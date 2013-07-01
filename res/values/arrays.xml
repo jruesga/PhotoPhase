@@ -14,7 +14,7 @@
      limitations under the License.
  -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string-array name="refresh_intervals_labels" translatable="false">
         <item>@string/refresh_intervals_disabled</item>

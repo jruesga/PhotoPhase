@@ -14,7 +14,7 @@
      limitations under the License.
  -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <dimen name="preference_icon_minWidth">0dp</dimen>
     <dimen name="preference_widget_width">48dp</dimen>
 

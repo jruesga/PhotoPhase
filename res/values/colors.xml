@@ -14,7 +14,7 @@
      limitations under the License.
  -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <color name="wallpaper_background_color">#ff202020</color>
     <color name="wallpaper_overlay_color">#aa202020</color>
@@ -23,4 +23,5 @@
 
     <color name="text_color">#404040</color>
     <color name="notification_text_color">#ffffffff</color>
+
 </resources>
