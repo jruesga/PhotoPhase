@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.util.Log;
 
-import org.cyanogenmod.wallpapers.photophase.preferences.Disposition;
+import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cyanogenmod.wallpapers.photophase.preferences;
+package org.cyanogenmod.wallpapers.photophase.model;
 
 import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 
