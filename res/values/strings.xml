@@ -25,6 +25,7 @@
 
     <!-- Menus -->
     <string name="mnu_ok" translatable="false">@android:string/ok</string>
+    <string name="mnu_restore">Restore</string>
     <string name="mnu_settings">Settings</string>
     <string name="mnu_select_all">Select all</string>
     <string name="mnu_deselect_all">Deselect all</string>

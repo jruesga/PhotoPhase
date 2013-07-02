@@ -43,6 +43,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +63,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
             Album album = null;
             mAlbums.clear();
+            mOriginalAlbums.clear();
             Cursor c = mContentResolver.query(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             new String[]{ MediaStore.MediaColumns.DATA },
@@ -118,18 +120,21 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         protected void onProgressUpdate(Album... values) {
             for (Album album : values) {
                 addAlbum(album);
+                mOriginalAlbums.add((Album)album.clone());
             }
         }
     };
 
 
+    /*package*/ ContentResolver mContentResolver;
 
-    List<Album> mAlbums;
-    ContentResolver mContentResolver;
-
-    private CardLayout mAlbumsPanel;
+    /*package*/ List<Album> mAlbums;
+    /*package*/ List<Album> mOriginalAlbums;
 
     /*package*/ Set<String> mSelectedAlbums;
+    private Set<String> mOriginalSelectedAlbums;
+
+    private CardLayout mAlbumsPanel;
 
     /*package*/ boolean mSelectionChanged;
 
@@ -143,13 +148,15 @@ public class ChoosePicturesFragment extends PreferenceFragment {
 
         // Create an empty album
         mAlbums = new ArrayList<Album>();
+        mOriginalAlbums = new ArrayList<Album>();
 
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
         // Load the albums user selection
-        mSelectedAlbums = PreferencesProvider.Preferences.Media.getSelectedAlbums();
+        mOriginalSelectedAlbums = PreferencesProvider.Preferences.Media.getSelectedAlbums();
+        mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
         mSelectionChanged = false;
 
         setHasOptionsMenu(true);
@@ -211,7 +218,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.albums, menu);
+        inflater.inflate(R.menu.choose_preference, menu);
     }
 
     /**
@@ -223,9 +230,39 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             case R.id.mnu_ok:
                 getActivity().finish();
                 return true;
+            case R.id.mnu_restore:
+                restoreData();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Method that restores the albums to its original state
+     */
+    private void restoreData() {
+        // Restore and the albums the selection
+        mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
+        mAlbums.clear();
+        for (Album album : mOriginalAlbums) {
+            mAlbums.add((Album)album.clone());
+        }
+
+        // Update every view (albums and views should have the same size)
+        int count = mAlbumsPanel.getChildCount();
+        for (int i = 0; i < count; i++) {
+            Album album = mAlbums.get(i);
+            View v = mAlbumsPanel.getChildAt(i);
+            AlbumInfo albumInfo = (AlbumInfo)v.findViewById(R.id.album_info);
+            AlbumPictures albumPictures = (AlbumPictures)v.findViewById(R.id.album_pictures);
+            albumInfo.updateView(album);
+            albumPictures.updateView(album);
+        }
+
+        // Restore the preference
+        PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
+        mSelectionChanged = false;
     }
 
     /**

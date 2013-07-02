@@ -160,14 +160,24 @@ public class AlbumPictures extends RelativeLayout
         mAlbum = album;
 
         if (mHolder != null) {
-            // Create the pictures
-            final LayoutInflater inflater = (LayoutInflater) getContext().
-                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mScroller.cancelTasks();
-            mHolder.removeAllViews();
-            for (final String picture : mAlbum.getItems()) {
-                View v = createPicture(inflater, picture, isPictureSelected(picture));
-                mHolder.addView(v);
+            int pictures = mHolder.getChildCount();
+            if (pictures != album.getItems().size()) {
+                // Recreate the pictures
+                final LayoutInflater inflater = (LayoutInflater) getContext().
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mScroller.cancelTasks();
+                mHolder.removeAllViews();
+                for (final String picture : mAlbum.getItems()) {
+                    View v = createPicture(inflater, picture, isPictureSelected(picture));
+                    mHolder.addView(v);
+                }
+            } else {
+                int i = 0;
+                for (final String picture : mAlbum.getItems()) {
+                    View v = mHolder.getChildAt(i);
+                    v.setSelected(isPictureSelected(picture));
+                    i++;
+                }
             }
         }
     }

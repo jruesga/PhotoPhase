@@ -18,12 +18,13 @@ package org.cyanogenmod.wallpapers.photophase.model;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A class that represents an album
  */
-public class Album  implements Comparable<Album> {
+public class Album  implements Comparable<Album>, Cloneable {
 
     private Drawable mIcon;
     private String mPath;
@@ -94,4 +95,15 @@ public class Album  implements Comparable<Album> {
         return mPath.compareTo(another.mPath);
     }
 
+    @Override
+    public Object clone() {
+        Album album = new Album();
+        album.mIcon = mIcon;
+        album.mPath = mPath;
+        album.mName = mName;
+        album.mDate = mDate;
+        album.mItems = new ArrayList<String>(mItems);
+        album.mSelectedItems = new ArrayList<String>(mSelectedItems);
+        return album;
+    }
 }
