@@ -293,7 +293,8 @@ public final class PreferencesProvider {
 
             private static final int DEFAULT_COLS = 8;
             private static final int DEFAULT_ROWS = 14;
-            private static final String DEFAULT_DISPOSITION = "0x0:5x4|5x0:3x2|5x2:3x2|0x4:4x4|4x4:4x4|0x8:8x6";
+            private static final String DEFAULT_PORTRAIT_DISPOSITION = "0x0:5x4|5x0:3x2|5x2:3x2|0x4:4x4|4x4:4x4|0x8:8x6";
+            private static final String DEFAULT_LANDSCAPE_DISPOSITION = "0x0:5x4|5x0:3x2|5x2:3x2|0x4:4x4|4x4:4x4|0x8:8x6";
 
             /**
              * Method that returns the rows of the wallpaper.
@@ -314,15 +315,35 @@ public final class PreferencesProvider {
             }
 
             /**
-             * Returns the disposition of the photo frames in the wallpaper. The setting is
-             * stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means (position x=0, y=0,
+             * Returns the disposition of the photo frames in the wallpaper on portrait screen. The
+             * setting is stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means (position x=0, y=0,
              * 1 cells width, 2 cells height, ...).
              *
              * @return List<Disposition> The photo frames dispositions
              */
-            public static List<Disposition> getDisposition() {
-                String setting = getString("ui_layout_disposition", DEFAULT_DISPOSITION);
-                String[] v = setting.split("\\|");
+            public static List<Disposition> getPortraitDisposition() {
+                return toDispositions(getString("ui_layout_portrait_disposition", DEFAULT_PORTRAIT_DISPOSITION));
+            }
+
+            /**
+             * Returns the disposition of the photo frames in the wallpaper on landscape screen. The
+             * setting is stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means (position x=0, y=0,
+             * 1 cells width, 2 cells height, ...).
+             *
+             * @return List<Disposition> The photo frames dispositions
+             */
+            public static List<Disposition> getLandscapeDisposition() {
+                return toDispositions(getString("ui_layout_landscape_disposition", DEFAULT_LANDSCAPE_DISPOSITION));
+            }
+
+            /**
+             * Method that converts to dispositions reference
+             *
+             * @param value The value to convert
+             * @return List<Disposition> The  dispositions reference
+             */
+            private static List<Disposition> toDispositions(String value) {
+                String[] v = value.split("\\|");
                 List<Disposition> dispositions = new ArrayList<Disposition>(v.length);
                 for (String s : v) {
                     String[] s1 = s.split(":");

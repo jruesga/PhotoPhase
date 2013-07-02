@@ -83,6 +83,22 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             boolean emptyTextureQueue = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, false);
             boolean mediaReload = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, false);
             boolean mediaIntervalChanged = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, false);
+            if (emptyTextureQueue) {
+                if (mTextureManager != null) {
+                    mTextureManager.emptyTextureQueue(true);
+                }
+            }
+            if (mediaReload) {
+                synchronized (mMediaSync) {
+                    if (mTextureManager != null) {
+                        mTextureManager.reloadMedia();
+                        scheduleOrCancelMediaScan();
+                    }
+                }
+            }
+            if (mediaIntervalChanged) {
+                scheduleOrCancelMediaScan();
+            }
             if (recreateWorld) {
                 // Recreate the wallpaper world
                 try {
@@ -93,18 +109,6 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             }
             if (redraw) {
                 mDispatcher.requestRender();
-            }
-            if (emptyTextureQueue) {
-                mTextureManager.emptyTextureQueue(true);
-            }
-            if (mediaReload) {
-                synchronized (mMediaSync) {
-                    mTextureManager.reloadMedia();
-                    scheduleOrCancelMediaScan();
-                }
-            }
-            if (mediaIntervalChanged) {
-                scheduleOrCancelMediaScan();
             }
         }
     };
@@ -320,10 +324,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             // the best fixed size will be set. The disposition size is simple for a better
             // performance of the internal arrays
             final Configuration conf = mContext.getResources().getConfiguration();
+            int orientation = mContext.getResources().getConfiguration().orientation;
             int w = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenWidthDp);
             int h = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenWidthDp);
             Rect dimensions = new Rect(0, 0, w / 2, h / 2);
-            int cc = PreferencesProvider.Preferences.Layout.getDisposition().size();
+            int cc = (orientation == Configuration.ORIENTATION_PORTRAIT)
+                        ? PreferencesProvider.Preferences.Layout.getPortraitDisposition().size()
+                        : PreferencesProvider.Preferences.Layout.getLandscapeDisposition().size();
 
             recycle();
             mTextureManager = new TextureManager(mContext, mDispatcher, cc, dimensions);

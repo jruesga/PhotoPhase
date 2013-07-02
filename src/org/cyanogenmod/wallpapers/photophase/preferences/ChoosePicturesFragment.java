@@ -176,6 +176,8 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         if (mSelectionChanged) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, Boolean.TRUE);
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);

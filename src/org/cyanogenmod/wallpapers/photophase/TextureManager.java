@@ -209,6 +209,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      */
     public void emptyTextureQueue(boolean reload) {
         synchronized (mSync) {
+            // Recycle the textures
             try {
                 List<GLESTextureInfo> all = mQueue.removeAll();
                 for (GLESTextureInfo info : all) {
@@ -223,10 +224,16 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             } catch (EmptyQueueException eqex) {
                 // Ignore
             }
+            // Recycle the bitmaps
+            for (Bitmap bitmap : sRecycledBitmaps) {
+                bitmap.recycle();
+            }
+            sRecycledBitmaps.clear();
 
             // Reload the queue
             if (reload) {
                 synchronized (mBackgroundTask.mLoadSync) {
+                    mBackgroundTask.resetAvailableImages();
                     mBackgroundTask.mLoadSync.notify();
                 }
             }
@@ -317,7 +324,18 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
          */
         public void setAvailableImages(File[] images) {
             synchronized (mLoadSync) {
+                mNewImages.clear();
                 mNewImages.addAll(Arrays.asList(images));
+                mUsedImages.clear();
+            }
+        }
+
+        /**
+         * Method that reset the current available images queue.
+         */
+        public void resetAvailableImages() {
+            synchronized (mLoadSync) {
+                mNewImages.addAll(mUsedImages);
                 mUsedImages.clear();
             }
         }

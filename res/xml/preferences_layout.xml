@@ -14,12 +14,30 @@
      limitations under the License.
  -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:photophase="http://schemas.android.com/apk/res/org.cyanogenmod.wallpapers.photophase">
 
     <!-- Disposition -->
     <PreferenceCategory
         android:key="category_disposition"
         android:title="@string/pref_layout_disposition">
+
+        <!-- Portrait -->
+        <Preference
+            android:key="ui_disposition_portrait"
+            android:title="@string/pref_disposition_portrait"
+            android:summary="@string/pref_disposition_portrait_summary"
+            android:fragment="org.cyanogenmod.wallpapers.photophase.preferences.PortraitDispositionFragment"
+            android:persistent="false" />
+
+        <!-- Landscape -->
+        <Preference
+            android:key="ui_disposition_landscape"
+            android:title="@string/pref_disposition_landscape"
+            android:summary="@string/pref_disposition_landscape_summary"
+            android:fragment="org.cyanogenmod.wallpapers.photophase.preferences.LandscapeDispositionFragment"
+            android:persistent="false" />
 
     </PreferenceCategory>
 

@@ -242,7 +242,9 @@ public class PhotoPhaseWallpaperWorld {
         int rows = portrait ? Preferences.Layout.getRows() : Preferences.Layout.getCols();
         float cellw = 2.0f / cols;
         float cellh = 2.0f / rows;
-        List<Disposition> dispositions = Preferences.Layout.getDisposition();
+        List<Disposition> dispositions = portrait
+                            ? Preferences.Layout.getPortraitDisposition()
+                            : Preferences.Layout.getLandscapeDisposition();
         if (DEBUG) Log.d(TAG,
                 "Dispositions: " + dispositions.size() + " | " + String.valueOf(dispositions));
         mPhotoFrames = new ArrayList<PhotoFrame>(dispositions.size());
@@ -325,6 +327,28 @@ public class PhotoPhaseWallpaperWorld {
                      1.0f - (y * cellh),
                      0.0f
                 };
+//        return new float[]
+//                {
+//                     // top left
+//                    -1.0f,
+//                    -1.0f,
+//                     0.0f,
+//
+//                     // bottom left
+//                    -1.0f,
+//                    1.0f,
+//                     0.0f,
+//
+//                     // bottom right
+//                     1.0f,
+//                     1.0f,
+//                     0.0f,
+//
+//                     // top right
+//                     1.0f,
+//                     -1.0f,
+//                     0.0f
+//                };
     }
 
     /**
