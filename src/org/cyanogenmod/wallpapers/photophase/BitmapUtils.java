@@ -86,6 +86,9 @@ public class BitmapUtils {
             // Try to load the bitmap as a bitmap file
             ExifInterface exif = new ExifInterface(file.getAbsolutePath());
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            if (orientation == 0) {
+                return bitmap;
+            }
             Matrix matrix = new Matrix();
             if (orientation == 6) {
                 matrix.postRotate(90);
