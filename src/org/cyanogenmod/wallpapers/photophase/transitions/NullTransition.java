@@ -27,7 +27,8 @@ import org.cyanogenmod.wallpapers.photophase.TextureManager;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * A special transition that does nothing other than draw the {@link PhotoFrame}
@@ -163,13 +164,14 @@ public class NullTransition extends Transition {
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw the photo frame
-        ShortBuffer vertexOrderBuffer = target.getVertexOrderBuffer();
-        vertexOrderBuffer.position(0);
-        GLES20.glDrawElements(
-                GLES20.GL_TRIANGLE_FAN,
-                6,
-                GLES20.GL_UNSIGNED_SHORT,
-                vertexOrderBuffer);
+//        ShortBuffer vertexOrderBuffer = target.getVertexOrderBuffer();
+//        vertexOrderBuffer.position(0);
+//        GLES20.glDrawElements(
+//                GLES20.GL_TRIANGLE_FAN,
+//                6,
+//                GLES20.GL_UNSIGNED_SHORT,
+//                vertexOrderBuffer);
+        GLES20.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 
         // Disable attributes
