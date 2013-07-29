@@ -56,8 +56,6 @@ public class BitmapUtils {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        options.inPreferQualityOverSpeed = false;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
         // Calculate inSampleSize
@@ -65,12 +63,16 @@ public class BitmapUtils {
 
         // Decode the bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
+        options.inPreferQualityOverSpeed = false;
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inDither = true;
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         if (bitmap == null) {
             return null;
         }
 
-        //Test if the file has exif format
+        // Test if the bitmap has exif format, and decode properly
         return decodeExifBitmap(file, bitmap);
     }
 
