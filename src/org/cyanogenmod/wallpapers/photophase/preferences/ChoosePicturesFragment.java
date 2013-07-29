@@ -25,6 +25,7 @@ import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +54,10 @@ import java.util.Set;
  */
 public class ChoosePicturesFragment extends PreferenceFragment {
 
+    private static final String TAG = "ChoosePicturesFragment";
+
+    private static final boolean DEBUG = false;
+
     private final AsyncTask<Void, Album, Void> mAlbumsLoaderTask = new AsyncTask<Void, Album, Void>() {
         /**
          * {@inheritDoc}
@@ -62,8 +67,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             // Query all the external content and classify the pictures in albums and load the cards
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
             Album album = null;
-            mAlbums.clear();
-            mOriginalAlbums.clear();
+            unregister();
             Cursor c = mContentResolver.query(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             new String[]{ MediaStore.MediaColumns.DATA },
@@ -72,9 +76,11 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                             MediaStore.MediaColumns.DATA);
             if (c != null) {
                 try {
+                    if (DEBUG) Log.v(TAG, "Media library:");
                     while (c.moveToNext()) {
                         // Only valid files (those i can read)
                         String p = c.getString(0);
+                        if (DEBUG) Log.v(TAG, "\t" + p);
                         if (p != null) {
                             File f = new File(p);
                             if (f.exists() && f.isFile() && f.canRead()) {
@@ -105,6 +111,13 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                             }
                         }
                     }
+
+                    // Add the last album
+                    if (album != null) {
+                        mAlbums.add(album);
+                        this.publishProgress(album);
+                    }
+
                 } finally {
                     c.close();
                 }
@@ -130,6 +143,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
 
     /*package*/ List<Album> mAlbums;
     /*package*/ List<Album> mOriginalAlbums;
+    /*package*/ List<AlbumsFlip3dAnimationController> mAnimationControllers;
 
     /*package*/ Set<String> mSelectedAlbums;
     private Set<String> mOriginalSelectedAlbums;
@@ -149,6 +163,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         // Create an empty album
         mAlbums = new ArrayList<Album>();
         mOriginalAlbums = new ArrayList<Album>();
+        mAnimationControllers = new ArrayList<AlbumsFlip3dAnimationController>();
 
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
@@ -172,6 +187,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             mAlbumsLoaderTask.cancel(true);
         }
         unbindDrawables(mAlbumsPanel);
+        unregister();
 
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
@@ -181,6 +197,12 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);
+    }
+
+    /*package*/ void unregister() {
+        mAlbums.clear();
+        mOriginalAlbums.clear();
+        mAnimationControllers.clear();
     }
 
     /**
@@ -265,6 +287,11 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         // Restore the preference
         PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
         mSelectionChanged = false;
+
+        // Restore all the animations states
+        for (AlbumsFlip3dAnimationController controller : mAnimationControllers) {
+            controller.reset();
+        }
     }
 
     /**
@@ -334,6 +361,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         // Register the animation controller
         AlbumsFlip3dAnimationController controller = new AlbumsFlip3dAnimationController(albumInfo, albumPictures);
         controller.register();
+        mAnimationControllers.add(controller);
 
         // Add to the panel of cards
         mAlbumsPanel.addCard(albumView);

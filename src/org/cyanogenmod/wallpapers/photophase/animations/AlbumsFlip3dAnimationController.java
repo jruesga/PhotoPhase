@@ -77,6 +77,23 @@ public class AlbumsFlip3dAnimationController {
     }
 
     /**
+     * Method that unregister the controller
+     */
+    public void unregister() {
+        getFrontView().setOnClickListener(null);
+        getBackView().setOnClickListener(null);
+    }
+
+    /**
+     * Method that reset the controller
+     */
+    public void reset() {
+        if (!mFrontFace) {
+            applyAnimation(true);
+        }
+    }
+
+    /**
      * Method that applies the animation over the views
      *
      * @param inverse Applies the inverse animation
