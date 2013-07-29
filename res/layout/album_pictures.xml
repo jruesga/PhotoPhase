@@ -33,7 +33,6 @@
         android:layout_marginLeft="@dimen/small_margin"
         android:layout_marginRight="@dimen/small_margin"
         android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:orientation="vertical">
 
@@ -59,7 +58,7 @@
     <org.cyanogenmod.wallpapers.photophase.widgets.PicturesView
         android:id="@+id/album_pictures_scroller"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/album_title_height"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@id/album_menubar"
@@ -69,7 +68,7 @@
 
         <LinearLayout android:id="@+id/album_pictures_holder"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <!-- Pictures go here -->

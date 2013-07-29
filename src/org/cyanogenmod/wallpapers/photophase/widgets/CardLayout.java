@@ -85,7 +85,14 @@ public class CardLayout extends LinearLayout {
             @Override
             public void run() {
                 addView(card);
-                card.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.cards_animation));
+                if (inverted) {
+                    card.startAnimation(AnimationUtils.loadAnimation(
+                            getContext(), R.anim.cards_animation_up_right));
+                } else {
+                    card.startAnimation(AnimationUtils.loadAnimation(
+                            getContext(), R.anim.cards_animation_up_left));
+                }
+                inverted = !inverted;
             }
         });
     }
