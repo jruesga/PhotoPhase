@@ -305,6 +305,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         boolean mRun;
         boolean mTaskPaused;
 
+        private boolean mEmpty;
         private final List<File> mNewImages;
         private final List<File> mUsedImages;
 
@@ -327,6 +328,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 mNewImages.clear();
                 mNewImages.addAll(Arrays.asList(images));
                 mUsedImages.clear();
+                mEmpty = images.length == 0;
             }
         }
 
@@ -357,7 +359,9 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                             mUsedImages.clear();
                         }
                         if (mNewImages.size() == 0) {
-                            reloadMedia();
+                            if (!mEmpty) {
+                                reloadMedia();
+                            }
                             break;
                         }
 
