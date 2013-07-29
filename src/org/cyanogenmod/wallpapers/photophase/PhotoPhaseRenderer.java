@@ -359,7 +359,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setPause(false);
 
-        // Create the wallpaper
+        // Create the wallpaper (destroy the previous)
+        if (mWorld != null) {
+            mWorld.recycle();
+        }
         mWorld = new PhotoPhaseWallpaperWorld(mContext, mTextureManager);
 
         // Create all other shapes

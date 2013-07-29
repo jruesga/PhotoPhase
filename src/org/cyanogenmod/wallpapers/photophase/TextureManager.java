@@ -219,7 +219,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                         GLESUtil.glesCheckError("glDeleteTextures");
                     }
                     // Return the bitmap
-                    sRecycledBitmaps.add(info.bitmap);
+                    info.bitmap.recycle();
                 }
             } catch (EmptyQueueException eqex) {
                 // Ignore
@@ -292,8 +292,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         }
         mBackgroundTask = null;
 
-        // Recycle the textures of the queue
-        emptyTextureQueue(false);
+//        // Recycle the textures of the queue
+//        emptyTextureQueue(false);
     }
 
     /**

@@ -18,6 +18,7 @@ package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
@@ -194,13 +195,20 @@ public class PhotoPhaseWallpaperWorld {
             int cc = mPhotoFrames.size()-1;
             for (int i = cc; i >= 0; i--) {
                 PhotoFrame frame = mPhotoFrames.get(i);
-                mTextureManager.releaseBitmap(frame.getTextureBitmap());
+                Bitmap bitmap = frame.getTextureBitmap();
+                if (bitmap != null) {
+                    mTextureManager.releaseBitmap(frame.getTextureBitmap());
+                }
                 frame.recycle();
                 mPhotoFrames.remove(i);
             }
         }
-        mTransitionsQueue.clear();
-        mUsedTransitionsQueue.clear();
+        if (mTransitionsQueue != null) {
+            mTransitionsQueue.clear();
+        }
+        if (mUsedTransitionsQueue != null) {
+            mUsedTransitionsQueue.clear();
+        }
         mRecycled = true;
     }
 
