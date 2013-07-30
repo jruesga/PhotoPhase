@@ -33,7 +33,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      * Constructor of <code>PortraitDispositionFragment</code>
      */
     public PortraitDispositionFragment() {
-        super(DispositionModes.PORTRAIT);
+        super();
     }
 
     /**
@@ -51,5 +51,21 @@ public class PortraitDispositionFragment extends DispositionFragment {
     @Override
     public List<Disposition> getUserDispositions() {
         return PreferencesProvider.Preferences.Layout.getPortraitDisposition();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRows() {
+        return PreferencesProvider.Preferences.Layout.getRows();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getCols() {
+        return PreferencesProvider.Preferences.Layout.getCols();
     }
 }

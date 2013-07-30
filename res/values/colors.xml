@@ -24,4 +24,6 @@
     <color name="text_color">#404040</color>
     <color name="notification_text_color">#ffffffff</color>
 
+    <color name="disposition_frame_bg_color">#c8595757</color>
+
 </resources>

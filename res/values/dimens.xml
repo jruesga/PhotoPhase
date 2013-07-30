@@ -44,4 +44,6 @@
     <dimen name="default_margin">16dp</dimen>
     <dimen name="small_margin">8dp</dimen>
     <dimen name="small_padding">5dp</dimen>
+
+    <dimen name="disposition_frame_padding">1dp</dimen>
 </resources>

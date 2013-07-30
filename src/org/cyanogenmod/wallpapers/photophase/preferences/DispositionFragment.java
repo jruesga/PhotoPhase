@@ -17,16 +17,18 @@
 package org.cyanogenmod.wallpapers.photophase.preferences;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
+import org.cyanogenmod.wallpapers.photophase.widgets.DispositionView;
 
 import java.util.List;
 
@@ -35,32 +37,21 @@ import java.util.List;
  */
 public abstract class DispositionFragment extends PreferenceFragment {
 
-    /**
-     * Available modes for the {@link DispositionFragment} class.
-     */
-    public static enum DispositionModes {
-        /**
-         * Portrait screen
-         */
-        PORTRAIT,
-        /**
-         * Landscape screen
-         */
-        LANDSCAPE;
-    }
+    private Runnable mRedraw = new Runnable() {
+        @Override
+        public void run() {
+            if (getActivity().isDestroyed()) return;
+            mDispositionView.setDispositions(getUserDispositions(), getCols(), getRows());
+        }
+    };
 
-    private final DispositionModes mMode;
-
-    private List<Disposition> mOldDispositions;
+    DispositionView mDispositionView;
 
     /**
      * Constructor of <code>DispositionFragment</code>
-     * 
-     * @param mode The mode of the disposition layout
      */
-    public DispositionFragment(DispositionModes mode) {
+    public DispositionFragment() {
         super();
-        mMode = mode;
     }
 
     /**
@@ -69,6 +60,20 @@ public abstract class DispositionFragment extends PreferenceFragment {
      * @return List<Disposition> The current user preference dispositions
      */
     public abstract List<Disposition> getUserDispositions();
+
+    /**
+     * Method that returns the number of rows to use
+     * 
+     * @return int The number of rows
+     */
+    public abstract int getRows();
+
+    /**
+     * Method that returns the number of cols to use
+     * 
+     * @return int The number of cols
+     */
+    public abstract int getCols();
 
     /**
      * {@inheritDoc}
@@ -80,6 +85,8 @@ public abstract class DispositionFragment extends PreferenceFragment {
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
+
+        setHasOptionsMenu(true);
     }
 
     /**
@@ -89,25 +96,52 @@ public abstract class DispositionFragment extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup v = (ViewGroup)inflater.inflate(R.layout.choose_disposition_fragment, container, false);
-//        v.addView(createFrame());
+        mDispositionView = (DispositionView)v.findViewById(R.id.disposition_view);
+        mDispositionView.post(mRedraw);
         return v;
     }
 
     /**
-     * Method that recreate
-     * @param r
-     * @return
+     * {@inheritDoc}
      */
-    private View createFrame(Rect r) {
-        // Create a view with all the 
-        View v = new View(getActivity());
-        v.setBackgroundColor(getResources().getColor(R.color.wallpaper_background_color));
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(r.width(), r.height());
-        params.leftMargin = r.top;
-        params.topMargin = r.left;
-        v.setLayoutParams(params);
-        v.setFocusable(true);
-        v.setFocusableInTouchMode(true);
-        return v;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mDispositionView != null) {
+            mDispositionView.removeCallbacks(mRedraw);
+        }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.accept_restore_preference, menu);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mnu_ok:
+                getActivity().finish();
+                return true;
+            case R.id.mnu_restore:
+                restoreData();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Method that restores the disposition view to the default state
+     */
+    private void restoreData() {
+        //TODO Restore disposition
+    }
+
 }

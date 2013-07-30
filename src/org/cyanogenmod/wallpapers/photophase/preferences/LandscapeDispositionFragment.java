@@ -33,7 +33,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
      * Constructor of <code>LandscapeDispositionFragment</code>
      */
     public LandscapeDispositionFragment() {
-        super(DispositionModes.LANDSCAPE);
+        super();
     }
 
     /**
@@ -51,5 +51,23 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public List<Disposition> getUserDispositions() {
         return PreferencesProvider.Preferences.Layout.getLandscapeDisposition();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRows() {
+        // inverted
+        return PreferencesProvider.Preferences.Layout.getCols();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getCols() {
+        // inverted
+        return PreferencesProvider.Preferences.Layout.getRows();
     }
 }

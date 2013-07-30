@@ -242,7 +242,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.choose_preference, menu);
+        inflater.inflate(R.menu.accept_restore_preference, menu);
     }
 
     /**
