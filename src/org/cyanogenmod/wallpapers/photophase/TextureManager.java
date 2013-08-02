@@ -40,7 +40,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
     private static final String TAG = "TextureManager";
 
-    private static final int QUEUE_SIZE = 1;
+    private static final int QUEUE_SIZE = 3;
 
     static final List<Bitmap> sRecycledBitmaps = new ArrayList<Bitmap>();
 

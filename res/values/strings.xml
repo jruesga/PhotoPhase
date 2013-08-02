@@ -72,8 +72,7 @@
     <string name="pref_disposition_portrait_summary">Select how pictures are disposed on a portrait screen</string>
     <string name="pref_disposition_landscape">Landscape disposition</string>
     <string name="pref_disposition_landscape_summary">Select how pictures are disposed on a landscape screen</string>
-    <string name="pref_disposition_description">Tap a frame to select it. Then drag \u0026 drop the borders of the frame to resize it.
-        Tap the split buttons to split the frame horizontally or vertically.</string>
+    <string name="pref_disposition_description">Long tap a frame to select it. Then drag \u0026 drop the borders of the frame to resize it.</string>
 
     <string name="pref_about">About</string>
     <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2013 The CyanogenMod Project</string>

@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * A fragment class that allow to choose the layout disposition of the wallpaper for portrait
- * screen. 
+ * screen.
  */
 public class PortraitDispositionFragment extends DispositionFragment {
 

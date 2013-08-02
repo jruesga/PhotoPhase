@@ -309,30 +309,26 @@ public class PhotoPhaseWallpaperWorld {
      */
     private static float[] getVerticesFromDisposition(
             Disposition disposition, boolean portrait, float cellw, float cellh) {
-        int x = portrait ? disposition.x : disposition.y;
-        int y = portrait ? disposition.y : disposition.x;
-        int w = portrait ? disposition.w : disposition.h;
-        int h = portrait ? disposition.h : disposition.w;
         return new float[]
                 {
                      // top left
-                    -1.0f + (x * cellw),
-                     1.0f - (y * cellh),
+                    -1.0f + (disposition.x * cellw),
+                     1.0f - (disposition.y * cellh),
                      0.0f,
 
                      // bottom left
-                    -1.0f + (x * cellw),
-                     1.0f - ((y * cellh) + (h * cellh)),
+                    -1.0f + (disposition.x * cellw),
+                     1.0f - ((disposition.y * cellh) + (disposition.h * cellh)),
                      0.0f,
 
                      // bottom right
-                    -1.0f + ((x * cellw) + (w * cellw)),
-                     1.0f - ((y * cellh) + (h * cellh)),
+                    -1.0f + ((disposition.x * cellw) + (disposition.w * cellw)),
+                     1.0f - ((disposition.y * cellh) + (disposition.h * cellh)),
                      0.0f,
 
                      // top right
-                    -1.0f + ((x * cellw) + (w * cellw)),
-                     1.0f - (y * cellh),
+                    -1.0f + ((disposition.x * cellw) + (disposition.w * cellw)),
+                     1.0f - (disposition.y * cellh),
                      0.0f
                 };
     }

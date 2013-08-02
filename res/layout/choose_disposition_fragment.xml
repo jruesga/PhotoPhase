@@ -14,22 +14,22 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/default_margin"
-    android:layout_marginBottom="@dimen/default_margin"
+    android:layout_marginTop="@dimen/small_margin"
+    android:layout_marginBottom="@dimen/small_margin"
     android:orientation="vertical">
 
-    <TextView android:id="@+id/description"
+    <TextView android:id="@+id/advise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/holo_blue_light"
-        android:layout_marginEnd="8dip"
-        android:layout_marginStart="8dip"
-        android:padding="4dip"
+        android:layout_marginStart="@dimen/disposition_frame_margin"
+        android:layout_marginEnd="@dimen/disposition_frame_margin"
+        android:padding="@dimen/disposition_advise_frame_padding"
         android:gravity="center_horizontal"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/notification_text_color"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/pref_disposition_description" />
 
@@ -37,6 +37,24 @@
         android:id="@+id/disposition_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin" />
-</LinearLayout>
+        android:padding="@dimen/disposition_frame_margin"
+        android:layout_below="@id/advise"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignLeft="@id/disposition_view"
+        android:layout_alignRight="@id/disposition_view"
+        android:layout_alignTop="@id/disposition_view"
+        android:layout_alignBottom="@id/disposition_view">
+        <org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame 
+            android:id="@+id/resize_frame"
+            android:layout_width="1dp"
+            android:layout_height="1dp">
+        </org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame>
+    </FrameLayout>
+
+</RelativeLayout>

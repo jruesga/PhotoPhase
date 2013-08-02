@@ -29,11 +29,12 @@ import android.view.ViewGroup;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.widgets.DispositionView;
+import org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame;
 
 import java.util.List;
 
 /**
- * An abstract fragment class that allow to choose the layout disposition of the wallpaper 
+ * An abstract fragment class that allow to choose the layout disposition of the wallpaper.
  */
 public abstract class DispositionFragment extends PreferenceFragment {
 
@@ -63,14 +64,14 @@ public abstract class DispositionFragment extends PreferenceFragment {
 
     /**
      * Method that returns the number of rows to use
-     * 
+     *
      * @return int The number of rows
      */
     public abstract int getRows();
 
     /**
      * Method that returns the number of cols to use
-     * 
+     *
      * @return int The number of cols
      */
     public abstract int getCols();
@@ -97,6 +98,7 @@ public abstract class DispositionFragment extends PreferenceFragment {
         // Inflate the layout for this fragment
         ViewGroup v = (ViewGroup)inflater.inflate(R.layout.choose_disposition_fragment, container, false);
         mDispositionView = (DispositionView)v.findViewById(R.id.disposition_view);
+        mDispositionView.setResizeFrame((ResizeFrame)v.findViewById(R.id.resize_frame));
         mDispositionView.post(mRedraw);
         return v;
     }

@@ -291,10 +291,10 @@ public final class PreferencesProvider {
          */
         public static class Layout {
 
-            private static final int DEFAULT_COLS = 8;
-            private static final int DEFAULT_ROWS = 14;
-            private static final String DEFAULT_PORTRAIT_DISPOSITION = "0x0:5x4|5x0:3x2|5x2:3x2|0x4:4x4|4x4:4x4|0x8:8x6";
-            private static final String DEFAULT_LANDSCAPE_DISPOSITION = "0x0:5x4|5x0:3x2|5x2:3x2|0x4:4x4|4x4:4x4|0x8:8x6";
+            private static final int DEFAULT_COLS = 4;
+            private static final int DEFAULT_ROWS = 7;
+            private static final String DEFAULT_PORTRAIT_DISPOSITION = "0x0:2x1|3x0:3x0|3x1:3x1|0x2:1x3|2x2:3x3|0x4:3x6";
+            private static final String DEFAULT_LANDSCAPE_DISPOSITION = "0x0:2x3|3x0:5x1|6x0:6x0|6x1:6x1|3x2:4x2|3x3:4x3|5x2:6x3";
 
             /**
              * Method that returns the rows of the wallpaper.
@@ -352,8 +352,8 @@ public final class PreferencesProvider {
                     Disposition disposition = new Disposition();
                     disposition.x = Integer.parseInt(s2[0]);
                     disposition.y = Integer.parseInt(s2[1]);
-                    disposition.w = Integer.parseInt(s3[0]);
-                    disposition.h = Integer.parseInt(s3[1]);
+                    disposition.w = Integer.parseInt(s3[0]) - disposition.x + 1;
+                    disposition.h = Integer.parseInt(s3[1]) - disposition.y + 1;
                     dispositions.add(disposition);
                 }
                 return dispositions;
