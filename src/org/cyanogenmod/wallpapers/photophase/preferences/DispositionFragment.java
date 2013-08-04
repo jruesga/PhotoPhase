@@ -44,7 +44,7 @@ public abstract class DispositionFragment
     private Runnable mRedraw = new Runnable() {
         @Override
         public void run() {
-            if (getActivity().isDestroyed()) return;
+            if (getActivity() == null || getActivity().isDestroyed()) return;
             mDispositionView.setDispositions(getUserDispositions(), getCols(), getRows());
         }
     };
