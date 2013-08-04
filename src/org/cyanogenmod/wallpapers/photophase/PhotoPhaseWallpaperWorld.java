@@ -18,14 +18,18 @@ package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
+import android.content.res.Resources.NotFoundException;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.util.Log;
 
+import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +56,9 @@ public class PhotoPhaseWallpaperWorld {
     private List<Integer> mTransitionsQueue;
     private List<Integer> mUsedTransitionsQueue;
     private int mCurrent;
+
+    private int mWidth;
+    private int mHeight;
 
     private boolean mRecycled;
 
@@ -104,22 +111,58 @@ public class PhotoPhaseWallpaperWorld {
     }
 
     /**
-     * Method that selects a transition and assign it to a photo frame.
+     * Method that ensures the transitions queue
      */
-    public void selectTransition() {
-        // Ensure queue
+    private void ensureTransitionsQueue() {
         if (mTransitionsQueue.isEmpty()) {
             mTransitionsQueue.addAll(mUsedTransitionsQueue);
             mUsedTransitionsQueue.clear();
         }
+    }
+
+    /**
+     * Method that selects a transition and assign it to a random photo frame.
+     */
+    public void selectRandomTransition() {
+        // Ensure queue
+        ensureTransitionsQueue();
 
         // Get a random frame to which apply the transition
         int r = 0 + (int)(Math.random() * (((mTransitionsQueue.size()-1) - 0) + 1));
         int pos = mTransitionsQueue.remove(r).intValue();
         mUsedTransitionsQueue.add(Integer.valueOf(pos));
-
-        // Create or use a transition
         PhotoFrame frame = mPhotoFrames.get(pos);
+
+        // Select the transition
+        selectTransition(frame, pos);
+    }
+
+    /**
+     * Method that selects a transition and assign it to the photo frame.
+     *
+     * @param frame The photo frame to select
+     */
+    public void selectTransition(PhotoFrame frame) {
+        // Ensure queue
+        ensureTransitionsQueue();
+
+        // Get a random frame to which apply the transition
+        int pos = mPhotoFrames.indexOf(frame);
+        mTransitionsQueue.remove(Integer.valueOf(pos));
+        mUsedTransitionsQueue.add(Integer.valueOf(pos));
+
+        // Select the transition
+        selectTransition(frame, pos);
+    }
+
+    /**
+     * Method that selects a transition and assign it to a photo frame.
+     *
+     * @param frame The frame to select
+     * @param pos The position
+     */
+    private void selectTransition(PhotoFrame frame, int pos) {
+        // Create or use a transition
         Transition transition = null;
         boolean isSelectable = false;
         while (transition == null || !isSelectable) {
@@ -195,9 +238,9 @@ public class PhotoPhaseWallpaperWorld {
             int cc = mPhotoFrames.size()-1;
             for (int i = cc; i >= 0; i--) {
                 PhotoFrame frame = mPhotoFrames.get(i);
-                Bitmap bitmap = frame.getTextureBitmap();
-                if (bitmap != null) {
-                    mTextureManager.releaseBitmap(frame.getTextureBitmap());
+                GLESTextureInfo info = frame.getTextureInfo();
+                if (info != null && info.bitmap != null) {
+                    mTextureManager.releaseBitmap(info);
                 }
                 frame.recycle();
                 mPhotoFrames.remove(i);
@@ -229,6 +272,22 @@ public class PhotoPhaseWallpaperWorld {
     }
 
     /**
+     * Method that returns if there are any transition running in the world.
+     *
+     * @return boolean If there are any transition running in the world
+     * @throws NotFoundException If the frame was not found
+     */
+    public boolean hasRunningTransition(PhotoFrame frame) throws NotFoundException {
+        int pos = mPhotoFrames.indexOf(frame);
+        if (pos == -1) {
+            throw new NotFoundException();
+        }
+        synchronized (mUsedTransitionsQueue) {
+            return mUsedTransitionsQueue.indexOf(Integer.valueOf(pos)) != -1;
+        }
+    }
+
+    /**
      * Method that creates and fills the world with {@link PhotoFrame} objects.
      *
      * @param w The new width dimension
@@ -242,6 +301,10 @@ public class PhotoPhaseWallpaperWorld {
             recycle();
             mRecycled = false;
         }
+
+        // Save the new dimensions of the wallpaper
+        mWidth = w;
+        mHeight = h;
 
         // Calculate the new world
         int orientation = mContext.getResources().getConfiguration().orientation;
@@ -262,7 +325,7 @@ public class PhotoPhaseWallpaperWorld {
         int i = 0;
         for (Disposition disposition : dispositions) {
             // Create the photo frame
-            float[] frameVertices = getVerticesFromDisposition(disposition, portrait, cellw, cellh);
+            float[] frameVertices = getVerticesFromDisposition(disposition, cellw, cellh);
             float[] pictureVertices = getFramePadding(frameVertices, portrait ? w : h, portrait ? h : w);
             PhotoFrame frame =
                     new PhotoFrame(
@@ -284,6 +347,27 @@ public class PhotoPhaseWallpaperWorld {
     }
 
     /**
+     * Method that returns a photo frame from a coordinates in screen
+     *
+     * @param coordinates The coordinates
+     * @return The photo frame reference or null if none found
+     */
+    public PhotoFrame getFrameFromCoordinates(PointF coordinates) {
+        // Translate pixels coordinates to GLES coordinates
+        float tx = ((coordinates.x * 2) / mWidth) - 1;
+        float ty = (((coordinates.y * 2) / mHeight) - 1) * -1;
+
+        // Locate the frame
+        for (PhotoFrame frame : mPhotoFrames) {
+            RectF vertex = Utils.rectFromVertex(frame.getFrameVertex());
+            if (vertex.left < tx && vertex.right > tx && vertex.top > ty && vertex.bottom < ty) {
+                return frame;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Method that draws all the photo frames.
      *
      * @param matrix The model-view-projection matrix
@@ -302,13 +386,12 @@ public class PhotoPhaseWallpaperWorld {
      * Method that returns a coordinates per vertex array from a disposition
      *
      * @param disposition The source disposition
-     * @param portrait If the device is in portrait mode
      * @param cellw The cell width based on the surface
      * @param cellh The cell height based on the surface
      * @return float[] The coordinates per vertex array
      */
     private static float[] getVerticesFromDisposition(
-            Disposition disposition, boolean portrait, float cellw, float cellh) {
+            Disposition disposition, float cellw, float cellh) {
         return new float[]
                 {
                      // top left

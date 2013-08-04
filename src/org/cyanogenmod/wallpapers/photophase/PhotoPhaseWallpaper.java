@@ -16,10 +16,15 @@
 
 package org.cyanogenmod.wallpapers.photophase;
 
+import android.app.ActivityManager;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.ViewConfiguration;
 
 import org.cyanogenmod.wallpapers.photophase.GLESWallpaperService.GLESEngineListener;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
@@ -42,6 +47,10 @@ public class PhotoPhaseWallpaper
     private PhotoPhaseWallpaperEngine mEngine;
 
     private boolean mPreserveEGLContext;
+
+    // List of the current top activities. Tap should be ignored when this acitivities are
+    // in the foreground
+    static final String[] TOP_ACTIVITIES = {"com.android.internal.app.ChooserActivity"};
 
     /**
      * {@inheritDoc}
@@ -85,6 +94,10 @@ public class PhotoPhaseWallpaper
      * A wallpaper engine implementation using GLES.
      */
     class PhotoPhaseWallpaperEngine extends GLES20WallpaperService.GLES20Engine {
+
+        private final Handler mHandler;
+        /*package*/ final ActivityManager mActivityManager;
+
         /**
          * Constructor of <code>PhotoPhaseWallpaperEngine<code>
          *
@@ -92,7 +105,9 @@ public class PhotoPhaseWallpaper
          */
         PhotoPhaseWallpaperEngine(PhotoPhaseWallpaper wallpaper) {
             super();
-            setOffsetNotificationsEnabled(true);
+            mHandler = new Handler();
+            mActivityManager = (ActivityManager)getApplication().getSystemService(ACTIVITY_SERVICE);
+            setOffsetNotificationsEnabled(false);
             setTouchEventsEnabled(false);
             setGLESEngineListener(wallpaper);
             setWallpaperGLSurfaceView(new PhotoPhaseWallpaperGLSurfaceView(wallpaper));
@@ -111,6 +126,38 @@ public class PhotoPhaseWallpaper
             public PhotoPhaseWallpaperGLSurfaceView(Context context) {
                 super(context);
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Bundle onCommand(final String action, final int x, final int y, final int z,
+                final Bundle extras, final boolean resultRequested) {
+            if (action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Only if the wallpaper is visible after a long press and
+                        // not in preview mode
+                        if(isVisible() && !isPreview()) {
+                            List<ActivityManager.RunningTaskInfo> taskInfo =
+                                                    mActivityManager.getRunningTasks(1);
+                            String topActivity = taskInfo.get(0).topActivity.getClassName();
+                            for (String activity : TOP_ACTIVITIES) {
+                                if (activity.compareTo(topActivity) == 0) {
+                                    // Ignore tap event
+                                    return;
+                                }
+                            }
+
+                            // Pass the x and y position to the renderer
+                            ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y);
+                        }
+                    }
+                }, ViewConfiguration.getLongPressTimeout() + 100L);
+            }
+            return super.onCommand(action, x, y, z, extras, resultRequested);
         }
     }
 

@@ -17,7 +17,6 @@
 package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.opengl.GLES20;
 import android.util.Log;
@@ -42,7 +41,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
     private static final int QUEUE_SIZE = 3;
 
-    static final List<Bitmap> sRecycledBitmaps = new ArrayList<Bitmap>();
+    static final List<GLESTextureInfo> sRecycledBitmaps = new ArrayList<GLESTextureInfo>();
 
     final Context mContext;
     final Object mSync;
@@ -74,7 +73,10 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 // If we have bitmap to reused then pick up from the recycled list
                 if (sRecycledBitmaps.size() > 0) {
                     // Bind to the GLES context
-                    ti = GLESUtil.loadTexture(sRecycledBitmaps.remove(0));
+                    GLESTextureInfo oldTextureInfo = sRecycledBitmaps.remove(0);
+                    ti = GLESUtil.loadTexture(oldTextureInfo.bitmap);
+                    ti.path = oldTextureInfo.path;
+                    oldTextureInfo.bitmap = null;
                 } else {
                     // Load and bind to the GLES context
                     ti = GLESUtil.loadTexture(mImage, mDimensions, Effects.getNextEffect(), false);
@@ -172,12 +174,12 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     /**
      * Method that returns a bitmap to be reused
      *
-     * @param bitmap The bitmap to release
+     * @param ti The bitmap to release
      */
     @SuppressWarnings("static-method")
-    public void releaseBitmap(Bitmap bitmap) {
-        if (bitmap != null) {
-            sRecycledBitmaps.add(0, bitmap);
+    public void releaseBitmap(GLESTextureInfo ti) {
+        if (ti != null && ti.bitmap != null) {
+            sRecycledBitmaps.add(0, ti);
         }
     }
 
@@ -225,8 +227,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 // Ignore
             }
             // Recycle the bitmaps
-            for (Bitmap bitmap : sRecycledBitmaps) {
-                bitmap.recycle();
+            for (GLESTextureInfo ti : sRecycledBitmaps) {
+                ti.bitmap.recycle();
             }
             sRecycledBitmaps.clear();
 

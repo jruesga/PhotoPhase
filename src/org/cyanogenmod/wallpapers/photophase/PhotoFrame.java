@@ -17,7 +17,6 @@
 package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
@@ -126,7 +125,6 @@ public class PhotoFrame implements TextureRequestor {
         }
 
         // Full frame picture
-        // TODO Apply some type of ratio correction to the texture coordinates
         setTextureHandle(ti, DEFAULT_TEXTURE_COORDS);
         mLoaded = true;
     }
@@ -217,15 +215,12 @@ public class PhotoFrame implements TextureRequestor {
     }
 
     /**
-     * Method that returns the bitmap handle
+     * Method that returns the texture info
      *
-     * @return int The bitmap handle
+     * @return GLESTextureInfo The texture info
      */
-    public Bitmap getTextureBitmap() {
-        if (mTextureInfo != null) {
-            return mTextureInfo.bitmap;
-        }
-        return null;
+    public GLESTextureInfo getTextureInfo() {
+        return mTextureInfo;
     }
 
     /**

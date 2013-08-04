@@ -18,12 +18,16 @@ package org.cyanogenmod.wallpapers.photophase;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.content.res.Resources.NotFoundException;
+import android.graphics.PointF;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLException;
 import android.opengl.GLSurfaceView;
@@ -33,6 +37,7 @@ import android.util.Log;
 
 import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
+import org.cyanogenmod.wallpapers.photophase.preferences.TouchAction;
 import org.cyanogenmod.wallpapers.photophase.shapes.ColorShape;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
 
@@ -124,7 +129,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 @Override
                 public void run() {
                     // Select a new transition
-                    mWorld.selectTransition();
+                    mWorld.selectRandomTransition();
                     mLastRunningTransition = System.currentTimeMillis();
 
                     // Now force continuously render while transition is applied
@@ -234,6 +239,84 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (DEBUG) Log.d(TAG, "onResume [" + mInstance + "]");
         if (mTextureManager != null) {
             mTextureManager.setPause(false);
+        }
+    }
+
+    /**
+     * Method called when the renderer should process a touch event over the screen
+     *
+     * @param x The x coordinate
+     * @param y The y coordinate
+     */
+    public void onTouch(float x , float y) {
+        if (mWorld != null) {
+            // Do user action
+            TouchAction touchAction = PreferencesProvider.Preferences.General.getTouchAction();
+            if (touchAction.compareTo(TouchAction.NONE) == 0) {
+                //Ignore
+            } else {
+                // Retrieve the photo frame for its coordinates
+                final PhotoFrame frame = mWorld.getFrameFromCoordinates(new PointF(x, y));
+                if (frame == null) {
+                    Log.w(TAG, "No frame from coordenates");
+                    return;
+                }
+
+                // Apply the action
+                if (touchAction.compareTo(TouchAction.TRANSITION) == 0) {
+                    try {
+                        // Check if the frame has pending transitions
+                        if (!mWorld.hasRunningTransition(frame)) {
+                            Log.w(TAG, "The frame has pending transitions " + frame.getTextureInfo().path);
+                            return;
+                        }
+
+                        // Select the frame with a transition
+                        // Run in GLES's thread
+                        mDispatcher.dispatch(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Select a new transition
+                                mWorld.selectTransition(frame);
+                                mLastRunningTransition = System.currentTimeMillis();
+
+                                // Now force continuously render while transition is applied
+                                mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                            }
+                        });
+
+                    } catch (NotFoundException ex) {
+                        Log.e(TAG, "The frame not exists " + frame.getTextureInfo().path, ex);
+                    }
+
+                } else if (touchAction.compareTo(TouchAction.OPEN) == 0) {
+                    // Open the image
+                    try {
+                        Uri uri = Uri.fromFile(frame.getTextureInfo().path);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.setDataAndType(uri, "image/*");
+                        mContext.startActivity(intent);
+                    } catch (ActivityNotFoundException ex) {
+                        Log.e(TAG, "Open activity not found for " + frame.getTextureInfo().path, ex);
+                    }
+
+                } else if (touchAction.compareTo(TouchAction.SHARE) == 0) {
+                    // Send the image
+                    try {
+                        Uri uri = Uri.fromFile(frame.getTextureInfo().path);
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.setType("image/*");
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                        mContext.startActivity(intent);
+                    } catch (ActivityNotFoundException ex) {
+                        Log.e(TAG, "Send activity not found for " + frame.getTextureInfo().path, ex);
+                    }
+                }
+            }
         }
     }
 

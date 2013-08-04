@@ -163,6 +163,10 @@ public final class GLESUtil {
          * The bitmap reference
          */
         public Bitmap bitmap;
+        /**
+         * The path to the texture
+         */
+        public File path;
     }
 
     /**
@@ -319,7 +323,9 @@ public final class GLESUtil {
             bitmap = effect.apply(bitmap);
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            return loadTexture(bitmap);
+            GLESTextureInfo ti = loadTexture(bitmap);
+            ti.path = file;
+            return ti;
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from file: " + file.getAbsolutePath();
@@ -358,7 +364,8 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            return loadTexture(bitmap);
+            GLESTextureInfo ti = loadTexture(bitmap);
+            return ti;
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from resource: " + resourceId;
@@ -428,6 +435,7 @@ public final class GLESUtil {
         GLESTextureInfo ti = new GLESTextureInfo();
         ti.handle = textureNames[0];
         ti.bitmap = bitmap;
+        ti.path = null;
         return ti;
     }
 

@@ -24,6 +24,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -33,7 +36,7 @@ import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
 /**
  * A testing activity to simulate the PhotoPhase Live Wallpaper inside an GLES activity.
  */
-public class PhotoPhaseActivity extends Activity {
+public class PhotoPhaseActivity extends Activity implements OnTouchListener {
 
     private static final String TAG = "PhotoPhaseActivity";
 
@@ -68,6 +71,7 @@ public class PhotoPhaseActivity extends Activity {
         mGLSurfaceView.setRenderer(mRenderer);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         mGLSurfaceView.setPreserveEGLContextOnPause(preserveEglCtx);
+        mGLSurfaceView.setOnTouchListener(this);
         setContentView(mGLSurfaceView);
 
         mRenderer.onCreate();
@@ -132,5 +136,24 @@ public class PhotoPhaseActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        float x = event.getX();
+        float y = event.getY();
+        switch (action) {
+            case MotionEvent.ACTION_UP:
+                mRenderer.onTouch(x, y);
+                return true;
+
+            default:
+                break;
+        }
+        return false;
     }
 }

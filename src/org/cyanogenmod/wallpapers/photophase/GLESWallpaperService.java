@@ -156,6 +156,15 @@ public abstract class GLESWallpaperService extends EGLWallpaperService {
         }
 
         /**
+         * Returns the renderer used by the engine
+         *
+         * @return Renderer The renderer
+         */
+        protected Renderer getRenderer() {
+            return mRenderer;
+        }
+
+        /**
          * {@inheritDoc}
          */
         @Override

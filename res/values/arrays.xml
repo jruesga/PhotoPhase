@@ -34,6 +34,20 @@
         <item>604800</item>
     </string-array>
 
+    <string-array name="touch_actions_labels" translatable="false">
+        <item>@string/touch_actions_none</item>
+        <item>@string/touch_actions_transition</item>
+        <item>@string/touch_actions_open</item>
+        <item>@string/touch_actions_share</item>
+    </string-array>
+
+    <string-array name="touch_actions_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
     <string-array name="transitions_labels" translatable="false">
         <item>@string/transitions_random</item>
         <item>@string/transitions_swap</item>

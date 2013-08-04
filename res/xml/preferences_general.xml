@@ -29,12 +29,23 @@
             android:persistent="true"
             android:defaultValue="0" />
 
+        <!-- Background color -->
         <org.cyanogenmod.wallpapers.photophase.widgets.ColorPickerPreference
             android:key="ui_background_color"
             android:title="@string/pref_general_settings_background_color"
             android:summary="@string/pref_general_settings_background_color_summary"
             android:persistent="true"
             android:defaultValue="@color/wallpaper_background_color" />
+
+        <!-- Touch action -->
+        <ListPreference
+            android:key="ui_touch_action"
+            android:title="@string/pref_general_touch_action"
+            android:summary="@string/pref_general_touch_action_summary"
+            android:persistent="true"
+            android:entries="@array/touch_actions_labels"
+            android:entryValues="@array/touch_actions_values"
+            android:defaultValue="0" />
 
     </PreferenceCategory>
 

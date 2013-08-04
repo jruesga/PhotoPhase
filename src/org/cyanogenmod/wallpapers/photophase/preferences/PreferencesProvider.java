@@ -188,6 +188,15 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Return the current user preference of the action to do when a frame is tap.
+             *
+             * @return TouchAction The action (default NONE)
+             */
+            public static TouchAction getTouchAction() {
+                return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0"))) ;
+            }
+
+            /**
              * Transitions preferences
              */
             public static class Transitions {
