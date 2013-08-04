@@ -16,6 +16,11 @@
 
 package org.cyanogenmod.wallpapers.photophase.widgets;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Vibrator;
@@ -23,15 +28,24 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
 import org.cyanogenmod.wallpapers.photophase.R;
+import org.cyanogenmod.wallpapers.photophase.animations.Evaluators;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
+import org.cyanogenmod.wallpapers.photophase.utils.DispositionUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.MERAlgorithm;
 import org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame.OnResizeListener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,14 +53,33 @@ import java.util.List;
  */
 public class DispositionView extends RelativeLayout implements OnLongClickListener, OnResizeListener {
 
+    /**
+     * An interface to communicate the selection/unselection of a frame
+     */
+    public interface OnFrameSelectedListener {
+        /**
+         * Invoked when a frame is selected
+         *
+         * @param v The frame view selected
+         */
+        void onFrameSelectedListener(View v);
+        /**
+         * Invoked when a frame is unselected
+         */
+        void onFrameUnselectedListener();
+    }
+
+    private boolean mChanged;
     private List<Disposition> mDispositions;
     private int mCols;
     private int mRows;
 
-    private View mTarget;
+    /*package*/ View mTarget;
     private ResizeFrame mResizeFrame;
     private int mInternalPadding;
     private Rect mOldResizeFrameLocation;
+
+    private OnFrameSelectedListener mOnFrameSelectedListener;
 
     private Vibrator mVibrator;
 
@@ -95,6 +128,15 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     }
 
     /**
+     * Method that returns the dispositions drawn on this view
+     *
+     * @return List<Disposition> The dispositions drawn
+     */
+    public List<Disposition> getDispositions() {
+        return mDispositions;
+    }
+
+    /**
      * Method that sets the disposition to draw on this view
      *
      * @param dispositions The dispositions to draw
@@ -105,10 +147,9 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         mRows = rows;
 
         // Remove all the current views and add the new ones
-        removeAllViews();
-        for (Disposition disposition : mDispositions) {
-            createFrame(getLocationFromDisposition(disposition));
-        }
+        recreateDispositions();
+        mResizeFrame.setVisibility(View.GONE);
+        mChanged = false;
     }
 
     /**
@@ -122,22 +163,211 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     }
 
     /**
+     * Method that set the listener for listen frame selection/unselection events
+     *
+     * @param onFrameSelectedListener The callback
+     */
+    public void setOnFrameSelectedListener(OnFrameSelectedListener onFrameSelectedListener) {
+        this.mOnFrameSelectedListener = onFrameSelectedListener;
+    }
+
+    /**
+     * Method that returns if the view was changed
+     *
+     * @return boolean true if the view was changed
+     */
+    public boolean isChanged() {
+        return mChanged;
+    }
+
+    /**
+     * Method that recreates all the dispositions
+     */
+    private void recreateDispositions() {
+        // Remove all the current views and add the new ones
+        removeAllViews();
+        for (Disposition disposition : mDispositions) {
+            createFrame(getLocationFromDisposition(disposition), false);
+        }
+        mOldResizeFrameLocation = null;
+        mTarget = null;
+        if (mOnFrameSelectedListener != null) {
+            mOnFrameSelectedListener.onFrameUnselectedListener();
+        }
+    }
+
+    /**
+     * Method that request the deletion of the current selected frame
+     */
+    @SuppressWarnings("boxing")
+    public void deleteCurrentFrame() {
+        if (mTarget == null) return;
+
+        final Disposition targetDisposition = resizerToDisposition();
+
+        // Get valid dispositions to move
+        final List<Disposition> adjacents = findAdjacentsDispositions(targetDisposition);
+        if (adjacents == null) {
+            // Nothing to do
+            Toast.makeText(getContext(),
+                    R.string.pref_disposition_unable_delete_advise, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Hide resizer
+        mResizeFrame.setVisibility(View.GONE);
+
+        // Animate adjacents views
+        List<Animator> animators = new ArrayList<Animator>();
+        animators.add(ObjectAnimator.ofFloat(mTarget, "scaleX", 1.0f, 0.0f));
+        animators.add(ObjectAnimator.ofFloat(mTarget, "scaleY", 1.0f, 0.0f));
+
+        Disposition first = null;
+        for (Disposition adjacent : adjacents) {
+            // Extract the view and remove from dispositions
+            View v = findViewFromRect(getLocationFromDisposition(adjacent));
+            mDispositions.remove(adjacent);
+
+            // Clone first disposition
+            if (first == null) {
+                first = new Disposition();
+                first.x = adjacent.x;
+                first.y = adjacent.y;
+                first.w = adjacent.w;
+                first.h = adjacent.h;
+            }
+
+            // Add animators and fix the adjacent
+            if (v != null) {
+                if (first.x < targetDisposition.x) {
+                    // From Left to Right
+                    int width = mTarget.getWidth() + mInternalPadding;
+                    animators.add(ValueAnimator.ofObject(
+                            new Evaluators.WidthEvaluator(v), v.getWidth(), v.getWidth() + width));
+
+                    // Update the adjacent
+                    adjacent.w += targetDisposition.w;
+                    mDispositions.add(adjacent);
+
+                } else if (first.x > targetDisposition.x) {
+                    // From Right to Left
+                    int width = mTarget.getWidth() + mInternalPadding;
+                    animators.add(ValueAnimator.ofObject(
+                            new Evaluators.WidthEvaluator(v), v.getWidth(), v.getWidth() + width));
+                    animators.add(ObjectAnimator.ofFloat(v, "x", v.getX(), mTarget.getX()));
+
+                    // Update the adjacent
+                    adjacent.x = targetDisposition.x;
+                    adjacent.w += targetDisposition.w;
+                    mDispositions.add(adjacent);
+
+                } else if (first.y < targetDisposition.y) {
+                    // From Top to Bottom
+                    int height = mTarget.getHeight() + mInternalPadding;
+                    animators.add(ValueAnimator.ofObject(
+                            new Evaluators.HeightEvaluator(v), v.getHeight(), v.getHeight() + height));
+
+                    // Update the adjacent
+                    adjacent.h += targetDisposition.h;
+                    mDispositions.add(adjacent);
+
+                } else if (first.y > targetDisposition.y) {
+                    // From Bottom to Top
+                    int height = mTarget.getHeight() + mInternalPadding;
+                    animators.add(ValueAnimator.ofObject(
+                            new Evaluators.HeightEvaluator(v), v.getHeight(), v.getHeight() + height));
+                    animators.add(ObjectAnimator.ofFloat(v, "y", v.getY(), mTarget.getY()));
+
+                    // Update the adjacent
+                    adjacent.x = targetDisposition.x;
+                    adjacent.w += targetDisposition.w;
+                    mDispositions.add(adjacent);
+                }
+            }
+        }
+        if (animators.size() > 0) {
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(animators);
+            animSet.setDuration(getResources().getInteger(R.integer.disposition_hide_anim));
+            animSet.setInterpolator(new AccelerateInterpolator());
+            animSet.addListener(new AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Ignore
+                }
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    // Ignore
+                }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    finishDeleteAnimation(targetDisposition);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    finishDeleteAnimation(targetDisposition);
+                }
+            });
+            animSet.start();
+        }
+    }
+
+    /**
+     * Method that finalizes the delete animation
+     *
+     * @param target The disposition target
+     */
+    /*package*/ void finishDeleteAnimation(Disposition target) {
+        removeView(mTarget);
+        mDispositions.remove(target);
+        Collections.sort(mDispositions);
+
+        // Clean status
+        mOldResizeFrameLocation = null;
+        mTarget = null;
+        if (mOnFrameSelectedListener != null) {
+            mOnFrameSelectedListener.onFrameUnselectedListener();
+        }
+    }
+
+    /**
      * Method that create a new frame to be drawn in the specified location
      *
      * @param r The location relative to the parent layout
+     * @return v The new view
      */
-    private void createFrame(Rect r) {
+    private View createFrame(Rect r, boolean animate) {
         int padding = (int)getResources().getDimension(R.dimen.disposition_frame_padding);
-        ImageView v = new ImageView(getContext());
+        final ImageView v = new ImageView(getContext());
         v.setImageResource(R.drawable.ic_camera);
         v.setScaleType(ScaleType.CENTER);
         v.setBackgroundColor(getResources().getColor(R.color.disposition_frame_bg_color));
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(r.width() - padding, r.height() - padding);
-        params.leftMargin = r.left + padding;
-        params.topMargin = r.top + padding;
+        v.setX(r.left + padding);
+        v.setY(r.top + padding);
         v.setOnLongClickListener(this);
+        if (animate) {
+            v.setVisibility(View.INVISIBLE);
+        }
         addView(v, params);
+
+        // Animate the view
+        if (animate) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    Animation anim = AnimationUtils.loadAnimation(
+                                        getContext(), R.anim.display_with_bounce);
+                    anim.setFillBefore(true);
+                    anim.setFillAfter(true);
+                    v.startAnimation(anim);
+                }
+            });
+        }
+
+        return v;
     }
 
     /**
@@ -165,26 +395,8 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      */
     @Override
     public boolean onLongClick(View v) {
-        // Do not do long click if we do not have a target
-//        if (mTarget != null) return false;
-
-        // Show the resize frame view just in place of the current clicked view
-        mResizeFrame.hide();
-        RelativeLayout.LayoutParams viewParams =
-                (RelativeLayout.LayoutParams)v.getLayoutParams();
-        FrameLayout.LayoutParams frameParams =
-                (FrameLayout.LayoutParams)mResizeFrame.getLayoutParams();
-        int padding = mInternalPadding + mResizeFrame.getNeededPadding();
-        frameParams.width = viewParams.width + (padding * 2);
-        frameParams.height = viewParams.height + (padding * 2);
-        mResizeFrame.setX(v.getLeft() - padding);
-        mResizeFrame.setY(v.getTop() - padding);
+        if (!selectTarget(v)) return false;
         mVibrator.vibrate(300);
-        mResizeFrame.show();
-
-        // Save the new view
-        mTarget = v;
-
         return true;
     }
 
@@ -248,63 +460,29 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         mResizeFrame.setLayoutParams(params);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void onEndResize(int mode) {
-        try {
-//        int w = getMeasuredWidth();
-//        int h = getMeasuredHeight();
-//        int cw = w / mCols;
-//        int ch = h / mRows;
-//
-//        // Retrieve the new layout params
-//        int neededPadding = mResizeFrame.getNeededPadding();
-//        int padding = (int)getResources().getDimension(R.dimen.disposition_frame_padding)
-//                            + neededPadding;
-//        FrameLayout.LayoutParams params =
-//                (FrameLayout.LayoutParams)mResizeFrame.getLayoutParams();
-//        switch (mode) {
-//            case Gravity.LEFT:
-//                int left = params.leftMargin + padding;
-//                if (left % cw != 0) {
-//                    params.leftMargin = ((left / cw) * cw) - padding;
-////                    params.width += ((left / cw) * cw) - left + (padding * 2);
-//                }
-//                break;
-//            case Gravity.RIGHT:
-//                int right = params.rightMargin + padding;
-//                if (right % cw != 0) {
-//                    params.rightMargin = ((right / cw) * cw) - padding;
-////                    params.width += ((right / cw) * cw) - right + (padding * 2);
-//                }
-//                break;
-//            case Gravity.TOP:
-//                int top = params.topMargin + padding;
-//                if (top % ch != 0) {
-//                    params.topMargin = ((top / ch) * ch) - padding;
-////                    params.height += ((top / cw) * cw) - top + (padding * 2);
-//                }
-//                break;
-//            case Gravity.BOTTOM:
-//                int bottom = params.bottomMargin + padding;
-//                if (bottom % ch != 0) {
-//                    params.bottomMargin = ((bottom / ch) * ch) - padding;
-////                    params.height += ((bottom / cw) * cw) - bottom + (padding * 2);
-//                }
-//                break;
-//
-//            default:
-//                break;
-//        }
-//        mResizeFrame.setLayoutParams(params);
-//        mResizeFrame.invalidate();
+    public void onEndResize(final int mode) {
+        if (mTarget == null) return;
 
-        // Recalculate all the dispositions in base to the new positions
+        // Compute the removed dispositions
+        computeRemovedDispositions(mode);
+        recreateDispositions();
+        computeNewDispositions(mode);
 
-        } finally {
-            // Reset vars
-//            mOldResizeFrameLocation = null;
-//            mTarget = null;
-        }
+        // Finish resize (select the target and create the new dispositions)
+        post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the target
+                View v = findTargetFromResizeFrame();
+                if (v != null) {
+                    selectTarget(v);
+                }
+            }
+        });
     }
 
     /**
@@ -318,7 +496,260 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
             mTarget.setTop(mOldResizeFrameLocation.top);
             mTarget.setBottom(mOldResizeFrameLocation.bottom);
         }
-//        mOldResizeFrameLocation = null;
-//        mTarget = null;
+        mOldResizeFrameLocation = null;
+        mTarget = null;
+        if (mOnFrameSelectedListener != null) {
+            mOnFrameSelectedListener.onFrameUnselectedListener();
+        }
+    }
+
+    /**
+     * Method that returns the target view for the current resize frame
+     *
+     * @return The target view
+     */
+    /*package*/ View findTargetFromResizeFrame() {
+        int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View v = getChildAt(i);
+            if (v.getX() < (mResizeFrame.getX() + (mResizeFrame.getWidth() / 2)) &&
+                (v.getX() + v.getWidth()) > (mResizeFrame.getX() + (mResizeFrame.getWidth() / 2)) &&
+                v.getY() < (mResizeFrame.getY() + (mResizeFrame.getHeight() / 2)) &&
+                (v.getY() + v.getHeight()) > (mResizeFrame.getY() + (mResizeFrame.getHeight() / 2))) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method that returns the view under the rect
+     *
+     * @return The view
+     */
+    private View findViewFromRect(Rect r) {
+        int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View v = getChildAt(i);
+            if (v.getX() < (r.left + (r.width() / 2)) &&
+                (v.getX() + v.getWidth()) > (r.left + (r.width() / 2)) &&
+                v.getY() < (r.top + (r.height() / 2)) &&
+                (v.getY() + v.getHeight()) > (r.top + (r.height() / 2))) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method that select a view as the target of to resize
+     *
+     * @param v The target view
+     */
+    /*package*/ boolean selectTarget(View v) {
+        //Do not do long click if we do not have a target
+        if (mTarget != null && v.equals(mTarget)) return false;
+
+        // Show the resize frame view just in place of the current clicked view
+        mResizeFrame.hide();
+        FrameLayout.LayoutParams frameParams =
+                (FrameLayout.LayoutParams)mResizeFrame.getLayoutParams();
+        int padding = mInternalPadding + mResizeFrame.getNeededPadding();
+        frameParams.width = v.getWidth() + (padding * 2);
+        frameParams.height = v.getHeight() + (padding * 2);
+        mResizeFrame.setX(v.getX() - padding);
+        mResizeFrame.setY(v.getY() - padding);
+        mResizeFrame.show();
+
+        // Save the new view
+        mTarget = v;
+        if (mOnFrameSelectedListener != null) {
+            mOnFrameSelectedListener.onFrameSelectedListener(v);
+        }
+        return true;
+    }
+
+    /**
+     * Computes the removed layout disposition based on the actual resize frame
+     *
+     * @param mode The resize mode
+     */
+    private void computeRemovedDispositions(int mode) {
+        // Transform the resizer to a dispositions object
+        Disposition resizer = resizerToDisposition();
+
+        // Delete all overlapped
+        int count = mDispositions.size();
+        for (int i = count - 1; i >= 0; i--) {
+            Disposition disposition = mDispositions.get(i);
+            if (!isVisible(disposition) || isOverlapped(resizer, disposition)) {
+                mDispositions.remove(disposition);
+            }
+        }
+
+        // Add the new disposition
+        mDispositions.add(resizer);
+        Collections.sort(mDispositions);
+
+        mChanged = true;
+    }
+
+    /**
+     * Computes the new layout disposition based on the actual resize frame
+     *
+     * @param mode The resize mode
+     */
+    private void computeNewDispositions(int mode) {
+        // Fill the empty areas
+        do {
+            byte[][] dispositionMatrix = DispositionUtil.toMatrix(mDispositions, mCols, mRows);
+            Rect rect = MERAlgorithm.getMaximalEmptyRectangle(dispositionMatrix);
+            if (rect.width() == 0 && rect.height() == 0) {
+                // No more empty areas
+                break;
+            }
+            Disposition disposition = DispositionUtil.fromRect(rect);
+            createFrame(getLocationFromDisposition(disposition), true);
+            mDispositions.add(disposition);
+        } while (true);
+
+        // Now the view was changed and should be reported
+        Collections.sort(mDispositions);
+        mChanged = true;
+    }
+
+    /**
+     * Method that converts the resize frame to a dispostion reference
+     *
+     * @return Disposition The disposition reference
+     */
+    private Disposition resizerToDisposition() {
+        int w = getMeasuredWidth() - (getPaddingLeft() + getPaddingRight());
+        int h = getMeasuredHeight() - (getPaddingTop() + getPaddingBottom());
+        int cw = w / mCols;
+        int ch = h / mRows;
+
+        //Remove overlapped areas
+        Disposition resizer = new Disposition();
+        resizer.x = Math.round(mResizeFrame.getX() / cw);
+        resizer.y = Math.round(mResizeFrame.getY() / ch);
+        resizer.w = Math.round(mResizeFrame.getWidth() / cw);
+        resizer.h = Math.round(mResizeFrame.getHeight() / ch);
+        return resizer;
+    }
+
+    /**
+     * Method that returns all dispositions that matched exactly (in one side) with
+     * the argument disposition.
+     *
+     * @param disposition The disposition to check
+     */
+    private List<Disposition> findAdjacentsDispositions(Disposition disposition) {
+        if (mDispositions.size() <= 1) return null;
+
+        // Check left size
+        if (disposition.x != 0) {
+            List<Disposition> dispositions = new ArrayList<Disposition>();
+            for (Disposition d : mDispositions) {
+                if (d.compareTo(disposition) != 0) {
+                    if ((d.x + d.w) == disposition.x &&
+                        (d.y >= disposition.y) && ((d.y + d.h) <= (disposition.y + disposition.h))) {
+                        dispositions.add(d);
+                    }
+                }
+            }
+            // Check if the sum of all the dispositions matches the disposition
+            int sum = 0;
+            for (Disposition d : dispositions) {
+                sum += d.h;
+            }
+            if (sum == disposition.h) {
+                return dispositions;
+            }
+        }
+        // Check top size
+        if (disposition.y != 0) {
+            List<Disposition> dispositions = new ArrayList<Disposition>();
+            for (Disposition d : mDispositions) {
+                if (d.compareTo(disposition) != 0) {
+                    if ((d.y + d.h) == disposition.y &&
+                        (d.x >= disposition.x) && ((d.x + d.w) <= (disposition.x + disposition.w))) {
+                        dispositions.add(d);
+                    }
+                }
+            }
+            // Check if the sum of all the dispositions matches the disposition
+            int sum = 0;
+            for (Disposition d : dispositions) {
+                sum += d.w;
+            }
+            if (sum == disposition.w) {
+                return dispositions;
+            }
+        }
+        // Check right size
+        if ((disposition.x + disposition.w) != mCols) {
+            List<Disposition> dispositions = new ArrayList<Disposition>();
+            for (Disposition d : mDispositions) {
+                if (d.compareTo(disposition) != 0) {
+                    if ((d.x) == (disposition.x + disposition.w) &&
+                        (d.y >= disposition.y) && ((d.y + d.h) <= (disposition.y + disposition.h))) {
+                        dispositions.add(d);
+                    }
+                }
+            }
+            // Check if the sum of all the dispositions matches the disposition
+            int sum = 0;
+            for (Disposition d : dispositions) {
+                sum += d.h;
+            }
+            if (sum == disposition.h) {
+                return dispositions;
+            }
+        }
+        // Check bottom size
+        if ((disposition.y + disposition.h) != mRows) {
+            List<Disposition> dispositions = new ArrayList<Disposition>();
+            for (Disposition d : mDispositions) {
+                if (d.compareTo(disposition) != 0) {
+                    if ((d.y) == (disposition.y + disposition.h) &&
+                        (d.x >= disposition.x) && ((d.x + d.w) <= (disposition.x + disposition.w))) {
+                        dispositions.add(d);
+                    }
+                }
+            }
+            // Check if the sum of all the dispositions matches the disposition
+            int sum = 0;
+            for (Disposition d : dispositions) {
+                sum += d.w;
+            }
+            if (sum == disposition.w) {
+                return dispositions;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method that checks if a dispositions overlaps another other disposition
+     *
+     * @param d1 One disposition
+     * @param d2 Another disposition
+     * @return boolean true if d1 overlaps d2
+     */
+    private static boolean isOverlapped(Disposition d1, Disposition d2) {
+        Rect r1 = new Rect(d1.x, d1.y, d1.x + d1.w, d1.y + d1.h);
+        Rect r2 = new Rect(d2.x, d2.y, d2.x + d2.w, d2.y + d2.h);
+        return r1.intersect(r2);
+    }
+
+    /**
+     * Method that checks if a dispositions is visible
+     *
+     * @param d The disposition to check
+     * @return boolean true if d is visible
+     */
+    private static boolean isVisible(Disposition d) {
+        return d.w > 0 && d.h > 0;
     }
 }

@@ -21,7 +21,7 @@ import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 /**
  * A class that holds a {@link PhotoFrame} disposition.
  */
-public class Disposition {
+public class Disposition implements Comparable<Disposition> {
     /**
      * Column
      */
@@ -82,5 +82,37 @@ public class Disposition {
     @Override
     public String toString() {
         return "Disposition [x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + "]";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(Disposition another) {
+        if (x == another.x && y == another.y && w == another.w && h == another.h) {
+            return 0;
+        }
+        if (x < another.x) {
+            return -1;
+        }
+        if (x > another.x) {
+            return 1;
+        }
+        if (y < another.y) {
+            return -1;
+        }
+        if (y > another.y) {
+            return 1;
+        }
+        if (w < another.w) {
+            return -1;
+        }
+        if (w > another.w) {
+            return 1;
+        }
+        if (h < another.h) {
+            return -1;
+        }
+        return 1;
     }
 }

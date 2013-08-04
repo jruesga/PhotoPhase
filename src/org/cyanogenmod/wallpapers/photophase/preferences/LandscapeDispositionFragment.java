@@ -20,6 +20,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
+import org.cyanogenmod.wallpapers.photophase.utils.DispositionUtil;
 
 import java.util.List;
 
@@ -51,6 +52,23 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public List<Disposition> getUserDispositions() {
         return PreferencesProvider.Preferences.Layout.getLandscapeDisposition();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Disposition> getDefaultDispositions() {
+        return DispositionUtil.toDispositions(
+                PreferencesProvider.Preferences.Layout.DEFAULT_LANDSCAPE_DISPOSITION);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveDispositions(List<Disposition> dispositions) {
+        PreferencesProvider.Preferences.Layout.setLandscapeDisposition(getActivity(), dispositions);
     }
 
     /**

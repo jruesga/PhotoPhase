@@ -24,8 +24,8 @@ import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.effects.Effects.EFFECTS;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import org.cyanogenmod.wallpapers.photophase.utils.DispositionUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -279,7 +279,6 @@ public final class PreferencesProvider {
                SharedPreferences preferences =
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
-               editor.remove("ui_media_selected_albums");
                editor.putStringSet("ui_media_selected_albums", selection);
                editor.commit();
                reload(context);
@@ -293,8 +292,8 @@ public final class PreferencesProvider {
 
             private static final int DEFAULT_COLS = 4;
             private static final int DEFAULT_ROWS = 7;
-            private static final String DEFAULT_PORTRAIT_DISPOSITION = "0x0:2x1|3x0:3x0|3x1:3x1|0x2:1x3|2x2:3x3|0x4:3x6";
-            private static final String DEFAULT_LANDSCAPE_DISPOSITION = "0x0:2x3|3x0:5x1|6x0:6x0|6x1:6x1|3x2:4x2|3x3:4x3|5x2:6x3";
+            public static final String DEFAULT_PORTRAIT_DISPOSITION = "0x0:2x1|0x2:1x3|0x4:3x6|2x2:3x3|3x0:3x0|3x1:3x1";
+            public static final String DEFAULT_LANDSCAPE_DISPOSITION = "0x0:2x3|3x0:5x1|3x2:4x3|5x2:6x3|6x0:6x0|6x1:6x1";
 
             /**
              * Method that returns the rows of the wallpaper.
@@ -322,7 +321,24 @@ public final class PreferencesProvider {
              * @return List<Disposition> The photo frames dispositions
              */
             public static List<Disposition> getPortraitDisposition() {
-                return toDispositions(getString("ui_layout_portrait_disposition", DEFAULT_PORTRAIT_DISPOSITION));
+                return DispositionUtil.toDispositions(
+                        getString("ui_layout_portrait_disposition", DEFAULT_PORTRAIT_DISPOSITION));
+            }
+
+            /**
+             * Sets the disposition of the photo frames in the wallpaper on landscape screen.
+             *
+             * @param context The current context
+             * @param dispositions The photo frames dispositions
+             */
+            public static void setPortraitDisposition(Context context, List<Disposition> dispositions) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putString("ui_layout_portrait_disposition",
+                                    DispositionUtil.fromDispositions(dispositions));
+                editor.commit();
+                reload(context);
             }
 
             /**
@@ -333,30 +349,24 @@ public final class PreferencesProvider {
              * @return List<Disposition> The photo frames dispositions
              */
             public static List<Disposition> getLandscapeDisposition() {
-                return toDispositions(getString("ui_layout_landscape_disposition", DEFAULT_LANDSCAPE_DISPOSITION));
+                return DispositionUtil.toDispositions(
+                        getString("ui_layout_landscape_disposition", DEFAULT_LANDSCAPE_DISPOSITION));
             }
 
             /**
-             * Method that converts to dispositions reference
+             * Sets the disposition of the photo frames in the wallpaper on landscape screen.
              *
-             * @param value The value to convert
-             * @return List<Disposition> The  dispositions reference
+             * @param context The current context
+             * @param dispositions The photo frames dispositions
              */
-            private static List<Disposition> toDispositions(String value) {
-                String[] v = value.split("\\|");
-                List<Disposition> dispositions = new ArrayList<Disposition>(v.length);
-                for (String s : v) {
-                    String[] s1 = s.split(":");
-                    String[] s2 = s1[0].split("x");
-                    String[] s3 = s1[1].split("x");
-                    Disposition disposition = new Disposition();
-                    disposition.x = Integer.parseInt(s2[0]);
-                    disposition.y = Integer.parseInt(s2[1]);
-                    disposition.w = Integer.parseInt(s3[0]) - disposition.x + 1;
-                    disposition.h = Integer.parseInt(s3[1]) - disposition.y + 1;
-                    dispositions.add(disposition);
-                }
-                return dispositions;
+            public static void setLandscapeDisposition(Context context, List<Disposition> dispositions) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putString("ui_layout_landscape_disposition",
+                            DispositionUtil.fromDispositions(dispositions));
+                editor.commit();
+                reload(context);
             }
         }
 

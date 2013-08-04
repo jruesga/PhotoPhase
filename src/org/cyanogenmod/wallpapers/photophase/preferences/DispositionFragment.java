@@ -17,6 +17,7 @@
 package org.cyanogenmod.wallpapers.photophase.preferences;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.widgets.DispositionView;
+import org.cyanogenmod.wallpapers.photophase.widgets.DispositionView.OnFrameSelectedListener;
 import org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame;
 
 import java.util.List;
@@ -36,7 +38,8 @@ import java.util.List;
 /**
  * An abstract fragment class that allow to choose the layout disposition of the wallpaper.
  */
-public abstract class DispositionFragment extends PreferenceFragment {
+public abstract class DispositionFragment
+    extends PreferenceFragment implements OnFrameSelectedListener {
 
     private Runnable mRedraw = new Runnable() {
         @Override
@@ -46,7 +49,10 @@ public abstract class DispositionFragment extends PreferenceFragment {
         }
     };
 
-    DispositionView mDispositionView;
+    /*package*/ DispositionView mDispositionView;
+
+    private boolean mRestored;
+    private MenuItem mDeleteMenu;
 
     /**
      * Constructor of <code>DispositionFragment</code>
@@ -61,6 +67,20 @@ public abstract class DispositionFragment extends PreferenceFragment {
      * @return List<Disposition> The current user preference dispositions
      */
     public abstract List<Disposition> getUserDispositions();
+
+    /**
+     * Method that returns the default preference for the disposition
+     *
+     * @return List<Disposition> The default preference dispositions
+     */
+    public abstract List<Disposition> getDefaultDispositions();
+
+    /**
+     * Method that request to save the dispositions
+     *
+     * @param dispositions The dispositions to save
+     */
+    public abstract void saveDispositions(List<Disposition> dispositions);
 
     /**
      * Method that returns the number of rows to use
@@ -99,6 +119,7 @@ public abstract class DispositionFragment extends PreferenceFragment {
         ViewGroup v = (ViewGroup)inflater.inflate(R.layout.choose_disposition_fragment, container, false);
         mDispositionView = (DispositionView)v.findViewById(R.id.disposition_view);
         mDispositionView.setResizeFrame((ResizeFrame)v.findViewById(R.id.resize_frame));
+        mDispositionView.setOnFrameSelectedListener(this);
         mDispositionView.post(mRedraw);
         return v;
     }
@@ -111,7 +132,18 @@ public abstract class DispositionFragment extends PreferenceFragment {
         super.onDestroyView();
         if (mDispositionView != null) {
             mDispositionView.removeCallbacks(mRedraw);
+            if (mRestored || mDispositionView.isChanged()) {
+                saveDispositions(mDispositionView.getDispositions());
+            }
         }
+
+        // Notify that the settings was changed
+        Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+        if (mRestored || mDispositionView.isChanged()) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+        }
+        getActivity().sendBroadcast(intent);
     }
 
     /**
@@ -119,7 +151,11 @@ public abstract class DispositionFragment extends PreferenceFragment {
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.accept_restore_preference, menu);
+        inflater.inflate(R.menu.dispositions, menu);
+        mDeleteMenu = menu.findItem(R.id.mnu_delete);
+        if (mDeleteMenu != null) {
+            mDeleteMenu.setVisible(false);
+        }
     }
 
     /**
@@ -134,6 +170,9 @@ public abstract class DispositionFragment extends PreferenceFragment {
             case R.id.mnu_restore:
                 restoreData();
                 return true;
+            case R.id.mnu_delete:
+                deleteFrame();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -143,7 +182,34 @@ public abstract class DispositionFragment extends PreferenceFragment {
      * Method that restores the disposition view to the default state
      */
     private void restoreData() {
-        //TODO Restore disposition
+        mDispositionView.setDispositions(getDefaultDispositions(), getCols(), getRows());
+        mRestored = true;
     }
 
+    /**
+     * Method that restores the disposition view to the default state
+     */
+    private void deleteFrame() {
+        mDispositionView.deleteCurrentFrame();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onFrameSelectedListener(View v) {
+        if (mDeleteMenu != null) {
+            mDeleteMenu.setVisible(true);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onFrameUnselectedListener() {
+        if (mDeleteMenu != null) {
+            mDeleteMenu.setVisible(false);
+        }
+    }
 }

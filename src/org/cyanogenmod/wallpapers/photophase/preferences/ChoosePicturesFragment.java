@@ -242,7 +242,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.accept_restore_preference, menu);
+        inflater.inflate(R.menu.albums, menu);
     }
 
     /**
@@ -286,7 +286,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
 
         // Restore the preference
         PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
-        mSelectionChanged = false;
+        mSelectionChanged = true;
 
         // Restore all the animations states
         for (AlbumsFlip3dAnimationController controller : mAnimationControllers) {
