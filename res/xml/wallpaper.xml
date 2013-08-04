@@ -15,6 +15,6 @@
  -->
 
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
-    android:thumbnail="@drawable/ic_launcher"
+    android:thumbnail="@drawable/wallpaper_thumb"
     android:description="@string/app_description"
     android:settingsActivity="org.cyanogenmod.wallpapers.photophase.preferences.PhotoPhasePreferences" />
