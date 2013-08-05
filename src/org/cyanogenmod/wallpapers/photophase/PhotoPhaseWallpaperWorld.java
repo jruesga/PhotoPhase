@@ -226,6 +226,7 @@ public class PhotoPhaseWallpaperWorld {
                 mTransitions.remove(i);
             }
         }
+        mCurrent = -1;
         if (mUnusedTransitions != null) {
             int cc = mUnusedTransitions.size()-1;
             for (int i = cc; i >= 0; i--) {
