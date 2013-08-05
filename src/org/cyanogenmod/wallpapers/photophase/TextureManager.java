@@ -52,8 +52,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     BackgroundPictureLoaderThread mBackgroundTask;
     private final MediaPictureDiscoverer mPictureDiscoverer;
 
-
-
+    /*package*/ Rect mScreenDimensions;
     /*package*/ Rect mDimensions;
 
     final GLESSurfaceDispatcher mDispatcher;
@@ -77,13 +76,13 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     // Bind to the GLES context
                     GLESTextureInfo oldTextureInfo = sRecycledBitmaps.remove(0);
                     ti = GLESUtil.loadTexture(oldTextureInfo.bitmap,
-                            Effects.getNextEffect(mEffectContext), mDimensions);
+                            Effects.getNextEffect(mEffectContext), mScreenDimensions);
                     ti.path = oldTextureInfo.path;
                     oldTextureInfo.bitmap = null;
                 } else {
                     // Load and bind to the GLES context
                     ti = GLESUtil.loadTexture(mImage, mDimensions,
-                            Effects.getNextEffect(mEffectContext), mDimensions, false);
+                            Effects.getNextEffect(mEffectContext), mScreenDimensions, false);
                 }
 
                 synchronized (mSync) {
@@ -118,15 +117,16 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      * @param effectCtx The current effect context
      * @param dispatcher The GLES dispatcher
      * @param requestors The number of requestors
-     * @param dimensions The desired dimensions for the decoded bitmaps
+     * @param screenDimensions The screen dimensions
      */
     public TextureManager(final Context ctx, final EffectContext effectCtx,
-                        GLESSurfaceDispatcher dispatcher, int requestors, Rect dimensions) {
+                        GLESSurfaceDispatcher dispatcher, int requestors, Rect screenDimensions) {
         super();
         mContext = ctx;
         mEffectContext = effectCtx;
         mDispatcher = dispatcher;
-        mDimensions = dimensions;
+        mScreenDimensions = screenDimensions;
+        mDimensions = screenDimensions; // For now, use the screen dimensions as the preferred dimensions for bitmaps 
         mSync = new Object();
         mPendingRequests = new ArrayList<TextureRequestor>(requestors);
         mPictureDiscoverer = new MediaPictureDiscoverer(mContext, this);

@@ -421,8 +421,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             final Configuration conf = mContext.getResources().getConfiguration();
             int orientation = mContext.getResources().getConfiguration().orientation;
             int w = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenWidthDp);
-            int h = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenWidthDp);
-            Rect dimensions = new Rect(0, 0, w / 2, h / 2);
+            int h = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenHeightDp);
+            Rect dimensions = new Rect(0, 0, w, h);
             int cc = (orientation == Configuration.ORIENTATION_PORTRAIT)
                         ? PreferencesProvider.Preferences.Layout.getPortraitDisposition().size()
                         : PreferencesProvider.Preferences.Layout.getLandscapeDisposition().size();
