@@ -88,7 +88,7 @@ public class FadeTransition extends NullTransition {
     @Override
     public void select(PhotoFrame target) {
         super.select(target);
-        mOverlay = new ColorShape(mContext, target.getPictureVertex(), Colors.getBackground());
+        mOverlay = new ColorShape(mContext, target.getFrameVertex()/*target.getPictureVertex()*/, Colors.getBackground());
         mOverlay.setAlpha(0);
     }
 
@@ -99,15 +99,13 @@ public class FadeTransition extends NullTransition {
     public void apply(float[] matrix) throws GLException {
         // Check internal vars
         if (mTarget == null ||
-            mTarget.getPictureVertexBuffer() == null ||
-            mTarget.getTextureBuffer() == null ||
-            mTarget.getVertexOrderBuffer() == null) {
+            mTarget.getPositionBuffer() == null ||
+            mTarget.getTextureBuffer() == null) {
             return;
         }
         if (mTransitionTarget == null ||
-            mTransitionTarget.getPictureVertexBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null ||
-            mTransitionTarget.getVertexOrderBuffer() == null) {
+            mTransitionTarget.getPositionBuffer() == null ||
+            mTransitionTarget.getTextureBuffer() == null) {
             return;
         }
 

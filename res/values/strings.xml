@@ -111,7 +111,7 @@
     <!-- Effects -->
     <string name="effects_none">None</string>
     <string name="effects_random">Random</string>
-    <string name="effects_black_and_white">Black &amp; White</string>
+    <string name="effects_grayscale">Grayscale</string>
     <string name="effects_sepia">Sepia</string>
 
     <!-- ColorPickerDialog -->

@@ -140,7 +140,7 @@ public class PhotoPhaseWallpaper
                     public void run() {
                         // Only if the wallpaper is visible after a long press and
                         // not in preview mode
-                        if(isVisible() && !isPreview()) {
+                        if (isVisible() && !isPreview()) {
                             List<ActivityManager.RunningTaskInfo> taskInfo =
                                                     mActivityManager.getRunningTasks(1);
                             String topActivity = taskInfo.get(0).topActivity.getClassName();

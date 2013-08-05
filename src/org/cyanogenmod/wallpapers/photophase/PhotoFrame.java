@@ -25,7 +25,6 @@ import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 
 /**
@@ -38,26 +37,21 @@ public class PhotoFrame implements TextureRequestor {
      */
     public static final int COORDS_PER_VERTER = 3;
 
-    // The photo frame is always a rectangle, so here applies 2 triangle order
-    private static final short[] VERTEX_ORDER = { 0, 1, 2, 0, 2, 3 };
-
     // The default texture coordinates (fit to frame)
     private static final float[] DEFAULT_TEXTURE_COORDS = {
-                                                            0, 0, // top left
-                                                            0, 1, // bottom left
-                                                            1, 1, // bottom right
-                                                            1, 0  // top right
+                                                            0.0f, 1.0f,
+                                                            1.0f, 1.0f,
+                                                            0.0f, 0.0f,
+                                                            1.0f, 0.0f
                                                           };
+
 
     private final TextureManager mTextureManager;
 
     private final float mFrameWidth, mFrameHeight;
-    private final float mPictureWidth, mPictureHeight;
     private final float[] mFrameVertex;
-    private final float[] mPictureVertex;
 
-    private FloatBuffer mPictureVertexBuffer;
-    private ShortBuffer mVertexOrderBuffer;
+    private FloatBuffer mPositionBuffer;
     private FloatBuffer mTextureBuffer;
 
     private GLESTextureInfo mTextureInfo;
@@ -74,11 +68,10 @@ public class PhotoFrame implements TextureRequestor {
      * @param ctx The current context
      * @param textureManager The texture manager
      * @param frameVertex A 4 dimension array with the coordinates per vertex plus padding
-     * @param pictureVertex A 4 dimension array with the coordinates per vertex
      * @param color Background color
      */
     public PhotoFrame(Context ctx, TextureManager textureManager,
-            float[] frameVertex, float[] pictureVertex, GLColor color) {
+                float[] frameVertex, GLColor color) {
         super();
         mLoaded = false;
         mBackgroundColor = color;
@@ -86,25 +79,15 @@ public class PhotoFrame implements TextureRequestor {
 
         // Save dimensions
         mFrameVertex = frameVertex;
-        mFrameWidth = frameVertex[9] - frameVertex[0];
-        mFrameHeight = frameVertex[4] - frameVertex[1];
-        mPictureVertex = pictureVertex;
-        mPictureWidth = pictureVertex[9] - pictureVertex[0];
-        mPictureHeight = pictureVertex[4] - pictureVertex[1];
+        mFrameWidth = frameVertex[6] - frameVertex[4];
+        mFrameHeight = frameVertex[1] - frameVertex[5];
 
         // Initialize vertex byte buffer for shape coordinates
-        ByteBuffer bb = ByteBuffer.allocateDirect(pictureVertex.length * 4); // (# of coordinate values * 4 bytes per float)
+        ByteBuffer bb = ByteBuffer.allocateDirect(frameVertex.length * 4); // (# of coordinate values * 4 bytes per float)
         bb.order(ByteOrder.nativeOrder());
-        mPictureVertexBuffer = bb.asFloatBuffer();
-        mPictureVertexBuffer.put(pictureVertex);
-        mPictureVertexBuffer.position(0);
-
-        // Initialize vertex byte buffer for shape coordinates order
-        bb = ByteBuffer.allocateDirect(VERTEX_ORDER.length * 2); // (# of coordinate values * 2 bytes per short)
-        bb.order(ByteOrder.nativeOrder());
-        mVertexOrderBuffer = bb.asShortBuffer();
-        mVertexOrderBuffer.put(VERTEX_ORDER);
-        mVertexOrderBuffer.position(0);
+        mPositionBuffer = bb.asFloatBuffer();
+        mPositionBuffer.put(frameVertex);
+        mPositionBuffer.position(0);
 
         // Load the texture
         mTextureInfo = null;
@@ -147,7 +130,7 @@ public class PhotoFrame implements TextureRequestor {
         ByteBuffer bb = ByteBuffer.allocateDirect(textureCoords.length * 4); // (# of coordinate values * 4 bytes per float)
         bb.order(ByteOrder.nativeOrder());
         synchronized (mSync) {
-            // Synchronize buffer swap
+            // Swap buffers
             mTextureBuffer = bb.asFloatBuffer();
             mTextureBuffer.put(textureCoords);
             mTextureBuffer.position(0);
@@ -165,30 +148,12 @@ public class PhotoFrame implements TextureRequestor {
     }
 
     /**
-     * Method that returns the picture vertex
+     * Method that returns the position vertex buffer
      *
-     * @return float[] The picture vertex
+     * @return FloatBuffer The position vertex buffer
      */
-    public float[] getPictureVertex() {
-        return mPictureVertex;
-    }
-
-    /**
-     * Method that returns the picture vertex buffer
-     *
-     * @return FloatBuffer The picture vertex buffer
-     */
-    public FloatBuffer getPictureVertexBuffer() {
-        return mPictureVertexBuffer;
-    }
-
-    /**
-     * Method that returns the vertex order buffer
-     *
-     * @return ShortBuffer The vertex order buffer
-     */
-    public ShortBuffer getVertexOrderBuffer() {
-        return mVertexOrderBuffer;
+    public FloatBuffer getPositionBuffer() {
+        return mPositionBuffer;
     }
 
     /**
@@ -242,24 +207,6 @@ public class PhotoFrame implements TextureRequestor {
     }
 
     /**
-     * Method that returns the picture width
-     *
-     * @return float The picture width
-     */
-    public float getPictureWidth() {
-        return mPictureWidth;
-    }
-
-    /**
-     * Method that returns the picture height
-     *
-     * @return float The picture height
-     */
-    public float getPictureHeight() {
-        return mPictureHeight;
-    }
-
-    /**
      * Method that returns the background color of the frame
      *
      * @return GLColor The background color
@@ -288,17 +235,13 @@ public class PhotoFrame implements TextureRequestor {
         }
         mTextureInfo = null;
 
-        if (mPictureVertexBuffer != null) {
-            mPictureVertexBuffer.clear();
-        }
-        if (mVertexOrderBuffer != null) {
-            mVertexOrderBuffer.clear();
+        if (mPositionBuffer != null) {
+            mPositionBuffer.clear();
         }
         if (mTextureBuffer != null) {
             mTextureBuffer.clear();
         }
-        mPictureVertexBuffer = null;
-        mVertexOrderBuffer = null;
+        mPositionBuffer = null;
         mTextureBuffer = null;
     }
 }

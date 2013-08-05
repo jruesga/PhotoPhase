@@ -23,6 +23,9 @@ import java.util.Stack;
  * The maximal empty rectangle algorithm that allows to find the rectangle with the maximal
  * area that could be create in empty areas (in this case 0 in a byte matrix)
  */
+//
+// Based on the source discussed at http://discuss.leetcode.com/questions/260/maximal-rectangle
+//
 public final class MERAlgorithm {
 
     /**

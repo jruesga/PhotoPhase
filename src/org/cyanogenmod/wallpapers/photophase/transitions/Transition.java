@@ -35,6 +35,7 @@ public abstract class Transition {
     private final TextureManager mTextureManager;
 
     protected int[] mProgramHandlers;
+    protected int[] mTextureHandlers;
     protected int[] mPositionHandlers;
     protected int[] mTextureCoordHandlers;
     protected int[] mMVPMatrixHandlers;
@@ -64,6 +65,7 @@ public abstract class Transition {
         assert mVertexShader.length != mFragmentShader.length;
         int cc = mVertexShader.length;
         mProgramHandlers = new int[cc];
+        mTextureHandlers = new int[cc];
         mPositionHandlers = new int[cc];
         mTextureCoordHandlers = new int[cc];
         mMVPMatrixHandlers = new int[cc];
@@ -86,7 +88,6 @@ public abstract class Transition {
                             mContext,
                             mTextureManager,
                             mTarget.getFrameVertex(),
-                            mTarget.getPictureVertex(),
                             mTarget.getBackgroundColor());
         }
     }
@@ -157,6 +158,8 @@ public abstract class Transition {
         mProgramHandlers[index] =
                 GLESUtil.createProgram(
                         mContext.getResources(), mVertexShader[index], mFragmentShader[index]);
+        mTextureHandlers[index] =
+                GLES20.glGetAttribLocation(mProgramHandlers[index], "sTexture");
         mPositionHandlers[index] =
                 GLES20.glGetAttribLocation(mProgramHandlers[index], "aPosition");
         GLESUtil.glesCheckError("glGetAttribLocation");
@@ -192,6 +195,7 @@ public abstract class Transition {
                 GLESUtil.glesCheckError("glDeleteProgram");
             }
             mProgramHandlers[i] = 0;
+            mTextureHandlers[i] = 0;
             mPositionHandlers[i] = 0;
             mTextureCoordHandlers[i] = 0;
             mMVPMatrixHandlers[i] = 0;

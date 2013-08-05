@@ -27,6 +27,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.media.effect.EffectContext;
 import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLException;
@@ -56,19 +57,20 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final long mInstance;
     private static long sInstances;
 
-    final Context mContext;
+    /*package*/ final Context mContext;
+    /*package*/ EffectContext mEffectContext;
     private final Handler mHandler;
-    final GLESSurfaceDispatcher mDispatcher;
-    TextureManager mTextureManager;
+    /*package*/ final GLESSurfaceDispatcher mDispatcher;
+    /*package*/ TextureManager mTextureManager;
 
-    PhotoPhaseWallpaperWorld mWorld;
-    ColorShape mOverlay;
+    /*package*/ PhotoPhaseWallpaperWorld mWorld;
+    /*package*/ ColorShape mOverlay;
 
-    long mLastRunningTransition;
+    /*package*/ long mLastRunningTransition;
 
-    int mWidth = -1;
-    int mHeight = -1;
-    int mMeasuredHeight  = -1;
+    /*package*/ int mWidth = -1;
+    /*package*/ int mHeight = -1;
+    /*package*/ int mMeasuredHeight  = -1;
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjMatrix = new float[16];
@@ -76,7 +78,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
     private final Object mDrawing = new Object();
 
-    final Object mMediaSync = new Object();
+    /*package*/ final Object mMediaSync = new Object();
     private PendingIntent mMediaScanIntent;
 
     private final BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
@@ -216,6 +218,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         // Register a receiver to listen for media reload request
         mContext.unregisterReceiver(mSettingsChangedReceiver);
         recycle();
+        if (mEffectContext != null) {
+            mEffectContext.release();
+        }
+        mEffectContext = null;
         mWidth = -1;
         mHeight = -1;
         mMeasuredHeight = -1;
@@ -401,6 +407,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
         GLESUtil.glesCheckError("glDepthFunc");
 
+        // Create an effect context
+        if (mEffectContext != null) {
+            mEffectContext.release();
+        }
+        mEffectContext = EffectContext.createWithCurrentGlContext();
+
         // Create the texture manager and recycle the old one
         if (mTextureManager == null) {
             // Precalculate the window size for the TextureManager. In onSurfaceChanged
@@ -415,8 +427,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                         ? PreferencesProvider.Preferences.Layout.getPortraitDisposition().size()
                         : PreferencesProvider.Preferences.Layout.getLandscapeDisposition().size();
 
+            // Recycle the current texture manager and create a new one
             recycle();
-            mTextureManager = new TextureManager(mContext, mDispatcher, cc, dimensions);
+            mTextureManager = new TextureManager(
+                    mContext, mEffectContext, mDispatcher, cc, dimensions);
         }
     }
 

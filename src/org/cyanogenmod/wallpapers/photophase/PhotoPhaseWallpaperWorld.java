@@ -327,13 +327,12 @@ public class PhotoPhaseWallpaperWorld {
         for (Disposition disposition : dispositions) {
             // Create the photo frame
             float[] frameVertices = getVerticesFromDisposition(disposition, cellw, cellh);
-            float[] pictureVertices = getFramePadding(frameVertices, portrait ? w : h, portrait ? h : w);
+            frameVertices = getFramePadding(frameVertices, portrait ? w : h, portrait ? h : w);
             PhotoFrame frame =
                     new PhotoFrame(
                             mContext,
                             mTextureManager,
                             frameVertices,
-                            pictureVertices,
                             Colors.getBackground());
             mPhotoFrames.add(frame);
 
@@ -395,25 +394,21 @@ public class PhotoPhaseWallpaperWorld {
             Disposition disposition, float cellw, float cellh) {
         return new float[]
                 {
-                     // top left
-                    -1.0f + (disposition.x * cellw),
-                     1.0f - (disposition.y * cellh),
-                     0.0f,
-
-                     // bottom left
+                    // bottom left
                     -1.0f + (disposition.x * cellw),
                      1.0f - ((disposition.y * cellh) + (disposition.h * cellh)),
-                     0.0f,
 
-                     // bottom right
+                    // bottom right
                     -1.0f + ((disposition.x * cellw) + (disposition.w * cellw)),
                      1.0f - ((disposition.y * cellh) + (disposition.h * cellh)),
-                     0.0f,
 
-                     // top right
-                    -1.0f + ((disposition.x * cellw) + (disposition.w * cellw)),
+                    // top left
+                    -1.0f + (disposition.x * cellw),
                      1.0f - (disposition.y * cellh),
-                     0.0f
+
+                    // top right
+                    -1.0f + ((disposition.x * cellw) + (disposition.w * cellw)),
+                     1.0f - (disposition.y * cellh)
                 };
     }
 
@@ -431,13 +426,13 @@ public class PhotoPhaseWallpaperWorld {
         final float pxw = (1 / (float)screenWidth) * PHOTO_FRAME_PADDING;
         final float pxh = (1 / (float)screenHeight) * PHOTO_FRAME_PADDING;
         paddingCoords[0] += pxw;
-        paddingCoords[1] -= pxh;
-        paddingCoords[3] += pxw;
-        paddingCoords[4] += pxh;
+        paddingCoords[1] += pxh;
+        paddingCoords[2] -= pxw;
+        paddingCoords[3] += pxh;
+        paddingCoords[4] += pxw;
+        paddingCoords[5] -= pxh;
         paddingCoords[6] -= pxw;
-        paddingCoords[7] += pxh;
-        paddingCoords[9] -= pxw;
-        paddingCoords[10] -= pxh;
+        paddingCoords[7] -= pxh;
         return paddingCoords;
     }
 }

@@ -16,6 +16,10 @@
 
 package org.cyanogenmod.wallpapers.photophase.effects;
 
+import android.media.effect.Effect;
+import android.media.effect.EffectContext;
+import android.media.effect.EffectFactory;
+
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
 /**
@@ -32,15 +36,15 @@ public class Effects {
          */
         RANDOM,
         /**
-         * @see NullEffect
+         * No effect
          */
         NO_EFFECT,
         /**
-         * @see BlackAndWhiteEffect
+         * @see EffectFactory#EFFECT_GRAYSCALE
          */
-        BLACK_AND_WHITE,
+        GRAYSCALE,
         /**
-         * @see SepiaEffect
+         * @see EffectFactory#EFFECT_SEPIA
          */
         SEPIA;
     }
@@ -48,21 +52,32 @@ public class Effects {
     /**
      * Method that return the next effect to use with the picture.
      *
-     * @return Effect The next effect to use
+     * @param effectContext The android media effects context
+     * @return Effect The next effect to use or null if no need to apply any effect
      */
-    public static Effect getNextEffect() {
+    public static Effect getNextEffect(EffectContext effectContext) {
+        // Get a new instance of a effect factory
+        EffectFactory effectFactory = effectContext.getFactory();
+
+        // Get an effect based on the user preference
         int effect = Preferences.General.Effects.getEffectTypes();
         if (effect == EFFECTS.RANDOM.ordinal()) {
             int low = EFFECTS.NO_EFFECT.ordinal();
             int hight = EFFECTS.values().length - 1;
             effect = low + (int)(Math.random() * ((hight - low) + 1));
         }
-        if (effect == EFFECTS.BLACK_AND_WHITE.ordinal()) {
-            return new BlackAndWhiteEffect();
+
+        // Select the effect if is available
+        if (effect == EFFECTS.GRAYSCALE.ordinal()) {
+            if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_GRAYSCALE)) {
+                return effectFactory.createEffect(EffectFactory.EFFECT_GRAYSCALE);
+            }
         }
         if (effect == EFFECTS.SEPIA.ordinal()) {
-            return new SepiaEffect();
+            if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_SEPIA)) {
+                return effectFactory.createEffect(EffectFactory.EFFECT_SEPIA);
+            }
         }
-        return new NullEffect();
+        return null;
     }
 }

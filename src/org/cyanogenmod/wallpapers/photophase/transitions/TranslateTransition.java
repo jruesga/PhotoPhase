@@ -29,7 +29,6 @@ import org.cyanogenmod.wallpapers.photophase.TextureManager;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,16 +119,16 @@ public class TranslateTransition extends Transition {
                 new ArrayList<TranslateTransition.TRANSLATE_MODES>(
                         Arrays.asList(TRANSLATE_MODES.values()));
         float[] vertex = target.getFrameVertex();
-        if (vertex[0] != -1.0f) {
+        if (vertex[4] != -1.0f) {
             modes.remove(TRANSLATE_MODES.RIGHT_TO_LEFT);
         }
-        if (vertex[9] != 1.0f) {
+        if (vertex[6] != 1.0f) {
             modes.remove(TRANSLATE_MODES.LEFT_TO_RIGHT);
         }
-        if (vertex[1] != 1.0f) {
+        if (vertex[5] != 1.0f) {
             modes.remove(TRANSLATE_MODES.DOWN_TO_UP);
         }
-        if (vertex[4] != -1.0f) {
+        if (vertex[1] != -1.0f) {
             modes.remove(TRANSLATE_MODES.UP_TO_DOWN);
         }
 
@@ -145,8 +144,8 @@ public class TranslateTransition extends Transition {
     @Override
     public boolean isSelectable(PhotoFrame frame) {
         float[] vertex = frame.getFrameVertex();
-        if (vertex[0] == -1.0f || vertex[9] == 1.0f ||
-            vertex[1] == 1.0f || vertex[4] == -1.0f) {
+        if (vertex[4] == -1.0f || vertex[6] == 1.0f ||
+            vertex[5] == 1.0f || vertex[1] == -1.0f) {
             return true;
         }
         return false;
@@ -168,15 +167,13 @@ public class TranslateTransition extends Transition {
     public void apply(float[] matrix) throws GLException {
         // Check internal vars
         if (mTarget == null ||
-            mTarget.getPictureVertexBuffer() == null ||
-            mTarget.getTextureBuffer() == null ||
-            mTarget.getVertexOrderBuffer() == null) {
+            mTarget.getPositionBuffer() == null ||
+            mTarget.getTextureBuffer() == null) {
             return;
         }
         if (mTransitionTarget == null ||
-            mTransitionTarget.getPictureVertexBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null ||
-            mTransitionTarget.getVertexOrderBuffer() == null) {
+            mTransitionTarget.getPositionBuffer() == null ||
+            mTransitionTarget.getTextureBuffer() == null) {
             return;
         }
 
@@ -218,7 +215,7 @@ public class TranslateTransition extends Transition {
         GLESUtil.glesCheckError("glBindTexture");
 
         // Position
-        FloatBuffer vertexBuffer = mTarget.getPictureVertexBuffer();
+        FloatBuffer vertexBuffer = mTarget.getPositionBuffer();
         vertexBuffer.position(0);
         GLES20.glVertexAttribPointer(
                 mPositionHandlers[0],
@@ -248,8 +245,8 @@ public class TranslateTransition extends Transition {
         // Calculate the delta distance
         float distance =
            (mMode.compareTo(TRANSLATE_MODES.LEFT_TO_RIGHT) == 0 || mMode.compareTo(TRANSLATE_MODES.RIGHT_TO_LEFT) == 0)
-           ? mTarget.getPictureWidth()
-           : mTarget.getPictureHeight();
+           ? mTarget.getFrameWidth()
+           : mTarget.getFrameHeight();
         if (mMode.compareTo(TRANSLATE_MODES.RIGHT_TO_LEFT) == 0 || mMode.compareTo(TRANSLATE_MODES.DOWN_TO_UP) == 0) {
             distance *= -1;
         }
@@ -267,13 +264,7 @@ public class TranslateTransition extends Transition {
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw the photo frame
-        ShortBuffer vertexOrderBuffer = mTarget.getVertexOrderBuffer();
-        vertexOrderBuffer.position(0);
-        GLES20.glDrawElements(
-                GLES20.GL_TRIANGLE_FAN,
-                6,
-                GLES20.GL_UNSIGNED_SHORT,
-                vertexOrderBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 
         // Disable attributes
@@ -301,7 +292,7 @@ public class TranslateTransition extends Transition {
         GLESUtil.glesCheckError("glBindTexture");
 
         // Position
-        FloatBuffer vertexBuffer = mTransitionTarget.getPictureVertexBuffer();
+        FloatBuffer vertexBuffer = mTransitionTarget.getPositionBuffer();
         vertexBuffer.position(0);
         GLES20.glVertexAttribPointer(
                 mPositionHandlers[1],
@@ -335,13 +326,7 @@ public class TranslateTransition extends Transition {
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw the photo frame
-        ShortBuffer vertexOrderBuffer = mTransitionTarget.getVertexOrderBuffer();
-        vertexOrderBuffer.position(0);
-        GLES20.glDrawElements(
-                GLES20.GL_TRIANGLE_FAN,
-                6,
-                GLES20.GL_UNSIGNED_SHORT,
-                vertexOrderBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 
         // Disable attributes

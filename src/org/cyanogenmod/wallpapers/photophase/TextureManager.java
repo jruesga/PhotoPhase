@@ -18,6 +18,7 @@ package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.media.effect.EffectContext;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -44,6 +45,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     static final List<GLESTextureInfo> sRecycledBitmaps = new ArrayList<GLESTextureInfo>();
 
     final Context mContext;
+    final EffectContext mEffectContext;
     final Object mSync;
     final List<TextureRequestor> mPendingRequests;
     final FixedQueue<GLESTextureInfo> mQueue = new FixedQueue<GLESTextureInfo>(QUEUE_SIZE);
@@ -74,12 +76,14 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 if (sRecycledBitmaps.size() > 0) {
                     // Bind to the GLES context
                     GLESTextureInfo oldTextureInfo = sRecycledBitmaps.remove(0);
-                    ti = GLESUtil.loadTexture(oldTextureInfo.bitmap);
+                    ti = GLESUtil.loadTexture(oldTextureInfo.bitmap,
+                            Effects.getNextEffect(mEffectContext), mDimensions);
                     ti.path = oldTextureInfo.path;
                     oldTextureInfo.bitmap = null;
                 } else {
                     // Load and bind to the GLES context
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, Effects.getNextEffect(), false);
+                    ti = GLESUtil.loadTexture(mImage, mDimensions,
+                            Effects.getNextEffect(mEffectContext), mDimensions, false);
                 }
 
                 synchronized (mSync) {
@@ -111,13 +115,16 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      * Constructor of <code>TextureManager</code>
      *
      * @param ctx The current context
+     * @param effectCtx The current effect context
      * @param dispatcher The GLES dispatcher
      * @param requestors The number of requestors
      * @param dimensions The desired dimensions for the decoded bitmaps
      */
-    public TextureManager(final Context ctx, GLESSurfaceDispatcher dispatcher, int requestors, Rect dimensions) {
+    public TextureManager(final Context ctx, final EffectContext effectCtx,
+                        GLESSurfaceDispatcher dispatcher, int requestors, Rect dimensions) {
         super();
         mContext = ctx;
+        mEffectContext = effectCtx;
         mDispatcher = dispatcher;
         mDimensions = dimensions;
         mSync = new Object();

@@ -65,7 +65,7 @@
     <string-array name="effects_labels" translatable="false">
         <item>@string/effects_none</item>
         <item>@string/effects_random</item>
-        <item>@string/effects_black_and_white</item>
+        <item>@string/effects_grayscale</item>
         <item>@string/effects_sepia</item>
     </string-array>
 

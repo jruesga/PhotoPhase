@@ -101,9 +101,8 @@ public class NullTransition extends Transition {
     public void apply(float[] matrix) throws GLException {
         // Check internal vars
         if (mTarget == null ||
-            mTarget.getPictureVertexBuffer() == null ||
-            mTarget.getTextureBuffer() == null ||
-            mTarget.getVertexOrderBuffer() == null) {
+            mTarget.getPositionBuffer() == null ||
+            mTarget.getTextureBuffer() == null) {
             return;
         }
 
@@ -114,54 +113,50 @@ public class NullTransition extends Transition {
     /**
      * Method that draws the picture texture
      *
-     * @param target
+     * @param target The target to draw
      * @param matrix The model-view-projection matrix
      */
     protected void draw(PhotoFrame target, float[] matrix) {
-        // Set the program
+        // Bind default FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+
+        // Use our shader program
         useProgram(0);
 
-        // Bind the texture
-        int textureHandle = target.getTextureHandle();
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLESUtil.glesCheckError("glActiveTexture");
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
-        GLESUtil.glesCheckError("glBindTexture");
-
-        // Position
-        FloatBuffer vertexBuffer = target.getPictureVertexBuffer();
-        vertexBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mPositionHandlers[0],
-                PhotoFrame.COORDS_PER_VERTER,
-                GLES20.GL_FLOAT,
-                false,
-                PhotoFrame.COORDS_PER_VERTER * 4,
-                vertexBuffer);
-        GLESUtil.glesCheckError("glVertexAttribPointer");
-        GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
-        GLESUtil.glesCheckError("glEnableVertexAttribArray");
-
-        // Texture
-        FloatBuffer textureBuffer = target.getTextureBuffer();
-        textureBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mTextureCoordHandlers[0],
-                2,
-                GLES20.GL_FLOAT,
-                false,
-                2 * 4,
-                textureBuffer);
-        GLESUtil.glesCheckError("glVertexAttribPointer");
-        GLES20.glEnableVertexAttribArray(mTextureCoordHandlers[0]);
-        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+        // Disable blending
+        GLES20.glDisable(GLES20.GL_BLEND);
 
         // Apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, matrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
-        // Draw the photo frame
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
+        // Texture
+        FloatBuffer textureBuffer = target.getTextureBuffer();
+        textureBuffer.position(0);
+        GLES20.glVertexAttribPointer(mTextureCoordHandlers[0], 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
+        GLESUtil.glesCheckError("glVertexAttribPointer");
+        GLES20.glEnableVertexAttribArray(mTextureCoordHandlers[0]);
+        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+
+        // Position
+        FloatBuffer positionBuffer = target.getPositionBuffer();
+        positionBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandlers[0], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
+        GLESUtil.glesCheckError("glVertexAttribPointer");
+        GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
+        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+
+        // Set the input texture
+        int textureHandle = target.getTextureHandle();
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLESUtil.glesCheckError("glActiveTexture");
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
+        GLESUtil.glesCheckError("glBindTexture");
+        GLES20.glUniform1i(mTextureHandlers[0], 0);
+        GLESUtil.glesCheckError("glBindTexture");
+
+        // Draw
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 
         // Disable attributes

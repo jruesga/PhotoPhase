@@ -21,11 +21,10 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.media.effect.Effect;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
-
-import org.cyanogenmod.wallpapers.photophase.effects.Effect;
 
 import java.io.File;
 import java.io.IOException;
@@ -305,12 +304,13 @@ public final class GLESUtil {
      *
      * @param file The image file
      * @param dimensions The desired dimensions
-     * @param effect The effect to apply to the image
+     * @param effect The effect to apply to the image or null if no effect is needed
+     * @param screenDim The screen dimensions
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(
-            File file, Rect dimensions, Effect effect, boolean recycle) {
+            File file, Rect dimensions, Effect effect, Rect screenDim, boolean recycle) {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)
@@ -320,10 +320,9 @@ public final class GLESUtil {
                 if (DEBUG) Log.e(TAG, msg);
                 return new GLESTextureInfo();
             }
-            bitmap = effect.apply(bitmap);
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            GLESTextureInfo ti = loadTexture(bitmap);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, screenDim);
             ti.path = file;
             return ti;
 
@@ -345,12 +344,13 @@ public final class GLESUtil {
      *
      * @param ctx The current context
      * @param resourceId The resource identifier
-     * @param effect The effect to apply to the image
+     * @param effect The effect to apply to the image or null if no effect is needed
+     * @param screenDim The screen dimensions
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(
-            Context ctx, int resourceId, Effect effect, boolean recycle) {
+            Context ctx, int resourceId, Effect effect, Rect screenDim, boolean recycle) {
         Bitmap bitmap = null;
         InputStream raw = null;
         try {
@@ -364,7 +364,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            GLESTextureInfo ti = loadTexture(bitmap);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, screenDim);
             return ti;
 
         } catch (Exception e) {
@@ -392,18 +392,22 @@ public final class GLESUtil {
      * Method that loads texture from a bitmap reference.
      *
      * @param bitmap The bitmap reference
+     * @param effect The effect to apply to the image or null if no effect is needed
+     * @param screenDim The screen dimensions
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Bitmap bitmap) {
+    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Rect screenDim) {
         // Check that we have a valid image name reference
         if (bitmap == null) {
             return new GLESTextureInfo();
         }
 
-        int[] textureNames = new int[1];
-        GLES20.glGenTextures(1, textureNames, 0);
+        int num = effect == null ? 1 : 2;
+
+        int[] textureNames = new int[num];
+        GLES20.glGenTextures(num, textureNames, 0);
         GLESUtil.glesCheckError("glGenTextures");
-        if (textureNames[0] <= 0) {
+        if (textureNames[0] <= 0 || (effect != null && textureNames[1] <= 0)) {
             String msg = "Failed to generate a valid texture";
             if (DEBUG) Log.e(TAG, msg);
             return new GLESTextureInfo();
@@ -431,9 +435,23 @@ public final class GLESUtil {
             return new GLESTextureInfo();
         }
 
+        // Has a effect?
+        int handle = textureNames[0];
+        if (effect != null) {
+            // Apply the effect
+            effect.apply(textureNames[0], screenDim.width(), screenDim.height(), textureNames[1]);
+            effect.release();
+            handle = textureNames[1];
+
+            // Delete the unused texture
+            int[] textures = {textureNames[0]};
+            GLES20.glDeleteTextures(1, textures, 0);
+            GLESUtil.glesCheckError("glTexParameteri");
+        }
+
         // Return the texture handle identifier and the associated info
         GLESTextureInfo ti = new GLESTextureInfo();
-        ti.handle = textureNames[0];
+        ti.handle = handle;
         ti.bitmap = bitmap;
         ti.path = null;
         return ti;
