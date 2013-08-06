@@ -327,12 +327,13 @@ public class PhotoPhaseWallpaperWorld {
         for (Disposition disposition : dispositions) {
             // Create the photo frame
             float[] frameVertices = getVerticesFromDisposition(disposition, cellw, cellh);
-            frameVertices = getFramePadding(frameVertices, portrait ? w : h, portrait ? h : w);
+            float[] photoVertices = getFramePadding(frameVertices, portrait ? w : h, portrait ? h : w);
             PhotoFrame frame =
                     new PhotoFrame(
                             mContext,
                             mTextureManager,
                             frameVertices,
+                            photoVertices,
                             Colors.getBackground());
             mPhotoFrames.add(frame);
 
@@ -359,7 +360,7 @@ public class PhotoPhaseWallpaperWorld {
 
         // Locate the frame
         for (PhotoFrame frame : mPhotoFrames) {
-            RectF vertex = Utils.rectFromVertex(frame.getFrameVertex());
+            RectF vertex = Utils.rectFromVertex(frame.getPhotoVertex());
             if (vertex.left < tx && vertex.right > tx && vertex.top > ty && vertex.bottom < ty) {
                 return frame;
             }

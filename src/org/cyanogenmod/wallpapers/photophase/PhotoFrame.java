@@ -48,8 +48,10 @@ public class PhotoFrame implements TextureRequestor {
 
     private final TextureManager mTextureManager;
 
+    private final float[] mFrameVertex, mPhotoVertex;
     private final float mFrameWidth, mFrameHeight;
-    private final float[] mFrameVertex;
+    private final float mPhotoWidth, mPhotoHeight;
+
 
     private FloatBuffer mPositionBuffer;
     private FloatBuffer mTextureBuffer;
@@ -68,10 +70,11 @@ public class PhotoFrame implements TextureRequestor {
      * @param ctx The current context
      * @param textureManager The texture manager
      * @param frameVertex A 4 dimension array with the coordinates per vertex plus padding
+     * @param photoVertex A 4 dimension array with the coordinates per vertex without padding
      * @param color Background color
      */
     public PhotoFrame(Context ctx, TextureManager textureManager,
-                float[] frameVertex, GLColor color) {
+                float[] frameVertex, float[] photoVertex, GLColor color) {
         super();
         mLoaded = false;
         mBackgroundColor = color;
@@ -81,12 +84,15 @@ public class PhotoFrame implements TextureRequestor {
         mFrameVertex = frameVertex;
         mFrameWidth = frameVertex[6] - frameVertex[4];
         mFrameHeight = frameVertex[1] - frameVertex[5];
+        mPhotoVertex = photoVertex;
+        mPhotoWidth = photoVertex[6] - photoVertex[4];
+        mPhotoHeight = photoVertex[1] - photoVertex[5];
 
         // Initialize vertex byte buffer for shape coordinates
-        ByteBuffer bb = ByteBuffer.allocateDirect(frameVertex.length * 4); // (# of coordinate values * 4 bytes per float)
+        ByteBuffer bb = ByteBuffer.allocateDirect(photoVertex.length * 4); // (# of coordinate values * 4 bytes per float)
         bb.order(ByteOrder.nativeOrder());
         mPositionBuffer = bb.asFloatBuffer();
-        mPositionBuffer.put(frameVertex);
+        mPositionBuffer.put(photoVertex);
         mPositionBuffer.position(0);
 
         // Load the texture
@@ -148,6 +154,51 @@ public class PhotoFrame implements TextureRequestor {
     }
 
     /**
+     * Method that returns the frame width
+     *
+     * @return float The frame width
+     */
+    public float getFrameWidth() {
+        return mFrameWidth;
+    }
+
+    /**
+     * Method that returns the frame height
+     *
+     * @return float The frame height
+     */
+    public float getFrameHeight() {
+        return mFrameHeight;
+    }
+
+    /**
+     * Method that returns the photo vertex
+     *
+     * @return float[] The photo vertex
+     */
+    public float[] getPhotoVertex() {
+        return mPhotoVertex;
+    }
+
+    /**
+     * Method that returns the photo width
+     *
+     * @return float The photo width
+     */
+    public float getPhotoWidth() {
+        return mPhotoWidth;
+    }
+
+    /**
+     * Method that returns the photo height
+     *
+     * @return float The photo height
+     */
+    public float getPhotoHeight() {
+        return mPhotoHeight;
+    }
+
+    /**
      * Method that returns the position vertex buffer
      *
      * @return FloatBuffer The position vertex buffer
@@ -186,24 +237,6 @@ public class PhotoFrame implements TextureRequestor {
      */
     public GLESTextureInfo getTextureInfo() {
         return mTextureInfo;
-    }
-
-    /**
-     * Method that returns the frame width
-     *
-     * @return float The frame width
-     */
-    public float getFrameWidth() {
-        return mFrameWidth;
-    }
-
-    /**
-     * Method that returns the frame height
-     *
-     * @return float The frame height
-     */
-    public float getFrameHeight() {
-        return mFrameHeight;
     }
 
     /**

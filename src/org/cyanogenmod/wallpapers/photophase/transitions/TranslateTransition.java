@@ -186,9 +186,9 @@ public class TranslateTransition extends Transition {
         final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
 
         // Apply the transition
-        applyTransitionToTransitionTarget(delta, matrix);
+        applyTransitionToDst(delta, matrix);
         if (delta < 1) {
-            applyTransitionToTarget(delta, matrix);
+            applyTransitionToSrc(delta, matrix);
         }
 
         // Transition ending
@@ -198,48 +198,46 @@ public class TranslateTransition extends Transition {
     }
 
     /**
-     * Apply the transition to the passed frame
+     * Apply the transition to the source frame
      *
      * @param delta The delta time
      * @param matrix The model-view-projection matrix
      */
-    private void applyTransitionToTarget(float delta, float[] matrix) {
+    private void applyTransitionToSrc(float delta, float[] matrix) {
+        // Bind default FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLESUtil.glesCheckError("glBindFramebuffer");
+
         // Set the program
         useProgram(0);
 
-        // Bind the texture
+        // Disable blending
+        GLES20.glDisable(GLES20.GL_BLEND);
+        GLESUtil.glesCheckError("glDisable");
+
+        // Set the input texture
         int textureHandle = mTarget.getTextureHandle();
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLESUtil.glesCheckError("glActiveTexture");
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLESUtil.glesCheckError("glBindTexture");
-
-        // Position
-        FloatBuffer vertexBuffer = mTarget.getPositionBuffer();
-        vertexBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mPositionHandlers[0],
-                PhotoFrame.COORDS_PER_VERTER,
-                GLES20.GL_FLOAT,
-                false,
-                PhotoFrame.COORDS_PER_VERTER * 4,
-                vertexBuffer);
-        GLESUtil.glesCheckError("glVertexAttribPointer");
-        GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
-        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+        GLES20.glUniform1i(mTextureHandlers[0], 0);
+        GLESUtil.glesCheckError("glBindTexture");
 
         // Texture
         FloatBuffer textureBuffer = mTarget.getTextureBuffer();
         textureBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mTextureCoordHandlers[0],
-                2,
-                GLES20.GL_FLOAT,
-                false,
-                2 * 4,
-                textureBuffer);
+        GLES20.glVertexAttribPointer(mTextureCoordHandlers[0], 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mTextureCoordHandlers[0]);
+        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+
+        // Position
+        FloatBuffer positionBuffer = mTarget.getPositionBuffer();
+        positionBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandlers[0], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
+        GLESUtil.glesCheckError("glVertexAttribPointer");
+        GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Calculate the delta distance
@@ -263,7 +261,7 @@ public class TranslateTransition extends Transition {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, translationMatrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
-        // Draw the photo frame
+        // Draw
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 
@@ -275,48 +273,46 @@ public class TranslateTransition extends Transition {
     }
 
     /**
-     * Apply the transition to the passed frame
+     * Apply the transition to the destination frame
      *
      * @param delta The delta time
      * @param matrix The model-view-projection matrix
      */
-    private void applyTransitionToTransitionTarget(float delta, float[] matrix) {
+    private void applyTransitionToDst(float delta, float[] matrix) {
+        // Bind default FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLESUtil.glesCheckError("glBindFramebuffer");
+
         // Set the program
         useProgram(1);
 
-        // Bind the texture
+        // Disable blending
+        GLES20.glDisable(GLES20.GL_BLEND);
+        GLESUtil.glesCheckError("glDisable");
+
+        // Set the input texture
         int textureHandle = mTransitionTarget.getTextureHandle();
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLESUtil.glesCheckError("glActiveTexture");
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLESUtil.glesCheckError("glBindTexture");
-
-        // Position
-        FloatBuffer vertexBuffer = mTransitionTarget.getPositionBuffer();
-        vertexBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mPositionHandlers[1],
-                PhotoFrame.COORDS_PER_VERTER,
-                GLES20.GL_FLOAT,
-                false,
-                PhotoFrame.COORDS_PER_VERTER * 4,
-                vertexBuffer);
-        GLESUtil.glesCheckError("glVertexAttribPointer");
-        GLES20.glEnableVertexAttribArray(mPositionHandlers[1]);
-        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+        GLES20.glUniform1i(mTextureHandlers[1], 0);
+        GLESUtil.glesCheckError("glUniform1i");
 
         // Texture
         FloatBuffer textureBuffer = mTransitionTarget.getTextureBuffer();
         textureBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mTextureCoordHandlers[1],
-                2,
-                GLES20.GL_FLOAT,
-                false,
-                2 * 4,
-                textureBuffer);
+        GLES20.glVertexAttribPointer(mTextureCoordHandlers[1], 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mTextureCoordHandlers[1]);
+        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+
+        // Position
+        FloatBuffer positionBuffer = mTransitionTarget.getPositionBuffer();
+        positionBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandlers[1], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
+        GLESUtil.glesCheckError("glVertexAttribPointer");
+        GLES20.glEnableVertexAttribArray(mPositionHandlers[1]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Apply the projection and view transformation
@@ -325,7 +321,7 @@ public class TranslateTransition extends Transition {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[1], 1, false, translationMatrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
-        // Draw the photo frame
+        // Draw
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 

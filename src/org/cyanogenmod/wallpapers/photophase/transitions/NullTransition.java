@@ -155,7 +155,7 @@ public class NullTransition extends Transition {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLESUtil.glesCheckError("glBindTexture");
         GLES20.glUniform1i(mTextureHandlers[0], 0);
-        GLESUtil.glesCheckError("glBindTexture");
+        GLESUtil.glesCheckError("glUniform1i");
 
         // Draw
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
