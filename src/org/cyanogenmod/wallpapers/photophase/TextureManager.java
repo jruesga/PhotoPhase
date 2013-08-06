@@ -126,7 +126,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         mEffectContext = effectCtx;
         mDispatcher = dispatcher;
         mScreenDimensions = screenDimensions;
-        mDimensions = screenDimensions; // For now, use the screen dimensions as the preferred dimensions for bitmaps 
+        mDimensions = screenDimensions; // For now, use the screen dimensions as the preferred dimensions for bitmaps
         mSync = new Object();
         mPendingRequests = new ArrayList<TextureRequestor>(requestors);
         mPictureDiscoverer = new MediaPictureDiscoverer(mContext, this);
