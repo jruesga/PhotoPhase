@@ -65,8 +65,21 @@
     <string-array name="effects_labels" translatable="false">
         <item>@string/effects_none</item>
         <item>@string/effects_random</item>
+        <item>@string/effects_autofix</item>
+        <item>@string/effects_crossprocess</item>
+        <item>@string/effects_documentary</item>
+        <item>@string/effects_duotone</item>
+        <item>@string/effects_fisheye</item>
+        <item>@string/effects_grain</item>
         <item>@string/effects_grayscale</item>
+        <item>@string/effects_lomoish</item>
+        <item>@string/effects_negative</item>
+        <item>@string/effects_posterize</item>
+        <item>@string/effects_saturate</item>
         <item>@string/effects_sepia</item>
+        <item>@string/effects_temperature</item>
+        <item>@string/effects_tint</item>
+        <item>@string/effects_vignete</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -74,6 +87,19 @@
         <item>0</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
     </string-array>
 
 </resources>
