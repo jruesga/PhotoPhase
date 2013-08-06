@@ -60,8 +60,8 @@ public class TranslateTransition extends Transition {
         DOWN_TO_UP
     }
 
-    private static final int[] VERTEX_SHADER = {R.raw.translate_vertex_shader, R.raw.default_vertex_shader};
-    private static final int[] FRAGMENT_SHADER = {R.raw.translate_fragment_shader, R.raw.default_fragment_shader};
+    private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader, R.raw.default_vertex_shader};
+    private static final int[] FRAGMENT_SHADER = {R.raw.default_fragment_shader, R.raw.default_fragment_shader};
 
     private static final float TRANSITION_TIME = 800.0f;
 

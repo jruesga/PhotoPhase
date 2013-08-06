@@ -88,7 +88,7 @@ public class FadeTransition extends NullTransition {
     @Override
     public void select(PhotoFrame target) {
         super.select(target);
-        mOverlay = new ColorShape(mContext, target.getFrameVertex()/*target.getPictureVertex()*/, Colors.getBackground());
+        mOverlay = new ColorShape(mContext, target.getFrameVertex(), Colors.getBackground());
         mOverlay.setAlpha(0);
     }
 

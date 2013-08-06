@@ -119,12 +119,14 @@ public class NullTransition extends Transition {
     protected void draw(PhotoFrame target, float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLESUtil.glesCheckError("glBindFramebuffer");
 
         // Use our shader program
         useProgram(0);
 
         // Disable blending
         GLES20.glDisable(GLES20.GL_BLEND);
+        GLESUtil.glesCheckError("glDisable");
 
         // Apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, matrix, 0);

@@ -26,7 +26,6 @@ import org.cyanogenmod.wallpapers.photophase.R;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * A shape plus color.
@@ -38,7 +37,6 @@ public class ColorShape implements DrawableShape {
     private int mColorHandler;
     private int mMatrixHandler;
     private FloatBuffer mVertexBuffer;
-    private ShortBuffer mVertexOrderBuffer;
 
     private final GLColor mColor;
 
@@ -53,11 +51,10 @@ public class ColorShape implements DrawableShape {
         super();
         mColor = color;
 
-        mProgramHandler =
-                GLESUtil.createProgram(
-                        ctx.getResources(),
-                        R.raw.color_vertex_shader,
-                        R.raw.color_fragment_shader);
+        mProgramHandler = GLESUtil.createProgram(
+                                                ctx.getResources(),
+                                                R.raw.color_vertex_shader,
+                                                R.raw.color_fragment_shader);
         mPositionHandler = GLES20.glGetAttribLocation(mProgramHandler, "aPosition");
         GLESUtil.glesCheckError("glGetAttribLocation");
         mColorHandler = GLES20.glGetAttribLocation(mProgramHandler, "aColor");
@@ -71,14 +68,6 @@ public class ColorShape implements DrawableShape {
         mVertexBuffer = bb.asFloatBuffer();
         mVertexBuffer.put(vertex);
         mVertexBuffer.position(0);
-
-        // Initialize vertex byte buffer for shape coordinates order
-        final short[] order = { 0, 1, 2, 0, 2, 3 };
-        ByteBuffer dlb = ByteBuffer.allocateDirect(order.length * 2); // (# of coordinate values * 2 bytes per short)
-        dlb.order(ByteOrder.nativeOrder());
-        mVertexOrderBuffer = dlb.asShortBuffer();
-        mVertexOrderBuffer.put(order);
-        mVertexOrderBuffer.position(0);
     }
 
     /**
@@ -86,10 +75,16 @@ public class ColorShape implements DrawableShape {
      */
     @Override
     public void draw(float[] matrix) {
+        // Bind default FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLESUtil.glesCheckError("glBindFramebuffer");
+
         // Enable properties
         if (mColor.a != 1.0f) {
             GLES20.glEnable(GLES20.GL_BLEND);
+            GLESUtil.glesCheckError("glEnable");
             GLES20.glBlendFunc(GLES20.GL_SRC_COLOR, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+            GLESUtil.glesCheckError("glBlendFunc");
         }
 
         // Set the program and its attributes
@@ -98,13 +93,7 @@ public class ColorShape implements DrawableShape {
 
         // Position
         mVertexBuffer.position(0);
-        GLES20.glVertexAttribPointer(
-                mPositionHandler,
-                3,
-                GLES20.GL_FLOAT,
-                false,
-                3 * 4,
-                mVertexBuffer);
+        GLES20.glVertexAttribPointer(mPositionHandler, 2, GLES20.GL_FLOAT, false, 0, mVertexBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mPositionHandler);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
@@ -118,12 +107,7 @@ public class ColorShape implements DrawableShape {
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw the photo frame
-        mVertexOrderBuffer.position(0);
-        GLES20.glDrawElements(
-                GLES20.GL_TRIANGLE_FAN,
-                6,
-                GLES20.GL_UNSIGNED_SHORT,
-                mVertexOrderBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLESUtil.glesCheckError("glDrawElements");
 
         // Disable attributes
@@ -161,8 +145,6 @@ public class ColorShape implements DrawableShape {
         mColorHandler = 0;
         mMatrixHandler = 0;
         mVertexBuffer.clear();
-        mVertexOrderBuffer.clear();
         mVertexBuffer = null;
-        mVertexOrderBuffer = null;
     }
 }

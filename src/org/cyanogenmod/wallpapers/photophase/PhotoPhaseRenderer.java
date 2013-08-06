@@ -462,12 +462,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
         mWorld = new PhotoPhaseWallpaperWorld(mContext, mTextureManager);
 
-        // Create all other shapes
+        // Create all the other shapes
         final float[] vertex = {
-                                -1.0f,  1.0f, 0.0f,
-                                -1.0f, -1.0f, 0.0f,
-                                 1.0f, -1.0f, 0.0f,
-                                 1.0f,  1.0f, 0.0f
+                                -1.0f, -1.0f,
+                                 1.0f, -1.0f,
+                                -1.0f,  1.0f,
+                                 1.0f,  1.0f
                                };
         mOverlay = new ColorShape(mContext, vertex, Colors.getOverlay());
 
