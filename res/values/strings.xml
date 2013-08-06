@@ -125,7 +125,7 @@
     <string name="effects_sepia">Sepiea</string>
     <string name="effects_temperature">Temperature</string>
     <string name="effects_tint">Tint</string>
-    <string name="effects_vignete">Vignete</string>
+    <string name="effects_vignette">Vignette</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

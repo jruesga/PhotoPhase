@@ -97,9 +97,9 @@ public class Effects {
          */
         TINT,
         /**
-         * @see EffectFactory#EFFECT_VIGNETE
+         * @see EffectFactory#EFFECT_VIGNETTE
          */
-        VIGNETE;
+        VIGNETTE;
     }
 
 
@@ -109,6 +109,7 @@ public class Effects {
      * @param effectContext The android media effects context
      * @return Effect The next effect to use or null if no need to apply any effect
      */
+    @SuppressWarnings("boxing")
     public static Effect getNextEffect(EffectContext effectContext) {
         // Get a new instance of a effect factory
         EffectFactory effectFactory = effectContext.getFactory();
@@ -186,7 +187,7 @@ public class Effects {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_TINT)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_TINT);
             }
-        } else if (type == EFFECTS.VIGNETE.ordinal()) {
+        } else if (type == EFFECTS.VIGNETTE.ordinal()) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_VIGNETTE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_VIGNETTE);
                 effect.setParameter("scale", .5f);

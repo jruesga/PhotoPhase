@@ -79,7 +79,7 @@
         <item>@string/effects_sepia</item>
         <item>@string/effects_temperature</item>
         <item>@string/effects_tint</item>
-        <item>@string/effects_vignete</item>
+        <item>@string/effects_vignette</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
