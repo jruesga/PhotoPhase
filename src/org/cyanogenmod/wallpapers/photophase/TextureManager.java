@@ -300,9 +300,6 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             }
         }
         mBackgroundTask = null;
-
-//        // Recycle the textures of the queue
-//        emptyTextureQueue(false);
     }
 
     /**
