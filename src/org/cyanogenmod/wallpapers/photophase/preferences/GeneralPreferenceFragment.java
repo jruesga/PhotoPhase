@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
@@ -47,7 +48,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private ListPreference mTouchActions;
     private ListPreference mTransitionsTypes;
     private SeekBarProgressPreference mTransitionsInterval;
-    private ListPreference mEffectsTypes;
+    private MultiSelectListPreference mEffectsTypes;
 
     boolean mRedrawFlag;
     boolean mEmptyTextureQueueFlag;
@@ -141,7 +142,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         });
         mTransitionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
 
-        mEffectsTypes = (ListPreference)findPreference("ui_effect_types");
+        mEffectsTypes = (MultiSelectListPreference)findPreference("ui_effect_types");
         mEffectsTypes.setOnPreferenceChangeListener(mOnChangeListener);
     }
 

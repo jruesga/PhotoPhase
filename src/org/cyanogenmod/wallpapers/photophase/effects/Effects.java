@@ -23,6 +23,9 @@ import android.media.effect.EffectFactory;
 
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A class that manages all the supported effects
  */
@@ -32,14 +35,6 @@ public class Effects {
      * Enumeration of the supported effects
      */
     public enum EFFECTS {
-        /**
-         * A random combination of all supported effects
-         */
-        RANDOM,
-        /**
-         * No effect
-         */
-        NO_EFFECT,
         /**
          * @see EffectFactory#EFFECT_AUTOFIX
          */
@@ -100,6 +95,21 @@ public class Effects {
          * @see EffectFactory#EFFECT_VIGNETTE
          */
         VIGNETTE;
+
+        /**
+         * Method that returns the effect from its ordinal position
+         *
+         * @param ordinal The ordinal position
+         * @return EFFECTS The effect or null if wasn't found
+         */
+        public static EFFECTS fromOrdinal(int ordinal) {
+            for (EFFECTS effect : EFFECTS.values()) {
+                if (effect.ordinal() == ordinal){
+                    return effect;
+                }
+            }
+            return null;
+        }
     }
 
 
@@ -115,79 +125,86 @@ public class Effects {
         EffectFactory effectFactory = effectContext.getFactory();
 
         // Get an effect based on the user preference
-        int type = Preferences.General.Effects.getEffectTypes();
-        if (type == EFFECTS.RANDOM.ordinal()) {
-            int low = EFFECTS.NO_EFFECT.ordinal();
-            int hight = EFFECTS.values().length - 1;
-            type = low + (int)(Math.random() * ((hight - low) + 1));
+        List<EFFECTS> effects = Arrays.asList(Preferences.General.Effects.getEffectTypes());
+
+        // Get an effect based on the user preference
+        EFFECTS nextEffect = null;
+        if (effects.size() > 0) {
+            int low = 0;
+            int hight = effects.size() - 1;
+            int pos = low + (int)(Math.random() * ((hight - low) + 1));
+            nextEffect = effects.get(pos);
+        }
+        if (nextEffect == null) {
+            return null;
         }
 
         // Select the effect if is available
         Effect effect = null;
-        if (type == EFFECTS.AUTOFIX.ordinal()) {
+        if (nextEffect.compareTo(EFFECTS.AUTOFIX) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_AUTOFIX)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_AUTOFIX);
                 effect.setParameter("scale", 0.5f);
             }
-        } else if (type == EFFECTS.CROSSPROCESS.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.CROSSPROCESS) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_CROSSPROCESS)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_CROSSPROCESS);
             }
-        } else if (type == EFFECTS.DOCUMENTARY.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.DOCUMENTARY) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_DOCUMENTARY)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_DOCUMENTARY);
             }
-        } else if (type == EFFECTS.DUOTONE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.DUOTONE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_DUOTONE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_DUOTONE);
                 effect.setParameter("first_color", Color.parseColor("#FF8CACFF"));
                 effect.setParameter("second_color", Color.WHITE);
             }
-        } else if (type == EFFECTS.FISHEYE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.FISHEYE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_FISHEYE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_FISHEYE);
                 effect.setParameter("scale", 1.0f);
             }
-        } else if (type == EFFECTS.GRAIN.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.GRAIN) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_GRAIN)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_GRAIN);
                 effect.setParameter("strength", 1.0f);
             }
-        } else if (type == EFFECTS.GRAYSCALE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.GRAYSCALE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_GRAYSCALE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_GRAYSCALE);
             }
-        } else if (type == EFFECTS.LOMOISH.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.LOMOISH) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_LOMOISH)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_LOMOISH);
             }
-        } else if (type == EFFECTS.NEGATIVE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.NEGATIVE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_NEGATIVE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_NEGATIVE);
             }
-        } else if (type == EFFECTS.POSTERIZE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.POSTERIZE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_POSTERIZE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_POSTERIZE);
             }
-        } else if (type == EFFECTS.SATURATE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.SATURATE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_SATURATE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_SATURATE);
                 effect.setParameter("scale", .5f);
             }
-        } else if (type == EFFECTS.SEPIA.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.SEPIA) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_SEPIA)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_SEPIA);
             }
-        } else if (type == EFFECTS.TEMPERATURE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.TEMPERATURE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_TEMPERATURE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_TEMPERATURE);
                 effect.setParameter("scale", .9f);
             }
-        } else if (type == EFFECTS.TINT.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.TINT) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_TINT)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_TINT);
             }
-        } else if (type == EFFECTS.VIGNETTE.ordinal()) {
+        } else if (nextEffect.compareTo(EFFECTS.VIGNETTE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_VIGNETTE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_VIGNETTE);
                 effect.setParameter("scale", .5f);

@@ -109,8 +109,6 @@
     <string name="transitions_translation">Translation</string>
 
     <!-- Effects -->
-    <string name="effects_none">None</string>
-    <string name="effects_random">Random</string>
     <string name="effects_autofix">Autofix</string>
     <string name="effects_crossprocess">Cross process</string>
     <string name="effects_documentary">Documentary</string>

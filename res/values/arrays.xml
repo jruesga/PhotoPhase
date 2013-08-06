@@ -63,8 +63,6 @@
     </string-array>
 
     <string-array name="effects_labels" translatable="false">
-        <item>@string/effects_none</item>
-        <item>@string/effects_random</item>
         <item>@string/effects_autofix</item>
         <item>@string/effects_crossprocess</item>
         <item>@string/effects_documentary</item>
@@ -83,8 +81,8 @@
     </string-array>
 
     <string-array name="effects_values" translatable="false">
-        <item>1</item>
         <item>0</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
@@ -98,8 +96,8 @@
         <item>12</item>
         <item>13</item>
         <item>14</item>
-        <item>15</item>
-        <item>16</item>
     </string-array>
+
+    <string-array name="effects_default" translatable="false"/>
 
 </resources>

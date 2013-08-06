@@ -243,10 +243,17 @@ public final class PreferencesProvider {
                  * Return the current user preference about the effect to apply to
                  * the pictures of the wallpaper.
                  *
-                 * @return int The effect to apply to the wallpaper's pictures
+                 * @return EFFECTS[] The effects to apply to the wallpaper's pictures
                  */
-                public static int getEffectTypes() {
-                    return Integer.valueOf(getString("ui_effect_types", String.valueOf(EFFECTS.NO_EFFECT.ordinal())));
+                public static EFFECTS[] getEffectTypes() {
+                    Set<String> set = getStringSet("ui_effect_types", new HashSet<String>());
+                    String[] values = set.toArray(new String[set.size()]);
+                    int count = values.length;
+                    EFFECTS[] effects = new EFFECTS[count];
+                    for (int i = 0; i < count; i++) {
+                        effects[i] = EFFECTS.fromOrdinal(Integer.valueOf(values[i]));
+                    }
+                    return effects;
                 }
             }
         }

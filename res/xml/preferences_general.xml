@@ -80,14 +80,14 @@
         android:title="@string/pref_general_effects">
 
         <!-- Transitions -->
-        <ListPreference
+        <MultiSelectListPreference
             android:key="ui_effect_types"
             android:title="@string/pref_general_effects_types"
             android:summary="@string/pref_general_effects_types_summary"
             android:persistent="true"
             android:entries="@array/effects_labels"
             android:entryValues="@array/effects_values"
-            android:defaultValue="1" />
+            android:defaultValue="@array/effects_default" />
 
     </PreferenceCategory>
 
