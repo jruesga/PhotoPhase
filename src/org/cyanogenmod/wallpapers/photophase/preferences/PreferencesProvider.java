@@ -217,10 +217,21 @@ public final class PreferencesProvider {
                  * Return the current user preference about the transition to apply to
                  * the pictures of the wallpaper.
                  *
-                 * @return int The transition to apply to the wallpaper's pictures
+                 * @return TRANSITIONS[] The transition to apply to the wallpaper's pictures
                  */
-                public static int getTransitionTypes() {
-                    return Integer.valueOf(getString("ui_transition_types", String.valueOf(TRANSITIONS.RANDOM.ordinal())));
+                public static TRANSITIONS[] getTransitionTypes() {
+                    Set<String> set = getStringSet("ui_transition_types", new HashSet<String>());
+                    if (set.isEmpty()) {
+                        // Return all the transitions if no one is selected
+                        return TRANSITIONS.getValidTranstions();
+                    }
+                    String[] values = set.toArray(new String[set.size()]);
+                    int count = values.length;
+                    TRANSITIONS[] transitions = new TRANSITIONS[count];
+                    for (int i = 0; i < count; i++) {
+                        transitions[i] = TRANSITIONS.fromOrdinal(Integer.valueOf(values[i]));
+                    }
+                    return transitions;
                 }
 
                 /**

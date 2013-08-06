@@ -103,7 +103,6 @@
     <string name="touch_actions_share">Share</string>
 
     <!-- Transitions -->
-    <string name="transitions_random">Random</string>
     <string name="transitions_swap">Swap</string>
     <string name="transitions_fade">Fade</string>
     <string name="transitions_translation">Translation</string>

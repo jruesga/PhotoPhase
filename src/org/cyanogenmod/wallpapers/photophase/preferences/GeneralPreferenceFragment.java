@@ -46,7 +46,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private SeekBarProgressPreference mWallpaperDim;
     private ColorPickerPreference mBackgroundColor;
     private ListPreference mTouchActions;
-    private ListPreference mTransitionsTypes;
+    private MultiSelectListPreference mTransitionsTypes;
     private SeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
 
@@ -125,7 +125,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTouchActions = (ListPreference)findPreference("ui_touch_action");
         mTouchActions.setOnPreferenceChangeListener(mOnChangeListener);
 
-        mTransitionsTypes = (ListPreference)findPreference("ui_transition_types");
+        mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTransitionsInterval = (SeekBarProgressPreference)findPreference("ui_transition_interval");

@@ -166,7 +166,7 @@ public class PhotoPhaseWallpaperWorld {
         Transition transition = null;
         boolean isSelectable = false;
         while (transition == null || !isSelectable) {
-            boolean isRandom = Preferences.General.Transitions.getTransitionTypes() == TRANSITIONS.RANDOM.ordinal();
+            boolean isRandom = Preferences.General.Transitions.getTransitionTypes().length > 1;
             TRANSITIONS type = Transitions.getNextTypeOfTransition(frame);
             transition = getOrCreateTransition(type, frame);
             isSelectable = transition.isSelectable(frame);

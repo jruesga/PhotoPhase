@@ -22,6 +22,9 @@ import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 import org.cyanogenmod.wallpapers.photophase.TextureManager;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * A class that manages all the supported transitions
@@ -32,10 +35,6 @@ public class Transitions {
      * Enumeration of the supported transitions
      */
     public enum TRANSITIONS {
-        /**
-         * A random combination of all supported transitions
-         */
-        RANDOM,
         /**
          * @see NullTransition
          */
@@ -52,28 +51,63 @@ public class Transitions {
          * @see TranslateTransition
          */
         TRANSLATION;
+
+        /**
+         * Method that returns the transition from its ordinal position
+         *
+         * @param ordinal The ordinal position
+         * @return TRANSITIONS The transition or null if wasn't found
+         */
+        public static TRANSITIONS fromOrdinal(int ordinal) {
+            for (TRANSITIONS transition : TRANSITIONS.values()) {
+                if (transition.ordinal() == ordinal){
+                    return transition;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Method that the returns an array with all the valid transitions (NO_TRANSITION is not
+         * a valid one).
+         *
+         * @return TRANSITIONS[] The valid transitions
+         */
+        public static TRANSITIONS[] getValidTranstions() {
+            TRANSITIONS[] src = TRANSITIONS.values();
+            TRANSITIONS[] dst = new TRANSITIONS[src.length-1];
+            System.arraycopy(src, 1, dst, 0, src.length-1);
+            return dst;
+        }
     }
 
     /**
      * Method that return the next type of transition to apply the picture.
      *
-     * @param frame The frame which the effect will be applied to
+     * @param frame The frame which the translation will be applied to
      * @return TRANSITIONS The next type of  transition to apply
      */
     public static TRANSITIONS getNextTypeOfTransition(PhotoFrame frame) {
-        int transition = Preferences.General.Transitions.getTransitionTypes();
-        if (transition == TRANSITIONS.RANDOM.ordinal()) {
-            int low = TRANSITIONS.SWAP.ordinal();
-            int hight = TRANSITIONS.values().length - 1;
-            transition = low + (int)(Math.random() * ((hight - low) + 1));
+        // Get a transition based on the user preference
+        List<TRANSITIONS> transitions =
+                Arrays.asList(Preferences.General.Transitions.getTransitionTypes());
+        TRANSITIONS nextTransition = null;
+        if (transitions.size() > 0) {
+            int low = 0;
+            int hight = transitions.size() - 1;
+            int pos = low + (int)(Math.random() * ((hight - low) + 1));
+            nextTransition = transitions.get(pos);
         }
-        if (transition == TRANSITIONS.SWAP.ordinal()) {
+        if (nextTransition == null) {
+            return TRANSITIONS.NO_TRANSITION;
+        }
+
+        // Select the transition if is available
+        if (nextTransition.compareTo(TRANSITIONS.SWAP) == 0) {
             return TRANSITIONS.SWAP;
-        }
-        if (transition == TRANSITIONS.FADE.ordinal()) {
+        } else if (nextTransition.compareTo(TRANSITIONS.FADE) == 0) {
             return TRANSITIONS.FADE;
-        }
-        if (transition == TRANSITIONS.TRANSLATION.ordinal()) {
+        } else if (nextTransition.compareTo(TRANSITIONS.TRANSLATION) == 0) {
             return TRANSITIONS.TRANSLATION;
         }
         return TRANSITIONS.NO_TRANSITION;
@@ -85,18 +119,16 @@ public class Transitions {
      * @param ctx The current context
      * @param tm The texture manager
      * @param type The type of transition
-     * @param frame The frame which the effect will be applied to
+     * @param frame The frame which the translation will be applied to
      * @return Transition The next transition to apply
      */
     public static Transition createTransition(
             Context ctx, TextureManager tm, TRANSITIONS type, PhotoFrame frame) {
         if (type.compareTo(TRANSITIONS.SWAP) == 0) {
             return new SwapTransition(ctx, tm);
-        }
-        if (type.compareTo(TRANSITIONS.FADE) == 0) {
+        } else if (type.compareTo(TRANSITIONS.FADE) == 0) {
             return new FadeTransition(ctx, tm);
-        }
-        if (type.compareTo(TRANSITIONS.TRANSLATION) == 0) {
+        } else if (type.compareTo(TRANSITIONS.TRANSLATION) == 0) {
             return new TranslateTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);

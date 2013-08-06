@@ -126,8 +126,6 @@ public class Effects {
 
         // Get an effect based on the user preference
         List<EFFECTS> effects = Arrays.asList(Preferences.General.Effects.getEffectTypes());
-
-        // Get an effect based on the user preference
         EFFECTS nextEffect = null;
         if (effects.size() > 0) {
             int low = 0;

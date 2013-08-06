@@ -55,14 +55,14 @@
         android:title="@string/pref_general_transitions">
 
         <!-- Types -->
-        <ListPreference
+        <MultiSelectListPreference
             android:key="ui_transition_types"
             android:title="@string/pref_general_transitions_types"
             android:summary="@string/pref_general_transitions_types_summary"
             android:persistent="true"
             android:entries="@array/transitions_labels"
             android:entryValues="@array/transitions_values"
-            android:defaultValue="0" />
+            android:defaultValue="@array/transitions_default" />
 
         <!-- Transitions Interval -->
         <org.cyanogenmod.wallpapers.photophase.preferences.SeekBarProgressPreference

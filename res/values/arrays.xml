@@ -49,18 +49,18 @@
     </string-array>
 
     <string-array name="transitions_labels" translatable="false">
-        <item>@string/transitions_random</item>
         <item>@string/transitions_swap</item>
         <item>@string/transitions_fade</item>
         <item>@string/transitions_translation</item>
     </string-array>
 
     <string-array name="transitions_values" translatable="false">
-        <item>0</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
     </string-array>
+
+    <string-array name="transitions_default" translatable="false"/>
 
     <string-array name="effects_labels" translatable="false">
         <item>@string/effects_autofix</item>
