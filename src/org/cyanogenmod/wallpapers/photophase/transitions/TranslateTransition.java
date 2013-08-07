@@ -316,9 +316,7 @@ public class TranslateTransition extends Transition {
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Apply the projection and view transformation
-        float[] translationMatrix = new float[16];
-        Matrix.translateM(translationMatrix, 0, matrix, 0, 0.0f, 0.0f, 0.0f);
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[1], 1, false, translationMatrix, 0);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[1], 1, false, matrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw
