@@ -50,7 +50,11 @@ public class Transitions {
         /**
          * @see TranslateTransition
          */
-        TRANSLATION;
+        TRANSLATION,
+        /**
+         * @see FlipTransition
+         */
+        FLIP;
 
         /**
          * Method that returns the transition from its ordinal position
@@ -60,7 +64,7 @@ public class Transitions {
          */
         public static TRANSITIONS fromOrdinal(int ordinal) {
             for (TRANSITIONS transition : TRANSITIONS.values()) {
-                if (transition.ordinal() == ordinal){
+                if (transition.ordinal() == ordinal) {
                     return transition;
                 }
             }
@@ -109,6 +113,8 @@ public class Transitions {
             return TRANSITIONS.FADE;
         } else if (nextTransition.compareTo(TRANSITIONS.TRANSLATION) == 0) {
             return TRANSITIONS.TRANSLATION;
+        } else if (nextTransition.compareTo(TRANSITIONS.FLIP) == 0) {
+            return TRANSITIONS.FLIP;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -130,6 +136,8 @@ public class Transitions {
             return new FadeTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.TRANSLATION) == 0) {
             return new TranslateTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.FLIP) == 0) {
+            return new FlipTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }

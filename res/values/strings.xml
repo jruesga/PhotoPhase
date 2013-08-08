@@ -106,6 +106,7 @@
     <string name="transitions_swap">Swap</string>
     <string name="transitions_fade">Fade</string>
     <string name="transitions_translation">Translation</string>
+    <string name="transitions_flip">Flip</string>
 
     <!-- Effects -->
     <string name="effects_autofix">Autofix</string>
