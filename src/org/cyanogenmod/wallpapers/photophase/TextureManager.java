@@ -250,6 +250,13 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             }
             sRecycledBitmaps.clear();
 
+            // Remove all pictures in the queue
+            try {
+                mQueue.removeAll();
+            } catch (EmptyQueueException ex) {
+                // Ignore
+            }
+
             // Reload the queue
             if (reload) {
                 synchronized (mBackgroundTask.mLoadSync) {
