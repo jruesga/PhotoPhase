@@ -83,12 +83,6 @@
     <string name="pref_about">About</string>
     <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2013 The CyanogenMod Project</string>
 
-    <!-- Plurals -->
-    <plurals name="album_number_of_pictures">
-        <item quantity="one">1 picture</item>
-        <item quantity="other"><xliff:g id="number" example="7">%d</xliff:g> pictures</item>
-    </plurals>
-
     <!-- Refresh intervals -->
     <string name="refresh_intervals_disabled">Disabled</string>
     <string name="refresh_intervals_1h">1 hour</string>

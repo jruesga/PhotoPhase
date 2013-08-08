@@ -98,7 +98,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             if (mediaReload) {
                 synchronized (mMediaSync) {
                     if (mTextureManager != null) {
-                        mTextureManager.reloadMedia();
+                        boolean userReloadRequest =
+                                intent.getBooleanExtra(
+                                        PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, false);
+                        mTextureManager.reloadMedia(userReloadRequest);
                         scheduleOrCancelMediaScan();
                     }
                 }

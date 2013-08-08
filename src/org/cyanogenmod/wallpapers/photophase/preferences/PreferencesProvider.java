@@ -77,6 +77,14 @@ public final class PreferencesProvider {
     public static final String EXTRA_FLAG_MEDIA_INTERVAL_CHANGED = "flag_media_interval_changed";
 
     /**
+     * An extra setting that indicates that the media reload becomes from a user
+     *
+     * @see #EXTRA_FLAG_MEDIA_RELOAD
+     * {@hide}
+     */
+    public static final String EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST = "action_media_user_reload_req";
+
+    /**
      * The shared preferences file
      */
     public static final String PREFERENCES_FILE = "org.cyanogenmod.wallpapers.photophase";

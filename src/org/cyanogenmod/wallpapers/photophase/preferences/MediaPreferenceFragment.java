@@ -98,6 +98,7 @@ public class MediaPreferenceFragment extends PreferenceFragment {
                 // Request a refresh of the media data
                 Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
                 intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
+                intent.putExtra(PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, Boolean.TRUE);
                 getActivity().sendBroadcast(intent);
                 return true;
             }
