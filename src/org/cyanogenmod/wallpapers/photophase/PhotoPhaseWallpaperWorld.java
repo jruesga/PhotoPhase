@@ -191,7 +191,7 @@ public class PhotoPhaseWallpaperWorld {
      * @param matrix The model-view-projection matrix
      */
     public void deselectTransition(float[] matrix) {
-        if (mCurrent != -1) {
+        if (mCurrent != -1 && mCurrent < mTransitions.size()) {
             // Retrieve the finally target
             Transition currentTransition = mTransitions.get(mCurrent);
             PhotoFrame currentTarget = currentTransition.getTarget();
