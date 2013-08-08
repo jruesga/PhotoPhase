@@ -19,32 +19,28 @@ package org.cyanogenmod.wallpapers.photophase.preferences;
 /**
  * An enumeration with all the touch actions supported
  */
-public enum TouchAction {
+public enum AspectRatioCorrection {
     /**
-     * No action
+     * Do not apply aspect ratio correction
      */
     NONE(0),
     /**
-     * Force transition of the frame
+     * Center the image and crop the image using the shortest size of the image
      */
-    TRANSITION(1),
+    CROP(1),
     /**
-     * Open the picture of the frame
+     * Center using the largest size of the image
      */
-    OPEN(2),
-    /**
-     * Share/send the picture of the frame
-     */
-    SHARE(3);
+    CENTER(2);
 
     private final int mValue;
 
     /**
-     * Constructor of <code>TouchAction</code>
+     * Constructor of <code>AspectRatioCorrection</code>
      *
      * @param id The unique identifier
      */
-    private TouchAction(int value) {
+    private AspectRatioCorrection(int value) {
         mValue = value;
     }
 
@@ -58,15 +54,14 @@ public enum TouchAction {
     }
 
     /**
-     * Method that gets the reference of a TouchAction from its value
+     * Method that gets the reference of a AspectRatioCorrection from its value
      *
      * @param value The value
-     * @return TouchAction The reference
+     * @return AspectRatioCorrection The reference
      */
-    public static final TouchAction fromValue(int value) {
-        if (value == TRANSITION.mValue) return TRANSITION;
-        if (value == OPEN.mValue) return OPEN;
-        if (value == SHARE.mValue) return SHARE;
+    public static final AspectRatioCorrection fromValue(int value) {
+        if (value == CROP.mValue) return CROP;
+        if (value == CENTER.mValue) return CENTER;
         return NONE;
     }
 }

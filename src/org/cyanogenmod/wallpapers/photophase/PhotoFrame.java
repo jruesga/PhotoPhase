@@ -113,6 +113,8 @@ public class PhotoFrame implements TextureRequestor {
             return;
         }
 
+        // TODO Apply the texture correction
+
         // Full frame picture
         setTextureHandle(ti, DEFAULT_TEXTURE_COORDS);
         mLoaded = true;

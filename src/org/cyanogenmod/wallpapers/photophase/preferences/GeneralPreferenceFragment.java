@@ -46,6 +46,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private SeekBarProgressPreference mWallpaperDim;
     private ColorPickerPreference mBackgroundColor;
     private ListPreference mTouchActions;
+    private ListPreference mAspectRatioCorrection;
     private MultiSelectListPreference mTransitionsTypes;
     private SeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
@@ -64,6 +65,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mRedrawFlag = true;
                 int color = ((Integer)newValue).intValue();
                 Colors.setBackground(new GLColor(color));
+            } else if (key.compareTo("ui_aspect_ratio_correction") == 0) {
+                mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_interval") == 0) {
@@ -124,6 +127,9 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         mTouchActions = (ListPreference)findPreference("ui_touch_action");
         mTouchActions.setOnPreferenceChangeListener(mOnChangeListener);
+
+        mAspectRatioCorrection = (ListPreference)findPreference("ui_aspect_ratio_correction");
+        mAspectRatioCorrection.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);

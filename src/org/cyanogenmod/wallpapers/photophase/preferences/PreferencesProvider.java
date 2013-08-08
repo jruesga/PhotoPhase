@@ -197,6 +197,17 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Return the current user preference about how to fix the aspect ratio of
+             * the current image of the frame.
+             *
+             * @return AspectRatioCorrection The correction mode (default NONE)
+             */
+            public static AspectRatioCorrection getAspectRatioCorrection() {
+                return AspectRatioCorrection.fromValue(
+                        Integer.valueOf(getString("ui_aspect_ratio_correction", "0"))) ;
+            }
+
+            /**
              * Transitions preferences
              */
             public static class Transitions {

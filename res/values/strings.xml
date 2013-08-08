@@ -45,6 +45,8 @@
     <string name="pref_general_settings_background_color_summary">Set the background color of the wallpaper</string>
     <string name="pref_general_touch_action">Touch action</string>
     <string name="pref_general_touch_action_summary">Select the action to apply when touch a frame</string>
+    <string name="pref_general_aspect_ratio_correction">Aspect ratio correction</string>
+    <string name="pref_general_aspect_ratio_correction_summary">Select the aspect ratio correction to apply</string>
 
     <string name="pref_general_transitions">Transitions</string>
     <string name="pref_general_transitions_types">Types</string>
@@ -101,6 +103,11 @@
     <string name="touch_actions_transition">Do transition</string>
     <string name="touch_actions_open">Open</string>
     <string name="touch_actions_share">Share</string>
+
+    <!-- Aspect ration correction -->
+    <string name="aspect_ratio_correction_none">None</string>
+    <string name="aspect_ratio_correction_crop">Crop</string>
+    <string name="aspect_ratio_correction_center">Center</string>
 
     <!-- Transitions -->
     <string name="transitions_swap">Swap</string>
