@@ -147,6 +147,15 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     }
 
     /**
+     * Method that allow to change the screen dimensions
+     *
+     * @param dimensions The new dimensions
+     */
+    public void setScreenDimesions(Rect dimensions) {
+        mScreenDimensions = dimensions;
+    }
+
+    /**
      * Method that returns if the texture manager is paused
      *
      * @return boolean whether the texture manager is paused
