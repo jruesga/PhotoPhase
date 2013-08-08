@@ -376,9 +376,16 @@ public class PhotoPhaseWallpaperWorld {
     public void draw(float[] matrix) {
         // Apply every transition
         if (mTransitions != null) {
-            // First draw active transitions; then the not running transitions
+            // First draw the non-running transitions; then the active ones 
             for (Transition transition : mTransitions) {
-                transition.apply(matrix);
+                if (!transition.isRunning()) {
+                    transition.apply(matrix);
+                }
+            }
+            for (Transition transition : mTransitions) {
+                if (transition.isRunning()) {
+                    transition.apply(matrix);
+                }
             }
         }
     }
