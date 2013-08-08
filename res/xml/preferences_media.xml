@@ -44,13 +44,20 @@
         android:key="category_pictures"
         android:title="@string/pref_media_pictures">
 
-        <!-- Refresh now -->
+        <!-- Albums -->
         <Preference
             android:key="ui_media_albums"
             android:title="@string/pref_media_albums"
             android:summary="@string/pref_media_albums_summary"
             android:fragment="org.cyanogenmod.wallpapers.photophase.preferences.ChoosePicturesFragment"
             android:persistent="false" />
+
+        <!--  Auto select new albums -->
+        <CheckBoxPreference
+            android:key="ui_media_auto_select_new"
+            android:title="@string/pref_media_auto_select_new"
+            android:summary="@string/pref_media_auto_select_new_summary"
+            android:defaultValue="true" />
 
     </PreferenceCategory>
 

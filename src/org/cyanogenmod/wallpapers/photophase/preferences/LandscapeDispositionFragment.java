@@ -19,6 +19,7 @@ package org.cyanogenmod.wallpapers.photophase.preferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.utils.DispositionUtil;
 
@@ -51,7 +52,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
      */
     @Override
     public List<Disposition> getUserDispositions() {
-        return PreferencesProvider.Preferences.Layout.getLandscapeDisposition();
+        return Preferences.Layout.getLandscapeDisposition();
     }
 
     /**
@@ -60,7 +61,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public List<Disposition> getDefaultDispositions() {
         return DispositionUtil.toDispositions(
-                PreferencesProvider.Preferences.Layout.DEFAULT_LANDSCAPE_DISPOSITION);
+                Preferences.Layout.DEFAULT_LANDSCAPE_DISPOSITION);
     }
 
     /**
@@ -68,7 +69,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
      */
     @Override
     public void saveDispositions(List<Disposition> dispositions) {
-        PreferencesProvider.Preferences.Layout.setLandscapeDisposition(getActivity(), dispositions);
+        Preferences.Layout.setLandscapeDisposition(getActivity(), dispositions);
     }
 
     /**
@@ -77,7 +78,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public int getRows() {
         // inverted
-        return PreferencesProvider.Preferences.Layout.getCols();
+        return Preferences.Layout.getCols();
     }
 
     /**
@@ -86,6 +87,6 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public int getCols() {
         // inverted
-        return PreferencesProvider.Preferences.Layout.getRows();
+        return Preferences.Layout.getRows();
     }
 }

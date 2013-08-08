@@ -27,6 +27,7 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import org.cyanogenmod.wallpapers.photophase.R;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
 /**
  * A fragment class with all the media settings
@@ -88,7 +89,7 @@ public class MediaPreferenceFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences_media);
 
         mRefreshInterval = (ListPreference)findPreference("ui_media_refresh_interval");
-        setRefreshIntervalSummary(PreferencesProvider.Preferences.Media.getRefreshFrecuency());
+        setRefreshIntervalSummary(Preferences.Media.getRefreshFrecuency());
         mRefreshInterval.setOnPreferenceChangeListener(mOnChangeListener);
 
         mRefreshNow = findPreference("ui_media_refresh_now");

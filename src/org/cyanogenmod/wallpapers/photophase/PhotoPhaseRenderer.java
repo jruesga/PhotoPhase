@@ -38,6 +38,7 @@ import android.util.Log;
 
 import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.preferences.TouchAction;
 import org.cyanogenmod.wallpapers.photophase.shapes.ColorShape;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
@@ -206,8 +207,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mContext.registerReceiver(mSettingsChangedReceiver, filter);
 
         // Check whether the media scan is active
-        int interval = PreferencesProvider.Preferences.Media.getRefreshFrecuency();
-        if (interval != PreferencesProvider.Preferences.Media.MEDIA_RELOAD_DISABLED) {
+        int interval = Preferences.Media.getRefreshFrecuency();
+        if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             // Schedule a media scan
             scheduleMediaScan(interval);
         }
@@ -260,7 +261,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     public void onTouch(float x , float y) {
         if (mWorld != null) {
             // Do user action
-            TouchAction touchAction = PreferencesProvider.Preferences.General.getTouchAction();
+            TouchAction touchAction = Preferences.General.getTouchAction();
             if (touchAction.compareTo(TouchAction.NONE) == 0) {
                 //Ignore
             } else {
@@ -330,8 +331,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     }
 
     void scheduleOrCancelMediaScan() {
-        int interval = PreferencesProvider.Preferences.Media.getRefreshFrecuency();
-        if (interval != PreferencesProvider.Preferences.Media.MEDIA_RELOAD_DISABLED) {
+        int interval = Preferences.Media.getRefreshFrecuency();
+        if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             scheduleMediaScan(interval);
         } else {
             cancelMediaScan();
@@ -350,7 +351,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         i.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
         mMediaScanIntent = PendingIntent.getBroadcast(mContext, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        long milliseconds = PreferencesProvider.Preferences.Media.getRefreshFrecuency() * 1000L;
+        long milliseconds = Preferences.Media.getRefreshFrecuency() * 1000L;
         am.set(AlarmManager.RTC, System.currentTimeMillis() + milliseconds, mMediaScanIntent);
     }
 
@@ -428,8 +429,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             int mh = h - AndroidHelper.calculateStatusBarHeight(mContext);
             Rect dimensions = new Rect(0, 0, w, mh);
             int cc = (orientation == Configuration.ORIENTATION_PORTRAIT)
-                        ? PreferencesProvider.Preferences.Layout.getPortraitDisposition().size()
-                        : PreferencesProvider.Preferences.Layout.getLandscapeDisposition().size();
+                        ? Preferences.Layout.getPortraitDisposition().size()
+                        : Preferences.Layout.getLandscapeDisposition().size();
 
             // Recycle the current texture manager and create a new one
             recycle();
@@ -516,7 +517,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     mWorld.deselectTransition(mMVPMatrix);
                     mLastRunningTransition = 0;
                     mHandler.postDelayed(mTransitionThread,
-                            PreferencesProvider.Preferences.General.Transitions.getTransitionInterval());
+                            Preferences.General.Transitions.getTransitionInterval());
                 }
             }
 
@@ -552,7 +553,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     private void drawOverlay() {
         if (mOverlay != null) {
-            mOverlay.setAlpha(PreferencesProvider.Preferences.General.getWallpaperDim() / 100.0f);
+            mOverlay.setAlpha(Preferences.General.getWallpaperDim() / 100.0f);
             mOverlay.draw(mMVPMatrix);
         }
     }

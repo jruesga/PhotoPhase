@@ -27,7 +27,6 @@ import org.cyanogenmod.wallpapers.photophase.FixedQueue.EmptyQueueException;
 import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
 import org.cyanogenmod.wallpapers.photophase.effects.Effects;
-import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -186,8 +185,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      */
     void reloadMedia(boolean userRequest) {
         Log.d(TAG, "Reload media picture data");
-        // Discover new media
-        mPictureDiscoverer.discover(Preferences.Media.getSelectedAlbums(), userRequest);
+        // Discovery new media
+        mPictureDiscoverer.discover(userRequest);
     }
 
     /**
@@ -290,6 +289,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 mBackgroundTask.mLoadSync.notify();
             }
         }
+
+        // Audit
         int found = images == null ? 0 : images.length;
         Log.d(TAG, "Media picture data reloaded: " + found + " images found.");
         if (userRequest) {

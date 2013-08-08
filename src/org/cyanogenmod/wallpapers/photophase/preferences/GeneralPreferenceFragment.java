@@ -29,6 +29,7 @@ import android.util.Log;
 import org.cyanogenmod.wallpapers.photophase.Colors;
 import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.R;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;
 import org.cyanogenmod.wallpapers.photophase.widgets.ColorPickerPreference;
 
@@ -136,8 +137,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         mTransitionsInterval = (SeekBarProgressPreference)findPreference("ui_transition_interval");
         mTransitionsInterval.setFormat(getString(R.string.pref_general_transitions_interval_format));
-        int max = PreferencesProvider.Preferences.General.Transitions.MAX_TRANSITION_INTERVAL;
-        int min = PreferencesProvider.Preferences.General.Transitions.MIN_TRANSITION_INTERVAL;
+        int max = Preferences.General.Transitions.MAX_TRANSITION_INTERVAL;
+        int min = Preferences.General.Transitions.MIN_TRANSITION_INTERVAL;
         final int MAX = ((max - min) / 1000) * 2;
         mTransitionsInterval.setMax(MAX);
         mTransitionsInterval.setOnDisplayProgress(new OnDisplayProgress() {

@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
-import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
 /**
  * A class that defines some wallpaper GLColor colors.
@@ -35,7 +35,7 @@ public class Colors {
      */
     public static void register(Context ctx) {
         Resources res = ctx.getResources();
-        sBackground = PreferencesProvider.Preferences.General.getBackgroundColor();
+        sBackground = Preferences.General.getBackgroundColor();
         sOverlay = new GLColor(res.getColor(R.color.wallpaper_overlay_color));
     }
 

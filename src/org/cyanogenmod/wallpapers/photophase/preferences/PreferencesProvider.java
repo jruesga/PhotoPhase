@@ -307,12 +307,22 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Method that returns if the app must be select new albums when they are discovered.
+             *
+             * @return boolean If the app must be select new albums when they are discovered.
+             */
+            public static boolean isAutoSelectNewAlbums() {
+                return getBoolean("ui_media_auto_select_new", Boolean.TRUE);
+            }
+
+            // Internal settings (non-UI)
+            /**
              * Method that returns the list of albums and pictures to be displayed
              *
              * @return Set<String> The list of albums and pictures to be displayed
              */
-            public static Set<String> getSelectedAlbums() {
-                return getStringSet("ui_media_selected_albums", new HashSet<String>());
+            public static Set<String> getSelectedMedia() {
+                return getStringSet("media_selected_media", new HashSet<String>());
             }
 
             /**
@@ -321,11 +331,37 @@ public final class PreferencesProvider {
             * @param context The current context
             * @param selection The new list of albums and pictures to be displayed
             */
-           public static synchronized void setSelectedAlbums(Context context, Set<String> selection) {
+           public static synchronized void setSelectedMedia(Context context, Set<String> selection) {
                SharedPreferences preferences =
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
-               editor.putStringSet("ui_media_selected_albums", selection);
+               editor.putStringSet("media_selected_media", selection);
+               editor.commit();
+               reload(context);
+           }
+
+           /**
+            * Method that returns the list of the name of the albums seen by the
+            * last media discovery scan.
+            *
+            * @return Set<String> The list of albums and pictures to be displayed
+            */
+           public static Set<String> getLastDiscorevedAlbums() {
+               return getStringSet("media_last_disvored_albums", new HashSet<String>());
+           }
+
+           /**
+            * Method that sets the list of the name of the albums seen by the
+            * last media discovery scan.
+            *
+            * @param context The current context
+            * @param albums The albums seen by the last media discovery scan
+            */
+           public static synchronized void setLastDiscorevedAlbums(Context context, Set<String> albums) {
+               SharedPreferences preferences =
+                       context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+               Editor editor = preferences.edit();
+               editor.putStringSet("media_last_disvored_albums", albums);
                editor.commit();
                reload(context);
            }

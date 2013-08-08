@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.animations.AlbumsFlip3dAnimationController;
 import org.cyanogenmod.wallpapers.photophase.model.Album;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.widgets.AlbumInfo;
 import org.cyanogenmod.wallpapers.photophase.widgets.AlbumPictures;
 import org.cyanogenmod.wallpapers.photophase.widgets.CardLayout;
@@ -83,7 +84,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                         if (DEBUG) Log.v(TAG, "\t" + p);
                         if (p != null) {
                             File f = new File(p);
-                            if (f.exists() && f.isFile() && f.canRead()) {
+                            if (f.isFile() && f.canRead()) {
                                   File path = f.getParentFile();
                                   String name = path.getName();
                                   if (album == null || album.getPath().compareTo(path.getAbsolutePath()) != 0) {
@@ -170,7 +171,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
         // Load the albums user selection
-        mOriginalSelectedAlbums = PreferencesProvider.Preferences.Media.getSelectedAlbums();
+        mOriginalSelectedAlbums = Preferences.Media.getSelectedMedia();
         mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
         mSelectionChanged = false;
 
@@ -285,7 +286,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         }
 
         // Restore the preference
-        PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
+        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
         mSelectionChanged = true;
 
         // Restore all the animations states
@@ -319,7 +320,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                 ref.setSelected(true);
                 albumPictures.updateView(ref);
 
-                PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
+                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
                 mSelectionChanged = true;
             }
 
@@ -330,7 +331,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                 ref.setSelected(false);
                 albumPictures.updateView(ref);
 
-                PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
+                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
                 mSelectionChanged = true;
             }
 
@@ -353,7 +354,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                 ref.setSelected(false);
                 albumInfo.updateView(ref);
 
-                PreferencesProvider.Preferences.Media.setSelectedAlbums(getActivity(), mSelectedAlbums);
+                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
                 mSelectionChanged = true;
             }
         });

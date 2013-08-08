@@ -20,6 +20,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.utils.DispositionUtil;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public List<Disposition> getUserDispositions() {
-        return PreferencesProvider.Preferences.Layout.getPortraitDisposition();
+        return Preferences.Layout.getPortraitDisposition();
     }
 
     /**
@@ -60,7 +61,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
     @Override
     public List<Disposition> getDefaultDispositions() {
         return DispositionUtil.toDispositions(
-                PreferencesProvider.Preferences.Layout.DEFAULT_PORTRAIT_DISPOSITION);
+                Preferences.Layout.DEFAULT_PORTRAIT_DISPOSITION);
     }
 
     /**
@@ -68,7 +69,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public void saveDispositions(List<Disposition> dispositions) {
-        PreferencesProvider.Preferences.Layout.setPortraitDisposition(getActivity(), dispositions);
+        Preferences.Layout.setPortraitDisposition(getActivity(), dispositions);
     }
 
     /**
@@ -76,7 +77,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public int getRows() {
-        return PreferencesProvider.Preferences.Layout.getRows();
+        return Preferences.Layout.getRows();
     }
 
     /**
@@ -84,6 +85,6 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public int getCols() {
-        return PreferencesProvider.Preferences.Layout.getCols();
+        return Preferences.Layout.getCols();
     }
 }
