@@ -63,7 +63,7 @@ public class TranslateTransition extends Transition {
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader, R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.default_fragment_shader, R.raw.default_fragment_shader};
 
-    private static final float TRANSITION_TIME = 800.0f;
+    private static final float TRANSITION_TIME = 600.0f;
 
     private TRANSLATE_MODES mMode;
 

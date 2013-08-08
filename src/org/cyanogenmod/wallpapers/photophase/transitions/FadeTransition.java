@@ -31,7 +31,7 @@ import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS
  */
 public class FadeTransition extends NullTransition {
 
-    private static final float TRANSITION_TIME = 800.0f;
+    private static final float TRANSITION_TIME = 600.0f;
 
     private boolean mRunning;
     private long mTime;
