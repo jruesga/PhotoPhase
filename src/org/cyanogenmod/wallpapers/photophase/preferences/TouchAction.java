@@ -20,9 +20,21 @@ package org.cyanogenmod.wallpapers.photophase.preferences;
  * An enumeration with all the touch actions supported
  */
 public enum TouchAction {
+    /**
+     * No action
+     */
     NONE(0),
+    /**
+     * Force transition of the frame
+     */
     TRANSITION(1),
+    /**
+     * Open the picture of the frame
+     */
     OPEN(2),
+    /**
+     * Share/send the picture of the frame 
+     */
     SHARE(3);
 
     private final int mValue;
