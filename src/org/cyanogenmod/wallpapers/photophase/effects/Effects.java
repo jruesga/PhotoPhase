@@ -104,7 +104,7 @@ public class Effects {
          */
         public static EFFECTS fromOrdinal(int ordinal) {
             for (EFFECTS effect : EFFECTS.values()) {
-                if (effect.ordinal() == ordinal){
+                if (effect.ordinal() == ordinal) {
                     return effect;
                 }
             }

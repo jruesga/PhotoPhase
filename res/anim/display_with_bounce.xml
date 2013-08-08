@@ -25,7 +25,7 @@
         android:toYScale="1.0"
         android:pivotX="50%"
         android:pivotY="50%" />
-    
+
     <alpha
         android:duration="@integer/disposition_show_anim"
         android:fromAlpha="0.0"

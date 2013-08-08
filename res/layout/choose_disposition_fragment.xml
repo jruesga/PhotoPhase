@@ -50,7 +50,7 @@
         android:layout_alignRight="@id/disposition_view"
         android:layout_alignTop="@id/disposition_view"
         android:layout_alignBottom="@id/disposition_view">
-        <org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame 
+        <org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame
             android:id="@+id/resize_frame"
             android:layout_width="1dp"
             android:layout_height="1dp">
