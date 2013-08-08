@@ -635,6 +635,13 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         resizer.y = Math.round(mResizeFrame.getY() / ch);
         resizer.w = Math.round(mResizeFrame.getWidth() / cw);
         resizer.h = Math.round(mResizeFrame.getHeight() / ch);
+
+        // Fix disposition (limits)
+        resizer.x = Math.max(resizer.x, 0);
+        resizer.y = Math.max(resizer.y, 0);
+        resizer.w = Math.min(resizer.w, mCols - resizer.x);
+        resizer.h = Math.min(resizer.h, mRows - resizer.y);
+
         return resizer;
     }
 
