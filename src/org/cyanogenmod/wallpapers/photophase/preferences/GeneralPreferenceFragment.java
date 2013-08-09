@@ -23,6 +23,7 @@ import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
@@ -131,6 +132,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         mAspectRatioCorrection = (ListPreference)findPreference("ui_aspect_ratio_correction");
         mAspectRatioCorrection.setOnPreferenceChangeListener(mOnChangeListener);
+        // TODO Hide for now, because no functionality was developed yet
+        ((PreferenceCategory)findPreference("category_settings")).removePreference(mAspectRatioCorrection);
 
         mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
