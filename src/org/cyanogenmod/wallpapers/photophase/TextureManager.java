@@ -288,23 +288,26 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     public void onMediaDiscovered(MediaPictureDiscoverer mpc, File[] images, boolean userRequest) {
         // Now we have the paths of the images to use. Start a image loader
         // thread to load pictures in background
-        mBackgroundTask.setAvailableImages(images);
-        if (!mBackgroundTask.mRun) {
-            mBackgroundTask.start();
-        } else {
-            synchronized (mBackgroundTask.mLoadSync) {
-                mBackgroundTask.mLoadSync.notify();
+        // Only if the task is created
+        if (mBackgroundTask != null) {
+            mBackgroundTask.setAvailableImages(images);
+            if (!mBackgroundTask.mRun) {
+                mBackgroundTask.start();
+            } else {
+                synchronized (mBackgroundTask.mLoadSync) {
+                    mBackgroundTask.mLoadSync.notify();
+                }
             }
-        }
-
-        // Audit
-        int found = images == null ? 0 : images.length;
-        Log.d(TAG, "Media picture data reloaded: " + found + " images found.");
-        if (userRequest) {
-            CharSequence msg =
-                    String.format(mContext.getResources().getQuantityText(
-                            R.plurals.msg_media_reload_complete, found).toString(), found);
-            Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+    
+            // Audit
+            int found = images == null ? 0 : images.length;
+            Log.d(TAG, "Media picture data reloaded: " + found + " images found.");
+            if (userRequest) {
+                CharSequence msg =
+                        String.format(mContext.getResources().getQuantityText(
+                                R.plurals.msg_media_reload_complete, found).toString(), found);
+                Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
