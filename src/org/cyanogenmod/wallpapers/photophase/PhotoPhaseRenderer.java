@@ -426,8 +426,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             int orientation = mContext.getResources().getConfiguration().orientation;
             int w = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenWidthDp);
             int h = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenHeightDp);
-            int mh = h - AndroidHelper.calculateStatusBarHeight(mContext);
-            Rect dimensions = new Rect(0, 0, w, mh);
+            Rect dimensions = new Rect(0, 0, w, h);
             int cc = (orientation == Configuration.ORIENTATION_PORTRAIT)
                         ? Preferences.Layout.getPortraitDisposition().size()
                         : Preferences.Layout.getLandscapeDisposition().size();
@@ -454,11 +453,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         // Save the width and height to avoid recreate the world
         mWidth = width;
         mHeight = height;
-        mMeasuredHeight = mHeight - AndroidHelper.calculateStatusBarHeight(mContext);
+        int statusBarHeight = AndroidHelper.calculateStatusBarHeight(mContext);
+        mMeasuredHeight = mHeight + statusBarHeight;
 
         // Calculate a better fixed size for the pictures
-        Rect dimensions = new Rect(0, 0, width / 2, mMeasuredHeight / 2);
-        Rect screenDimensions = new Rect(0, 0, width, mMeasuredHeight);
+        Rect dimensions = new Rect(0, 0, width / 2, height / 2);
+        Rect screenDimensions = new Rect(0, statusBarHeight, width, height);
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setScreenDimesions(screenDimensions);
         mTextureManager.setPause(false);

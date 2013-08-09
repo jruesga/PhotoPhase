@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.ViewConfiguration;
 
@@ -84,8 +85,12 @@ public final class AndroidHelper {
      * @return The height of the status bar
      */
     public static int calculateStatusBarHeight(Context context) {
+        // CyanogenMod specific featured (DO NOT RELAY IN INTERNAL VARS)
+        boolean hiddenStatusBar = 
+                Settings.System.getInt(context.getContentResolver(), "expanded_desktop_state", 0) == 1 &&
+                Settings.System.getInt(context.getContentResolver(), "expanded_desktop_style", 0) == 2;
         int result = 0;
-        if (!(context instanceof Activity)) {
+        if (!hiddenStatusBar && !(context instanceof Activity)) {
             int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
             if (resourceId > 0) {
                 result = context.getResources().getDimensionPixelSize(resourceId);
