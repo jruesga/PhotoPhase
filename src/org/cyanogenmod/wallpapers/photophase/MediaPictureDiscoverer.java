@@ -49,19 +49,31 @@ public class MediaPictureDiscoverer {
      */
     public interface OnMediaPictureDiscoveredListener  {
         /**
-         * Called when the data is ready
+         * Called when the starting to fetch data
          *
-         * @param mpc The reference to the discoverer
+         * @param userRequest If the user requested this media discovery
+         */
+        void onStartMediaDiscovered(boolean userRequest);
+        /**
+         * Called when the all the data is ready
+         *
          * @param images All the images paths found
          * @param userRequest If the user requested this media discovery
          */
-        void onMediaDiscovered(MediaPictureDiscoverer mpc, File[] images, boolean userRequest);
+        void onEndMediaDiscovered(File[] images, boolean userRequest);
+        /**
+         * Called when the partial data is ready
+         *
+         * @param images All the images paths found
+         * @param userRequest If the user requested this media discovery
+         */
+        void onPartialMediaDiscovered(File[] images, boolean userRequest);
     }
 
     /**
      * The asynchronous task for query the MediaStore
      */
-    private class AsyncDiscoverTask extends AsyncTask<Void, Void, List<File> > {
+    private class AsyncDiscoverTask extends AsyncTask<Void, File, List<File>> {
 
         private final ContentResolver mFinalContentResolver;
         private final OnMediaPictureDiscoveredListener mFinalCallback;
@@ -96,6 +108,9 @@ public class MediaPictureDiscoverer {
         @Override
         protected List<File> doInBackground(Void...params) {
             try {
+                // Start progress
+                publishProgress(new File[]{});
+
                 // The columns to read
                 final String[] projection = {MediaStore.MediaColumns.DATA};
 
@@ -131,11 +146,23 @@ public class MediaPictureDiscoverer {
          * {@inheritDoc}
          */
         @Override
+        protected void onProgressUpdate(File... values) {
+            if (mFinalCallback != null) {
+                if (values == null || values.length == 0) {
+                    mFinalCallback.onStartMediaDiscovered(mUserRequest);
+                } else {
+                    mFinalCallback.onPartialMediaDiscovered(values, mUserRequest);
+                }
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         protected void onPostExecute(List<File> result) {
             if (mFinalCallback != null) {
-                mFinalCallback.onMediaDiscovered(
-                        MediaPictureDiscoverer.this, result.toArray(new File[result.size()]),
-                        mUserRequest);
+                mFinalCallback.onEndMediaDiscovered(result.toArray(new File[result.size()]), mUserRequest);
             }
         }
 
@@ -146,8 +173,7 @@ public class MediaPictureDiscoverer {
         protected void onCancelled(List<File> result) {
             // Nothing found
             if (mFinalCallback != null) {
-                mFinalCallback.onMediaDiscovered(
-                        MediaPictureDiscoverer.this, new File[]{}, mUserRequest);
+                mFinalCallback.onEndMediaDiscovered(new File[]{}, mUserRequest);
             }
         }
 
@@ -163,9 +189,11 @@ public class MediaPictureDiscoverer {
         private List<File> getPictures(
                 Uri uri, String[] projection, String where, String[] args) {
             List<File> paths = new ArrayList<File>();
+            List<File> partial = new ArrayList<File>();
             Cursor c = mFinalContentResolver.query(uri, projection, where, args, null);
             if (c != null) {
                 try {
+                    int i = 0;
                     while (c.moveToNext()) {
                         // Only valid files (those i can read)
                         String p = c.getString(0);
@@ -178,9 +206,17 @@ public class MediaPictureDiscoverer {
                                 // Check if is a valid filter
                                 if (matchFilter(f)) {
                                     paths.add(f);
+                                    partial.add(f);
                                 }
                             }
                         }
+
+                        // Publish partial data
+                        if (i % 5 == 0 && partial.size() > 0){
+                            publishProgress(partial.toArray(new File[partial.size()]));
+                            partial.clear();
+                        }
+                        i++;
                     }
                 } finally {
                     try {

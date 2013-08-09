@@ -284,11 +284,38 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      * {@inheritDoc}
      */
     @Override
+    public void onStartMediaDiscovered(boolean userRequest) {
+        // No images but thread should start here to received partial data
+        if (mBackgroundTask != null) {
+            mBackgroundTask.setAvailableImages(new File[]{});
+            if (!mBackgroundTask.mRun) {
+                mBackgroundTask.start();
+            } else {
+                synchronized (mBackgroundTask.mLoadSync) {
+                    mBackgroundTask.mLoadSync.notify();
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPartialMediaDiscovered(File[] images, boolean userRequest) {
+        if (mBackgroundTask != null) {
+            mBackgroundTask.setPartialAvailableImages(images);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("boxing")
-    public void onMediaDiscovered(MediaPictureDiscoverer mpc, File[] images, boolean userRequest) {
-        // Now we have the paths of the images to use. Start a image loader
-        // thread to load pictures in background
-        // Only if the task is created
+    public void onEndMediaDiscovered(File[] images, boolean userRequest) {
+        // Now we have the paths of the images to use. Notify to the thread to
+        // load pictures in background
         if (mBackgroundTask != null) {
             mBackgroundTask.setAvailableImages(images);
             if (!mBackgroundTask.mRun) {
@@ -298,7 +325,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     mBackgroundTask.mLoadSync.notify();
                 }
             }
-    
+
             // Audit
             int found = images == null ? 0 : images.length;
             Log.d(TAG, "Media picture data reloaded: " + found + " images found.");
@@ -364,6 +391,18 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 mNewImages.clear();
                 mNewImages.addAll(Arrays.asList(images));
                 mUsedImages.clear();
+                mEmpty = images.length == 0;
+            }
+        }
+
+        /**
+         * Method that adds some available images.
+         *
+         * @param images The current images
+         */
+        public void setPartialAvailableImages(File[] images) {
+            synchronized (mLoadSync) {
+                mNewImages.addAll(Arrays.asList(images));
                 mEmpty = images.length == 0;
             }
         }
