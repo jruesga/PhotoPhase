@@ -90,12 +90,8 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                                   if (album == null || album.getPath().compareTo(path.getAbsolutePath()) != 0) {
                                       if (album != null) {
                                           mAlbums.add(album);
+                                          mOriginalAlbums.add((Album)album.clone());
                                           this.publishProgress(album);
-                                          try {
-                                              Thread.sleep(50L);
-                                          } catch (InterruptedException e) {
-                                              // Ignore
-                                          }
                                       }
                                       album = new Album();
                                       album.setPath(path.getAbsolutePath());
@@ -109,6 +105,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                                   if (isSelectedItem(f.getAbsolutePath())) {
                                       album.getSelectedItems().add(f.getAbsolutePath());
                                   }
+                                  Thread.yield();
                             }
                         }
                     }
@@ -116,6 +113,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                     // Add the last album
                     if (album != null) {
                         mAlbums.add(album);
+                        mOriginalAlbums.add((Album)album.clone());
                         this.publishProgress(album);
                     }
 
@@ -123,7 +121,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                     c.close();
                 }
             }
-
+//this.publishProgress(mAlbums.toArray(new Album[mAlbums.size()]));
             return null;
         }
 
@@ -134,7 +132,6 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         protected void onProgressUpdate(Album... values) {
             for (Album album : values) {
                 addAlbum(album);
-                mOriginalAlbums.add((Album)album.clone());
             }
         }
     };
