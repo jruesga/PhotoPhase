@@ -86,7 +86,7 @@ public final class AndroidHelper {
      */
     public static int calculateStatusBarHeight(Context context) {
         // CyanogenMod specific featured (DO NOT RELAY IN INTERNAL VARS)
-        boolean hiddenStatusBar = 
+        boolean hiddenStatusBar =
                 Settings.System.getInt(context.getContentResolver(), "expanded_desktop_state", 0) == 1 &&
                 Settings.System.getInt(context.getContentResolver(), "expanded_desktop_style", 0) == 2;
         int result = 0;

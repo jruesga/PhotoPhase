@@ -479,7 +479,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mOverlay = new ColorShape(mContext, vertex, Colors.getOverlay());
 
         // Set the viewport and the fustrum to use
-        GLES20.glViewport(0, 0, width, mMeasuredHeight);
+        GLES20.glViewport(0, -statusBarHeight, width, height);
         GLESUtil.glesCheckError("glViewport");
         Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
 
