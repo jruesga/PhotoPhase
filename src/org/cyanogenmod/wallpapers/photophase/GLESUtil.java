@@ -38,7 +38,7 @@ public final class GLESUtil {
 
     private static final String TAG = "GLESUtil";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /**
      * A helper class to deal with OpenGL float colors.
@@ -201,8 +201,7 @@ public final class GLESUtil {
         int shader = GLES20.glCreateShader(type);
         GLESUtil.glesCheckError("glCreateShader");
         if (shader <= 0) {
-            String msg = "Cannot create a shader";
-            if (DEBUG) Log.e(TAG, msg);
+            Log.e(TAG, "Cannot create a shader");
             return 0;
         }
         GLES20.glShaderSource(shader, src);
@@ -316,8 +315,7 @@ public final class GLESUtil {
             // Decode and associate the bitmap (invert the desired dimensions)
             bitmap = BitmapUtils.decodeBitmap(file, dimensions.height(), dimensions.width());
             if (bitmap == null) {
-                String msg = "Failed to decode the file bitmap";
-                if (DEBUG) Log.e(TAG, msg);
+                Log.e(TAG, "Failed to decode the file bitmap");
                 return new GLESTextureInfo();
             }
 
@@ -328,7 +326,7 @@ public final class GLESUtil {
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from file: " + file.getAbsolutePath();
-            if (DEBUG) Log.e(TAG, msg, e);
+            Log.e(TAG, msg, e);
             return new GLESTextureInfo();
 
         } finally {
@@ -359,7 +357,7 @@ public final class GLESUtil {
             bitmap = BitmapUtils.decodeBitmap(raw);
             if (bitmap == null) {
                 String msg = "Failed to decode the resource bitmap";
-                if (DEBUG) Log.e(TAG, msg);
+                Log.e(TAG, msg);
                 return new GLESTextureInfo();
             }
 
@@ -369,7 +367,7 @@ public final class GLESUtil {
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from resource: " + resourceId;
-            if (DEBUG) Log.e(TAG, msg, e);
+            Log.e(TAG, msg, e);
             return new GLESTextureInfo();
 
         } finally {
@@ -408,8 +406,7 @@ public final class GLESUtil {
         GLES20.glGenTextures(num, textureNames, 0);
         GLESUtil.glesCheckError("glGenTextures");
         if (textureNames[0] <= 0 || (effect != null && textureNames[1] <= 0)) {
-            String msg = "Failed to generate a valid texture";
-            if (DEBUG) Log.e(TAG, msg);
+            Log.e(TAG, "Failed to generate a valid texture");
             return new GLESTextureInfo();
         }
 
@@ -430,8 +427,7 @@ public final class GLESUtil {
         // Load the texture
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
         if (!GLES20.glIsTexture(textureNames[0])) {
-            String msg = "Failed to load a valid texture";
-            if (DEBUG) Log.e(TAG, msg);
+            Log.e(TAG, "Failed to load a valid texture");
             return new GLESTextureInfo();
         }
 
@@ -466,10 +462,8 @@ public final class GLESUtil {
     public static boolean glesCheckError(String func) {
         int error = GLES20.glGetError();
         if (error != 0) {
-            if (DEBUG) {
-                Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
-                        GLUtils.getEGLErrorString(error));
-            }
+            Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
+                    GLUtils.getEGLErrorString(error));
             return true;
         }
         return false;
@@ -509,8 +503,7 @@ public final class GLESUtil {
             }
             return sb.toString();
         } catch (Exception e) {
-            String msg = "Failed to read the resource " + resId;
-            if (DEBUG) Log.e(TAG, msg);
+            Log.e(TAG, "Failed to read the resource " + resId);
             return null;
         } finally {
             try {

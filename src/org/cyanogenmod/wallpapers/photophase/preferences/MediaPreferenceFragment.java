@@ -36,7 +36,7 @@ public class MediaPreferenceFragment extends PreferenceFragment {
 
     private static final String TAG = "MediaPreferenceFragment";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     ListPreference mRefreshInterval;
     Preference mRefreshNow;

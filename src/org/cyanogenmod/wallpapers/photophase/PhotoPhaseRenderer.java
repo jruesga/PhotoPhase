@@ -53,7 +53,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "PhotoPhaseRenderer";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private final long mInstance;
     private static long sInstances;

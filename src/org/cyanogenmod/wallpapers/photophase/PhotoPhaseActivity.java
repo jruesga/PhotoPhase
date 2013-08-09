@@ -40,7 +40,7 @@ public class PhotoPhaseActivity extends Activity implements OnTouchListener {
 
     private static final String TAG = "PhotoPhaseActivity";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private GLSurfaceView mGLSurfaceView;
     private PhotoPhaseRenderer mRenderer;

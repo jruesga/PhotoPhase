@@ -42,7 +42,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private static final String TAG = "GeneralPreferenceFragment";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private SeekBarProgressPreference mWallpaperDim;
     private ColorPickerPreference mBackgroundColor;

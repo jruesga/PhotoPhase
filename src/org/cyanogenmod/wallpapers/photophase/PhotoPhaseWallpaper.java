@@ -41,7 +41,7 @@ public class PhotoPhaseWallpaper
 
     private static final String TAG = "PhotoPhaseWallpaper";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private List<PhotoPhaseRenderer> mRenderers;
     private PhotoPhaseWallpaperEngine mEngine;
