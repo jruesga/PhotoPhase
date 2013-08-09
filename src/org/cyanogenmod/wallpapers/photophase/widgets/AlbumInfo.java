@@ -265,8 +265,9 @@ public class AlbumInfo extends RelativeLayout
         if (mIcon != null) {
             Resources res = getContext().getResources();
 
-            String count = String.valueOf(mAlbum.getSelectedItems().size());
-            if (mAlbum.getItems().size() > 99) {
+            int selectedItems = mAlbum.getSelectedItems().size();
+            String count = String.valueOf(selectedItems);
+            if (selectedItems > 99) {
                 count += "+";
             }
             mSelectedItems.setText(count);
