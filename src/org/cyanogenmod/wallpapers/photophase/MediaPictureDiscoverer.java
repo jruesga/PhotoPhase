@@ -173,7 +173,9 @@ public class MediaPictureDiscoverer {
         protected void onCancelled(List<File> result) {
             // Nothing found
             if (mFinalCallback != null) {
-                mFinalCallback.onEndMediaDiscovered(new File[]{}, mUserRequest);
+                // Overwrite the user request setting. If the task is cancelled then
+                // there is no notification to send to the user
+                mFinalCallback.onEndMediaDiscovered(new File[]{}, false);
             }
         }
 
