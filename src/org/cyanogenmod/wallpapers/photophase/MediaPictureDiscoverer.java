@@ -226,14 +226,13 @@ public class MediaPictureDiscoverer {
          */
         private void catalog(File f) {
             File parent = f.getParentFile();
-            String album = parent.getName();
             String albumPath = parent.getAbsolutePath();
 
             // Add to new albums
-            mNewAlbums.add(album);
+            mNewAlbums.add(albumPath);
 
             // Is a new album?
-            if (!mLastAlbums.contains(album)) {
+            if (!mLastAlbums.contains(albumPath)) {
                 // Is in the filter?
                 if (mIsAutoSelectNewAlbums && !mFilter.contains(albumPath)) {
                     // Add the album to the selected filter
