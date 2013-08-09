@@ -214,7 +214,7 @@ public class MediaPictureDiscoverer {
                         }
 
                         // Publish partial data
-                        if (i % 5 == 0 && partial.size() > 0){
+                        if (i % 5 == 0 && partial.size() > 0) {
                             publishProgress(partial.toArray(new File[partial.size()]));
                             partial.clear();
                         }

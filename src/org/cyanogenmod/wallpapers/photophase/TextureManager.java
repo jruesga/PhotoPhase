@@ -57,6 +57,12 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
     final GLESSurfaceDispatcher mDispatcher;
 
+    // The status of the texture manager:
+    // 0 - Loading
+    // 1 - Loaded
+    // 2 - Error
+    private byte mStatus;
+
     /**
      * A private runnable that will run in the GLThread
      */
@@ -286,6 +292,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     @Override
     public void onStartMediaDiscovered(boolean userRequest) {
         // No images but thread should start here to received partial data
+        this.mStatus = 0; // Loading
         if (mBackgroundTask != null) {
             mBackgroundTask.setAvailableImages(new File[]{});
             if (!mBackgroundTask.mRun) {
@@ -318,13 +325,10 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         // load pictures in background
         if (mBackgroundTask != null) {
             mBackgroundTask.setAvailableImages(images);
-            if (!mBackgroundTask.mRun) {
-                mBackgroundTask.start();
-            } else {
-                synchronized (mBackgroundTask.mLoadSync) {
-                    mBackgroundTask.mLoadSync.notify();
-                }
+            synchronized (mBackgroundTask.mLoadSync) {
+                mBackgroundTask.mLoadSync.notify();
             }
+            this.mStatus = 1; // Loaded
 
             // Audit
             int found = images == null ? 0 : images.length;
@@ -335,6 +339,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                                 R.plurals.msg_media_reload_complete, found).toString(), found);
                 Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
             }
+        } else {
+            this.mStatus = 2; // Error
         }
     }
 
@@ -359,6 +365,25 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         mBackgroundTask = null;
     }
 
+
+    /**
+     * Returns the status of the texture manager
+     *
+     * @return byte The status
+     */
+    public byte getStatus() {
+        return mStatus;
+    }
+
+    /**
+     * Returns if the texture manager is empty
+     *
+     * @return boolean If the texture manager is empty
+     */
+    public boolean isEmpty() {
+        return mBackgroundTask != null && mBackgroundTask.mEmpty;
+    }
+
     /**
      * An internal thread to load pictures in background
      */
@@ -368,7 +393,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         boolean mRun;
         boolean mTaskPaused;
 
-        private boolean mEmpty;
+        /*package*/ boolean mEmpty;
         private final List<File> mNewImages;
         private final List<File> mUsedImages;
 

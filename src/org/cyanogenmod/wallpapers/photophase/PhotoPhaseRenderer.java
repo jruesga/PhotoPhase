@@ -41,6 +41,7 @@ import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.preferences.TouchAction;
 import org.cyanogenmod.wallpapers.photophase.shapes.ColorShape;
+import org.cyanogenmod.wallpapers.photophase.shapes.OopsShape;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -66,6 +67,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
     /*package*/ PhotoPhaseWallpaperWorld mWorld;
     /*package*/ ColorShape mOverlay;
+    /*package*/ OopsShape mOopsShape;
 
     /*package*/ long mLastRunningTransition;
 
@@ -381,9 +383,11 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             if (mWorld != null) mWorld.recycle();
             if (mTextureManager != null) mTextureManager.recycle();
             if (mOverlay != null) mOverlay.recycle();
+            if (mOopsShape != null) mOopsShape.recycle();
             mWorld = null;
             mTextureManager = null;
             mOverlay = null;
+            mOopsShape = null;
         }
     }
 
@@ -469,7 +473,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
         mWorld = new PhotoPhaseWallpaperWorld(mContext, mTextureManager);
 
-        // Create all the other shapes
+        // Create the overlay shape
         final float[] vertex = {
                                 -1.0f, -1.0f,
                                  1.0f, -1.0f,
@@ -478,7 +482,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                                };
         mOverlay = new ColorShape(mContext, vertex, Colors.getOverlay());
 
-        // Set the viewport and the fustrum to use
+        // Create the Oops shape
+        mOopsShape = new OopsShape(mContext, R.string.no_pictures_oops_msg);
+
+        // Set the viewport and the fustrum
         GLES20.glViewport(0, -statusBarHeight, width, height);
         GLESUtil.glesCheckError("glViewport");
         Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
@@ -497,32 +504,42 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 glUnused) {
         synchronized (mDrawing) {
-            // Draw the background
-            drawBackground();
+            // Set the projection, view and model
+            Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
-            if (mWorld != null) {
-                // Set the projection, view and model
-                Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-                Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
-
-                // Now draw the world (all the photo frames with effects)
-                mWorld.draw(mMVPMatrix);
-
-                // Check if we have some pending transition or transition has exceed its timeout
-                if (!mWorld.hasRunningTransition() || isTransitionTimeout()) {
+            if (mTextureManager != null) {
+                if (mTextureManager.getStatus() == 1 && mTextureManager.isEmpty()) {
+                    // Advise the user and stop
+                    drawOops();
                     mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-                    // Now start a delayed thread to generate the next effect
-                    mHandler.removeCallbacks(mTransitionThread);
-                    mWorld.deselectTransition(mMVPMatrix);
-                    mLastRunningTransition = 0;
-                    mHandler.postDelayed(mTransitionThread,
-                            Preferences.General.Transitions.getTransitionInterval());
+                } else {
+                    // Draw the background
+                    drawBackground();
+
+                    if (mWorld != null) {
+                        // Now draw the world (all the photo frames with effects)
+                        mWorld.draw(mMVPMatrix);
+
+                        // Check if we have some pending transition or transition has exceed its timeout
+                        if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
+                            mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+                            // Now start a delayed thread to generate the next effect
+                            mHandler.removeCallbacks(mTransitionThread);
+                            mWorld.deselectTransition(mMVPMatrix);
+                            mLastRunningTransition = 0;
+                            mHandler.postDelayed(mTransitionThread,
+                                    Preferences.General.Transitions.getTransitionInterval());
+                        }
+                    }
+
+                    // Draw the overlay
+                    drawOverlay();
                 }
             }
 
-            // Draw the overlay
-            drawOverlay();
         }
     }
 
@@ -531,7 +548,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      *
      * @return boolean if the transition has exceed the timeout
      */
-    private boolean isTransitionTimeout() {
+    private boolean firedTransitionTimeout() {
         long now = System.currentTimeMillis();
         long diff = now - mLastRunningTransition;
         return mLastRunningTransition != 0 && diff > Transition.MAX_TRANSTION_TIME;
@@ -555,6 +572,15 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (mOverlay != null) {
             mOverlay.setAlpha(Preferences.General.getWallpaperDim() / 100.0f);
             mOverlay.draw(mMVPMatrix);
+        }
+    }
+
+    /**
+     * Method that draws the oops message
+     */
+    private void drawOops() {
+        if (mOopsShape != null) {
+            mOopsShape.draw(mMVPMatrix);
         }
     }
 

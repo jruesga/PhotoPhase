@@ -95,7 +95,7 @@ public final class GLESUtil {
         /**
          * Constructor of <code>GLColor</code> from ARGB.
          *
-         * @param argb An #AARRGGBB string
+         * @param argb An #AARRGGBB number
          */
         public GLColor(int argb) {
             this.a = Color.alpha(argb) / MAX_COLOR;

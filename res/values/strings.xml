@@ -23,6 +23,9 @@
     <!-- The app description -->
     <string name="app_description">PhotoPhase Live Wallpaper</string>
 
+    <!-- No images message -->
+    <string name="no_pictures_oops_msg">Oops, no pictures.</string>
+
     <!-- Menus -->
     <string name="mnu_ok" translatable="false">@android:string/ok</string>
     <string name="mnu_restore">Restore</string>
