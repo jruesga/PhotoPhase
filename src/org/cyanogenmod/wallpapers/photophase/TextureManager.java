@@ -415,7 +415,18 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             synchronized (mLoadSync) {
                 mNewImages.clear();
                 mNewImages.addAll(Arrays.asList(images));
-                mUsedImages.clear();
+
+                // Retain used images
+                int count = mUsedImages.size() - 1;
+                for (int i = count; i >= 0; i--) {
+                    File image = mUsedImages.get(i);
+                    if (!mNewImages.contains(image)) {
+                        mUsedImages.remove(image);
+                    } else {
+                        mNewImages.remove(image);
+                    }
+                }
+
                 mEmpty = images.length == 0;
             }
         }
