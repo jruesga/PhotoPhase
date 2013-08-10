@@ -50,9 +50,9 @@ public class Utils {
     public static RectF rectFromVertex(float[] vertex) {
         RectF rect = new RectF();
         rect.left = vertex[0];
-        rect.top = vertex[1];
+        rect.top = vertex[7];
         rect.right = vertex[6];
-        rect.bottom = vertex[7];
+        rect.bottom = vertex[1];
         return rect;
     }
 }
