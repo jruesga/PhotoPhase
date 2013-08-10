@@ -17,6 +17,7 @@
 package org.cyanogenmod.wallpapers.photophase.shapes;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -51,12 +52,18 @@ public class OopsShape implements DrawableShape {
                                                   };
 
     // The vertex position coordinates
-    private static final float[] VERTEX_COORDS = {
-                                                   -0.5f, -0.5f,
-                                                    0.5f, -0.5f,
-                                                   -0.5f,  0.5f,
-                                                    0.5f,  0.5f
-                                                 };
+    private static final float[] VERTEX_COORDS_PORTRAIT = {
+                                                           -0.75f, -0.5f,
+                                                            0.75f, -0.5f,
+                                                           -0.75f,  0.5f,
+                                                            0.75f,  0.5f
+                                                         };
+    private static final float[] VERTEX_COORDS_LANDSCAPE = {
+                                                            -0.5f, -0.75f,
+                                                             0.5f, -0.75f,
+                                                            -0.5f,  0.75f,
+                                                             0.5f,  0.75f
+                                                          };
 
     private FloatBuffer mPositionBuffer;
     private FloatBuffer mTextureBuffer;
@@ -80,12 +87,18 @@ public class OopsShape implements DrawableShape {
      */
     public OopsShape(Context ctx, int resourceMessageId) {
         super();
+        
+        int orientation = ctx.getResources().getConfiguration().orientation;
+        float[] vertex = VERTEX_COORDS_PORTRAIT;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            vertex = VERTEX_COORDS_LANDSCAPE;
+        }
 
         // Load the buffers
-        ByteBuffer bb1 = ByteBuffer.allocateDirect(VERTEX_COORDS.length * 4); // (# of coordinate values * 4 bytes per float)
+        ByteBuffer bb1 = ByteBuffer.allocateDirect(vertex.length * 4); // (# of coordinate values * 4 bytes per float)
         bb1.order(ByteOrder.nativeOrder());
         mPositionBuffer = bb1.asFloatBuffer();
-        mPositionBuffer.put(VERTEX_COORDS);
+        mPositionBuffer.put(vertex);
         mPositionBuffer.position(0);
         // -
         ByteBuffer bb2 = ByteBuffer.allocateDirect(TEXTURE_COORDS.length * 4); // (# of coordinate values * 4 bytes per float)
@@ -258,7 +271,7 @@ public class OopsShape implements DrawableShape {
         Typeface font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Roboto-Bold.ttf");
         paint.setTypeface(font);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(48.0f);
+        paint.setTextSize(24.0f);
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
         Bitmap src = mOopsImageTexture.bitmap;
