@@ -20,7 +20,6 @@
     </style>
 
     <style name="PhotoPhase.TextAppearance">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/text_color</item>
     </style>
 
@@ -50,7 +49,6 @@
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/bg_notification</item>
         <item name="android:textSize">@dimen/notification_text_size</item>
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/notification_text_color</item>
     </style>
@@ -61,7 +59,6 @@
     <style name="PhotoPhase.Album.Title">
         <item name="android:background">@null</item>
         <item name="android:textSize">@dimen/secondary_text_size</item>
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_color</item>
         <item name="android:rotation">-90</item>

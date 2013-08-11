@@ -21,7 +21,7 @@
 
     <original-package android:name="org.cyanogenmod.wallpapers.photophase" />
 
-    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="18" />
 
     <uses-feature android:name="android.software.live_wallpaper" android:required="true" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />

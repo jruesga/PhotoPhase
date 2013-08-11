@@ -87,7 +87,7 @@ public class OopsShape implements DrawableShape {
      */
     public OopsShape(Context ctx, int resourceMessageId) {
         super();
-        
+
         int orientation = ctx.getResources().getConfiguration().orientation;
         float[] vertex = VERTEX_COORDS_PORTRAIT;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

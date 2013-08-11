@@ -41,6 +41,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * A view use directly into a dialog. It contains a one {@link ColorPickerView}
  * and two {@link ColorPanelView} (the current color and the new color)
@@ -65,6 +68,8 @@ public class ColorDialogView extends RelativeLayout
     private String mNewLabelText = "New:"; //$NON-NLS-1$
 
     private String mColorLabelText = "Color:"; //$NON-NLS-1$
+
+    private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
     /**
      * Constructor of <code>ColorDialogView</code>
@@ -111,7 +116,7 @@ public class ColorDialogView extends RelativeLayout
         // Create the scrollview over the dialog
         final int dlgMarging = (int)convertDpToPixel(DEFAULT_MARGIN_DP);
         ScrollView sv = new ScrollView(getContext());
-        sv.setId(generateViewId());
+        sv.setId(internalGenerateViewId());
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -121,7 +126,7 @@ public class ColorDialogView extends RelativeLayout
 
         // Now the vertical layout
         LinearLayout ll = new LinearLayout(getContext());
-        ll.setId(generateViewId());
+        ll.setId(internalGenerateViewId());
         lp = new RelativeLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT);
@@ -192,14 +197,14 @@ public class ColorDialogView extends RelativeLayout
                         sb.append(c);
                     }
                 }
-                return sb.toString().toUpperCase();
+                return sb.toString().toUpperCase(Locale.getDefault());
             }
         };
         this.etColor.setFilters(filters);
         this.etColor.addTextChangedListener(this);
 
         LinearLayout ll1 = new LinearLayout(getContext());
-        ll1.setId(generateViewId());
+        ll1.setId(internalGenerateViewId());
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -223,7 +228,7 @@ public class ColorDialogView extends RelativeLayout
     private int createColorPicker(ViewGroup parent, int belowOf) {
         final int dlgMarging = (int)convertDpToPixel(DEFAULT_MARGIN_DP);
         this.mPickerView = new ColorPickerView(getContext());
-        this.mPickerView.setId(generateViewId());
+        this.mPickerView.setId(internalGenerateViewId());
         this.mPickerView.setOnColorChangedListener(this);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
@@ -274,7 +279,7 @@ public class ColorDialogView extends RelativeLayout
         sep1.setTextSize(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP);
 
         LinearLayout ll1 = new LinearLayout(getContext());
-        ll1.setId(generateViewId());
+        ll1.setId(internalGenerateViewId());
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -306,7 +311,7 @@ public class ColorDialogView extends RelativeLayout
         sep2.setTextSize(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP);
 
         LinearLayout ll2 = new LinearLayout(getContext());
-        ll2.setId(generateViewId());
+        ll2.setId(internalGenerateViewId());
         lp = new RelativeLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT, panelHeight);
         lp.setMargins(dlgMarging, 0, dlgMarging, dlgMarging/2);
@@ -489,6 +494,24 @@ public class ColorDialogView extends RelativeLayout
         if (hex.length() == 1) {
             hex = "0" + hex; //$NON-NLS-1$
         }
-        return hex.toUpperCase();
+        return hex.toUpperCase(Locale.getDefault());
+    }
+
+    /**
+     * Generate a value suitable for use in {@link #setId(int)}.
+     * This value will not collide with ID values generated at build time by aapt for R.id.
+     *
+     * @return a generated ID value
+     */
+    private static int internalGenerateViewId() {
+        for (;;) {
+            final int result = sNextGeneratedId.get();
+            // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
+            int newValue = result + 1;
+            if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
+            if (sNextGeneratedId.compareAndSet(result, newValue)) {
+                return result;
+            }
+        }
     }
 }
