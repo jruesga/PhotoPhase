@@ -113,7 +113,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             if (mediaIntervalChanged) {
                 scheduleOrCancelMediaScan();
             }
-            if (recreateWorld) {
+            if (recreateWorld && mWorld != null) {
                 // Recreate the wallpaper world
                 try {
                     mWorld.recreateWorld(mWidth, mMeasuredHeight);
