@@ -279,8 +279,8 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
                     animators.add(ObjectAnimator.ofFloat(v, "y", v.getY(), mTarget.getY()));
 
                     // Update the adjacent
-                    adjacent.x = targetDisposition.x;
-                    adjacent.w += targetDisposition.w;
+                    adjacent.y = targetDisposition.y;
+                    adjacent.h += targetDisposition.h;
                     mDispositions.add(adjacent);
                 }
             }
