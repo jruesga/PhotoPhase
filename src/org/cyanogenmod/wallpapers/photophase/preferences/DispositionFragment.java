@@ -55,7 +55,6 @@ public abstract class DispositionFragment
 
     /*package*/ DispositionView mDispositionView;
 
-    private boolean mRestored;
     private MenuItem mDeleteMenu;
 
     /**
@@ -136,14 +135,14 @@ public abstract class DispositionFragment
         super.onDestroyView();
         if (mDispositionView != null) {
             mDispositionView.removeCallbacks(mRedraw);
-            if (mRestored || mDispositionView.isChanged()) {
+            if (mDispositionView.isChanged()) {
                 saveDispositions(mDispositionView.getDispositions());
             }
         }
 
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-        if (mRestored || mDispositionView.isChanged()) {
+        if (mDispositionView.isChanged()) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
         }
@@ -186,8 +185,7 @@ public abstract class DispositionFragment
      * Method that restores the disposition view to the default state
      */
     private void restoreData() {
-        mDispositionView.setDispositions(getDefaultDispositions(), getCols(), getRows());
-        mRestored = true;
+        mDispositionView.setDispositions(getUserDispositions(), getCols(), getRows());
     }
 
     /**
