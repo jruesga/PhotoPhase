@@ -17,6 +17,7 @@
 package org.cyanogenmod.wallpapers.photophase.widgets;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -64,6 +65,8 @@ public class AlbumPictures extends RelativeLayout
     }
 
     private List<CallbacksListener> mCallbacks;
+
+    private Handler mHandler;
 
     private PicturesView mScroller;
     private LinearLayout mHolder;
@@ -113,6 +116,7 @@ public class AlbumPictures extends RelativeLayout
      */
     private void init() {
         mCallbacks = new ArrayList<AlbumPictures.CallbacksListener>();
+        mHandler = new Handler();
     }
 
     /**
@@ -160,25 +164,32 @@ public class AlbumPictures extends RelativeLayout
         mAlbum = album;
 
         if (mHolder != null) {
-            int pictures = mHolder.getChildCount();
-            if (pictures != album.getItems().size()) {
-                // Recreate the pictures
-                final LayoutInflater inflater = (LayoutInflater) getContext().
-                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                mScroller.cancelTasks();
-                mHolder.removeAllViews();
-                for (final String picture : mAlbum.getItems()) {
-                    View v = createPicture(inflater, picture, isPictureSelected(picture));
-                    mHolder.addView(v);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    int pictures = mHolder.getChildCount();
+                    if (pictures != mAlbum.getItems().size()) {
+                        // Recreate the pictures
+                        final LayoutInflater inflater = (LayoutInflater) getContext().
+                                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        mScroller.cancelTasks();
+                        mHolder.removeAllViews();
+                        for (final String picture : mAlbum.getItems()) {
+                            View v = createPicture(inflater, picture, isPictureSelected(picture));
+                            mHolder.addView(v);
+                            Thread.yield();
+                        }
+                    } else {
+                        int i = 0;
+                        for (final String picture : mAlbum.getItems()) {
+                            View v = mHolder.getChildAt(i);
+                            v.setSelected(isPictureSelected(picture));
+                            Thread.yield();
+                            i++;
+                        }
+                    }
                 }
-            } else {
-                int i = 0;
-                for (final String picture : mAlbum.getItems()) {
-                    View v = mHolder.getChildAt(i);
-                    v.setSelected(isPictureSelected(picture));
-                    i++;
-                }
-            }
+            });
         }
     }
 
