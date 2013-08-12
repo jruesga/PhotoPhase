@@ -16,7 +16,7 @@
 
 package org.cyanogenmod.wallpapers.photophase;
 
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 
 /**
  * An interface that defines an object as able to request textures.

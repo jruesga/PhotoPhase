@@ -28,7 +28,7 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import org.cyanogenmod.wallpapers.photophase.Colors;
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;

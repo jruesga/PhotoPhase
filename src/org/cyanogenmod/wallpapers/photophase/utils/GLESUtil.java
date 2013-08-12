@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cyanogenmod.wallpapers.photophase;
+package org.cyanogenmod.wallpapers.photophase.utils;
 
 import android.content.Context;
 import android.content.res.Resources;

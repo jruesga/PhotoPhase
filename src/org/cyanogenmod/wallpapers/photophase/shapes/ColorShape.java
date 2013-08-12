@@ -19,8 +19,8 @@ package org.cyanogenmod.wallpapers.photophase.shapes;
 import android.content.Context;
 import android.opengl.GLES20;
 
-import org.cyanogenmod.wallpapers.photophase.GLESUtil;
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.R;
 
 import java.nio.ByteBuffer;

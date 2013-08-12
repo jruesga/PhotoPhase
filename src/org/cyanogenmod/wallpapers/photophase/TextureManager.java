@@ -24,7 +24,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.cyanogenmod.wallpapers.photophase.FixedQueue.EmptyQueueException;
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
 import org.cyanogenmod.wallpapers.photophase.effects.Effects;
 

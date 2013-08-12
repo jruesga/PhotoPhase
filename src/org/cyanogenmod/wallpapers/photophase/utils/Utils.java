@@ -39,8 +39,6 @@ public class Utils {
         return dp * (metrics.densityDpi / 160f);
     }
 
-
-
     /**
      * Method that converts a rect from a vertex data
      *

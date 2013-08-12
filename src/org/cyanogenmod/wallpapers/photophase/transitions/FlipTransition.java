@@ -22,7 +22,7 @@ import android.opengl.GLException;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import org.cyanogenmod.wallpapers.photophase.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
 import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.TextureManager;

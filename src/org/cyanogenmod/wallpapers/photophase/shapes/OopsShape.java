@@ -26,9 +26,9 @@ import android.graphics.Typeface;
 import android.opengl.GLES20;
 
 import org.cyanogenmod.wallpapers.photophase.Colors;
-import org.cyanogenmod.wallpapers.photophase.GLESUtil;
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLColor;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.R;
 
 import java.nio.ByteBuffer;

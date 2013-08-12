@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.effects.Effects.EFFECTS;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS;

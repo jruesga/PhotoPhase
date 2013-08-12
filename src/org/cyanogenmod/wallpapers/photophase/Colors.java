@@ -19,7 +19,7 @@ package org.cyanogenmod.wallpapers.photophase;
 import android.content.Context;
 import android.content.res.Resources;
 
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLColor;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLColor;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 
 /**

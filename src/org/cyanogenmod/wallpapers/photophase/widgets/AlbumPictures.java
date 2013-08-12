@@ -68,12 +68,12 @@ public class AlbumPictures extends RelativeLayout
 
     private Handler mHandler;
 
-    private PicturesView mScroller;
-    private LinearLayout mHolder;
+    /*package*/ PicturesView mScroller;
+    /*package*/ LinearLayout mHolder;
     private View mBackButton;
     private View mOverflowButton;
 
-    private Album mAlbum;
+    /*package*/ Album mAlbum;
 
     /**
      * Constructor of <code>AlbumPictures</code>.
@@ -304,7 +304,7 @@ public class AlbumPictures extends RelativeLayout
      * @param picture The path of the picture
      * @param selected If the picture is selected
      */
-    private View createPicture(LayoutInflater inflater, String picture, boolean selected) {
+    /*package*/ View createPicture(LayoutInflater inflater, String picture, boolean selected) {
         final View v = inflater.inflate(R.layout.picture_item, mHolder, false);
         v.setTag(picture);
         v.setSelected(selected);
@@ -318,7 +318,7 @@ public class AlbumPictures extends RelativeLayout
      * @param picture The picture to check
      * @return boolean whether the picture is selected
      */
-    private boolean isPictureSelected(String picture) {
+    /*package*/ boolean isPictureSelected(String picture) {
         for (String item : mAlbum.getSelectedItems()) {
             if (item.compareTo(picture) == 0) {
                 return true;

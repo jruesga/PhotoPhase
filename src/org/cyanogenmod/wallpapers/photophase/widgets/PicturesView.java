@@ -142,7 +142,7 @@ public class PicturesView extends HorizontalScrollView {
     /**
      * Method that load in background all visible and pending pictures
      */
-    private void requestLoadOfPendingPictures() {
+    /*package*/ void requestLoadOfPendingPictures() {
         // Get the visible rect
         Rect r = new Rect();
         getHitRect(r);

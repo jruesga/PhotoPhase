@@ -23,7 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-import org.cyanogenmod.wallpapers.photophase.BitmapUtils;
+import org.cyanogenmod.wallpapers.photophase.utils.BitmapUtils;
 
 import java.io.File;
 

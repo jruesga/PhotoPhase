@@ -23,7 +23,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
-import org.cyanogenmod.wallpapers.photophase.GLESUtil.GLESTextureInfo;
+import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
