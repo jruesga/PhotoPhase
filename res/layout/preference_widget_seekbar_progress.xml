@@ -21,7 +21,8 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:minWidth="50sp"
-    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:layout_margin="5dp"
+    android:textAppearance="?android:attr/textAppearanceSmall"
     android:textColor="?android:attr/textColorSecondary"
     android:layout_gravity="center" />
 

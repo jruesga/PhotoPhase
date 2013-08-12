@@ -54,7 +54,7 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal" />
 
-        <TextView android:id="@+id/summary"
+        <TextView android:id="@+android:id/summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@android:id/title"
