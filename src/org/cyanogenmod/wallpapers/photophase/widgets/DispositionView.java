@@ -140,14 +140,17 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      * Method that sets the disposition to draw on this view
      *
      * @param dispositions The dispositions to draw
+     * @param cols The number of cols
+     * @param rows The number of rows
      */
-    public void setDispositions(List<Disposition> dispositions, int cols, int rows) {
+    public void setDispositions(
+            List<Disposition> dispositions, int cols, int rows) {
         mDispositions = dispositions;
         mCols = cols;
         mRows = rows;
 
         // Remove all the current views and add the new ones
-        recreateDispositions();
+        recreateDispositions(true);
         mResizeFrame.setVisibility(View.GONE);
         mChanged = false;
     }
@@ -182,12 +185,14 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
     /**
      * Method that recreates all the dispositions
+     *
+     * @param animate If the recreate should be done with an animation
      */
-    private void recreateDispositions() {
+    private void recreateDispositions(boolean animate) {
         // Remove all the current views and add the new ones
         removeAllViews();
         for (Disposition disposition : mDispositions) {
-            createFrame(getLocationFromDisposition(disposition), false);
+            createFrame(getLocationFromDisposition(disposition), animate);
         }
         mOldResizeFrameLocation = null;
         mTarget = null;
@@ -469,7 +474,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
         // Compute the removed dispositions
         computeRemovedDispositions(mode);
-        recreateDispositions();
+        recreateDispositions(false);
         computeNewDispositions(mode);
 
         // Finish resize (select the target and create the new dispositions)
