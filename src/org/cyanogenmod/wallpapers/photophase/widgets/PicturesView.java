@@ -19,6 +19,7 @@ package org.cyanogenmod.wallpapers.photophase.widgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.AsyncTask.Status;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -37,6 +38,7 @@ import java.util.Iterator;
 public class PicturesView extends HorizontalScrollView {
 
     private HashMap<File, AsyncPictureLoaderTask> mTasks;
+    private Handler mHandler;
 
     /**
      * Constructor of <code>PicturesView</code>.
@@ -79,6 +81,7 @@ public class PicturesView extends HorizontalScrollView {
      */
     private void init() {
         mTasks = new HashMap<File, AsyncPictureLoaderTask>();
+        mHandler = new Handler();
     }
 
     /**
@@ -111,13 +114,35 @@ public class PicturesView extends HorizontalScrollView {
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        requestLoadOfPendingPictures();
+        // Estimated velocity (in some moment we must obtain some scrolling with an estimated
+        // velocity below of 3)
+        int velocity = Math.abs(l - oldl);
+        if (velocity <= 3) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    requestLoadOfPendingPictures();
+                }
+            });
+        }
+    }
+
+    /**
+     * Method invoked when the view is displayed
+     */
+    public void onShow() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                requestLoadOfPendingPictures();
+            }
+        });
     }
 
     /**
      * Method that load in background all visible and pending pictures
      */
-    public void requestLoadOfPendingPictures() {
+    private void requestLoadOfPendingPictures() {
         // Get the visible rect
         Rect r = new Rect();
         getHitRect(r);

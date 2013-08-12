@@ -283,7 +283,7 @@ public class AlbumPictures extends RelativeLayout
      * Method invoked when the view is displayed
      */
     public void onShow() {
-        mScroller.requestLoadOfPendingPictures();
+        mScroller.onShow();
     }
 
     /**
