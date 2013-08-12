@@ -29,7 +29,7 @@ import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS
  */
 public abstract class Transition {
 
-    public static final long MAX_TRANSTION_TIME = 15000L/* FIXME 1500L*/;
+    public static final long MAX_TRANSTION_TIME = 1500L;
 
     protected final Context mContext;
     private final TextureManager mTextureManager;
