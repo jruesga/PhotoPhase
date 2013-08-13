@@ -30,7 +30,7 @@ public class Album  implements Comparable<Album>, Cloneable {
     private String mPath;
     private String mName;
     private String mDate;
-    private boolean selected;
+    private boolean mSelected;
     private List<String> mItems;
     private List<String> mSelectedItems;
 
@@ -67,11 +67,11 @@ public class Album  implements Comparable<Album>, Cloneable {
     }
 
     public boolean isSelected() {
-        return selected;
+        return mSelected;
     }
 
     public void setSelected(boolean selected) {
-        this.selected = selected;
+        this.mSelected = selected;
     }
 
     public List<String> getItems() {
@@ -104,6 +104,7 @@ public class Album  implements Comparable<Album>, Cloneable {
         album.mDate = mDate;
         album.mItems = new ArrayList<String>(mItems);
         album.mSelectedItems = new ArrayList<String>(mSelectedItems);
+        album.mSelected = mSelected;
         return album;
     }
 }
