@@ -70,7 +70,7 @@ public class CardLayout extends LinearLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (isHardwareAccelerated()) {
+        if (!isHardwareAccelerated()) {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
     }
