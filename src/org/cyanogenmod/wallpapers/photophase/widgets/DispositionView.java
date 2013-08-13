@@ -327,6 +327,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         removeView(mTarget);
         mDispositions.remove(target);
         Collections.sort(mDispositions);
+        mChanged = true;
 
         // Clean status
         mOldResizeFrameLocation = null;
