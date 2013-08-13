@@ -111,6 +111,9 @@ public class MediaPictureDiscoverer {
                 // Start progress
                 publishProgress(new File[]{});
 
+                // If no filters then do search for pictures
+                if (mFilter.isEmpty()) return new ArrayList<File>();
+
                 // The columns to read
                 final String[] projection = {MediaStore.MediaColumns.DATA};
 

@@ -33,6 +33,7 @@
     <string name="mnu_settings">Settings</string>
     <string name="mnu_select_all">Select all</string>
     <string name="mnu_deselect_all">Deselect all</string>
+    <string name="mnu_invert_all">Invert all</string>
     <string name="mnu_invert_selection">Invert selection</string>
     <string name="mnu_select_album">Select album</string>
     <string name="mnu_deselect_album">Deselect album</string>

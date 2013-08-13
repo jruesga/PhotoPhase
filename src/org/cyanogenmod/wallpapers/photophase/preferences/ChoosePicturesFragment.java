@@ -121,7 +121,6 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                     c.close();
                 }
             }
-//this.publishProgress(mAlbums.toArray(new Album[mAlbums.size()]));
             return null;
         }
 
@@ -255,6 +254,9 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             case R.id.mnu_restore:
                 restoreData();
                 return true;
+            case R.id.mnu_invert_all:
+                invertAll();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -271,6 +273,36 @@ public class ChoosePicturesFragment extends PreferenceFragment {
             mAlbums.add((Album)album.clone());
         }
 
+        // Update all the views
+        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+        updateAll();
+    }
+
+    /**
+     * Method that inverts the selection of all the albums
+     */
+    private void invertAll() {
+        // Restore and the albums the selection
+        mSelectedAlbums = new HashSet<String>();
+        for (Album album : mAlbums) {
+            album.setSelected(!album.isSelected());
+            album.setSelectedItems(new ArrayList<String>());
+            if (album.isSelected()) {
+                mSelectedAlbums.add(album.getPath());
+            } else {
+                mSelectedAlbums.addAll(album.getSelectedItems());
+            }
+        }
+
+        // Update all the views
+        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+        updateAll();
+    }
+
+    /**
+     * Method that updates the current state of all the albums
+     */
+    private void updateAll() {
         // Update every view (albums and views should have the same size)
         int count = mAlbumsPanel.getChildCount();
         for (int i = 0; i < count; i++) {
