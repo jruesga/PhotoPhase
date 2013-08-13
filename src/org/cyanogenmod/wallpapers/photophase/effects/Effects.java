@@ -36,6 +36,10 @@ public class Effects {
      */
     public enum EFFECTS {
         /**
+         * No effect
+         */
+        NO_EFFECT,
+        /**
          * @see EffectFactory#EFFECT_AUTOFIX
          */
         AUTOFIX,

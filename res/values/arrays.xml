@@ -77,6 +77,7 @@
     <string-array name="transitions_default" translatable="false"/>
 
     <string-array name="effects_labels" translatable="false">
+    	<item>@string/effects_noeffect</item>
         <item>@string/effects_autofix</item>
         <item>@string/effects_crossprocess</item>
         <item>@string/effects_documentary</item>
@@ -110,8 +111,11 @@
         <item>12</item>
         <item>13</item>
         <item>14</item>
+        <item>15</item>
     </string-array>
 
-    <string-array name="effects_default" translatable="false"/>
+    <string-array name="effects_default" translatable="false">
+        <item>0</item>
+    </string-array>
 
 </resources>

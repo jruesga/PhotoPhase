@@ -116,6 +116,7 @@
     <string name="transitions_flip">Flip</string>
 
     <!-- Effects -->
+    <string name="effects_noeffect">No effect</string>
     <string name="effects_autofix">Autofix</string>
     <string name="effects_crossprocess">Cross process</string>
     <string name="effects_documentary">Documentary</string>

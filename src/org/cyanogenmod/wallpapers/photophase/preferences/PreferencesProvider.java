@@ -275,7 +275,9 @@ public final class PreferencesProvider {
                  * @return EFFECTS[] The effects to apply to the wallpaper's pictures
                  */
                 public static EFFECTS[] getEffectTypes() {
-                    Set<String> set = getStringSet("ui_effect_types", new HashSet<String>());
+                    Set<String> defaults = new HashSet<String>();
+                    defaults.add(String.valueOf(EFFECTS.NO_EFFECT.ordinal()));
+                    Set<String> set = getStringSet("ui_effect_types", defaults);
                     String[] values = set.toArray(new String[set.size()]);
                     int count = values.length;
                     EFFECTS[] effects = new EFFECTS[count];
