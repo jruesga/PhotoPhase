@@ -166,6 +166,10 @@ public final class GLESUtil {
          * The path to the texture
          */
         public File path;
+        /**
+         * The effect to apply
+         */
+        public Effect effect;
     }
 
     /**
@@ -436,7 +440,6 @@ public final class GLESUtil {
         if (effect != null) {
             // Apply the effect
             effect.apply(textureNames[0], screenDim.width(), screenDim.height(), textureNames[1]);
-            effect.release();
             handle = textureNames[1];
 
             // Delete the unused texture

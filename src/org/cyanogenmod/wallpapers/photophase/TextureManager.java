@@ -17,13 +17,18 @@
 package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.media.ThumbnailUtils;
+import android.media.effect.Effect;
 import android.media.effect.EffectContext;
 import android.opengl.GLES20;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.cyanogenmod.wallpapers.photophase.FixedQueue.EmptyQueueException;
+import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
@@ -79,24 +84,30 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         public void run() {
             try {
                 // If we have bitmap to reused then pick up from the recycled list
+                Effect effect = Effects.getNextEffect(mEffectContext);
                 if (sRecycledBitmaps.size() > 0) {
                     // Bind to the GLES context
                     GLESTextureInfo oldTextureInfo = sRecycledBitmaps.remove(0);
-                    ti = GLESUtil.loadTexture(oldTextureInfo.bitmap,
-                            Effects.getNextEffect(mEffectContext), mScreenDimensions);
+                    ti = GLESUtil.loadTexture(oldTextureInfo.bitmap, effect, mScreenDimensions);
                     ti.path = oldTextureInfo.path;
                     oldTextureInfo.bitmap = null;
+                    if (effect != null) {
+                        effect.release();
+                    }
                 } else {
-                    // Load and bind to the GLES context
-                    ti = GLESUtil.loadTexture(mImage, mDimensions,
-                            Effects.getNextEffect(mEffectContext), mScreenDimensions, false);
+                    // Load and bind to the GLES context. The effect is applied when the image
+                    // is associated to the destination target
+                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
+                    ti.effect = effect;
                 }
 
                 synchronized (mSync) {
                     // Notify the new images to all pending frames
                     if (mPendingRequests.size() > 0) {
                         // Invalid textures are also reported, so requestor can handle it
-                        mPendingRequests.remove(0).setTextureHandle(ti);
+                        TextureRequestor requestor = mPendingRequests.remove(0);
+                        fixAspectRatio(requestor, ti);
+                        requestor.setTextureHandle(ti);
                     } else {
                         // Add to the queue (only valid textures)
                         if (ti.handle > 0) {
@@ -216,7 +227,9 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     public void request(TextureRequestor requestor) {
         synchronized (mSync) {
             try {
-                requestor.setTextureHandle(mQueue.remove());
+                GLESTextureInfo ti = mQueue.remove();
+                fixAspectRatio(requestor, ti);
+                requestor.setTextureHandle(ti);
             } catch (EmptyQueueException eqex) {
                 // Add to queue of pending request to be notified when
                 // we have a new bitmap in the queue
@@ -383,6 +396,48 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      */
     public boolean isEmpty() {
         return mBackgroundTask != null && mBackgroundTask.mEmpty;
+    }
+
+    /**
+     * Methdo that fix the aspect ratio of a image to fit the destination target
+     *
+     * @param request The requestor target
+     * @param ti The original texture information
+     * @param effect The effect to apply to the destination picture
+     */
+    /*package*/ void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
+        // Check if we have to apply any correction to the image
+        if (Preferences.General.isFixAspectRatio()) {
+            // Transform requestor dimensions to screen dimensions
+            RectF dimens = requestor.getRequestorDimensions();
+            Rect pixels = new Rect(
+                                0,
+                                0,
+                                (int)(mScreenDimensions.width() * dimens.width() / 2),
+                                (int)(mScreenDimensions.height() * dimens.height() / 2));
+
+            // Create a thumbnail of the image
+            Bitmap thumb = ThumbnailUtils.extractThumbnail(
+                                    ti.bitmap,
+                                    (int)pixels.width(),
+                                    (int)pixels.height(),
+                                    ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+            GLESTextureInfo dst = GLESUtil.loadTexture(
+                        thumb, ti == null ? null : ti.effect, mScreenDimensions);
+
+            // Destroy references
+            int[] textures = new int[]{ti.handle};
+            GLES20.glDeleteTextures(1, textures, 0);
+            GLESUtil.glesCheckError("glDeleteTextures");
+            if (ti != null && ti.effect != null) {
+                ti.effect.release();
+            }
+
+            // Swap references
+            ti.bitmap = dst.bitmap;
+            ti.handle = dst.handle;
+            ti.effect = null;
+        }
     }
 
     /**

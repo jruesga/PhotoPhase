@@ -19,11 +19,11 @@ package org.cyanogenmod.wallpapers.photophase.preferences;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
@@ -48,7 +48,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private SeekBarProgressPreference mWallpaperDim;
     private ColorPickerPreference mBackgroundColor;
     private ListPreference mTouchActions;
-    private ListPreference mAspectRatioCorrection;
+    private CheckBoxPreference mFixAspectRatio;
     private MultiSelectListPreference mTransitionsTypes;
     private SeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
@@ -67,7 +67,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mRedrawFlag = true;
                 int color = ((Integer)newValue).intValue();
                 Colors.setBackground(new GLColor(color));
-            } else if (key.compareTo("ui_aspect_ratio_correction") == 0) {
+            } else if (key.compareTo("ui_fix_aspect_ratio") == 0) {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
@@ -130,10 +130,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTouchActions = (ListPreference)findPreference("ui_touch_action");
         mTouchActions.setOnPreferenceChangeListener(mOnChangeListener);
 
-        mAspectRatioCorrection = (ListPreference)findPreference("ui_aspect_ratio_correction");
-        mAspectRatioCorrection.setOnPreferenceChangeListener(mOnChangeListener);
-        // TODO Hide for now, because no functionality was developed yet
-        ((PreferenceCategory)findPreference("category_settings")).removePreference(mAspectRatioCorrection);
+        mFixAspectRatio = (CheckBoxPreference)findPreference("ui_fix_aspect_ratio");
+        mFixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);

@@ -201,18 +201,17 @@ public final class PreferencesProvider {
              * @return TouchAction The action (default NONE)
              */
             public static TouchAction getTouchAction() {
-                return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0"))) ;
+                return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0")));
             }
 
             /**
-             * Return the current user preference about how to fix the aspect ratio of
-             * the current image of the frame.
+             * Return the current user preference about fix or not fix the aspect ratio
+             * of the image by cropping the image.
              *
-             * @return AspectRatioCorrection The correction mode (default NONE)
+             * @return boolean Indicates if the image should be cropped
              */
-            public static AspectRatioCorrection getAspectRatioCorrection() {
-                return AspectRatioCorrection.fromValue(
-                        Integer.valueOf(getString("ui_aspect_ratio_correction", "0"))) ;
+            public static boolean isFixAspectRatio() {
+                return getBoolean("ui_fix_aspect_ratio", false);
             }
 
             /**

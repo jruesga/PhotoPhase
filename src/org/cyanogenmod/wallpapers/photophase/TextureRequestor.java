@@ -16,6 +16,8 @@
 
 package org.cyanogenmod.wallpapers.photophase;
 
+import android.graphics.RectF;
+
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 
 /**
@@ -29,4 +31,11 @@ public interface TextureRequestor {
      * @param ti The texture information
      */
     void setTextureHandle(GLESTextureInfo ti);
+
+    /**
+     * Method that returns the dimension of the requestor
+     *
+     * @return RectF The dimensions of the requestor
+     */
+    RectF getRequestorDimensions();
 }

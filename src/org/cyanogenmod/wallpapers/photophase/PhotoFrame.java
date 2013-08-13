@@ -17,6 +17,7 @@
 package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
+import android.graphics.RectF;
 import android.opengl.GLES20;
 
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
@@ -87,7 +88,7 @@ public class PhotoFrame implements TextureRequestor {
         mFrameHeight = frameVertex[1] - frameVertex[5];
         mPhotoVertex = photoVertex;
         mPhotoWidth = photoVertex[6] - photoVertex[4];
-        mPhotoHeight = photoVertex[1] - photoVertex[5];
+        mPhotoHeight = photoVertex[5] - photoVertex[1];
 
         // Initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(photoVertex.length * 4); // (# of coordinate values * 4 bytes per float)
@@ -107,14 +108,20 @@ public class PhotoFrame implements TextureRequestor {
      * {@inheritDoc}
      */
     @Override
+    public RectF getRequestorDimensions() {
+        return new RectF(0, 0, mPhotoWidth, mPhotoHeight);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void setTextureHandle(GLESTextureInfo ti) {
         // If the picture is invalid request a new texture
         if (ti == null || ti.handle <= 0) {
             mTextureManager.request(this);
             return;
         }
-
-        // TODO Apply the texture correction
 
         // Full frame picture
         setTextureHandle(ti, DEFAULT_TEXTURE_COORDS);
