@@ -28,19 +28,19 @@ import android.util.Log;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
 
 /**
- * A halftone effect<br/>
+ * A pixelate effect<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * <tr>
  *   <td><code>strength</code></td>
- *   <td>The halftone strength.</td>
- *   <td>Positive float (>0). Higher numbers produce smallest points.</td>
+ *   <td>The pixelate strength.</td>
+ *   <td>Positive float (>0). Higher numbers produce more pixelation.</td>
  * </tr>
  * </table>
  */
-public class HalftoneEffect extends PhotoPhaseEffect {
+public class PixelateEffect extends PhotoPhaseEffect {
 
-    private static final String TAG = "HalftoneEffect";
+    private static final String TAG = "PixelateEffect";
 
     private static final String STRENGTH_PARAMETER = "strength";
 
@@ -56,31 +56,21 @@ public class HalftoneEffect extends PhotoPhaseEffect {
             "    float offx = floor(v_texcoord.s  / (strength * step_w));\n" +
             "    float offy = floor(v_texcoord.t  / (strength * step_h));\n" +
             "    vec3 res = texture2D(tex_sampler, vec2(offx * strength * step_w , offy * strength * step_h)).bgr;\n" +
-            "    vec2 prc = fract(v_texcoord.st / vec2(strength * step_w, strength * step_h));\n" +
-            "    vec2 pw = pow(abs(prc - 0.5), vec2(2.0));\n" +
-            "    float  rs = pow(0.45, 2.0);\n" +
-            "    float gr = smoothstep(rs - 0.1, rs + 0.1, pw.x + pw.y);\n" +
-            "    float y = (res.r + res.g + res.b) / 3.0; \n" +
-            "    vec3 ra = res / y;\n" +
-            "    float ls = 0.3;\n" +
-            "    float lb = ceil(y / ls);\n" +
-            "    float lf = ls * lb + 0.3;\n" +
-            "    res = lf * res;\n" +
             "    gl_FragColor.a = 1.0;\n" +
-            "    gl_FragColor.rgb = mix(res, vec3(0.1, 0.1, 0.1), gr);\n" +
+            "    gl_FragColor.rgb = res;\n" +
             "}";
 
-    private float mStrength = 16.0f;
+    private float mStrength = 8.0f;
     private int mStepsHandle;
 
     /**
-     * Constructor of <code>HalftoneEffect</code>.
+     * Constructor of <code>PixelateEffect</code>.
      *
      * @param ctx The effect context
      * @param name The effect name
      */
-    public HalftoneEffect(EffectContext ctx, String name) {
-        super(ctx, HalftoneEffect.class.getName());
+    public PixelateEffect(EffectContext ctx, String name) {
+        super(ctx, PixelateEffect.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
     }
 

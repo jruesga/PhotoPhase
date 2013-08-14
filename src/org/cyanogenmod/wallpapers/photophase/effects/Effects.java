@@ -44,6 +44,10 @@ public class Effects {
          */
         AUTOFIX,
         /**
+         * @see PhotoPhaseEffectFactory#EFFECT_BLUR
+         */
+        BLUR,
+        /**
          * @see EffectFactory#EFFECT_CROSSPROCESS
          */
         CROSSPROCESS,
@@ -56,9 +60,17 @@ public class Effects {
          */
         DUOTONE,
         /**
+         * @see PhotoPhaseEffectFactory#EFFECT_EMBOSS
+         */
+        EMBOSS,
+        /**
          * @see EffectFactory#EFFECT_FISHEYE
          */
         FISHEYE,
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_GLOW
+         */
+        GLOW,
         /**
          * @see EffectFactory#EFFECT_GRAIN
          */
@@ -76,9 +88,25 @@ public class Effects {
          */
         LOMOISH,
         /**
+         * @see PhotoPhaseEffectFactory#EFFECT_MIRROR
+         */
+        MIRROR,
+        /**
          * @see EffectFactory#EFFECT_NEGATIVE
          */
         NEGATIVE,
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_OUTLINE
+         */
+        OUTLINE,
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_PIXELATE
+         */
+        PIXELATE,
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_POPART
+         */
+        POPART,
         /**
          * @see EffectFactory#EFFECT_POSTERIZE
          */
@@ -156,6 +184,10 @@ public class Effects {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_AUTOFIX);
                 effect.setParameter("scale", 0.5f);
             }
+        } else if (nextEffect.compareTo(EFFECTS.BLUR) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_BLUR)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_BLUR);
+            }
         } else if (nextEffect.compareTo(EFFECTS.CROSSPROCESS) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_CROSSPROCESS)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_CROSSPROCESS);
@@ -170,10 +202,18 @@ public class Effects {
                 effect.setParameter("first_color", Color.parseColor("#FF8CACFF"));
                 effect.setParameter("second_color", Color.WHITE);
             }
+        } else if (nextEffect.compareTo(EFFECTS.EMBOSS) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_EMBOSS)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_EMBOSS);
+            }
         } else if (nextEffect.compareTo(EFFECTS.FISHEYE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_FISHEYE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_FISHEYE);
                 effect.setParameter("scale", 1.0f);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.GLOW) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_GLOW)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_GLOW);
             }
         } else if (nextEffect.compareTo(EFFECTS.GRAIN) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_GRAIN)) {
@@ -187,7 +227,11 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.HALFTONE) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_HALFTONE)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_HALFTONE);
-                effect.setParameter("strength", 30.0f);
+                effect.setParameter("strength", 8.0f);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.MIRROR) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_MIRROR)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_MIRROR);
             }
         } else if (nextEffect.compareTo(EFFECTS.LOMOISH) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_LOMOISH)) {
@@ -196,6 +240,19 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.NEGATIVE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_NEGATIVE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_NEGATIVE);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.OUTLINE) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_OUTLINE)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_OUTLINE);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.PIXELATE) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_PIXELATE)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_PIXELATE);
+                effect.setParameter("strength", 8.0f);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.POPART) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_POPART)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_POPART);
             }
         } else if (nextEffect.compareTo(EFFECTS.POSTERIZE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_POSTERIZE)) {

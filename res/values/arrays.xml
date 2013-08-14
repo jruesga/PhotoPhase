@@ -77,17 +77,24 @@
     <string-array name="transitions_default" translatable="false"/>
 
     <string-array name="effects_labels" translatable="false">
-    	<item>@string/effects_noeffect</item>
+        <item>@string/effects_noeffect</item>
         <item>@string/effects_autofix</item>
+        <item>@string/effects_blur</item>
         <item>@string/effects_crossprocess</item>
         <item>@string/effects_documentary</item>
         <item>@string/effects_duotone</item>
+        <item>@string/effects_emboss</item>
         <item>@string/effects_fisheye</item>
+        <item>@string/effects_glow</item>
         <item>@string/effects_grain</item>
         <item>@string/effects_grayscale</item>
         <item>@string/effects_halftone</item>
         <item>@string/effects_lomoish</item>
+        <item>@string/effects_mirror</item>
         <item>@string/effects_negative</item>
+        <item>@string/effects_outline</item>
+        <item>@string/effects_pixelate</item>
+        <item>@string/effects_popart</item>
         <item>@string/effects_posterize</item>
         <item>@string/effects_saturate</item>
         <item>@string/effects_scanlines</item>
@@ -116,6 +123,13 @@
         <item>15</item>
         <item>16</item>
         <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">

@@ -18,6 +18,7 @@ package org.cyanogenmod.wallpapers.photophase.effects;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
+import android.media.effect.EffectFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
@@ -60,8 +61,8 @@ public abstract class PhotoPhaseEffect extends Effect {
     FloatBuffer mPosVertices;
 
     /**
-     * An abstract contructor of <code>Effect</code> to follow the rules
-     * defined by {@see EffectFactory}.
+     * An abstract constructor of <code>Effect</code> to follow the rules
+     * defined by {@link EffectFactory}.
      *
      * @param ctx The effect context
      * @param name The effect name
@@ -171,6 +172,7 @@ public abstract class PhotoPhaseEffect extends Effect {
      */
     @Override
     public void setParameter(String parameterKey, Object value) {
+        // Ignore
     }
 
     /**

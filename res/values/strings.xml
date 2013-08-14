@@ -118,15 +118,22 @@
     <!-- Effects -->
     <string name="effects_noeffect">No effect</string>
     <string name="effects_autofix">Autofix</string>
+    <string name="effects_blur">Blur</string>
     <string name="effects_crossprocess">Cross process</string>
     <string name="effects_documentary">Documentary</string>
     <string name="effects_duotone">Duotone</string>
+    <string name="effects_emboss">Emboss</string>
     <string name="effects_fisheye">Fish Eye</string>
+    <string name="effects_glow">Glow</string>
     <string name="effects_grain">Grain</string>
     <string name="effects_grayscale">Grayscale</string>
     <string name="effects_halftone">Halftone</string>
     <string name="effects_lomoish">Lomoish</string>
+    <string name="effects_mirror">Mirror</string>
     <string name="effects_negative">Negative</string>
+    <string name="effects_outline">Outline</string>
+    <string name="effects_pixelate">Pixelate</string>
+    <string name="effects_popart">Pop art</string>
     <string name="effects_posterize">Posterize</string>
     <string name="effects_saturate">Saturate</string>
     <string name="effects_scanlines">Scanlines</string>

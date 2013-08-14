@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 //
-// Based on the shaders of Max Maischein of App-VideoMixer:
-//   http://cpansearch.perl.org/src/CORION/App-VideoMixer-0.02/filters/scanlines.glsl
+// Based on the shaders of kodemongki:
+//   http://kodemongki.blogspot.com.es/2011/06/kameraku-custom-shader-effects-example.html
 //
 
 package org.cyanogenmod.wallpapers.photophase.effects;
@@ -24,35 +24,39 @@ package org.cyanogenmod.wallpapers.photophase.effects;
 import android.media.effect.EffectContext;
 
 /**
- * A TV scanline effect<br/>
+ * A mirror effect<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * </table>
  */
-public class ScanlinesEffect extends PhotoPhaseEffect {
+public class MirrorEffect extends PhotoPhaseEffect {
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
             "uniform sampler2D tex_sampler;\n" +
-            "uniform float offset;\n" +
-            "float frequency = 83.0;\n" +
             "varying vec2 v_texcoord;\n" +
             "void main(void)\n" +
             "{\n" +
-            "    float global_pos = (v_texcoord.y + offset) * frequency;\n" +
-            "    float wave_pos = cos((fract(global_pos) - 0.5)*3.14);\n" +
-            "    vec4 pel = texture2D(tex_sampler, v_texcoord);\n" +
-            "    gl_FragColor = mix(vec4(0,0,0,0), pel, wave_pos);\n" +
+            "    vec2 off = vec2(0.0, 0.0);\n" +
+            "    if (v_texcoord.t > 0.5) {\n" +
+            "        off.t = 1.0 - v_texcoord.t;\n" +
+            "        off.s = v_texcoord.s;\n" +
+            "    } else {\n" +
+            "         off = v_texcoord;\n" +
+            "    }\n" +
+            "    vec3 color = texture2D(tex_sampler, vec2(off)).bgr;\n" +
+            "    gl_FragColor.a = 1.0;\n" +
+            "    gl_FragColor.rgb = color;\n" +
             "}";
 
     /**
-     * Constructor of <code>ScanlinesEffect</code>.
+     * Constructor of <code>MirrorEffect</code>.
      *
      * @param ctx The effect context
      * @param name The effect name
      */
-    public ScanlinesEffect(EffectContext ctx, String name) {
-        super(ctx, ScanlinesEffect.class.getName());
+    public MirrorEffect(EffectContext ctx, String name) {
+        super(ctx, MirrorEffect.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
     }
 
