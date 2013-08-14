@@ -35,4 +35,13 @@ public class PhotoPhaseEffectFactory {
      * </table>
      */
     public static final String EFFECT_HALFTONE = "org.cyanogenmod.wallpapers.photophase.effects.HalftoneEffect";
+
+    /**
+     * <p>Applies a TV scanlines effect to the image.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_SCANLINES = "org.cyanogenmod.wallpapers.photophase.effects.ScanlinesEffect";
 }

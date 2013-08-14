@@ -120,15 +120,16 @@
     <string name="effects_autofix">Autofix</string>
     <string name="effects_crossprocess">Cross process</string>
     <string name="effects_documentary">Documentary</string>
-    <string name="effects_halftone">Halftone</string>
     <string name="effects_duotone">Duotone</string>
     <string name="effects_fisheye">Fish Eye</string>
     <string name="effects_grain">Grain</string>
     <string name="effects_grayscale">Grayscale</string>
+    <string name="effects_halftone">Halftone</string>
     <string name="effects_lomoish">Lomoish</string>
     <string name="effects_negative">Negative</string>
     <string name="effects_posterize">Posterize</string>
     <string name="effects_saturate">Saturate</string>
+    <string name="effects_scanlines">Scanlines</string>
     <string name="effects_sepia">Sepia</string>
     <string name="effects_temperature">Temperature</string>
     <string name="effects_tint">Tint</string>

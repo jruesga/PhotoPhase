@@ -52,10 +52,6 @@ public class Effects {
          */
         DOCUMENTARY,
         /**
-         * @see PhotoPhaseEffectFactory#EFFECT_HALFTONE
-         */
-        HALFTONE,
-        /**
          * @see EffectFactory#EFFECT_DUOTONE
          */
         DUOTONE,
@@ -72,6 +68,10 @@ public class Effects {
          */
         GRAYSCALE,
         /**
+         * @see PhotoPhaseEffectFactory#EFFECT_HALFTONE
+         */
+        HALFTONE,
+        /**
          * @see EffectFactory#EFFECT_LOMOISH
          */
         LOMOISH,
@@ -87,6 +87,10 @@ public class Effects {
          * @see EffectFactory#EFFECT_SATURATE
          */
         SATURATE,
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_SCANLINES
+         */
+        SCANLINES,
         /**
          * @see EffectFactory#EFFECT_SEPIA
          */
@@ -160,11 +164,6 @@ public class Effects {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_DOCUMENTARY)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_DOCUMENTARY);
             }
-        } else if (nextEffect.compareTo(EFFECTS.HALFTONE) == 0) {
-            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_HALFTONE)) {
-                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_HALFTONE);
-                effect.setParameter("strength", 30.0f);
-            }
         } else if (nextEffect.compareTo(EFFECTS.DUOTONE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_DUOTONE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_DUOTONE);
@@ -185,6 +184,11 @@ public class Effects {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_GRAYSCALE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_GRAYSCALE);
             }
+        } else if (nextEffect.compareTo(EFFECTS.HALFTONE) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_HALFTONE)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_HALFTONE);
+                effect.setParameter("strength", 30.0f);
+            }
         } else if (nextEffect.compareTo(EFFECTS.LOMOISH) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_LOMOISH)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_LOMOISH);
@@ -201,6 +205,10 @@ public class Effects {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_SATURATE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_SATURATE);
                 effect.setParameter("scale", .5f);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.SCANLINES) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_SCANLINES)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_SCANLINES);
             }
         } else if (nextEffect.compareTo(EFFECTS.SEPIA) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_SEPIA)) {

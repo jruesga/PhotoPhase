@@ -81,15 +81,16 @@
         <item>@string/effects_autofix</item>
         <item>@string/effects_crossprocess</item>
         <item>@string/effects_documentary</item>
-        <item>@string/effects_halftone</item>
         <item>@string/effects_duotone</item>
         <item>@string/effects_fisheye</item>
         <item>@string/effects_grain</item>
         <item>@string/effects_grayscale</item>
+        <item>@string/effects_halftone</item>
         <item>@string/effects_lomoish</item>
         <item>@string/effects_negative</item>
         <item>@string/effects_posterize</item>
         <item>@string/effects_saturate</item>
+        <item>@string/effects_scanlines</item>
         <item>@string/effects_sepia</item>
         <item>@string/effects_temperature</item>
         <item>@string/effects_tint</item>
@@ -114,6 +115,7 @@
         <item>14</item>
         <item>15</item>
         <item>16</item>
+        <item>17</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">
