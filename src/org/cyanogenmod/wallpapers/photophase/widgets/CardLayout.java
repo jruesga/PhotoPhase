@@ -79,20 +79,23 @@ public class CardLayout extends LinearLayout {
      * Add a new card to the layout
      *
      * @param card The card view to add
+     * @param animate If the add should be animated
      */
-    public void addCard(final View card) {
+    public void addCard(final View card, final boolean animate) {
         post(new Runnable() {
             @Override
             public void run() {
                 addView(card);
-                if (inverted) {
-                    card.startAnimation(AnimationUtils.loadAnimation(
-                            getContext(), R.anim.cards_animation_up_right));
-                } else {
-                    card.startAnimation(AnimationUtils.loadAnimation(
-                            getContext(), R.anim.cards_animation_up_left));
+                if (animate) {
+                    if (inverted) {
+                        card.startAnimation(AnimationUtils.loadAnimation(
+                                getContext(), R.anim.cards_animation_up_right));
+                    } else {
+                        card.startAnimation(AnimationUtils.loadAnimation(
+                                getContext(), R.anim.cards_animation_up_left));
+                    }
+                    inverted = !inverted;
                 }
-                inverted = !inverted;
             }
         });
     }

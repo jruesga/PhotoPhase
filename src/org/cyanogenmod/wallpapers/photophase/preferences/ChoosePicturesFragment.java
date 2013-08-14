@@ -19,6 +19,7 @@ package org.cyanogenmod.wallpapers.photophase.preferences;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -40,6 +41,8 @@ import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Pre
 import org.cyanogenmod.wallpapers.photophase.widgets.AlbumInfo;
 import org.cyanogenmod.wallpapers.photophase.widgets.AlbumPictures;
 import org.cyanogenmod.wallpapers.photophase.widgets.CardLayout;
+import org.cyanogenmod.wallpapers.photophase.widgets.VerticalEndlessScroller;
+import org.cyanogenmod.wallpapers.photophase.widgets.VerticalEndlessScroller.OnEndScrollListener;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -53,11 +56,13 @@ import java.util.Set;
 /**
  * A fragment class for select the picture that will be displayed on the wallpaper
  */
-public class ChoosePicturesFragment extends PreferenceFragment {
+public class ChoosePicturesFragment extends PreferenceFragment implements OnEndScrollListener {
 
     private static final String TAG = "ChoosePicturesFragment";
 
     private static final boolean DEBUG = false;
+
+    private static final int AMOUNT_OF_ADDED_STEPS = 5;
 
     private final AsyncTask<Void, Album, Void> mAlbumsLoaderTask = new AsyncTask<Void, Album, Void>() {
         /**
@@ -91,7 +96,6 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                                       if (album != null) {
                                           mAlbums.add(album);
                                           mOriginalAlbums.add((Album)album.clone());
-                                          this.publishProgress(album);
                                       }
                                       album = new Album();
                                       album.setPath(path.getAbsolutePath());
@@ -114,7 +118,6 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                     if (album != null) {
                         mAlbums.add(album);
                         mOriginalAlbums.add((Album)album.clone());
-                        this.publishProgress(album);
                     }
 
                 } finally {
@@ -128,23 +131,37 @@ public class ChoosePicturesFragment extends PreferenceFragment {
          * {@inheritDoc}
          */
         @Override
-        protected void onProgressUpdate(Album... values) {
-            for (Album album : values) {
-                addAlbum(album);
+        protected void onPostExecute(Void result) {
+            Resources res = getActivity().getResources();
+            int size = (int)(res.getDimension(R.dimen.album_size) +
+                    res.getDimension(R.dimen.small_margin));
+            mScroller.setEndPadding(size * AMOUNT_OF_ADDED_STEPS);
+            int height = mScroller.getMeasuredHeight();
+            int steps = (height / size) + AMOUNT_OF_ADDED_STEPS;
+
+            // Create the views an force a redraw the items
+            mAlbumViews = new ArrayList<View>(mAlbums.size());
+            for (Album item : mAlbums) {
+                mAlbumViews.add(createAlbumView(item));
             }
+            doEndScroll(steps, true);
+
+            // Load in background
+            loadInBackground(1500L);
         }
     };
-
 
     /*package*/ ContentResolver mContentResolver;
 
     /*package*/ List<Album> mAlbums;
+    /*package*/ List<View> mAlbumViews;
     /*package*/ List<Album> mOriginalAlbums;
     /*package*/ List<AlbumsFlip3dAnimationController> mAnimationControllers;
 
     /*package*/ Set<String> mSelectedAlbums;
     private Set<String> mOriginalSelectedAlbums;
 
+    /*package*/ VerticalEndlessScroller mScroller;
     private CardLayout mAlbumsPanel;
 
     /*package*/ boolean mSelectionChanged;
@@ -225,13 +242,16 @@ public class ChoosePicturesFragment extends PreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.choose_picture_fragment, container, false);
-        mAlbumsPanel = (CardLayout) v.findViewById(R.id.albums_panel);
+        mScroller =
+                (VerticalEndlessScroller)inflater.inflate(
+                        R.layout.choose_picture_fragment, container, false);
+        mScroller.setCallback(this);
+        mAlbumsPanel = (CardLayout)mScroller.findViewById(R.id.albums_panel);
 
         // Load the albums
         mAlbumsLoaderTask.execute();
 
-        return v;
+        return mScroller;
     }
 
     /**
@@ -325,11 +345,12 @@ public class ChoosePicturesFragment extends PreferenceFragment {
     }
 
     /**
-     * Method that adds a new album to the card layout
+     * Method that creates a new album to the card layout
      *
-     * @param album The album to add
+     * @param album The album to create
+     * @return View The view create
      */
-    void addAlbum(Album album) {
+    View createAlbumView(Album album) {
         LayoutInflater li = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View albumView = li.inflate(R.layout.album, mAlbumsPanel, false);
         final AlbumInfo albumInfo = (AlbumInfo)albumView.findViewById(R.id.album_info);
@@ -393,8 +414,7 @@ public class ChoosePicturesFragment extends PreferenceFragment {
         controller.register();
         mAnimationControllers.add(controller);
 
-        // Add to the panel of cards
-        mAlbumsPanel.addCard(albumView);
+        return albumView;
     }
 
     /**
@@ -430,5 +450,45 @@ public class ChoosePicturesFragment extends PreferenceFragment {
                 it.remove();
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onEndScroll() {
+        doEndScroll(AMOUNT_OF_ADDED_STEPS, false);
+    }
+
+    /**
+     * Method that performs a scroll creating new items
+     *
+     * @param amount The amount of items to create
+     * @param animate If the add should be animated
+     */
+    /*package*/ synchronized void doEndScroll(int amount, boolean animate) {
+        for (int i = 0; i < amount; i++) {
+            //Add to the panel of cards
+            if (mAlbumViews != null && !mAlbumViews.isEmpty()) {
+                mAlbumsPanel.addCard(mAlbumViews.remove(0), animate);
+            }
+        }
+    }
+
+    /**
+     * Method that load albums in background
+     *
+     * @param delay The delay time
+     */
+    /*package*/ void loadInBackground(long delay) {
+        mAlbumsPanel.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doEndScroll(AMOUNT_OF_ADDED_STEPS, false);
+                if (mAlbumViews != null && !mAlbumViews.isEmpty()) {
+                    loadInBackground(300L);
+                }
+            }
+        }, delay);
     }
 }
