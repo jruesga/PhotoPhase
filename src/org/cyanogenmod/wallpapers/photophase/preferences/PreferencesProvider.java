@@ -211,7 +211,7 @@ public final class PreferencesProvider {
              * @return boolean Indicates if the image should be cropped
              */
             public static boolean isFixAspectRatio() {
-                return getBoolean("ui_fix_aspect_ratio", false);
+                return getBoolean("ui_fix_aspect_ratio", true);
             }
 
             /**

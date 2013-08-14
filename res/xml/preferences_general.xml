@@ -53,7 +53,7 @@
             android:title="@string/pref_general_aspect_ratio_correction"
             android:summary="@string/pref_general_aspect_ratio_correction_summary"
             android:persistent="true"
-            android:defaultValue="false" />
+            android:defaultValue="true" />
 
     </PreferenceCategory>
 
