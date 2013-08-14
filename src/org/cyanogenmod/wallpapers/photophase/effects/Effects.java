@@ -52,6 +52,10 @@ public class Effects {
          */
         DOCUMENTARY,
         /**
+         * @see PhotoPhaseEffectFactory#EFFECT_HALFTONE
+         */
+        HALFTONE,
+        /**
          * @see EffectFactory#EFFECT_DUOTONE
          */
         DUOTONE,
@@ -155,6 +159,11 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.DOCUMENTARY) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_DOCUMENTARY)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_DOCUMENTARY);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.HALFTONE) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_HALFTONE)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_HALFTONE);
+                effect.setParameter("strength", 30.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.DUOTONE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_DUOTONE)) {

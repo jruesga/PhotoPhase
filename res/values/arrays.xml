@@ -81,6 +81,7 @@
         <item>@string/effects_autofix</item>
         <item>@string/effects_crossprocess</item>
         <item>@string/effects_documentary</item>
+        <item>@string/effects_halftone</item>
         <item>@string/effects_duotone</item>
         <item>@string/effects_fisheye</item>
         <item>@string/effects_grain</item>
@@ -112,6 +113,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">
