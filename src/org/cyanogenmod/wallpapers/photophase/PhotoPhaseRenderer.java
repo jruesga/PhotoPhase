@@ -72,6 +72,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
     /*package*/ long mLastRunningTransition;
 
+    private long mLastTouchTime;
+    private static final long TOUCH_BARRIER_TIME = 1000L;
+
     /*package*/ int mWidth = -1;
     /*package*/ int mHeight = -1;
     /*package*/ int mMeasuredHeight  = -1;
@@ -268,6 +271,14 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             if (touchAction.compareTo(TouchAction.NONE) == 0) {
                 //Ignore
             } else {
+                // Avoid to handle multiple touchs
+                long touchTime = System.currentTimeMillis();
+                long diff = touchTime - mLastTouchTime;
+                mLastTouchTime = touchTime;
+                if (diff < TOUCH_BARRIER_TIME) {
+                    return;
+                }
+
                 // Retrieve the photo frame for its coordinates
                 final PhotoFrame frame = mWorld.getFrameFromCoordinates(new PointF(x, y));
                 if (frame == null) {
