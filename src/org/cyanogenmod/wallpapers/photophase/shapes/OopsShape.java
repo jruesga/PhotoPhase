@@ -115,7 +115,7 @@ public class OopsShape implements DrawableShape {
         mMVPMatrixHandlers = new int[2];
 
         // Create all the params
-        for (int i=0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             mProgramHandlers[i] =
                     GLESUtil.createProgram(
                             ctx.getResources(), VERTEX_SHADER, FRAGMENT_SHADER);
@@ -246,7 +246,7 @@ public class OopsShape implements DrawableShape {
         mPositionBuffer = null;
         mTextureBuffer = null;
 
-        for (int i=0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             if (GLES20.glIsProgram(mProgramHandlers[i])) {
                 GLES20.glDeleteProgram(mProgramHandlers[i]);
                 GLESUtil.glesCheckError("glDeleteProgram(" + i + ")");

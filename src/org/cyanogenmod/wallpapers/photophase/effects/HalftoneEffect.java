@@ -23,6 +23,7 @@
 package org.cyanogenmod.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
+import android.media.effect.EffectFactory;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -54,7 +55,7 @@ public class HalftoneEffect extends PhotoPhaseEffect {
             "float half_step = dotsize / 2.0;\n" +
             "void main() {\n" +
             "    vec2 center = v_texcoord - vec2(mod(v_texcoord.x, dotsize),mod(v_texcoord.y, dotsize)) + half_step;\n" +
-            "    vec4 pel = texture2D( tex_sampler, center);\n" +
+            "    vec4 pel = texture2D(tex_sampler, center);\n" +
             "    float size = length(pel);\n" +
             "    if (distance(v_texcoord,center) <= dotsize*size/4.0) {\n" +
             "       gl_FragColor = pel;\n" +
@@ -67,8 +68,8 @@ public class HalftoneEffect extends PhotoPhaseEffect {
     private int mStepsHandle;
 
     /**
-     * An abstract contructor of <code>Effect</code> to follow the rules
-     * defined by {@see EffectFactory}.
+     * An abstract constructor of <code>Effect</code> to follow the rules
+     * defined by {@link EffectFactory}.
      *
      * @param ctx The effect context
      * @param name The effect name

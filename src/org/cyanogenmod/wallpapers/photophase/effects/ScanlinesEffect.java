@@ -23,6 +23,7 @@
 package org.cyanogenmod.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
+import android.media.effect.EffectFactory;
 
 /**
  * A TV scanline effect<br/>
@@ -41,14 +42,14 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
             "void main(void)\n" +
             "{\n" +
             "    float global_pos = (v_texcoord.y + offset) * frequency;\n" +
-            "    float wave_pos = cos((fract( global_pos ) - 0.5)*3.14);\n" +
-            "    vec4 pel = texture2D( tex_sampler, v_texcoord );\n" +
+            "    float wave_pos = cos((fract(global_pos) - 0.5)*3.14);\n" +
+            "    vec4 pel = texture2D(tex_sampler, v_texcoord);\n" +
             "    gl_FragColor = mix(vec4(0,0,0,0), pel, wave_pos);\n" +
             "}";
 
     /**
-     * An abstract contructor of <code>Effect</code> to follow the rules
-     * defined by {@see EffectFactory}.
+     * An abstract constructor of <code>Effect</code> to follow the rules
+     * defined by {@link EffectFactory}.
      *
      * @param ctx The effect context
      * @param name The effect name
