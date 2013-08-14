@@ -74,7 +74,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      */
     /*package*/ class PictureDispatcher implements Runnable {
         File mImage;
-        GLESTextureInfo ti;
+        GLESTextureInfo ti = null;
         final Object mWait = new Object();
 
         /**
@@ -96,9 +96,14 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     }
                 } else {
                     // Load and bind to the GLES context. The effect is applied when the image
-                    // is associated to the destination target
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
-                    ti.effect = effect;
+                    // is associated to the destination target (only if aspect ratio will be applied)
+                    if (!Preferences.General.isFixAspectRatio()) {
+                        ti = GLESUtil.loadTexture(
+                                mImage, mDimensions, effect, mScreenDimensions, false);
+                    } else {
+                        ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
+                        ti.effect = effect;
+                    }
                 }
 
                 synchronized (mSync) {
@@ -419,17 +424,17 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             // Create a thumbnail of the image
             Bitmap thumb = ThumbnailUtils.extractThumbnail(
                                     ti.bitmap,
-                                    (int)pixels.width(),
-                                    (int)pixels.height(),
+                                    pixels.width(),
+                                    pixels.height(),
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
             GLESTextureInfo dst = GLESUtil.loadTexture(
-                        thumb, ti == null ? null : ti.effect, mScreenDimensions);
+                        thumb, ti.effect == null ? null : ti.effect, mScreenDimensions);
 
             // Destroy references
             int[] textures = new int[]{ti.handle};
             GLES20.glDeleteTextures(1, textures, 0);
             GLESUtil.glesCheckError("glDeleteTextures");
-            if (ti != null && ti.effect != null) {
+            if (ti.effect != null) {
                 ti.effect.release();
             }
 
