@@ -30,6 +30,7 @@ import android.widget.Toast;
 import org.cyanogenmod.wallpapers.photophase.FixedQueue.EmptyQueueException;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
 import org.cyanogenmod.wallpapers.photophase.effects.Effects;
@@ -539,9 +540,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
                         // Extract a random image
                         int low = 0;
-                        int hight = mNewImages.size()-1;
-                        int index = low + (int)(Math.random() * ((hight - low) + 1));
-                        image = mNewImages.remove(index);
+                        int high = mNewImages.size()-1;
+                        image = mNewImages.remove(Utils.getNextRandom(low, high));
                     }
 
                     // Run commands in the GLThread

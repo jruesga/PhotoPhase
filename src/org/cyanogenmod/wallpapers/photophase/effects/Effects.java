@@ -22,6 +22,7 @@ import android.media.effect.EffectContext;
 import android.media.effect.EffectFactory;
 
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -169,8 +170,8 @@ public class Effects {
         EFFECTS nextEffect = null;
         if (effects.size() > 0) {
             int low = 0;
-            int hight = effects.size() - 1;
-            int pos = low + (int)(Math.random() * ((hight - low) + 1));
+            int high = effects.size() - 1;
+            int pos = Utils.getNextRandom(low, high);
             nextEffect = effects.get(pos);
         }
         if (nextEffect == null) {

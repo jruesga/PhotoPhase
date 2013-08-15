@@ -21,10 +21,14 @@ import android.content.res.Resources;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
 
+import java.util.Random;
+
 /**
  * A helper class with utilities
  */
 public class Utils {
+
+    private static Random sRandom = new Random();
 
     /**
      * This method converts dp unit to equivalent device specific value in pixels.
@@ -52,5 +56,16 @@ public class Utils {
         rect.right = vertex[6];
         rect.bottom = vertex[1];
         return rect;
+    }
+
+    /**
+     * Method that returns a random number between two numbers.
+     *
+     * @param low The low number 
+     * @param high The high number
+     * @return int The random number
+     */
+    public static int getNextRandom(int low, int high) {
+        return low + (sRandom.nextInt() * ((high - low) + 1));
     }
 }

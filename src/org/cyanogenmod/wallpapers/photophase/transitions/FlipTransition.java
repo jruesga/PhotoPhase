@@ -23,6 +23,7 @@ import android.opengl.Matrix;
 import android.os.SystemClock;
 
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.TextureManager;
@@ -106,8 +107,8 @@ public class FlipTransition extends Transition {
         // Random mode
         FLIP_MODES[] modes = FLIP_MODES.values();
         int low = 0;
-        int hight = modes.length - 1;
-        mMode = modes[(low + (int)(Math.random() * ((hight - low) + 1)))];
+        int high = modes.length - 1;
+        mMode = modes[Utils.getNextRandom(low, high)];
     }
 
     /**

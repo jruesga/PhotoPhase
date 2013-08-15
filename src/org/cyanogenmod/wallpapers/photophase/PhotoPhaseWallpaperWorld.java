@@ -128,8 +128,8 @@ public class PhotoPhaseWallpaperWorld {
         ensureTransitionsQueue();
 
         // Get a random frame to which apply the transition
-        int r = 0 + (int)(Math.random() * (((mTransitionsQueue.size()-1) - 0) + 1));
-        int pos = mTransitionsQueue.remove(r).intValue();
+        int item = Utils.getNextRandom(0, mTransitionsQueue.size() - 1);
+        int pos = mTransitionsQueue.remove(item).intValue();
         mUsedTransitionsQueue.add(Integer.valueOf(pos));
         PhotoFrame frame = mPhotoFrames.get(pos);
 

@@ -24,6 +24,7 @@ import android.os.SystemClock;
 import android.view.animation.AccelerateInterpolator;
 
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 import org.cyanogenmod.wallpapers.photophase.R;
 import org.cyanogenmod.wallpapers.photophase.TextureManager;
@@ -130,8 +131,8 @@ public class WindowTransition extends Transition {
 
         // Random mode
         int low = 0;
-        int hight = modes.size() - 1;
-        mMode = modes.get(low + (int)(Math.random() * ((hight - low) + 1)));
+        int high = modes.size() - 1;
+        mMode = modes.get(Utils.getNextRandom(low, high));
     }
 
     /**

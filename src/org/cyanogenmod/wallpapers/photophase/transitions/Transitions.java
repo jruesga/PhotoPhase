@@ -21,6 +21,7 @@ import android.content.Context;
 import org.cyanogenmod.wallpapers.photophase.PhotoFrame;
 import org.cyanogenmod.wallpapers.photophase.TextureManager;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -102,8 +103,8 @@ public class Transitions {
         TRANSITIONS nextTransition = null;
         if (transitions.size() > 0) {
             int low = 0;
-            int hight = transitions.size() - 1;
-            int pos = low + (int)(Math.random() * ((hight - low) + 1));
+            int high = transitions.size() - 1;
+            int pos = Utils.getNextRandom(low, high);
             nextTransition = transitions.get(pos);
         }
         if (nextTransition == null) {
