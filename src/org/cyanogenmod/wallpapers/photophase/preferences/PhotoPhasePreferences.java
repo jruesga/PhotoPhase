@@ -59,7 +59,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
         loadHeadersFromResource(R.xml.preferences_headers, target);
 
         // Retrieve the about header
-        Header aboutHeader = target.get(target.size()-1);
+        Header aboutHeader = target.get(target.size() - 1);
         try {
             String appver =
                     this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;

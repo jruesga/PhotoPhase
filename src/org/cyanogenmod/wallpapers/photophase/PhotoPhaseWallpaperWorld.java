@@ -219,7 +219,7 @@ public class PhotoPhaseWallpaperWorld {
     public void recycle() {
         // Destroy the previous world
         if (mTransitions != null) {
-            int cc = mTransitions.size()-1;
+            int cc = mTransitions.size() - 1;
             for (int i = cc; i >= 0; i--) {
                 Transition transition = mTransitions.get(i);
                 transition.recycle();
@@ -228,7 +228,7 @@ public class PhotoPhaseWallpaperWorld {
         }
         mCurrent = -1;
         if (mUnusedTransitions != null) {
-            int cc = mUnusedTransitions.size()-1;
+            int cc = mUnusedTransitions.size() - 1;
             for (int i = cc; i >= 0; i--) {
                 Transition transition = mUnusedTransitions.get(i);
                 transition.recycle();
@@ -236,7 +236,7 @@ public class PhotoPhaseWallpaperWorld {
             }
         }
         if (mPhotoFrames != null) {
-            int cc = mPhotoFrames.size()-1;
+            int cc = mPhotoFrames.size() - 1;
             for (int i = cc; i >= 0; i--) {
                 PhotoFrame frame = mPhotoFrames.get(i);
                 GLESTextureInfo info = frame.getTextureInfo();

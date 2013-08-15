@@ -540,7 +540,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
                         // Extract a random image
                         int low = 0;
-                        int high = mNewImages.size()-1;
+                        int high = mNewImages.size() - 1;
                         image = mNewImages.remove(Utils.getNextRandom(low, high));
                     }
 
