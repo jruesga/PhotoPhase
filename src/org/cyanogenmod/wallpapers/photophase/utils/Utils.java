@@ -66,6 +66,6 @@ public class Utils {
      * @return int The random number
      */
     public static int getNextRandom(int low, int high) {
-        return low + (sRandom.nextInt() * ((high - low) + 1));
+        return low + (int)(sRandom.nextDouble() * ((high - low) + 1));
     }
 }
