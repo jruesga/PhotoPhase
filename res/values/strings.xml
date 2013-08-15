@@ -110,10 +110,11 @@
     <string name="aspect_ratio_correction_center">Center</string>
 
     <!-- Transitions -->
-    <string name="transitions_swap">Swap</string>
     <string name="transitions_fade">Fade</string>
-    <string name="transitions_translation">Translation</string>
     <string name="transitions_flip">Flip</string>
+    <string name="transitions_swap">Swap</string>
+    <string name="transitions_translation">Translation</string>
+    <string name="transitions_window">Window</string>
 
     <!-- Effects -->
     <string name="effects_noeffect">No effect</string>

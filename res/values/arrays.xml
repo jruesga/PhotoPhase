@@ -61,10 +61,11 @@
     </string-array>
 
     <string-array name="transitions_labels" translatable="false">
-        <item>@string/transitions_swap</item>
         <item>@string/transitions_fade</item>
-        <item>@string/transitions_translation</item>
         <item>@string/transitions_flip</item>
+        <item>@string/transitions_swap</item>
+        <item>@string/transitions_translation</item>
+        <item>@string/transitions_window</item>
     </string-array>
 
     <string-array name="transitions_values" translatable="false">
@@ -72,6 +73,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string-array name="transitions_default" translatable="false"/>

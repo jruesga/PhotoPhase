@@ -40,21 +40,25 @@ public class Transitions {
          */
         NO_TRANSITION,
         /**
-         * @see SwapTransition
-         */
-        SWAP,
-        /**
          * @see FadeTransition
          */
         FADE,
+        /**
+         * @see FlipTransition
+         */
+        FLIP,
+        /**
+         * @see SwapTransition
+         */
+        SWAP,
         /**
          * @see TranslateTransition
          */
         TRANSLATION,
         /**
-         * @see FlipTransition
+         * @see WindowTransition
          */
-        FLIP;
+        WINDOW;
 
         /**
          * Method that returns the transition from its ordinal position
@@ -115,6 +119,8 @@ public class Transitions {
             return TRANSITIONS.TRANSLATION;
         } else if (nextTransition.compareTo(TRANSITIONS.FLIP) == 0) {
             return TRANSITIONS.FLIP;
+        } else if (nextTransition.compareTo(TRANSITIONS.WINDOW) == 0) {
+            return TRANSITIONS.WINDOW;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -138,6 +144,8 @@ public class Transitions {
             return new TranslateTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.FLIP) == 0) {
             return new FlipTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.WINDOW) == 0) {
+            return new WindowTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }
