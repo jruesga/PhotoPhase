@@ -73,6 +73,15 @@ public class PhotoPhaseEffectFactory {
     public static final String EFFECT_MIRROR = "org.cyanogenmod.wallpapers.photophase.effects.MirrorEffect";
 
     /**
+     * <p>Doesn't apply any effect.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_NULL = "org.cyanogenmod.wallpapers.photophase.effects.NullEffect";
+
+    /**
      * <p>Applies an outline effect to the image.</p>
      * <p>Available parameters:</p>
      * <table>

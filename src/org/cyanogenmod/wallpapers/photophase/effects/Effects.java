@@ -37,7 +37,7 @@ public class Effects {
      */
     public enum EFFECTS {
         /**
-         * No effect
+         * @see PhotoPhaseEffectFactory#EFFECT_NULL
          */
         NO_EFFECT,
         /**
@@ -286,6 +286,13 @@ public class Effects {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_VIGNETTE);
                 effect.setParameter("scale", .5f);
             }
+        }
+
+        // Instead of not to apply any effect, just use one null effect to follow the same
+        // effect model. This allow to use the same height when Effect.apply is applied for all
+        // the frames
+        if (effect == null && EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NULL)) {
+            effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NULL);
         }
         return effect;
     }

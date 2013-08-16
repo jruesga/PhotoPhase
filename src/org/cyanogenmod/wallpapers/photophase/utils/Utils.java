@@ -61,7 +61,7 @@ public class Utils {
     /**
      * Method that returns a random number between two numbers.
      *
-     * @param low The low number 
+     * @param low The low number
      * @param high The high number
      * @return int The random number
      */
