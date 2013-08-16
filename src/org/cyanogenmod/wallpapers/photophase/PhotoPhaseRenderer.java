@@ -290,7 +290,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 if (touchAction.compareTo(TouchAction.TRANSITION) == 0) {
                     try {
                         // Check if the frame has pending transitions
-                        if (mWorld.hasRunningTransition(frame)) {
+                        if (!mWorld.hasRunningTransition(frame)) {
                             Log.w(TAG, "The frame has pending transitions " + frame.getTextureInfo().path);
                             return;
                         }
@@ -533,7 +533,6 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     if (mWorld != null) {
                         // Now draw the world (all the photo frames with effects)
                         mWorld.draw(mMVPMatrix);
-                        mWorld.deselectAllFinishedTransition(mMVPMatrix);
 
                         // Check if we have some pending transition or transition has exceed its timeout
                         if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
@@ -541,6 +540,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
                             // Now start a delayed thread to generate the next effect
                             mHandler.removeCallbacks(mTransitionThread);
+                            mWorld.deselectTransition(mMVPMatrix);
                             mLastRunningTransition = 0;
                             mHandler.postDelayed(mTransitionThread,
                                     Preferences.General.Transitions.getTransitionInterval());
