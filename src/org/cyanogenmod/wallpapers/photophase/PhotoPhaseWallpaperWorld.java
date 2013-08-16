@@ -18,7 +18,6 @@ package org.cyanogenmod.wallpapers.photophase;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
@@ -270,22 +269,6 @@ public class PhotoPhaseWallpaperWorld {
             }
         }
         return false;
-    }
-
-    /**
-     * Method that returns if there are any transition running in the world.
-     *
-     * @return boolean If there are any transition running in the world
-     * @throws NotFoundException If the frame was not found
-     */
-    public boolean hasRunningTransition(PhotoFrame frame) throws NotFoundException {
-        int pos = mPhotoFrames.indexOf(frame);
-        if (pos == -1) {
-            throw new NotFoundException();
-        }
-        synchronized (mUsedTransitionsQueue) {
-            return mUsedTransitionsQueue.indexOf(Integer.valueOf(pos)) != -1;
-        }
     }
 
     /**

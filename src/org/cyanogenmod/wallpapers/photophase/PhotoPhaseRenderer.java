@@ -289,18 +289,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 // Apply the action
                 if (touchAction.compareTo(TouchAction.TRANSITION) == 0) {
                     try {
-                        // Check if the frame has pending transitions
-                        if (!mWorld.hasRunningTransition(frame)) {
-                            Log.w(TAG, "The frame has pending transitions " + frame.getTextureInfo().path);
-                            return;
-                        }
-
                         // Select the frame with a transition
                         // Run in GLES's thread
                         mDispatcher.dispatch(new Runnable() {
                             @Override
                             public void run() {
                                 // Select a new transition
+                                deselectCurrentTransition();
                                 mWorld.selectTransition(frame);
                                 mLastRunningTransition = System.currentTimeMillis();
 
@@ -344,7 +339,15 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
     }
 
-    void scheduleOrCancelMediaScan() {
+    /**
+     * Method that deselect the current transition
+     */
+    /*package*/ synchronized void deselectCurrentTransition() {
+        mHandler.removeCallbacks(mTransitionThread);
+        mWorld.deselectTransition(mMVPMatrix);
+    }
+
+    /*package*/ void scheduleOrCancelMediaScan() {
         int interval = Preferences.Media.getRefreshFrecuency();
         if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             scheduleMediaScan(interval);
@@ -539,8 +542,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
                             // Now start a delayed thread to generate the next effect
-                            mHandler.removeCallbacks(mTransitionThread);
-                            mWorld.deselectTransition(mMVPMatrix);
+                            deselectCurrentTransition();
                             mLastRunningTransition = 0;
                             mHandler.postDelayed(mTransitionThread,
                                     Preferences.General.Transitions.getTransitionInterval());
