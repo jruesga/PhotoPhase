@@ -26,6 +26,7 @@ import android.util.Log;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import org.cyanogenmod.wallpapers.photophase.model.Disposition;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import org.cyanogenmod.wallpapers.photophase.transitions.NullTransition;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transition;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions;
 import org.cyanogenmod.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
@@ -55,7 +56,6 @@ public class PhotoPhaseWallpaperWorld {
 
     private List<Integer> mTransitionsQueue;
     private List<Integer> mUsedTransitionsQueue;
-    private int mCurrent;
 
     private int mWidth;
     private int mHeight;
@@ -73,7 +73,6 @@ public class PhotoPhaseWallpaperWorld {
         super();
         mContext = ctx;
         mTextureManager = textureManager;
-        mCurrent = -1;
         mUnusedTransitions = new ArrayList<Transition>();
         mRecycled = false;
     }
@@ -128,10 +127,14 @@ public class PhotoPhaseWallpaperWorld {
         ensureTransitionsQueue();
 
         // Get a random frame to which apply the transition
-        int item = Utils.getNextRandom(0, mTransitionsQueue.size() - 1);
-        int pos = mTransitionsQueue.remove(item).intValue();
-        mUsedTransitionsQueue.add(Integer.valueOf(pos));
-        PhotoFrame frame = mPhotoFrames.get(pos);
+        PhotoFrame frame = null;
+        int pos = -1;
+        synchronized(mTransitions) {
+            int item = Utils.getNextRandom(0, mTransitionsQueue.size() - 1);
+            pos = mTransitionsQueue.remove(item).intValue();
+            mUsedTransitionsQueue.add(Integer.valueOf(pos));
+            frame = mPhotoFrames.get(pos);
+        }
 
         // Select the transition
         selectTransition(frame, pos);
@@ -146,10 +149,15 @@ public class PhotoPhaseWallpaperWorld {
         // Ensure queue
         ensureTransitionsQueue();
 
-        // Get a random frame to which apply the transition
-        int pos = mPhotoFrames.indexOf(frame);
-        mTransitionsQueue.remove(Integer.valueOf(pos));
-        mUsedTransitionsQueue.add(Integer.valueOf(pos));
+        // Select the transition
+        int pos = -1;
+        synchronized(mTransitions) {
+            pos = mPhotoFrames.indexOf(frame);
+            if (mTransitionsQueue.contains(Integer.valueOf(pos))) {
+                mTransitionsQueue.remove(Integer.valueOf(pos));
+                mUsedTransitionsQueue.add(Integer.valueOf(pos));
+            }
+        }
 
         // Select the transition
         selectTransition(frame, pos);
@@ -182,34 +190,48 @@ public class PhotoPhaseWallpaperWorld {
         }
         mTransitions.set(pos, transition);
         transition.select(frame);
-        mCurrent = pos;
     }
 
     /**
-     * Method that deselect the current transition.
+     * Method that deselect all the finished transitions.
      *
      * @param matrix The model-view-projection matrix
      */
-    public void deselectTransition(float[] matrix) {
-        if (mCurrent != -1 && mCurrent < mTransitions.size()) {
+    public void deselectAllFinishedTransition(float[] matrix) {
+        if (mTransitions != null) {
+            for (Transition transition : mTransitions) {
+                if (!(transition instanceof NullTransition) && !transition.isRunning()) {
+                    deselectTransition(matrix, mTransitions.indexOf(transition));
+                }
+            }
+        }
+    }
+
+    /**
+     * Method that deselect a transition.
+     *
+     * @param matrix The model-view-projection matrix
+     * @param pos The position of the transition
+     */
+    public void deselectTransition(float[] matrix, int pos) {
+        if (pos >= 0 && pos < mTransitions.size()) {
             // Retrieve the finally target
-            Transition currentTransition = mTransitions.get(mCurrent);
+            Transition currentTransition = mTransitions.get(pos);
             PhotoFrame currentTarget = currentTransition.getTarget();
             PhotoFrame finalTarget = currentTransition.getTransitionTarget();
             mUnusedTransitions.add(currentTransition);
 
             if (finalTarget != null) {
                 Transition transition = getOrCreateTransition(TRANSITIONS.NO_TRANSITION, finalTarget);
-                mTransitions.set(mCurrent, transition);
+                mTransitions.set(pos, transition);
 
                 currentTarget.recycle();
-                mPhotoFrames.set(mCurrent, finalTarget);
+                mPhotoFrames.set(pos, finalTarget);
                 transition.select(finalTarget);
 
                 // Draw the transition once
                 transition.apply(matrix);
             }
-            mCurrent = -1;
         }
     }
 
@@ -226,7 +248,6 @@ public class PhotoPhaseWallpaperWorld {
                 mTransitions.remove(i);
             }
         }
-        mCurrent = -1;
         if (mUnusedTransitions != null) {
             int cc = mUnusedTransitions.size() - 1;
             for (int i = cc; i >= 0; i--) {
@@ -263,9 +284,11 @@ public class PhotoPhaseWallpaperWorld {
      */
     public boolean hasRunningTransition() {
         if (mTransitions != null) {
-            for (Transition transition : mTransitions) {
-                if (transition.isRunning()) {
-                    return true;
+            synchronized (mTransitions) {
+                for (Transition transition : mTransitions) {
+                    if (transition.isRunning() && !(transition instanceof NullTransition)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -283,9 +306,15 @@ public class PhotoPhaseWallpaperWorld {
         if (pos == -1) {
             throw new NotFoundException();
         }
-        synchronized (mUsedTransitionsQueue) {
-            return mUsedTransitionsQueue.indexOf(Integer.valueOf(pos)) != -1;
+        synchronized (mTransitions) {
+            for (Transition transition : mTransitions) {
+                if (!transition.isRunning() && !(transition instanceof NullTransition) &&
+                    transition.getTarget() != null && transition.getTarget().equals(frame)) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     /**
