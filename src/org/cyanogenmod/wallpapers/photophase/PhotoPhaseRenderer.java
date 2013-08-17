@@ -203,7 +203,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     }
 
     /**
-     * Method called when when renderer is created
+     * Method called when renderer is created
      */
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "onCreate [" + mInstance + "]");
@@ -221,7 +221,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     }
 
     /**
-     * Method called when when renderer is destroyed
+     * Method called when renderer is destroyed
      */
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "onDestroy [" + mInstance + "]");
@@ -235,6 +235,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mWidth = -1;
         mHeight = -1;
         mMeasuredHeight = -1;
+    }
+
+    /**
+     * Method called when system runs under low memory
+     */
+    public void onLowMemory() {
+        mTextureManager.emptyTextureQueue(false);
     }
 
     /**

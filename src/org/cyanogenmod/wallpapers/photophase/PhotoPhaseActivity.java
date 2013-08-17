@@ -156,4 +156,16 @@ public class PhotoPhaseActivity extends Activity implements OnTouchListener {
         }
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.i(TAG, "onLowMemory");
+        // Pause the wallpaper and destroy the cached textures
+        mRenderer.onPause();
+        mRenderer.onLowMemory();
+    }
 }

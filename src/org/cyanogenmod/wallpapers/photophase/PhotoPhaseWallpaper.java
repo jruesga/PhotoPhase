@@ -165,6 +165,20 @@ public class PhotoPhaseWallpaper
      * {@inheritDoc}
      */
     @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.i(TAG, "onLowMemory");
+        for(PhotoPhaseRenderer renderer : mRenderers) {
+            // Pause the wallpaper and destroy the cached textures
+            renderer.onPause();
+            renderer.onLowMemory();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onInitializeEGLView(GLSurfaceView view) {
         if (DEBUG) Log.d(TAG, "onInitializeEGLView");
     }
