@@ -15,7 +15,7 @@
  -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Wether preserve EGL context on pause. Disable when the devices doesn't support
+    <!-- Wether preserve EGL context on pause. Disable it when the devices doesn't support
          multiples EGL contexts -->
     <bool name="config_preserve_egl_context">true</bool>
 </resources>
