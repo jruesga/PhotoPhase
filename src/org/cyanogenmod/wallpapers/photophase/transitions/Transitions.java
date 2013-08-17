@@ -41,6 +41,10 @@ public class Transitions {
          */
         NO_TRANSITION,
         /**
+         * @see CubeTransition
+         */
+        CUBE,
+        /**
          * @see FadeTransition
          */
         FADE,
@@ -122,6 +126,8 @@ public class Transitions {
             return TRANSITIONS.FLIP;
         } else if (nextTransition.compareTo(TRANSITIONS.WINDOW) == 0) {
             return TRANSITIONS.WINDOW;
+        } else if (nextTransition.compareTo(TRANSITIONS.CUBE) == 0) {
+            return TRANSITIONS.CUBE;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -147,6 +153,8 @@ public class Transitions {
             return new FlipTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.WINDOW) == 0) {
             return new WindowTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.CUBE) == 0) {
+            return new CubeTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }
