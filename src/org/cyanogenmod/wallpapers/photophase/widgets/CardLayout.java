@@ -65,17 +65,6 @@ public class CardLayout extends LinearLayout {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (!isHardwareAccelerated()) {
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
-    }
-
-    /**
      * Add a new card to the layout
      *
      * @param card The card view to add

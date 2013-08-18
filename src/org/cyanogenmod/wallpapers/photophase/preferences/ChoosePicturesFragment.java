@@ -248,6 +248,14 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
         mScroller.setCallback(this);
         mAlbumsPanel = (CardLayout)mScroller.findViewById(R.id.albums_panel);
 
+        // Force Hardware acceleration
+        if (!mScroller.isHardwareAccelerated()) {
+            mScroller.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+        if (!mAlbumsPanel.isHardwareAccelerated()) {
+            mAlbumsPanel.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+
         // Load the albums
         mAlbumsLoaderTask.execute();
 
