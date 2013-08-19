@@ -90,7 +90,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     // Bind to the GLES context
                     GLESTextureInfo oldTextureInfo = sRecycledBitmaps.remove(0);
                     try {
-                        ti = GLESUtil.loadTexture(oldTextureInfo.bitmap, effect, mScreenDimensions);
+                        ti = GLESUtil.loadTexture(oldTextureInfo.bitmap, effect, mDimensions);
                         ti.path = oldTextureInfo.path;
                     } finally {
                         if (GLES20.glIsTexture(oldTextureInfo.handle)) {
@@ -107,7 +107,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     // is associated to the destination target (only if aspect ratio will be applied)
                     if (!Preferences.General.isFixAspectRatio()) {
                         ti = GLESUtil.loadTexture(
-                                mImage, mDimensions, effect, mScreenDimensions, false);
+                                mImage, mDimensions, effect, mDimensions, false);
                     } else {
                         ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
                         ti.effect = effect;
@@ -450,7 +450,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                                     pixels.width(),
                                     pixels.height(),
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, mScreenDimensions);
+            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, pixels);
 
             // Destroy references
             int[] textures = new int[]{ti.handle};

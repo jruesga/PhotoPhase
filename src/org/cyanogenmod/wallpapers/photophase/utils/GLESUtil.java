@@ -312,12 +312,12 @@ public final class GLESUtil {
      * @param file The image file
      * @param dimensions The desired dimensions
      * @param effect The effect to apply to the image or null if no effect is needed
-     * @param screenDim The screen dimensions
+     * @param dimen The new dimensions
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(
-            File file, Rect dimensions, Effect effect, Rect screenDim, boolean recycle) {
+            File file, Rect dimensions, Effect effect, Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)
@@ -328,7 +328,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            GLESTextureInfo ti = loadTexture(bitmap, effect, screenDim);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen);
             ti.path = file;
             return ti;
 
@@ -351,12 +351,12 @@ public final class GLESUtil {
      * @param ctx The current context
      * @param resourceId The resource identifier
      * @param effect The effect to apply to the image or null if no effect is needed
-     * @param screenDim The screen dimensions
+     * @param dimen The new dimensions
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(
-            Context ctx, int resourceId, Effect effect, Rect screenDim, boolean recycle) {
+            Context ctx, int resourceId, Effect effect, Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         InputStream raw = null;
         try {
@@ -370,7 +370,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            GLESTextureInfo ti = loadTexture(bitmap, effect, screenDim);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen);
             return ti;
 
         } catch (Exception e) {
@@ -399,10 +399,10 @@ public final class GLESUtil {
      *
      * @param bitmap The bitmap reference
      * @param effect The effect to apply to the image or null if no effect is needed
-     * @param screenDim The screen dimensions
+     * @param dimen The new dimensions
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Rect screenDim) {
+    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Rect dimen) {
         // Check that we have a valid image name reference
         if (bitmap == null) {
             return new GLESTextureInfo();
@@ -444,7 +444,10 @@ public final class GLESUtil {
         if (effect != null) {
             // Apply the effect (we need a thread-safe call here)
             synchronized (sSync) {
-                effect.apply(textureNames[0], screenDim.width(), screenDim.height(), textureNames[1]);
+                // No more than 1024 (the minimum supported by all the gles20 devices)
+                int w = Math.min(dimen.width(), 1024);
+                int h = Math.min(dimen.width(), 1024);
+                effect.apply(textureNames[0], w, h, textureNames[1]);
             }
             handle = textureNames[1];
 

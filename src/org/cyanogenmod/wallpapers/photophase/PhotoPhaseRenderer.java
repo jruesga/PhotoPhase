@@ -77,6 +77,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
     /*package*/ int mWidth = -1;
     /*package*/ int mHeight = -1;
+    private int mStatusBarHeight = 0;
     /*package*/ int mMeasuredHeight  = -1;
 
     private final float[] mMVPMatrix = new float[16];
@@ -423,6 +424,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mWidth = -1;
         mHeight = -1;
         mMeasuredHeight = -1;
+        mStatusBarHeight = 0;
 
         // We have a 2d (fake) scenario, disable all unnecessary tests. Deep are
         // necessary for some 3d effects
@@ -479,12 +481,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         // Save the width and height to avoid recreate the world
         mWidth = width;
         mHeight = height;
-        int statusBarHeight = AndroidHelper.calculateStatusBarHeight(mContext);
-        mMeasuredHeight = mHeight + statusBarHeight;
+        mStatusBarHeight = AndroidHelper.calculateStatusBarHeight(mContext);
+        mMeasuredHeight = mHeight + mStatusBarHeight;
 
         // Calculate a better fixed size for the pictures
         Rect dimensions = new Rect(0, 0, width / 2, height / 2);
-        Rect screenDimensions = new Rect(0, statusBarHeight, width, height);
+        Rect screenDimensions = new Rect(0, mStatusBarHeight, width, height);
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setScreenDimesions(screenDimensions);
         mTextureManager.setPause(false);
@@ -508,7 +510,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mOopsShape = new OopsShape(mContext, R.string.no_pictures_oops_msg);
 
         // Set the viewport and the fustrum
-        GLES20.glViewport(0, -statusBarHeight, width, height);
+        GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
         GLESUtil.glesCheckError("glViewport");
         Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
 
@@ -527,6 +529,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 glUnused) {
         synchronized (mDrawing) {
             // Set the projection, view and model
+            GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
             Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 

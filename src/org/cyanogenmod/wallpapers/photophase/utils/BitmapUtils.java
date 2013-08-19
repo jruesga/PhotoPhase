@@ -58,8 +58,12 @@ public class BitmapUtils {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
-        // Calculate inSampleSize
-        options.inSampleSize = calculateBitmapRatio(options, reqWidth, reqHeight);
+        // Calculate inSampleSize (use 1024 as maximum size, the minimum supported
+        // by all the gles20 devices)
+        options.inSampleSize = calculateBitmapRatio(
+                                    options,
+                                    Math.min(reqWidth, 1024),
+                                    Math.min(reqHeight, 1024));
 
         // Decode the bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
