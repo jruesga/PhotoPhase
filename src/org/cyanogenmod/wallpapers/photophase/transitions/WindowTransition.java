@@ -65,6 +65,8 @@ public class WindowTransition extends Transition {
 
     private WINDOW_MODES mMode;
 
+    private float[] mTranslationMatrix;
+
     private boolean mRunning;
     private long mTime;
 
@@ -81,6 +83,7 @@ public class WindowTransition extends Transition {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
         // Initialized
+        mTranslationMatrix = new float[16];
         reset();
     }
 
@@ -275,12 +278,11 @@ public class WindowTransition extends Transition {
         }
 
         // Apply the projection and view transformation
-        float[] translationMatrix = new float[16];
         Matrix.setIdentityM(matrix, 0);
-        Matrix.translateM(translationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
-        Matrix.rotateM(translationMatrix, 0, translationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
-        Matrix.translateM(translationMatrix, 0, translationMatrix, 0, translateX, 0.0f, 0.0f);
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, translationMatrix, 0);
+        Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
+        Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
+        Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, 0.0f, 0.0f);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, mTranslationMatrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw

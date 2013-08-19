@@ -29,6 +29,8 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 
 /**
@@ -39,6 +41,8 @@ public final class GLESUtil {
     private static final String TAG = "GLESUtil";
 
     private static final boolean DEBUG = false;
+
+    private static final Object sSync = new Object();
 
     /**
      * A helper class to deal with OpenGL float colors.
@@ -438,8 +442,10 @@ public final class GLESUtil {
         // Has a effect?
         int handle = textureNames[0];
         if (effect != null) {
-            // Apply the effect
-            effect.apply(textureNames[0], screenDim.width(), screenDim.height(), textureNames[1]);
+            // Apply the effect (we need a thread-safe call here)
+            synchronized (sSync) {
+                effect.apply(textureNames[0], screenDim.width(), screenDim.height(), textureNames[1]);
+            }
             handle = textureNames[1];
 
             // Delete the unused texture
@@ -495,14 +501,14 @@ public final class GLESUtil {
      * @throws IOException If an error occurs while loading the resource
      */
     private static String readResource(Resources res, int resId) {
-        InputStream is = res.openRawResource(resId);
+        Reader reader = new InputStreamReader(res.openRawResource(resId));
         try {
             final int BUFFER = 1024;
-            byte[] data = new byte[BUFFER];
+            char[] data = new char[BUFFER];
             int read = 0;
             StringBuilder sb = new StringBuilder();
-            while ((read = is.read(data, 0, BUFFER)) != -1) {
-                sb.append(new String(data, 0 ,read));
+            while ((read = reader.read(data, 0, BUFFER)) != -1) {
+                sb.append(data, 0, read);
             }
             return sb.toString();
         } catch (Exception e) {
@@ -510,7 +516,7 @@ public final class GLESUtil {
             return null;
         } finally {
             try {
-                is.close();
+                reader.close();
             } catch (Exception ex) {
                 // Ignore
             }

@@ -67,6 +67,10 @@ public class CubeTransition extends Transition {
     private boolean mRunning;
     private long mTime;
 
+    private FloatBuffer mPositionBuffer;
+    private float[] mTranslationMatrix;
+    private float[] mVertex;
+
     private float mAmount;
 
     /**
@@ -79,6 +83,7 @@ public class CubeTransition extends Transition {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
         // Initialized
+        mTranslationMatrix = new float[16];
         reset();
     }
 
@@ -113,6 +118,17 @@ public class CubeTransition extends Transition {
     public void select(PhotoFrame target) {
         super.select(target);
         mAmount = getAmount();
+
+        // Create the interal buffer
+        float[] vertex = target.getFrameVertex();
+        if (mPositionBuffer == null) {
+            ByteBuffer bb = ByteBuffer.allocateDirect(vertex.length * 4); // (# of coordinate values * 4 bytes per float)
+            bb.order(ByteOrder.nativeOrder());
+            mPositionBuffer = bb.asFloatBuffer();
+        }
+        if (mVertex == null) {
+            mVertex = new float[vertex.length];
+        }
 
         // Random mode
         List<WINDOW_MODES> modes =
@@ -215,33 +231,31 @@ public class CubeTransition extends Transition {
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Position
-        float[] vertex = cloneVertex();
+        setInternalVertex();
         float interpolation = delta > 0.5f
                         ? 1 - delta
                         : delta;
-        float w = Math.abs(vertex[6] - vertex[4]);
+        float w = Math.abs(mVertex[6] - mVertex[4]);
         switch (mMode) {
             case RIGHT_TO_LEFT:
-                vertex[1] -= interpolation * mAmount;
-                vertex[5] += interpolation * mAmount;
-                vertex[4] += w * delta;
-                vertex[0] = vertex[4];
+                mVertex[1] -= interpolation * mAmount;
+                mVertex[5] += interpolation * mAmount;
+                mVertex[4] += w * delta;
+                mVertex[0] = mVertex[4];
                 break;
             case LEFT_TO_RIGHT:
-                vertex[3] -= interpolation * mAmount;
-                vertex[7] += interpolation * mAmount;
-                vertex[6] -= w * delta;
-                vertex[2] = vertex[6];
+                mVertex[3] -= interpolation * mAmount;
+                mVertex[7] += interpolation * mAmount;
+                mVertex[6] -= w * delta;
+                mVertex[2] = mVertex[6];
                 break;
             default:
                 break;
         }
-        ByteBuffer bb = ByteBuffer.allocateDirect(vertex.length * 4); // (# of coordinate values * 4 bytes per float)
-        bb.order(ByteOrder.nativeOrder());
-        FloatBuffer positionBuffer = bb.asFloatBuffer();
-        positionBuffer.put(vertex);
-        positionBuffer.position(0);
-        GLES20.glVertexAttribPointer(mPositionHandlers[0], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
+        mPositionBuffer.position(0);
+        mPositionBuffer.put(mVertex);
+        mPositionBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandlers[0], 2, GLES20.GL_FLOAT, false, 0, mPositionBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
@@ -254,12 +268,12 @@ public class CubeTransition extends Transition {
             case RIGHT_TO_LEFT:
                 angle = delta * 90;
                 rotateY = -1.0f;
-                translateX = vertex[2] * -1;
+                translateX = mVertex[2] * -1;
                 break;
             case LEFT_TO_RIGHT:
                 angle = delta * -90;
                 rotateY = -1.0f;
-                translateX = vertex[0] * -1;
+                translateX = mVertex[0] * -1;
                 break;
 
             default:
@@ -267,12 +281,11 @@ public class CubeTransition extends Transition {
         }
 
         // Apply the projection and view transformation
-        float[] translationMatrix = new float[16];
         Matrix.setIdentityM(matrix, 0);
-        Matrix.translateM(translationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
-        Matrix.rotateM(translationMatrix, 0, translationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
-        Matrix.translateM(translationMatrix, 0, translationMatrix, 0, translateX, 0.0f, 0.0f);
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, translationMatrix, 0);
+        Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
+        Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
+        Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, 0.0f, 0.0f);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, mTranslationMatrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw
@@ -322,33 +335,31 @@ public class CubeTransition extends Transition {
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Position
-        float[] vertex = cloneVertex();
+        setInternalVertex();
         float interpolation = delta > 0.5f
                 ? 1 - delta
                 : delta;
-        float w = Math.abs(vertex[6] - vertex[4]);
+        float w = Math.abs(mVertex[6] - mVertex[4]);
         switch (mMode) {
             case LEFT_TO_RIGHT:
-                vertex[1] -= interpolation * mAmount;
-                vertex[5] += interpolation * mAmount;
-                vertex[4] += w * (1 - delta);
-                vertex[0] = vertex[4];
+                mVertex[1] -= interpolation * mAmount;
+                mVertex[5] += interpolation * mAmount;
+                mVertex[4] += w * (1 - delta);
+                mVertex[0] = mVertex[4];
                 break;
             case RIGHT_TO_LEFT:
-                vertex[3] -= interpolation * mAmount;
-                vertex[7] += interpolation * mAmount;
-                vertex[6] -= w * (1 - delta);
-                vertex[2] = vertex[6];
+                mVertex[3] -= interpolation * mAmount;
+                mVertex[7] += interpolation * mAmount;
+                mVertex[6] -= w * (1 - delta);
+                mVertex[2] = mVertex[6];
                 break;
             default:
                 break;
         }
-        ByteBuffer bb = ByteBuffer.allocateDirect(vertex.length * 4); // (# of coordinate values * 4 bytes per float)
-        bb.order(ByteOrder.nativeOrder());
-        FloatBuffer positionBuffer = bb.asFloatBuffer();
-        positionBuffer.put(vertex);
-        positionBuffer.position(0);
-        GLES20.glVertexAttribPointer(mPositionHandlers[1], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
+        mPositionBuffer.position(0);
+        mPositionBuffer.put(mVertex);
+        mPositionBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandlers[1], 2, GLES20.GL_FLOAT, false, 0, mPositionBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mPositionHandlers[1]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
@@ -361,12 +372,12 @@ public class CubeTransition extends Transition {
             case LEFT_TO_RIGHT:
                 angle = 90 - (delta * 90);
                 rotateY = -1.0f;
-                translateX = vertex[2] * -1;
+                translateX = mVertex[2] * -1;
                 break;
             case RIGHT_TO_LEFT:
                 angle = -90 + (delta * 90);
                 rotateY = -1.0f;
-                translateX = vertex[0] * -1;
+                translateX = mVertex[0] * -1;
                 break;
 
             default:
@@ -374,12 +385,11 @@ public class CubeTransition extends Transition {
         }
 
         // Apply the projection and view transformation
-        float[] translationMatrix = new float[16];
         Matrix.setIdentityM(matrix, 0);
-        Matrix.translateM(translationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
-        Matrix.rotateM(translationMatrix, 0, translationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
-        Matrix.translateM(translationMatrix, 0, translationMatrix, 0, translateX, 0.0f, 0.0f);
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[1], 1, false, translationMatrix, 0);
+        Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
+        Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
+        Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, 0.0f, 0.0f);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[1], 1, false, mTranslationMatrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw
@@ -451,15 +461,11 @@ public class CubeTransition extends Transition {
     }
 
     /**
-     * Method that copy the vertex array
-     *
-     * @return The copy of the vertex
+     * Method that prepares the internal vertex array
      */
-    private float[] cloneVertex() {
+    private void setInternalVertex() {
         float[] originalVertex = mTarget.getFrameVertex();
-        float[] vertex = new float[originalVertex.length];
-        System.arraycopy(originalVertex, 0, vertex, 0, originalVertex.length);
-        return vertex;
+        System.arraycopy(originalVertex, 0, mVertex, 0, originalVertex.length);
     }
 
     /**

@@ -168,7 +168,7 @@ public class PhotoPhaseWallpaper
     public void onLowMemory() {
         super.onLowMemory();
         Log.i(TAG, "onLowMemory");
-        for(PhotoPhaseRenderer renderer : mRenderers) {
+        for (PhotoPhaseRenderer renderer : mRenderers) {
             // Pause the wallpaper and destroy the cached textures
             renderer.onPause();
             renderer.onLowMemory();

@@ -25,7 +25,9 @@ import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Pre
 import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A class that manages all the supported effects
@@ -153,17 +155,42 @@ public class Effects {
         }
     }
 
+    private final Map<EFFECTS, Effect> mCachedEffects;
+    private final EffectContext mEffectContext;
+
+    /**
+     * Constructor of <code>Effects</code>
+     *
+     * @param effectContext The current effect context
+     */
+    public Effects(EffectContext effectContext) {
+        super();
+        mCachedEffects = new HashMap<Effects.EFFECTS, Effect>();
+        mEffectContext = effectContext;
+    }
+
+    /**
+     * Method that that release the cached data
+     */
+    public void release() {
+        if (mCachedEffects != null) {
+            for (Effect effect : mCachedEffects.values()) {
+                effect.release();
+            }
+            mCachedEffects.clear();
+        }
+    }
 
     /**
      * Method that return the next effect to use with the picture.
      *
-     * @param effectContext The android media effects context
      * @return Effect The next effect to use or null if no need to apply any effect
      */
     @SuppressWarnings("boxing")
-    public static Effect getNextEffect(EffectContext effectContext) {
+    public Effect getNextEffect() {
         // Get a new instance of a effect factory
-        EffectFactory effectFactory = effectContext.getFactory();
+        EffectFactory effectFactory = mEffectContext.getFactory();
+        Effect effect = null;
 
         // Get an effect based on the user preference
         List<EFFECTS> effects = Arrays.asList(Preferences.General.Effects.getEffectTypes());
@@ -175,11 +202,19 @@ public class Effects {
             nextEffect = effects.get(pos);
         }
         if (nextEffect == null) {
-            return null;
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NULL)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NULL);
+                mCachedEffects.put(nextEffect, effect);
+            }
+            return effect;
+        }
+
+        // Has a cached effect?
+        if (mCachedEffects.containsKey(nextEffect)) {
+            return mCachedEffects.get(nextEffect);
         }
 
         // Select the effect if is available
-        Effect effect = null;
         if (nextEffect.compareTo(EFFECTS.AUTOFIX) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_AUTOFIX)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_AUTOFIX);
@@ -293,7 +328,11 @@ public class Effects {
         // the frames
         if (effect == null && EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NULL)) {
             effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NULL);
+            nextEffect = EFFECTS.NO_EFFECT;
         }
+
+        // Cache the effects
+        mCachedEffects.put(nextEffect, effect);
         return effect;
     }
 }

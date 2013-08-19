@@ -182,7 +182,7 @@ public abstract class Transition {
             createProgram(index);
         }
         GLES20.glUseProgram(mProgramHandlers[index]);
-        GLESUtil.glesCheckError("glUseProgram(" + index + ")");
+        GLESUtil.glesCheckError("glUseProgram()");
     }
 
     /**
@@ -195,11 +195,11 @@ public abstract class Transition {
                 GLES20.glDeleteProgram(mProgramHandlers[i]);
                 GLESUtil.glesCheckError("glDeleteProgram");
             }
-            mProgramHandlers[i] = 0;
-            mTextureHandlers[i] = 0;
-            mPositionHandlers[i] = 0;
-            mTextureCoordHandlers[i] = 0;
-            mMVPMatrixHandlers[i] = 0;
+            mProgramHandlers[i] = -1;
+            mTextureHandlers[i] = -1;
+            mPositionHandlers[i] = -1;
+            mTextureCoordHandlers[i] = -1;
+            mMVPMatrixHandlers[i] = -1;
         }
         mTransitionTarget = null;
         mTarget = null;

@@ -59,6 +59,7 @@ public abstract class PhotoPhaseEffect extends Effect {
 
     FloatBuffer mTexVertices;
     FloatBuffer mPosVertices;
+    IntBuffer mTexBuffer;
 
     /**
      * An abstract constructor of <code>Effect</code> to follow the rules
@@ -120,7 +121,7 @@ public abstract class PhotoPhaseEffect extends Effect {
      * {@inheritDoc}
      */
     @Override
-    public final void apply(int inputTexId, int width, int height, int outputTexId) {
+    public final synchronized void apply(int inputTexId, int width, int height, int outputTexId) {
         // Create a framebuffer object and call the effect apply method to draw the effect
         int[] fb = new int[1];
         GLES20.glGenFramebuffers(1, fb, 0);
@@ -128,18 +129,22 @@ public abstract class PhotoPhaseEffect extends Effect {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fb[0]);
         GLESUtil.glesCheckError("glBindFramebuffer");
 
-        // Render on the whole framebuffer,
+        // Render on the whole framebuffer
         GLES20.glViewport(0, 0, width, height);
         GLESUtil.glesCheckError("glViewport");
 
-        // Create a new output texturure
+        // Create a new output texture
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, outputTexId);
         GLESUtil.glesCheckError("glBindTexture");
-        IntBuffer texBuffer = IntBuffer.wrap(new int[width * height]);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, width, height, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, texBuffer);
+        int bytes = width * height;
+        if (mTexBuffer == null || mTexBuffer.capacity() < bytes) {
+            mTexBuffer = IntBuffer.wrap(new int[bytes]);
+        }
+        mTexBuffer.clear();
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, width, height, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, mTexBuffer);
         GLESUtil.glesCheckError("glTexImage2D");
 
-        // Set the
+        // Set the parameters
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
         GLESUtil.glesCheckError("glTexParameteri");
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);

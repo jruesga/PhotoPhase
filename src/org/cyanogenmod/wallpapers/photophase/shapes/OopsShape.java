@@ -136,8 +136,10 @@ public class OopsShape implements DrawableShape {
         mMessage = ctx.getString(resourceMessageId);
 
         // Load the textures
-        mOopsImageTexture = GLESUtil.loadTexture(ctx, R.drawable.bg_cid_oops, null, null, false);
-        mOopsTextTexture = GLESUtil.loadTexture(text2Bitmap(ctx, mMessage), null, null);
+        mOopsImageTexture = GLESUtil.loadTexture(ctx, R.drawable.bg_cid_oops, null, null, true);
+        Bitmap textBitmap = text2Bitmap(ctx, mMessage);
+        mOopsTextTexture = GLESUtil.loadTexture(textBitmap, null, null);
+        textBitmap.recycle();
     }
 
     /**

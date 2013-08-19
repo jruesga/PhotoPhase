@@ -36,7 +36,7 @@
         android:theme="@android:style/Theme.Holo.Light"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:largeHeap="false">
+        android:largeHeap="true">
 
         <service
             android:name="PhotoPhaseWallpaper"

@@ -136,10 +136,16 @@ public class PhotoFrame implements TextureRequestor {
      */
     private void setTextureHandle(GLESTextureInfo ti, final float[] textureCoords) {
         // Recycle the previous handle
-        if (mTextureInfo != null && mTextureInfo.handle != 0) {
-            int[] textures = new int[]{mTextureInfo.handle};
-            GLES20.glDeleteTextures(1, textures, 0);
-            GLESUtil.glesCheckError("glDeleteTextures");
+        if (mTextureInfo != null) {
+            if (GLES20.glIsTexture(mTextureInfo.handle)) {
+                int[] textures = new int[]{mTextureInfo.handle};
+                GLES20.glDeleteTextures(1, textures, 0);
+                GLESUtil.glesCheckError("glDeleteTextures");
+            }
+            if (mTextureInfo.bitmap != null) {
+                mTextureInfo.bitmap.recycle();
+                mTextureInfo.bitmap = null;
+            }
         }
 
         // Initialize vertex byte buffer for shape coordinates
