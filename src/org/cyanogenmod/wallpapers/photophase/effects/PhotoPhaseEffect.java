@@ -214,6 +214,8 @@ public abstract class PhotoPhaseEffect extends Effect {
         applyParameters();
 
         // Set the input texture
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLESUtil.glesCheckError("glActiveTexture");
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, inputTexId);
         GLESUtil.glesCheckError("glBindTexture");
         GLES20.glUniform1i(mTexSamplerHandle, 0);
