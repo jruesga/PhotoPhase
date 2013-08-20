@@ -84,16 +84,16 @@ public class BitmapUtils {
      * Method that decodes an Exif bitmap
      *
      * @param file The file to decode
-     * @param bitmap The bitmap reference
+     * @param src The bitmap reference
      * @return Bitmap The decoded bitmap
      */
-    private static Bitmap decodeExifBitmap(File file, Bitmap bitmap) {
+    private static Bitmap decodeExifBitmap(File file, Bitmap src) {
         try {
             // Try to load the bitmap as a bitmap file
             ExifInterface exif = new ExifInterface(file.getAbsolutePath());
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
             if (orientation == 0) {
-                return bitmap;
+                return src;
             }
             Matrix matrix = new Matrix();
             if (orientation == 6) {
@@ -104,12 +104,15 @@ public class BitmapUtils {
                 matrix.postRotate(270);
             }
             // Rotate the bitmap
-            return Bitmap.createBitmap(
-                    bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            Bitmap out = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+            if (!out.equals(src)) {
+                src.recycle();
+            } 
+            return out;
         } catch (IOException e) {
             // Ignore
         }
-        return bitmap;
+        return src;
     }
 
     /**
