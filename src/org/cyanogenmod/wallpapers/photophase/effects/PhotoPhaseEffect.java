@@ -27,7 +27,6 @@ import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 /**
  * An abstract class definition for all the PhotoPhase custom effects
@@ -59,7 +58,6 @@ public abstract class PhotoPhaseEffect extends Effect {
 
     FloatBuffer mTexVertices;
     FloatBuffer mPosVertices;
-    IntBuffer mTexBuffer;
 
     /**
      * An abstract constructor of <code>Effect</code> to follow the rules
@@ -136,12 +134,7 @@ public abstract class PhotoPhaseEffect extends Effect {
         // Create a new output texture
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, outputTexId);
         GLESUtil.glesCheckError("glBindTexture");
-        int bytes = width * height;
-        if (mTexBuffer == null || mTexBuffer.capacity() < bytes) {
-            mTexBuffer = IntBuffer.wrap(new int[bytes]);
-        }
-        mTexBuffer.clear();
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, width, height, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, mTexBuffer);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, width, height, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, null);
         GLESUtil.glesCheckError("glTexImage2D");
 
         // Set the parameters
@@ -199,7 +192,7 @@ public abstract class PhotoPhaseEffect extends Effect {
      *  @param inputTexId The input texture
      */
     void apply(int inputTexId) {
-     // Use our shader program
+        // Use our shader program
         GLES20.glUseProgram(mProgram);
         GLESUtil.glesCheckError("glUseProgram");
 
