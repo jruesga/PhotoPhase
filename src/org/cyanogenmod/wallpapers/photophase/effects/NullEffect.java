@@ -51,4 +51,11 @@ public class NullEffect extends PhotoPhaseEffect {
         init(VERTEX_SHADER, FRAGMENT_SHADER);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void apply(int inputTexId) {
+        // Nothing to draw
+    }
 }

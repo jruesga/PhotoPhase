@@ -35,6 +35,8 @@ public abstract class PhotoPhaseEffect extends Effect {
 
     private static final int FLOAT_SIZE_BYTES = 4;
 
+    private static final String MCA_IDENTITY_EFFECT = "IdentityEffect";
+
     static final String VERTEX_SHADER =
             "attribute vec4 a_position;\n" +
             "attribute vec2 a_texcoord;\n" +
@@ -48,8 +50,17 @@ public abstract class PhotoPhaseEffect extends Effect {
     private static final float[] TEX_VERTICES = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
     private static final float[] POS_VERTICES = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
 
+    private final int GL_STATE_FBO          = 0;
+    private final int GL_STATE_PROGRAM      = 1;
+    private final int GL_STATE_ARRAYBUFFER  = 2;
+    private final int GL_STATE_COUNT        = 3;
+
+    private int[] mOldState = new int[GL_STATE_COUNT];
+
     private final EffectContext mEffectContext;
     private final String mName;
+
+    private Effect mIdentityEffect;
 
     int mProgram;
     int mTexSamplerHandle;
@@ -70,6 +81,10 @@ public abstract class PhotoPhaseEffect extends Effect {
         super();
         mEffectContext = ctx;
         mName = name;
+
+        // Stand on MCA identity effect for the initialization work
+        EffectFactory effectFactory = mEffectContext.getFactory();
+        mIdentityEffect = effectFactory.createEffect(MCA_IDENTITY_EFFECT);
     }
 
     /**
@@ -120,49 +135,44 @@ public abstract class PhotoPhaseEffect extends Effect {
      */
     @Override
     public final synchronized void apply(int inputTexId, int width, int height, int outputTexId) {
-        // Create a framebuffer object and call the effect apply method to draw the effect
-        int[] fb = new int[1];
-        GLES20.glGenFramebuffers(1, fb, 0);
-        GLESUtil.glesCheckError("glGenFramebuffers");
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fb[0]);
-        GLESUtil.glesCheckError("glBindFramebuffer");
+        // Save the GLES state
+        saveGLState();
 
-        // Render on the whole framebuffer
-        GLES20.glViewport(0, 0, width, height);
-        GLESUtil.glesCheckError("glViewport");
+        try {
+            // Create a framebuffer object and call the effect apply method to draw the effect
+            int[] fb = new int[1];
+            GLES20.glGenFramebuffers(1, fb, 0);
+            GLESUtil.glesCheckError("glGenFramebuffers");
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fb[0]);
+            GLESUtil.glesCheckError("glBindFramebuffer");
 
-        // Create a new output texture
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, outputTexId);
-        GLESUtil.glesCheckError("glBindTexture");
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, width, height, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, null);
-        GLESUtil.glesCheckError("glTexImage2D");
+            // Render on the whole framebuffer
+            GLES20.glViewport(0, 0, width, height);
+            GLESUtil.glesCheckError("glViewport");
 
-        // Set the parameters
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-        GLESUtil.glesCheckError("glTexParameteri");
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-        GLESUtil.glesCheckError("glTexParameteri");
+            // Create a new output texture (Use the MCA identity to clone the input to the output)
+            mIdentityEffect.apply(inputTexId, width, height, outputTexId);
 
-        // Create the framebuffer
-        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20. GL_TEXTURE_2D, outputTexId, 0);
-        GLESUtil.glesCheckError("glFramebufferTexture2D");
+            // Create the framebuffer
+            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20. GL_TEXTURE_2D, outputTexId, 0);
+            GLESUtil.glesCheckError("glFramebufferTexture2D");
 
-        // Check if the buffer was built successfully
-        if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
-            // Something when wrong. Throw an exception
-            GLESUtil.glesCheckError("glCheckFramebufferStatus");
-            int error = GLES20.glGetError();
-            throw new android.opengl.GLException(error, GLUtils.getEGLErrorString(error));
+            // Check if the buffer was built successfully
+            if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+                // Something when wrong. Throw an exception
+                GLESUtil.glesCheckError("glCheckFramebufferStatus");
+                int error = GLES20.glGetError();
+                throw new android.opengl.GLException(error, GLUtils.getEGLErrorString(error));
+            }
+
+            // Apply the effect
+            apply(inputTexId);
+
+        } finally {
+            // Restore the GLES state
+            restoreGLState();
         }
 
-        // Bind the framebuffer
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fb[0]);
-
-        // Apply the effect
-        apply(inputTexId);
-
-        // Unbind the framebuffer
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     }
 
     /**
@@ -241,5 +251,18 @@ public abstract class PhotoPhaseEffect extends Effect {
      */
     void applyParameters() {
         // Do nothing
+    }
+
+
+    private final void saveGLState() {
+        GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, mOldState, GL_STATE_FBO);
+        GLES20.glGetIntegerv(GLES20.GL_CURRENT_PROGRAM, mOldState, GL_STATE_PROGRAM);
+        GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, mOldState, GL_STATE_ARRAYBUFFER);
+    }
+
+    private final void restoreGLState() {
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mOldState[GL_STATE_FBO]);
+        GLES20.glUseProgram(mOldState[GL_STATE_PROGRAM]);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mOldState[GL_STATE_ARRAYBUFFER]);
     }
 }
