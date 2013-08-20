@@ -38,6 +38,7 @@ import android.util.Log;
 
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil;
 import org.cyanogenmod.wallpapers.photophase.utils.GLESUtil.GLColor;
+import org.cyanogenmod.wallpapers.photophase.utils.Utils;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider;
 import org.cyanogenmod.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import org.cyanogenmod.wallpapers.photophase.preferences.TouchAction;
@@ -485,7 +486,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mMeasuredHeight = mHeight + mStatusBarHeight;
 
         // Calculate a better fixed size for the pictures
-        Rect dimensions = new Rect(0, 0, width / 4, height / 4);
+        Rect dimensions = Utils.isTablet(mContext)
+                             ? new Rect(0, 0, width / 2, height / 2)
+                             : new Rect(0, 0, width / 4, height / 4);
         Rect screenDimensions = new Rect(0, mStatusBarHeight, width, height);
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setScreenDimesions(screenDimensions);

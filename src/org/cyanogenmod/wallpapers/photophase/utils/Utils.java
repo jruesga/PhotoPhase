@@ -17,6 +17,7 @@
 package org.cyanogenmod.wallpapers.photophase.utils;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
@@ -41,6 +42,17 @@ public class Utils {
         Resources resources = ctx.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return dp * (metrics.densityDpi / 160f);
+    }
+
+    /**
+     * Used to determine if the device is a tablet or not
+     *
+     * @param context The {@link Context} to use.
+     * @return True if the device is a tablet, false otherwise.
+     */
+    public static final boolean isTablet(final Context context) {
+        final int layout = context.getResources().getConfiguration().screenLayout;
+        return (layout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     /**
