@@ -485,7 +485,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mMeasuredHeight = mHeight + mStatusBarHeight;
 
         // Calculate a better fixed size for the pictures
-        Rect dimensions = new Rect(0, 0, width / 2, height / 2);
+        Rect dimensions = new Rect(0, 0, width / 4, height / 4);
         Rect screenDimensions = new Rect(0, mStatusBarHeight, width, height);
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setScreenDimesions(screenDimensions);
