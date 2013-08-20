@@ -341,6 +341,7 @@ public final class GLESUtil {
             // Recycle the bitmap
             if (bitmap != null && recycle) {
                 bitmap.recycle();
+                bitmap = null;
             }
         }
     }
@@ -390,6 +391,7 @@ public final class GLESUtil {
             // Recycle the bitmap
             if (bitmap != null && recycle) {
                 bitmap.recycle();
+                bitmap = null;
             }
         }
     }

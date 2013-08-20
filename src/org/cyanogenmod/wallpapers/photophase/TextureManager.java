@@ -100,6 +100,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                         }
                         if (oldTextureInfo.bitmap != null) {
                             oldTextureInfo.bitmap.recycle();
+                            oldTextureInfo.bitmap = null;
                         }
                     }
                 } else {
@@ -287,6 +288,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     }
                     // Return the bitmap
                     info.bitmap.recycle();
+                    info.bitmap = null;
                 }
             } catch (EmptyQueueException eqex) {
                 // Ignore
@@ -294,6 +296,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             // Recycle the bitmaps
             for (GLESTextureInfo ti : sRecycledBitmaps) {
                 ti.bitmap.recycle();
+                ti.bitmap = null;
             }
             sRecycledBitmaps.clear();
 

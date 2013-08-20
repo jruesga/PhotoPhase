@@ -77,7 +77,12 @@ public class BitmapUtils {
         }
 
         // Test if the bitmap has exif format, and decode properly
-        return decodeExifBitmap(file, bitmap);
+        Bitmap out = decodeExifBitmap(file, bitmap);
+        if (!out.equals(bitmap)) {
+            bitmap.recycle();
+            bitmap = null;
+        }
+        return out;
     }
 
     /**
@@ -104,11 +109,7 @@ public class BitmapUtils {
                 matrix.postRotate(270);
             }
             // Rotate the bitmap
-            Bitmap out = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-            if (!out.equals(src)) {
-                src.recycle();
-            } 
-            return out;
+            return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
         } catch (IOException e) {
             // Ignore
         }
