@@ -412,16 +412,16 @@ public final class GLESUtil {
 
         int num = effect == null ? 1 : 2;
 
-        int[] textureNames = new int[num];
-        GLES20.glGenTextures(num, textureNames, 0);
+        int[] textureHandles = new int[num];
+        GLES20.glGenTextures(num, textureHandles, 0);
         GLESUtil.glesCheckError("glGenTextures");
-        if (textureNames[0] <= 0 || (effect != null && textureNames[1] <= 0)) {
+        if (textureHandles[0] <= 0 || (effect != null && textureHandles[1] <= 0)) {
             Log.e(TAG, "Failed to generate a valid texture");
             return new GLESTextureInfo();
         }
 
         // Bind the texture to the name
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureNames[0]);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandles[0]);
         GLESUtil.glesCheckError("glBindTexture");
 
         // Set the texture properties
@@ -436,27 +436,27 @@ public final class GLESUtil {
 
         // Load the texture
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-        if (!GLES20.glIsTexture(textureNames[0])) {
+        if (!GLES20.glIsTexture(textureHandles[0])) {
             Log.e(TAG, "Failed to load a valid texture");
             return new GLESTextureInfo();
         }
 
         // Has a effect?
-        int handle = textureNames[0];
+        int handle = textureHandles[0];
         if (effect != null) {
             // Apply the effect (we need a thread-safe call here)
             synchronized (sSync) {
                 // No more than 1024 (the minimum supported by all the gles20 devices)
                 int w = Math.min(dimen.width(), 1024);
                 int h = Math.min(dimen.width(), 1024);
-                effect.apply(textureNames[0], w, h, textureNames[1]);
+                effect.apply(textureHandles[0], w, h, textureHandles[1]);
             }
-            handle = textureNames[1];
+            handle = textureHandles[1];
 
             // Delete the unused texture
-            int[] textures = {textureNames[0]};
+            int[] textures = {textureHandles[0]};
             GLES20.glDeleteTextures(1, textures, 0);
-            GLESUtil.glesCheckError("glTexParameteri");
+            GLESUtil.glesCheckError("glDeleteTextures");
         }
 
         // Return the texture handle identifier and the associated info
