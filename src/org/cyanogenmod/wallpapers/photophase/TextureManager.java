@@ -578,7 +578,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     // Wait until the texture is loaded
                     try {
                         synchronized (pd.mWait) {
-                            pd.mWait.wait();
+                            pd.mWait.wait(10000L);
                         }
                     } catch (Exception e) {
                         // Ignore
