@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/pref_disposition_description" />
 
-    <org.cyanogenmod.wallpapers.photophase.widgets.DispositionView
+    <com.ruesga.android.wallpapers.photophase.widgets.DispositionView
         android:id="@+id/disposition_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -50,11 +50,11 @@
         android:layout_alignRight="@id/disposition_view"
         android:layout_alignTop="@id/disposition_view"
         android:layout_alignBottom="@id/disposition_view">
-        <org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame
+        <com.ruesga.android.wallpapers.photophase.widgets.ResizeFrame
             android:id="@+id/resize_frame"
             android:layout_width="1dp"
             android:layout_height="1dp">
-        </org.cyanogenmod.wallpapers.photophase.widgets.ResizeFrame>
+        </com.ruesga.android.wallpapers.photophase.widgets.ResizeFrame>
     </FrameLayout>
 
 </RelativeLayout>

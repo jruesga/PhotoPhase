@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<org.cyanogenmod.wallpapers.photophase.widgets.VerticalEndlessScroller
+<com.ruesga.android.wallpapers.photophase.widgets.VerticalEndlessScroller
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -22,12 +22,12 @@
     android:fillViewport="true"
     android:scrollbars="none">
 
-    <org.cyanogenmod.wallpapers.photophase.widgets.CardLayout
+    <com.ruesga.android.wallpapers.photophase.widgets.CardLayout
         android:id="@+id/albums_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="@dimen/small_margin" />
 
-</org.cyanogenmod.wallpapers.photophase.widgets.VerticalEndlessScroller>
+</com.ruesga.android.wallpapers.photophase.widgets.VerticalEndlessScroller>
 

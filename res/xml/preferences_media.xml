@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@
             android:key="ui_media_albums"
             android:title="@string/pref_media_albums"
             android:summary="@string/pref_media_albums_summary"
-            android:fragment="org.cyanogenmod.wallpapers.photophase.preferences.ChoosePicturesFragment"
+            android:fragment="com.ruesga.android.wallpapers.photophase.preferences.ChoosePicturesFragment"
             android:persistent="false" />
 
         <!--  Auto select new albums -->

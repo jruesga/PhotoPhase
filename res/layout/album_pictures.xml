@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<org.cyanogenmod.wallpapers.photophase.widgets.AlbumPictures xmlns:android="http://schemas.android.com/apk/res/android"
+<com.ruesga.android.wallpapers.photophase.widgets.AlbumPictures xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/card"
@@ -55,7 +55,7 @@
             style="@style/PhotoPhase.Album.MenuBar.Overflow" />
     </LinearLayout>
 
-    <org.cyanogenmod.wallpapers.photophase.widgets.PicturesView
+    <com.ruesga.android.wallpapers.photophase.widgets.PicturesView
         android:id="@+id/album_pictures_scroller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,6 +74,6 @@
             <!-- Pictures go here -->
 
         </LinearLayout>
-    </org.cyanogenmod.wallpapers.photophase.widgets.PicturesView>
+    </com.ruesga.android.wallpapers.photophase.widgets.PicturesView>
 
-</org.cyanogenmod.wallpapers.photophase.widgets.AlbumPictures>
+</com.ruesga.android.wallpapers.photophase.widgets.AlbumPictures>

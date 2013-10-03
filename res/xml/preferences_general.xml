@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
         android:title="@string/pref_general_settings">
 
         <!-- Dim screen -->
-        <org.cyanogenmod.wallpapers.photophase.preferences.SeekBarProgressPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
             android:key="ui_wallpaper_dim"
             android:title="@string/pref_general_settings_wallpaper_dim"
             android:summary="@string/pref_general_settings_wallpaper_dim_summary"
@@ -30,7 +30,7 @@
             android:defaultValue="0" />
 
         <!-- Background color -->
-        <org.cyanogenmod.wallpapers.photophase.widgets.ColorPickerPreference
+        <com.ruesga.android.wallpapers.photophase.widgets.ColorPickerPreference
             android:key="ui_background_color"
             android:title="@string/pref_general_settings_background_color"
             android:summary="@string/pref_general_settings_background_color_summary"
@@ -73,7 +73,7 @@
             android:defaultValue="@array/transitions_default" />
 
         <!-- Transitions Interval -->
-        <org.cyanogenmod.wallpapers.photophase.preferences.SeekBarProgressPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
             android:key="ui_transition_interval"
             android:title="@string/pref_general_transitions_interval"
             android:summary="@string/pref_general_transitions_interval_summary"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:photophase="http://schemas.android.com/apk/res/org.cyanogenmod.wallpapers.photophase">
+    xmlns:photophase="http://schemas.android.com/apk/res/com.ruesga.android.wallpapers.photophase">
 
     <!-- Disposition -->
     <PreferenceCategory
@@ -28,7 +28,7 @@
             android:key="ui_disposition_portrait"
             android:title="@string/pref_disposition_portrait"
             android:summary="@string/pref_disposition_portrait_summary"
-            android:fragment="org.cyanogenmod.wallpapers.photophase.preferences.PortraitDispositionFragment"
+            android:fragment="com.ruesga.android.wallpapers.photophase.preferences.PortraitDispositionFragment"
             android:persistent="false" />
 
         <!-- Landscape -->
@@ -36,7 +36,7 @@
             android:key="ui_disposition_landscape"
             android:title="@string/pref_disposition_landscape"
             android:summary="@string/pref_disposition_landscape_summary"
-            android:fragment="org.cyanogenmod.wallpapers.photophase.preferences.LandscapeDispositionFragment"
+            android:fragment="com.ruesga.android.wallpapers.photophase.preferences.LandscapeDispositionFragment"
             android:persistent="false" />
 
     </PreferenceCategory>

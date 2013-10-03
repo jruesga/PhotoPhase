@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The CyanogenMod Project
+<!-- Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -17,4 +17,4 @@
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     android:thumbnail="@drawable/wallpaper_thumb"
     android:description="@string/app_description"
-    android:settingsActivity="org.cyanogenmod.wallpapers.photophase.preferences.PhotoPhasePreferences" />
+    android:settingsActivity="com.ruesga.android.wallpapers.photophase.preferences.PhotoPhasePreferences" />
