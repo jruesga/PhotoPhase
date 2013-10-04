@@ -48,18 +48,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="aspect_ratio_correction_labels" translatable="false">
-        <item>@string/aspect_ratio_correction_none</item>
-        <item>@string/aspect_ratio_correction_crop</item>
-        <item>@string/aspect_ratio_correction_center</item>
-    </string-array>
-
-    <string-array name="aspect_ratio_correction_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="transitions_labels" translatable="false">
         <item>@string/transitions_cube</item>
         <item>@string/transitions_fade</item>

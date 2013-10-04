@@ -104,11 +104,6 @@
     <string name="touch_actions_open">Open</string>
     <string name="touch_actions_share">Share</string>
 
-    <!-- Aspect ration correction -->
-    <string name="aspect_ratio_correction_none">None</string>
-    <string name="aspect_ratio_correction_crop">Crop</string>
-    <string name="aspect_ratio_correction_center">Center</string>
-
     <!-- Transitions -->
     <string name="transitions_cube">Cube</string>
     <string name="transitions_fade">Fade</string>
