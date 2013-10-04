@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2013 Jorge Ruesga
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_description">Fondo de pantalla animado PhotoPhase</string>
+    <string name="no_pictures_oops_msg">Vaya, no hay imágenes</string>
+    <string name="mnu_restore">Restaurar</string>
+    <string name="mnu_delete">Borrar</string>
+    <string name="mnu_settings">Ajustes</string>
+    <string name="mnu_select_all">Seleccionar todo</string>
+    <string name="mnu_deselect_all">Deseleccionar todo</string>
+    <string name="mnu_invert_all">Invertir todo</string>
+    <string name="mnu_invert_selection">Invertir selección</string>
+    <string name="mnu_select_album">Seleccionar álbum</string>
+    <string name="mnu_deselect_album">Deseleccionar álbum</string>
+    <string name="pref_general">General</string>
+    <string name="pref_general_summary">Accede a ajustes generales, efectos y transiciones</string>
+    <string name="pref_general_settings">Ajustes</string>
+    <string name="pref_general_settings_wallpaper_dim">Oscurecer fondo de escritorio</string>
+    <string name="pref_general_settings_wallpaper_dim_format">%s%%</string>
+    <string name="pref_general_settings_wallpaper_dim_summary">Establece el brillo del fondo de escritorio para una mejor visualización y rendimiento de la batería</string>
+    <string name="pref_general_settings_background_color">Color del fondo</string>
+    <string name="pref_general_settings_background_color_summary">Establece el color del fondo de escritorio</string>
+    <string name="pref_general_touch_action">Acción al tocar</string>
+    <string name="pref_general_touch_action_summary">Selecciona la acción a aplicar al tocar una imagen</string>
+    <string name="pref_general_aspect_ratio_correction">Relación de aspecto</string>
+    <string name="pref_general_aspect_ratio_correction_summary">Intentar corregir la relación de aspecto original de la imagen cortando la imagen para ajustarla a la celda de destino</string>
+    <string name="pref_general_transitions">Transiciones</string>
+    <string name="pref_general_transitions_types">Tipos</string>
+    <string name="pref_general_transitions_types_summary">Selecciona los tipos de efectos de transición a aplicar</string>
+    <string name="pref_general_transitions_interval">Intervalo</string>
+    <string name="pref_general_transitions_interval_summary">Establece la frecuencia en la que las imágenes son reemplazadas</string>
+    <string name="pref_general_transitions_interval_format">%s seg.</string>
+    <string name="pref_general_effects">Efectos</string>
+    <string name="pref_general_effects_types">Tipos</string>
+    <string name="pref_general_effects_types_summary">Selecciona los tipos de efectos a aplicar a las imágenes</string>
+    <string name="pref_media">Medios</string>
+    <string name="pref_media_summary">Establece las imágenes y albums a mostrar, el intervalo de búsqueda y otros ajustes asociados a los medios</string>
+    <string name="pref_media_settings">Ajustes</string>
+    <string name="pref_media_settings_refresh_interval">Intervalo de refresco</string>
+    <string name="pref_media_settings_refresh_interval_disable">La búsqueda de nuevas imágenes esta deshabilitada</string>
+    <string name="pref_media_settings_refresh_interval_summary">La búsqueda de nuevas imágenes se realiza cada <xliff:g id="interval">%1$s</xliff:g></string>
+    <string name="pref_media_settings_refresh_now">Refrescar ahora</string>
+    <string name="pref_media_settings_refresh_now_summary">Refrescar la base de datos de imágenes y álbumes ahora</string>
+    <string name="pref_media_pictures">Imágenes</string>
+    <string name="pref_media_albums">Álbumes</string>
+    <string name="pref_media_albums_summary">Establece los álbumes e imágenes a mostrar en el fondo de pantalla</string>
+    <string name="pref_media_auto_select_new">Autoseleccionar álbumes</string>
+    <string name="pref_media_auto_select_new_summary">Seleccionar automáticamente los nuevos álbumes cuando se descubran nuevos elementos en los medios</string>
+    <string name="pref_layout">Disposición</string>
+    <string name="pref_layout_summary">Selecciona como se mostraran las imágenes en pantalla</string>
+    <string name="pref_layout_disposition">Disposición</string>
+    <string name="pref_disposition_portrait">Disposición vertical</string>
+    <string name="pref_disposition_portrait_summary">Selecciona como se mostraran las imágenes en una pantalla horizontal</string>
+    <string name="pref_disposition_landscape">Disposición horizontal</string>
+    <string name="pref_disposition_landscape_summary">Selecciona como se mostraran las imágenes en una pantalla vertical</string>
+    <string name="pref_disposition_description">Presiona una celda durante un segundo para seleccionarla. Entonces arrastra y suelta los bordes de la celda para redimensionarla</string>
+    <string name="pref_disposition_unable_delete_advise">No es posible borrar la celda seleccionada</string>
+    <string name="pref_about">Acerca de</string>
+    <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2013 Jorge Ruesga</string>
+    <string name="refresh_intervals_disabled">Deshabilitado</string>
+    <string name="refresh_intervals_1h">1 hora</string>
+    <string name="refresh_intervals_2h">2 horas</string>
+    <string name="refresh_intervals_4h">4 horas</string>
+    <string name="refresh_intervals_1d">1 día</string>
+    <string name="refresh_intervals_2d">2 días</string>
+    <string name="refresh_intervals_1w">1 semana</string>
+    <string name="touch_actions_none">Ninguna</string>
+    <string name="touch_actions_transition">Siguiente transición</string>
+    <string name="touch_actions_open">Abrir</string>
+    <string name="touch_actions_share">Compartir</string>
+    <string name="transitions_cube">Cubo</string>
+    <string name="transitions_fade">Difuminar</string>
+    <string name="transitions_flip">Voltear</string>
+    <string name="transitions_swap">Intercambiar</string>
+    <string name="transitions_translation">Trasladar</string>
+    <string name="transitions_window">Ventana</string>
+    <string name="effects_noeffect">Sin efecto</string>
+    <string name="effects_autofix">Autocorrección</string>
+    <string name="effects_blur">Borroso</string>
+    <string name="effects_crossprocess">Proceso cruzado</string>
+    <string name="effects_documentary">Documental</string>
+    <string name="effects_duotone">Doble tono</string>
+    <string name="effects_emboss">Realzado</string>
+    <string name="effects_fisheye">Ojo de pez</string>
+    <string name="effects_glow">Brillo</string>
+    <string name="effects_grain">Granulado</string>
+    <string name="effects_grayscale">Escala de grises</string>
+    <string name="effects_halftone">Medio tono</string>
+    <string name="effects_lomoish">Lomoish</string>
+    <string name="effects_mirror">Espejo</string>
+    <string name="effects_negative">Negativo</string>
+    <string name="effects_outline">Perfilado</string>
+    <string name="effects_pixelate">Pixelado</string>
+    <string name="effects_popart">Arte Pop</string>
+    <string name="effects_posterize">Posterizado</string>
+    <string name="effects_saturate">Saturado</string>
+    <string name="effects_scanlines">Líneas de escaneado</string>
+    <string name="effects_sepia">Sepia</string>
+    <string name="effects_temperature">Temperatura</string>
+    <string name="effects_tint">Tintado</string>
+    <string name="effects_vignette">Vignette</string>
+    <string name="color_picker_alpha_slider_text">Alfa</string>
+    <string name="color_picker_current_text">Actual:</string>
+    <string name="color_picker_new_text">Nuevo:</string>
+    <string name="color_picker_color">Color:</string>
+</resources>
