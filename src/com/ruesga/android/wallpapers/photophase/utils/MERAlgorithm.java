@@ -38,6 +38,7 @@ public final class MERAlgorithm {
         // Check matrix
         int rows = matrix.length;
         if (rows == 0) return null;
+        int cols = matrix[0].length;
 
         // Convert to histogram
         int[][] histogram = toHistogram(matrix);
@@ -50,7 +51,21 @@ public final class MERAlgorithm {
                 maxRect = rect;
             }
         }
-        return maxRect;
+        return ensureBounds(maxRect, cols, rows);
+    }
+
+    /**
+     * Method that ensure the bounds of the max rectangle
+     *
+     * @param rect The rectangle to check
+     * @param cols The number of cols
+     * @param rows The number of rows
+     * @return Rect The rectangle checked
+     */
+    private static Rect ensureBounds(Rect rect, int cols, int rows) {
+        if (rect.right - rect.left >= cols) rect.right = cols;
+        if (rect.bottom - rect.top >= rows) rect.bottom = rows;
+        return rect;
     }
 
     /**
