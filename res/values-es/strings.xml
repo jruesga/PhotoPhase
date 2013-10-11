@@ -50,7 +50,7 @@
     <string name="pref_general_effects_types">Tipos</string>
     <string name="pref_general_effects_types_summary">Selecciona los tipos de efectos a aplicar a las imágenes</string>
     <string name="pref_media">Medios</string>
-    <string name="pref_media_summary">Establece las imágenes y albums a mostrar, el intervalo de búsqueda y otros ajustes asociados a los medios</string>
+    <string name="pref_media_summary">Establece las imágenes y álbumes a mostrar, el intervalo de búsqueda y otros ajustes asociados a los medios</string>
     <string name="pref_media_settings">Ajustes</string>
     <string name="pref_media_settings_refresh_interval">Intervalo de refresco</string>
     <string name="pref_media_settings_refresh_interval_disable">La búsqueda de nuevas imágenes esta deshabilitada</string>
