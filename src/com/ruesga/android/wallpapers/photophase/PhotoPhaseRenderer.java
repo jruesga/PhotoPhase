@@ -38,6 +38,7 @@ import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
@@ -320,12 +321,14 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 } else if (touchAction.compareTo(TouchAction.OPEN) == 0) {
                     // Open the image
                     try {
-                        Uri uri = Uri.fromFile(frame.getTextureInfo().path);
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.setDataAndType(uri, "image/*");
-                        mContext.startActivity(intent);
+                        Uri uri = getUriFromFrame(frame);
+                        if (uri != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.setDataAndType(uri, "image/*");
+                            mContext.startActivity(intent);
+                        }
                     } catch (ActivityNotFoundException ex) {
                         Log.e(TAG, "Open activity not found for " + frame.getTextureInfo().path, ex);
                     }
@@ -333,19 +336,44 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 } else if (touchAction.compareTo(TouchAction.SHARE) == 0) {
                     // Send the image
                     try {
-                        Uri uri = Uri.fromFile(frame.getTextureInfo().path);
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.setType("image/*");
-                        intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        mContext.startActivity(intent);
+                        Uri uri = getUriFromFrame(frame);
+                        if (uri != null) {
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.setType("image/*");
+                            intent.putExtra(Intent.EXTRA_STREAM, uri);
+                            mContext.startActivity(intent);
+                        }
                     } catch (ActivityNotFoundException ex) {
                         Log.e(TAG, "Send activity not found for " + frame.getTextureInfo().path, ex);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Method that returns an Uri reference from a photo frame
+     *
+     * @param frame The photo frame
+     * @return Uri The image uri
+     */
+    private static Uri getUriFromFrame(final PhotoFrame frame) {
+        // Sanity checks
+        GLESTextureInfo info = frame.getTextureInfo();
+        if (info == null) {
+            Log.e(TAG, "The frame has not a valid reference right now." +
+                    "Touch action is not available.");
+            return null;
+        }
+        if (info.path == null || !info.path.isFile()) {
+            Log.e(TAG, "The image do not exists. Touch action is not available.");
+            return null;
+        }
+
+        // Return the uri from the path
+        return Uri.fromFile(frame.getTextureInfo().path);
     }
 
     /**
