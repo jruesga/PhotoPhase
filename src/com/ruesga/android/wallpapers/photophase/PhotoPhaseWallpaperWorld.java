@@ -22,7 +22,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
@@ -235,18 +234,6 @@ public class PhotoPhaseWallpaperWorld {
                 Transition transition = mUnusedTransitions.get(i);
                 transition.recycle();
                 mUnusedTransitions.remove(i);
-            }
-        }
-        if (mPhotoFrames != null) {
-            int cc = mPhotoFrames.size() - 1;
-            for (int i = cc; i >= 0; i--) {
-                PhotoFrame frame = mPhotoFrames.get(i);
-                GLESTextureInfo info = frame.getTextureInfo();
-                if (info != null && info.bitmap != null) {
-                    mTextureManager.releaseBitmap(info);
-                }
-                frame.recycle();
-                mPhotoFrames.remove(i);
             }
         }
         if (mTransitionsQueue != null) {

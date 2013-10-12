@@ -143,12 +143,16 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             mDispatcher.dispatch(new Runnable() {
                 @Override
                 public void run() {
-                    // Select a new transition
-                    mWorld.selectRandomTransition();
-                    mLastRunningTransition = System.currentTimeMillis();
-
-                    // Now force continuously render while transition is applied
-                    mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                    try {
+                        // Select a new transition
+                        mWorld.selectRandomTransition();
+                        mLastRunningTransition = System.currentTimeMillis();
+    
+                        // Now force continuously render while transition is applied
+                        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                    } catch (Throwable ex) {
+                        Log.e(TAG, "Something was wrong selecting the transition", ex);
+                    }
                 }
             });
         }

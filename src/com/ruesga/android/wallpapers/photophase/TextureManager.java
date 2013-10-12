@@ -49,8 +49,6 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
     private static final int QUEUE_SIZE = 3;
 
-    static final List<GLESTextureInfo> sRecycledBitmaps = new ArrayList<GLESTextureInfo>();
-
     final Context mContext;
     final Effects mEffects;
     final Object mSync;
@@ -84,35 +82,16 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         @Override
         public void run() {
             try {
-                // If we have bitmap to reused then pick up from the recycled list
                 Effect effect = mEffects.getNextEffect();
-                if (sRecycledBitmaps.size() > 0) {
-                    // Bind to the GLES context
-                    GLESTextureInfo oldTextureInfo = sRecycledBitmaps.remove(0);
-                    try {
-                        ti = GLESUtil.loadTexture(oldTextureInfo.bitmap, effect, mDimensions);
-                        ti.path = oldTextureInfo.path;
-                    } finally {
-                        if (GLES20.glIsTexture(oldTextureInfo.handle)) {
-                            int[] textures = new int[] {oldTextureInfo.handle};
-                            GLES20.glDeleteTextures(1, textures, 0);
-                            GLESUtil.glesCheckError("glDeleteTextures");
-                        }
-                        if (oldTextureInfo.bitmap != null) {
-                            oldTextureInfo.bitmap.recycle();
-                            oldTextureInfo.bitmap = null;
-                        }
-                    }
+
+                // Load and bind to the GLES context. The effect is applied when the image
+                // is associated to the destination target (only if aspect ratio will be applied)
+                if (!Preferences.General.isFixAspectRatio()) {
+                    ti = GLESUtil.loadTexture(
+                            mImage, mDimensions, effect, mDimensions, false);
                 } else {
-                    // Load and bind to the GLES context. The effect is applied when the image
-                    // is associated to the destination target (only if aspect ratio will be applied)
-                    if (!Preferences.General.isFixAspectRatio()) {
-                        ti = GLESUtil.loadTexture(
-                                mImage, mDimensions, effect, mDimensions, false);
-                    } else {
-                        ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
-                        ti.effect = effect;
-                    }
+                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
+                    ti.effect = effect;
                 }
 
                 synchronized (mSync) {
@@ -137,8 +116,9 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     }
                 }
 
-            } catch (Exception e) {
-                Log.e(TAG, "Something was wrong loading the texture: " + mImage.getAbsolutePath(), e);
+            } catch (Throwable e) {
+                Log.e(TAG, "Something was wrong loading the texture: " +
+                        mImage.getAbsolutePath(), e);
 
             } finally {
                 // Notify that we have a new image
@@ -229,18 +209,6 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     }
 
     /**
-     * Method that returns a bitmap to be reused
-     *
-     * @param ti The bitmap to release
-     */
-    @SuppressWarnings("static-method")
-    public void releaseBitmap(GLESTextureInfo ti) {
-        if (ti != null && ti.bitmap != null) {
-            sRecycledBitmaps.add(0, ti);
-        }
-    }
-
-    /**
      * Method that request a new picture for the {@link TextureRequestor}
      *
      * @param requestor The requestor of the texture
@@ -293,12 +261,6 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             } catch (EmptyQueueException eqex) {
                 // Ignore
             }
-            // Recycle the bitmaps
-            for (GLESTextureInfo ti : sRecycledBitmaps) {
-                ti.bitmap.recycle();
-                ti.bitmap = null;
-            }
-            sRecycledBitmaps.clear();
 
             // Remove all pictures in the queue
             try {
