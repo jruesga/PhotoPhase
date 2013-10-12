@@ -147,6 +147,9 @@ public class PhotoPhaseWallpaperWorld {
 
         // Get a random frame to which apply the transition
         int pos = mPhotoFrames.indexOf(frame);
+        if (pos == -1) {
+            return;
+        }
         mTransitionsQueue.remove(Integer.valueOf(pos));
         mUsedTransitionsQueue.add(Integer.valueOf(pos));
 
