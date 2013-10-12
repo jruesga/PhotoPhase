@@ -578,15 +578,24 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                         // Now draw the world (all the photo frames with effects)
                         mWorld.draw(mMVPMatrix);
 
-                        // Check if we have some pending transition or transition has exceed its timeout
-                        if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
-                            mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                        // Check if we have some pending transition or transition has
+                        // exceed its timeout
+                        if (Preferences.General.Transitions.getTransitionInterval() > 0) {
+                            if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
+                                mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-                            // Now start a delayed thread to generate the next effect
-                            deselectCurrentTransition();
-                            mLastRunningTransition = 0;
-                            mHandler.postDelayed(mTransitionThread,
-                                    Preferences.General.Transitions.getTransitionInterval());
+                                // Now start a delayed thread to generate the next effect
+                                deselectCurrentTransition();
+                                mLastRunningTransition = 0;
+                                mHandler.postDelayed(mTransitionThread,
+                                        Preferences.General.Transitions.getTransitionInterval());
+                            }
+                        } else {
+                            // Just display the initial frames and never make transitions
+                            if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
+                                mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                                mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                            }
                         }
                     }
 

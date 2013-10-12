@@ -68,6 +68,19 @@
 
     <string-array name="transitions_default" translatable="false"/>
 
+    <integer-array name="transitions_intervals_values" translatable="false">
+        <item>0</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>5000</item>
+        <item>8000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+    </integer-array>
+
     <string-array name="effects_labels" translatable="false">
         <item>@string/effects_noeffect</item>
         <item>@string/effects_autofix</item>

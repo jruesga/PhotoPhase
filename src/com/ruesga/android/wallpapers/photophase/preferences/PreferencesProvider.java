@@ -19,7 +19,9 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 
+import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.effects.Effects.EFFECTS;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
@@ -92,6 +94,11 @@ public final class PreferencesProvider {
     private static Map<String, ?> mPreferences = new HashMap<String, Object>();
 
     /**
+     * @hide
+     */
+    /*package*/ static int[] TRANSITIONS_INTERVALS;
+
+    /**
      * Method that loads the all the preferences of the application
      *
      * @param context The current context
@@ -100,6 +107,9 @@ public final class PreferencesProvider {
         SharedPreferences preferences =
                 context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         mPreferences = preferences.getAll();
+
+        final Resources res = context.getResources();
+        TRANSITIONS_INTERVALS = res.getIntArray(R.array.transitions_intervals_values);
     }
 
     /**
@@ -221,15 +231,7 @@ public final class PreferencesProvider {
                 /**
                  * The default transition interval
                  */
-                public static final int DEFAULT_TRANSITION_INTERVAL = 2000;
-                /**
-                 * The minimum transition interval
-                 */
-                public static final int MIN_TRANSITION_INTERVAL = 1000;
-                /**
-                 * The maximum transition interval
-                 */
-                public static final int MAX_TRANSITION_INTERVAL = 8000;
+                public static final int DEFAULT_TRANSITION_INTERVAL_INDEX = 2;
 
                 /**
                  * Return the current user preference about the transition to apply to
@@ -258,9 +260,9 @@ public final class PreferencesProvider {
                  * @return int The milliseconds in which the next transition will be triggered
                  */
                 public static int getTransitionInterval() {
-                    int def =  (DEFAULT_TRANSITION_INTERVAL / 500) - 2;
-                    int interval = getInt("ui_transition_interval", def);
-                    return (interval * 500) + 1000;
+                    int interval = getInt("ui_transition_interval",
+                            DEFAULT_TRANSITION_INTERVAL_INDEX);
+                    return TRANSITIONS_INTERVALS[interval];
                 }
             }
 

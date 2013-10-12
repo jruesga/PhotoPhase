@@ -18,6 +18,8 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -33,8 +35,6 @@ import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;
 import com.ruesga.android.wallpapers.photophase.widgets.ColorPickerPreference;
-
-import java.text.DecimalFormat;
 
 /**
  * A fragment class with all the general settings
@@ -113,9 +113,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
-        final DecimalFormat df = new DecimalFormat();
-        df.setMinimumFractionDigits(0);
-        df.setMaximumIntegerDigits(1);
+        final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
+        final Resources res = getActivity().getResources();
 
         // Add the preferences
         addPreferencesFromResource(R.xml.preferences_general);
@@ -136,16 +135,20 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
 
+        final int[] transitionsIntervals = res.getIntArray(R.array.transitions_intervals_values);
         mTransitionsInterval = (SeekBarProgressPreference)findPreference("ui_transition_interval");
         mTransitionsInterval.setFormat(getString(R.string.pref_general_transitions_interval_format));
-        int max = Preferences.General.Transitions.MAX_TRANSITION_INTERVAL;
-        int min = Preferences.General.Transitions.MIN_TRANSITION_INTERVAL;
-        final int MAX = ((max - min) / 1000) * 2;
-        mTransitionsInterval.setMax(MAX);
+        mTransitionsInterval.setMax(transitionsIntervals.length - 1);
+        int transitionInterval = prefs.getInt("ui_transition_interval",
+                Preferences.General.Transitions.DEFAULT_TRANSITION_INTERVAL_INDEX);
+        if (transitionInterval > (transitionsIntervals.length - 1)) {
+            mTransitionsInterval.setProgress(
+                    Preferences.General.Transitions.DEFAULT_TRANSITION_INTERVAL_INDEX);
+        }
         mTransitionsInterval.setOnDisplayProgress(new OnDisplayProgress() {
             @Override
             public String onDisplayProgress(int progress) {
-                return df.format((progress * 0.5) + 1);
+                return String.valueOf(transitionsIntervals[progress] / 1000);
             }
         });
         mTransitionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
