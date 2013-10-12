@@ -30,7 +30,6 @@ import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -190,6 +189,7 @@ public class MediaPictureDiscoverer {
          */
         private List<File> getPictures(
                 Uri uri, String[] projection, String where, String[] args) {
+            long start = System.currentTimeMillis();
             List<File> paths = new ArrayList<File>();
             List<File> partial = new ArrayList<File>();
             Cursor c = mFinalContentResolver.query(uri, projection, where, args, null);
@@ -201,15 +201,12 @@ public class MediaPictureDiscoverer {
                         String p = c.getString(0);
                         if (p != null) {
                             File f = new File(p);
-                            if (f.isFile() && f.canRead()) {
-                                // Catalog the file
-                                catalog(f);
+                            catalog(f);
 
-                                // Check if is a valid filter
-                                if (matchFilter(f)) {
-                                    paths.add(f);
-                                    partial.add(f);
-                                }
+                            // Check if is a valid filter
+                            if (matchFilter(f)) {
+                                paths.add(f);
+                                partial.add(f);
                             }
                         }
 
@@ -228,6 +225,8 @@ public class MediaPictureDiscoverer {
                     }
                 }
             }
+            long end = System.currentTimeMillis();
+            if (DEBUG) Log.v(TAG, "Media reloaded in " + (end - start) + " miliseconds");
             return paths;
         }
 
@@ -238,24 +237,8 @@ public class MediaPictureDiscoverer {
          * @return boolean whether the picture match the filter
          */
         private boolean matchFilter(File picture) {
-            Iterator<String> it = mFilter.iterator();
-            boolean noFilter = true;
-            while (it.hasNext()) {
-                noFilter = false;
-                File filter = new File(it.next());
-                if (filter.isDirectory()) {
-                    // Album match
-                    if (filter.compareTo(picture.getParentFile()) == 0) {
-                        return true;
-                    }
-                } else {
-                    // Picture match
-                    if (filter.compareTo(picture) == 0) {
-                        return true;
-                    }
-                }
-            }
-            return noFilter;
+            return mFilter.contains(picture.getAbsolutePath()) ||
+                    mFilter.contains(picture.getParentFile().getAbsolutePath());
         }
 
         /**

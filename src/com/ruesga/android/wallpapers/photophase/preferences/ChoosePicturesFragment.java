@@ -82,6 +82,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
                             MediaStore.MediaColumns.DATA);
             if (c != null) {
                 try {
+                    long start = System.currentTimeMillis();
                     if (DEBUG) Log.v(TAG, "Media library:");
                     while (c.moveToNext()) {
                         // Only valid files (those i can read)
@@ -119,6 +120,8 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
                         mAlbums.add(album);
                         mOriginalAlbums.add((Album)album.clone());
                     }
+                    long end = System.currentTimeMillis();
+                    if (DEBUG) Log.v(TAG, "Library loaded in " + (end - start) + " miliseconds");
 
                 } finally {
                     c.close();
