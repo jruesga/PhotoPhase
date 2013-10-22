@@ -1,0 +1,14 @@
+v1.0.2
+----------------------------
+- Permite mover la aplicación a la tarjeta SD externa (no todos los dispositivos soportan esta característica. Si tu fondo de pantalla se resetea al de defecto tras un reinicio del dispositivo, entonces tu dispositivo no soporta esta característica y necesita ser instalado en la tarjeta SD interna)
+- Corregido un problema que impide el arranque de aplicación en la versión 4.0.3 de Android (gracias por los informes de errores)
+
+v1.0.1
+----------------------------
+- Ajustes de intervalo de transiciones: Ahora acepta valores desde 0 a 60 segundos (0 significa sin transiciones)
+- Mejora en los tiempos de búsqueda de nuevas imágenes
+- Corregidos algunos errores (gracias por los informes de errores)
+
+v1.0.0
+----------------------------
+- Versión inicial
