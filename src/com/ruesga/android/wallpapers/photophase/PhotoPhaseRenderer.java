@@ -495,7 +495,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             // Recycle the current texture manager and create a new one
             recycle();
             mTextureManager = new TextureManager(
-                    mContext, mEffectContext, mDispatcher, cc, dimensions);
+                    mContext, mHandler, mEffectContext, mDispatcher, cc, dimensions);
         }
     }
 
