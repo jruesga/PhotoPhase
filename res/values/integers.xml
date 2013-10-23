@@ -15,7 +15,7 @@
  -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <integer name="cards_slide_anim">800</integer>
+    <integer name="cards_slide_anim">1000</integer>
     <integer name="disposition_show_anim">600</integer>
     <integer name="disposition_hide_anim">400</integer>
 </resources>
