@@ -97,7 +97,7 @@ public class VerticalEndlessScroller extends ScrollView {
      */
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        // We take the last son in the scrollview
+        // We take the last child in the scrollview
         View view = getChildAt(getChildCount() - 1);
         int diff = (view.getBottom() - (getHeight() + getScrollY()));
         if ((!mSwitch && diff <= mEndPadding)) {
@@ -108,9 +108,6 @@ public class VerticalEndlessScroller extends ScrollView {
             }
         } else if (diff > mEndPadding) {
             mSwitch = false;
-        }
-        if (!mSwitch) {
-//            super.onScrollChanged(l, t, oldl, oldt);
         }
     }
 

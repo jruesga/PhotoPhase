@@ -153,15 +153,6 @@ public class AlbumInfo extends RelativeLayout
         mOverflowButton.setOnClickListener(this);
 
         updateView(mAlbum);
-
-        post(new Runnable() {
-            @Override
-            public void run() {
-                // Show as icon, the first picture
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon);
-                mTask.execute(new File(mAlbum.getItems().get(0)));
-            }
-        });
     }
 
     /**
@@ -172,7 +163,7 @@ public class AlbumInfo extends RelativeLayout
         super.onDetachedFromWindow();
 
         // Cancel pending tasks
-        if (mTask.getStatus().compareTo(Status.PENDING) == 0) {
+        if (mTask != null && mTask.getStatus().compareTo(Status.PENDING) == 0) {
             mTask.cancel(true);
         }
     }
@@ -262,7 +253,7 @@ public class AlbumInfo extends RelativeLayout
     public void updateView(Album album) {
         mAlbum = album;
 
-        if (mIcon != null) {
+        if (mAlbum != null && mIcon != null) {
             Resources res = getContext().getResources();
 
             int selectedItems = mAlbum.getSelectedItems().size();
@@ -277,6 +268,17 @@ public class AlbumInfo extends RelativeLayout
             mItems.setText(String.format(res.getQuantityText(
                     R.plurals.album_number_of_pictures, items).toString(), items));
             setSelected(album.isSelected());
+
+            if (mTask == null) {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Show as icon, the first picture
+                        mTask = new AsyncPictureLoaderTask(getContext(), mIcon);
+                        mTask.execute(new File(mAlbum.getItems().get(0)));
+                    }
+                });
+            }
         }
     }
 }

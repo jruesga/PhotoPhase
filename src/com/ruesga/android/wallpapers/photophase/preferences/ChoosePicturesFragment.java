@@ -110,7 +110,6 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
                                   if (isSelectedItem(f.getAbsolutePath())) {
                                       album.getSelectedItems().add(f.getAbsolutePath());
                                   }
-                                  Thread.yield();
                             }
                         }
                     }
@@ -149,8 +148,11 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
             }
             doEndScroll(steps, true);
 
-            // Load in background
-            loadInBackground(1500L);
+            // We not need Hardware acceleration anymore (no more animations)
+            // Disable drawing cache
+            mScroller.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            mScroller.setDrawingCacheEnabled(false);
+            mScroller.setSmoothScrollingEnabled(true);
         }
     };
 
@@ -342,7 +344,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
             AlbumInfo albumInfo = (AlbumInfo)v.findViewById(R.id.album_info);
             AlbumPictures albumPictures = (AlbumPictures)v.findViewById(R.id.album_pictures);
             albumInfo.updateView(album);
-            albumPictures.updateView(album);
+            albumPictures.updateView(album, true);
         }
 
         // Restore the preference
@@ -361,14 +363,19 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
      * @param album The album to create
      * @return View The view create
      */
-    View createAlbumView(Album album) {
+    View createAlbumView(final Album album) {
         LayoutInflater li = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View albumView = li.inflate(R.layout.album, mAlbumsPanel, false);
         final AlbumInfo albumInfo = (AlbumInfo)albumView.findViewById(R.id.album_info);
         final AlbumPictures albumPictures = (AlbumPictures)albumView.findViewById(R.id.album_pictures);
 
         // Load the album info
-        albumInfo.updateView(album);
+        albumInfo.post(new Runnable() {
+            @Override
+            public void run() {
+                albumInfo.updateView(album);
+            }
+        });
         if (album.isSelected()) {
             albumInfo.setSelected(true);
         }
@@ -379,7 +386,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
                 removeAlbumItems(ref);
                 mSelectedAlbums.add(ref.getPath());
                 ref.setSelected(true);
-                albumPictures.updateView(ref);
+                albumPictures.updateView(ref, true);
 
                 Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
                 mSelectionChanged = true;
@@ -390,7 +397,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
                 // Remove all pictures of the album
                 removeAlbumItems(ref);
                 ref.setSelected(false);
-                albumPictures.updateView(ref);
+                albumPictures.updateView(ref, true);
 
                 Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
                 mSelectionChanged = true;
@@ -400,7 +407,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
         });
 
         // Load the album picture data
-        albumPictures.updateView(album);
+        albumPictures.updateView(album, false);
         albumPictures.addCallBackListener(new AlbumPictures.CallbacksListener() {
             @Override
             public void onBackButtonClick(View v) {
@@ -480,26 +487,10 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
     /*package*/ synchronized void doEndScroll(int amount, boolean animate) {
         for (int i = 0; i < amount; i++) {
             //Add to the panel of cards
-            if (mAlbumViews != null && !mAlbumViews.isEmpty()) {
-                mAlbumsPanel.addCard(mAlbumViews.remove(0), animate);
+            if (mAlbumViews == null || mAlbumViews.isEmpty()) {
+                break;
             }
+            mAlbumsPanel.addCard(mAlbumViews.remove(0), animate);
         }
-    }
-
-    /**
-     * Method that load albums in background
-     *
-     * @param delay The delay time
-     */
-    /*package*/ void loadInBackground(long delay) {
-        mAlbumsPanel.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doEndScroll(AMOUNT_OF_ADDED_STEPS, false);
-                if (mAlbumViews != null && !mAlbumViews.isEmpty()) {
-                    loadInBackground(300L);
-                }
-            }
-        }, delay);
     }
 }

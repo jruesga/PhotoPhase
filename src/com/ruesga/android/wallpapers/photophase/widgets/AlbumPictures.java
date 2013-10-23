@@ -73,6 +73,8 @@ public class AlbumPictures extends RelativeLayout
     private View mBackButton;
     private View mOverflowButton;
 
+    private boolean mInitialized;
+
     /*package*/ Album mAlbum;
 
     /**
@@ -117,6 +119,7 @@ public class AlbumPictures extends RelativeLayout
     private void init() {
         mCallbacks = new ArrayList<AlbumPictures.CallbacksListener>();
         mHandler = new Handler();
+        mInitialized = false;
     }
 
     /**
@@ -134,7 +137,7 @@ public class AlbumPictures extends RelativeLayout
         TextView title = (TextView)findViewById(R.id.album_pictures_title);
         title.setText(mAlbum.getName());
 
-        updateView(mAlbum);
+        updateView(mAlbum, false);
     }
 
     /**
@@ -159,10 +162,19 @@ public class AlbumPictures extends RelativeLayout
      * Method that set the data of the view
      *
      * @param album The album data
+     * @param recreate If the view should be recreated
      */
-    public void updateView(Album album) {
+    public void updateView(Album album, boolean recreate) {
         mAlbum = album;
+        recreateView(false);
+    }
 
+    /**
+     * Method that recreates the the view
+     *
+     * @param propagateShow If should propagate the show event
+     */
+    private void recreateView(final boolean propagateShow) {
         if (mHolder != null) {
             mHandler.post(new Runnable() {
                 @Override
@@ -177,16 +189,17 @@ public class AlbumPictures extends RelativeLayout
                         for (final String picture : mAlbum.getItems()) {
                             View v = createPicture(inflater, picture, isPictureSelected(picture));
                             mHolder.addView(v);
-                            Thread.yield();
                         }
                     } else {
                         int i = 0;
                         for (final String picture : mAlbum.getItems()) {
                             View v = mHolder.getChildAt(i);
                             v.setSelected(isPictureSelected(picture));
-                            Thread.yield();
                             i++;
                         }
+                    }
+                    if (propagateShow) {
+                        mScroller.onShow();
                     }
                 }
             });
@@ -294,7 +307,10 @@ public class AlbumPictures extends RelativeLayout
      * Method invoked when the view is displayed
      */
     public void onShow() {
-        mScroller.onShow();
+        if (!mInitialized) {
+            mInitialized = true;
+            recreateView(true);
+        }
     }
 
     /**
