@@ -1,3 +1,8 @@
+v1.0.3
+----------------------------
+- Corregido el problema que muestra la pantalla en blanco en la actividad de álbumes 
+- Mejorada la respuesta en la actividad de álbumes
+
 v1.0.2
 ----------------------------
 - Permite mover la aplicación a la tarjeta SD externa (no todos los dispositivos soportan esta característica. Si tu fondo de pantalla se resetea al de defecto tras un reinicio del dispositivo, entonces tu dispositivo no soporta esta característica y necesita ser instalado en la tarjeta SD interna)
