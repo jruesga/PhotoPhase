@@ -386,6 +386,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /*package*/ synchronized void deselectCurrentTransition() {
         mHandler.removeCallbacks(mTransitionThread);
         mWorld.deselectTransition(mMVPMatrix);
+        mLastRunningTransition = 0;
     }
 
     /*package*/ void scheduleOrCancelMediaScan() {
@@ -557,6 +558,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         } catch (GLException e) {
             Log.e(TAG, "Cannot recreate the wallpaper world.", e);
         }
+
+        // Force an immediate redraw of the screen (draw thread could be in dirty mode only)
+        deselectCurrentTransition();
+        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
     /**
@@ -600,13 +605,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             // Just display the initial frames and never make transitions
                             if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                                mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                             }
                         }
-                    }
 
-                    // Draw the overlay
-                    drawOverlay();
+                        // Draw the overlay
+                        drawOverlay();
+                    }
                 }
             }
 
