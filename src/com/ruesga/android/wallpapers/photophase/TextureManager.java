@@ -52,7 +52,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
     final Context mContext;
     final Handler mHandler;
-    final Effects mEffects;
+    Effects mEffects;
     final Object mSync;
     final List<TextureRequestor> mPendingRequests;
     final FixedQueue<GLESTextureInfo> mQueue = new FixedQueue<GLESTextureInfo>(QUEUE_SIZE);
@@ -84,7 +84,10 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         @Override
         public void run() {
             try {
-                Effect effect = mEffects.getNextEffect();
+                Effect effect = null;
+                synchronized (mEffects) {
+                    effect = mEffects.getNextEffect();
+                }
 
                 // Load and bind to the GLES context. The effect is applied when the image
                 // is associated to the destination target (only if aspect ratio will be applied)
@@ -157,6 +160,22 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         mBackgroundTask = new BackgroundPictureLoaderThread();
         mBackgroundTask.mTaskPaused = false;
         reloadMedia(false);
+    }
+
+    /**
+     * Method that update the effect context if the EGL context change
+     *
+     * @param effectCtx The new effect context
+     */
+    protected void updateEffectContext(final EffectContext effectCtx) {
+        synchronized (mEffects) {
+            if (mEffects != null) {
+                mEffects.release();
+                mEffects = null;
+            }
+            mEffects = new Effects(effectCtx);
+        }
+        emptyTextureQueue(true);
     }
 
     /**
