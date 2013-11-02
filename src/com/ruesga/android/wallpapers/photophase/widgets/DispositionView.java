@@ -74,7 +74,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     private int mCols;
     private int mRows;
 
-    /*package*/ View mTarget;
+    View mTarget;
     private ResizeFrame mResizeFrame;
     private int mInternalPadding;
     private Rect mOldResizeFrameLocation;
@@ -323,7 +323,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      *
      * @param target The disposition target
      */
-    /*package*/ void finishDeleteAnimation(Disposition target) {
+    void finishDeleteAnimation(Disposition target) {
         removeView(mTarget);
         mDispositions.remove(target);
         Collections.sort(mDispositions);
@@ -514,7 +514,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      *
      * @return The target view
      */
-    /*package*/ View findTargetFromResizeFrame() {
+    View findTargetFromResizeFrame() {
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View v = getChildAt(i);
@@ -552,7 +552,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      *
      * @param v The target view
      */
-    /*package*/ boolean selectTarget(View v) {
+    boolean selectTarget(View v) {
         //Do not do long click if we do not have a target
         if (mTarget != null && v.equals(mTarget)) return false;
 

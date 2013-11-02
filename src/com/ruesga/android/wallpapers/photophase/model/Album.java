@@ -24,15 +24,19 @@ import java.util.List;
 /**
  * A class that represents an album
  */
-public class Album  implements Comparable<Album>, Cloneable {
+public class Album implements Comparable<Album>, Cloneable {
 
     private Drawable mIcon;
     private String mPath;
     private String mName;
     private String mDate;
     private boolean mSelected;
-    private List<String> mItems;
+    private List<Picture> mItems;
+    // We have this array for performance access. Do not forget to sync with Picture#selected
     private List<String> mSelectedItems;
+
+    // Ui properties
+    private boolean mDisplayed = false;
 
     public Drawable getIcon() {
         return mIcon;
@@ -74,11 +78,11 @@ public class Album  implements Comparable<Album>, Cloneable {
         this.mSelected = selected;
     }
 
-    public List<String> getItems() {
+    public List<Picture> getItems() {
         return mItems;
     }
 
-    public void setItems(List<String> items) {
+    public void setItems(List<Picture> items) {
         this.mItems = items;
     }
 
@@ -88,6 +92,14 @@ public class Album  implements Comparable<Album>, Cloneable {
 
     public void setSelectedItems(List<String> selectedItems) {
         this.mSelectedItems = selectedItems;
+    }
+
+    public boolean isDisplayed() {
+        return mDisplayed;
+    }
+
+    public void setDisplayed(boolean mDisplayed) {
+        this.mDisplayed = mDisplayed;
     }
 
     @Override
@@ -102,9 +114,10 @@ public class Album  implements Comparable<Album>, Cloneable {
         album.mPath = mPath;
         album.mName = mName;
         album.mDate = mDate;
-        album.mItems = new ArrayList<String>(mItems);
+        album.mItems = new ArrayList<Picture>(mItems);
         album.mSelectedItems = new ArrayList<String>(mSelectedItems);
         album.mSelected = mSelected;
+        album.mDisplayed = mDisplayed;
         return album;
     }
 }

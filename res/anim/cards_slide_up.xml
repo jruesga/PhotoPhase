@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 Jorge Ruesga
+<!--
+     Copyright (C) 2013 Ahmed Nammari
+     Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,24 +15,18 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:interpolator="@android:anim/accelerate_interpolator" >
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+    android:fillAfter="true">
 
     <translate
-        android:duration="@integer/cards_slide_anim"
+        android:duration="@integer/cards_slide_up_anim"
         android:fromYDelta="100%p"
         android:toYDelta="0" />
 
     <alpha
-        android:duration="@integer/cards_slide_anim"
+        android:duration="@integer/cards_slide_up_anim"
         android:fromAlpha="0.0"
         android:toAlpha="1.0" />
 
-    <rotate
-        android:duration="@integer/cards_slide_anim"
-        android:fromDegrees="-25"
-        android:pivotX="100%"
-        android:pivotY="0"
-        android:toDegrees="0" />
 </set>

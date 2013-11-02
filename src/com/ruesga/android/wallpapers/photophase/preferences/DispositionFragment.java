@@ -53,7 +53,7 @@ public abstract class DispositionFragment
         }
     };
 
-    /*package*/ DispositionView mDispositionView;
+    DispositionView mDispositionView;
 
     private MenuItem mDeleteMenu;
 

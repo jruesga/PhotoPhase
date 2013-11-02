@@ -16,7 +16,9 @@
 
 package com.ruesga.android.wallpapers.photophase.preferences;
 
-import android.content.ContentResolver;
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -24,6 +26,8 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -32,19 +36,30 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.animations.AlbumsFlip3dAnimationController;
+import com.ruesga.android.wallpapers.photophase.adapters.AlbumCardUiAdapter;
+import com.ruesga.android.wallpapers.photophase.adapters.AlbumPictureAdapter;
 import com.ruesga.android.wallpapers.photophase.model.Album;
+import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
-import com.ruesga.android.wallpapers.photophase.widgets.AlbumInfo;
-import com.ruesga.android.wallpapers.photophase.widgets.AlbumPictures;
-import com.ruesga.android.wallpapers.photophase.widgets.CardLayout;
-import com.ruesga.android.wallpapers.photophase.widgets.VerticalEndlessScroller;
-import com.ruesga.android.wallpapers.photophase.widgets.VerticalEndlessScroller.OnEndScrollListener;
+import com.ruesga.android.wallpapers.photophase.widgets.AlbumInfoView;
+import com.ruesga.android.wallpapers.photophase.widgets.PictureItemView;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,25 +71,28 @@ import java.util.Set;
 /**
  * A fragment class for select the picture that will be displayed on the wallpaper
  */
-public class ChoosePicturesFragment extends PreferenceFragment implements OnEndScrollListener {
+public class ChoosePicturesFragment extends PreferenceFragment
+        implements AlbumInfoView.CallbacksListener, OnClickListener {
 
     private static final String TAG = "ChoosePicturesFragment";
 
     private static final boolean DEBUG = false;
 
-    private static final int AMOUNT_OF_ADDED_STEPS = 5;
+    private static final int PROGRESS_STEPS = 5;
 
-    private final AsyncTask<Void, Album, Void> mAlbumsLoaderTask = new AsyncTask<Void, Album, Void>() {
+    // The album loader task
+    private final AsyncTask<Void, Album, Void> mTask = new AsyncTask<Void, Album, Void>() {
+
+        private DateFormat mDateFormat;
+
         /**
          * {@inheritDoc}
          */
         @Override
         protected Void doInBackground(Void... params) {
             // Query all the external content and classify the pictures in albums and load the cards
-            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-            Album album = null;
-            unregister();
-            Cursor c = mContentResolver.query(
+            mDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+            Cursor c = getActivity().getContentResolver().query(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             new String[]{ MediaStore.MediaColumns.DATA },
                             null,
@@ -84,40 +102,31 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
                 try {
                     long start = System.currentTimeMillis();
                     if (DEBUG) Log.v(TAG, "Media library:");
+                    int count = 0;
+                    List<Album> pending = new ArrayList<Album>();
+                    List<Album> all = new ArrayList<Album>();
+                    Album album = null;
                     while (c.moveToNext()) {
-                        // Only valid files (those i can read)
-                        String p = c.getString(0);
-                        if (DEBUG) Log.v(TAG, "\t" + p);
-                        if (p != null) {
-                            File f = new File(p);
-                            if (f.isFile() && f.canRead()) {
-                                  File path = f.getParentFile();
-                                  String name = path.getName();
-                                  if (album == null || album.getPath().compareTo(path.getAbsolutePath()) != 0) {
-                                      if (album != null) {
-                                          mAlbums.add(album);
-                                          mOriginalAlbums.add((Album)album.clone());
-                                      }
-                                      album = new Album();
-                                      album.setPath(path.getAbsolutePath());
-                                      album.setName(name);
-                                      album.setDate(df.format(new Date(path.lastModified())));
-                                      album.setSelected(isSelectedItem(album.getPath()));
-                                      album.setItems(new ArrayList<String>());
-                                      album.setSelectedItems(new ArrayList<String>());
-                                  }
-                                  album.getItems().add(f.getAbsolutePath());
-                                  if (isSelectedItem(f.getAbsolutePath())) {
-                                      album.getSelectedItems().add(f.getAbsolutePath());
-                                  }
-                            }
+                        album = processPath(all, pending, album, c.getString(0));
+                        count++;
+                        if (count % PROGRESS_STEPS == 0) {
+                            // Notify and clean
+                            publishProgress(pending.toArray(new Album[pending.size()]));
+                            pending.clear();
                         }
                     }
 
-                    // Add the last album
+                    // Add the last albums
                     if (album != null) {
-                        mAlbums.add(album);
+                     // Add to global structures
+                        all.add(album);
                         mOriginalAlbums.add((Album)album.clone());
+
+                        // Add to local structures and notify
+                        pending.add(album);
+
+                        // Notify
+                        publishProgress(pending.toArray(new Album[pending.size()]));
                     }
                     long end = System.currentTimeMillis();
                     if (DEBUG) Log.v(TAG, "Library loaded in " + (end - start) + " miliseconds");
@@ -133,43 +142,139 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
          * {@inheritDoc}
          */
         @Override
-        protected void onPostExecute(Void result) {
-            Resources res = getActivity().getResources();
-            int size = (int)(res.getDimension(R.dimen.album_size) +
-                    res.getDimension(R.dimen.small_margin));
-            mScroller.setEndPadding(size * AMOUNT_OF_ADDED_STEPS);
-            int height = mScroller.getMeasuredHeight();
-            int steps = (height / size) + AMOUNT_OF_ADDED_STEPS;
-
-            // Create the views an force a redraw the items
-            mAlbumViews = new ArrayList<View>(mAlbums.size());
-            for (Album item : mAlbums) {
-                mAlbumViews.add(createAlbumView(item));
+        protected void onProgressUpdate(Album... albums) {
+            for(Album album : albums) {
+                mAlbums.add(album);
             }
-            doEndScroll(steps, true);
+            mAlbumAdapter.notifyDataSetChanged();
+        }
 
-            // We not need Hardware acceleration anymore (no more animations)
-            // Disable drawing cache
-            mScroller.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            mScroller.setDrawingCacheEnabled(false);
-            mScroller.setSmoothScrollingEnabled(true);
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void onPostExecute(Void result) {
+            mAlbumAdapter.notifyDataSetChanged();
+        }
+
+        /**
+         * Method that process a album path
+         *
+         * @param all All the albums
+         * @param pending Pending albums to notify
+         * @param data The current album data
+         * @param path The path to analyze
+         * @return Album The new current album
+         */
+        private Album processPath(List<Album> all, List<Album> pending, Album data, String path) {
+            // Only valid files (those i can read)
+            if (DEBUG) Log.v(TAG, "\t" + path);
+            Album album = data;
+            if (path != null) {
+                File f = new File(path);
+                if (f.isFile() && f.canRead()) {
+                      File p = f.getParentFile();
+                      String name = p.getName();
+                      if (album == null || album.getPath().compareTo(p.getAbsolutePath()) != 0) {
+                          if (album != null) {
+                              // Add to global structures
+                              all.add(album);
+                              mOriginalAlbums.add((Album)album.clone());
+
+                              // Add to local structures and notify
+                              pending.add(album);
+                          }
+                          album = new Album();
+                          album.setPath(p.getAbsolutePath());
+                          album.setName(name);
+                          album.setDate(mDateFormat.format(new Date(p.lastModified())));
+                          album.setSelected(isSelectedItem(album.getPath()));
+                          album.setItems(new ArrayList<Picture>());
+                          album.setSelectedItems(new ArrayList<String>());
+                      }
+                      boolean selected = isSelectedItem(f.getAbsolutePath());
+                      album.getItems().add(new Picture(f.getAbsolutePath(), selected));
+                      if (selected) {
+                          album.getSelectedItems().add(f.getAbsolutePath());
+                      }
+                }
+            }
+            return album;
+        }
+
+        /**
+         * Method that checks if an item is selected
+         *
+         * @param item The item
+         * @return boolean if an item is selected
+         */
+        private boolean isSelectedItem(String item) {
+            Iterator<String> it = mSelectedAlbums.iterator();
+            while (it.hasNext()) {
+                String albumPath = it.next();
+                if (item.compareTo(albumPath) == 0) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
 
-    /*package*/ ContentResolver mContentResolver;
+    private final Handler.Callback mCallback = new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.what == MSG_LOAD_PICTURES) {
+                loadPictures((Album)msg.obj);
+                return true;
+            }
+            return false;
+        }
+    };
 
-    /*package*/ List<Album> mAlbums;
-    /*package*/ List<View> mAlbumViews;
-    /*package*/ List<Album> mOriginalAlbums;
-    /*package*/ List<AlbumsFlip3dAnimationController> mAnimationControllers;
+    OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mShowingAlbums) {
+                onHeaderPressed(parent, view, position);
+            } else {
+                onPicturePressed(view);
+            }
+        }
+    };
 
-    /*package*/ Set<String> mSelectedAlbums;
+    private static final int MSG_LOAD_PICTURES = 1;
+
+    List<Album> mAlbums;
+    List<Album> mOriginalAlbums;
+
+    Set<String> mSelectedAlbums;
     private Set<String> mOriginalSelectedAlbums;
 
-    /*package*/ VerticalEndlessScroller mScroller;
-    private CardLayout mAlbumsPanel;
+    ViewGroup mContainer;
 
-    /*package*/ boolean mSelectionChanged;
+    ListView mAlbumsPanel;
+    AlbumCardUiAdapter mAlbumAdapter;
+
+    GridView mPicturesPanel;
+    AlbumPictureAdapter mPictureAdapter;
+
+    private boolean mSelectionChanged;
+
+    // Animation references
+    ViewGroup mSrcParent;
+    View mSrcView;
+    ViewGroup mDstParent;
+    View mDstView;
+
+    Album mAlbum;
+
+    private int mPicturesAnimDurationIn;
+    private int mPicturesAnimDurationOut;
+
+    Handler mHandler;
+    LayoutInflater mInflater;
+
+    boolean mShowingAlbums;
 
     /**
      * {@inheritDoc}
@@ -177,21 +282,25 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContentResolver = getActivity().getContentResolver();
+        mHandler = new Handler(mCallback);
+        mShowingAlbums = true;
 
         // Create an empty album
         mAlbums = new ArrayList<Album>();
         mOriginalAlbums = new ArrayList<Album>();
-        mAnimationControllers = new ArrayList<AlbumsFlip3dAnimationController>();
 
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
         // Load the albums user selection
-        mOriginalSelectedAlbums = Preferences.Media.getSelectedMedia();
+        mOriginalSelectedAlbums = removeObsoleteAlbumsData(Preferences.Media.getSelectedMedia());
         mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
         mSelectionChanged = false;
+
+        Resources res = getActivity().getResources();
+        mPicturesAnimDurationIn = res.getInteger(R.integer.pictures_anim_in);
+        mPicturesAnimDurationOut = res.getInteger(R.integer.pictures_anim_out);
 
         setHasOptionsMenu(true);
     }
@@ -202,11 +311,18 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mAlbumsLoaderTask.getStatus().compareTo(Status.PENDING) == 0) {
-            mAlbumsLoaderTask.cancel(true);
+        if (mTask.getStatus().compareTo(Status.PENDING) == 0) {
+            mTask.cancel(true);
         }
         unbindDrawables(mAlbumsPanel);
         unregister();
+
+        if (!mShowingAlbums) {
+            mPicturesPanel.setVisibility(View.GONE);
+            mDstView.setVisibility(View.GONE);
+            mDstParent.removeView(mPicturesPanel);
+            mDstParent.removeView(mDstView);
+        }
 
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
@@ -218,10 +334,9 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
         getActivity().sendBroadcast(intent);
     }
 
-    /*package*/ void unregister() {
+    private void unregister() {
         mAlbums.clear();
         mOriginalAlbums.clear();
-        mAnimationControllers.clear();
     }
 
     /**
@@ -229,7 +344,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
      *
      * @param view The root view
      */
-    private void unbindDrawables(View view) {
+    void unbindDrawables(View view) {
         if (view.getBackground() != null) {
             view.getBackground().setCallback(null);
         }
@@ -237,7 +352,6 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
                 unbindDrawables(((ViewGroup) view).getChildAt(i));
             }
-            ((ViewGroup) view).removeAllViews();
         }
     }
 
@@ -245,26 +359,43 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
      * {@inheritDoc}
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            Bundle savedInstanceState) {
+
+        mContainer = container;
+        mInflater = inflater;
+
         // Inflate the layout for this fragment
-        mScroller =
-                (VerticalEndlessScroller)inflater.inflate(
+        FrameLayout root =
+                (FrameLayout)mInflater.inflate(
                         R.layout.choose_picture_fragment, container, false);
-        mScroller.setCallback(this);
-        mAlbumsPanel = (CardLayout)mScroller.findViewById(R.id.albums_panel);
+        mAlbumsPanel = (ListView)root.findViewById(R.id.albums_panel);
+        mAlbumsPanel.setSmoothScrollbarEnabled(true);
+        mAlbumAdapter = new AlbumCardUiAdapter(getActivity(), mAlbumsPanel, mAlbums, this);
+        mAlbumsPanel.setAdapter(mAlbumAdapter);
+        mAlbumsPanel.setOnItemClickListener(mOnItemClickListener);
 
         // Force Hardware acceleration
-        if (!mScroller.isHardwareAccelerated()) {
-            mScroller.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        if (!root.isHardwareAccelerated()) {
+            root.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
         if (!mAlbumsPanel.isHardwareAccelerated()) {
             mAlbumsPanel.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
 
         // Load the albums
-        mAlbumsLoaderTask.execute();
+        unregister();
+        mTask.execute();
 
-        return mScroller;
+        return root;
+    }
+
+    @Override
+    public void onClick(View v) {
+        // Hide the albums picture with animation
+        if (v.equals(mDstView)) {
+            hideAlbumPictures(mDstParent, mDstView, mSrcParent, mSrcView);
+        }
     }
 
     /**
@@ -287,8 +418,12 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
             case R.id.mnu_restore:
                 restoreData();
                 return true;
-            case R.id.mnu_invert_all:
-                invertAll();
+            case R.id.mnu_invert:
+                if (mShowingAlbums) {
+                    invertAll();
+                } else {
+                    invertAlbum(mAlbum);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -301,14 +436,25 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
     private void restoreData() {
         // Restore and the albums the selection
         mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
-        mAlbums.clear();
-        for (Album album : mOriginalAlbums) {
-            mAlbums.add((Album)album.clone());
-        }
+        int count = mAlbums.size();
+        for (int i = 0; i < count ; i++) {
+            Album album = mAlbums.get(i);
+            Album originalAlbum = mOriginalAlbums.get(i);
 
-        // Update all the views
+            // Update selected status
+            album.setSelected(originalAlbum.isSelected());
+            album.setItems(new ArrayList<Picture>(originalAlbum.getItems()));
+            album.setSelectedItems(new ArrayList<String>(originalAlbum.getSelectedItems()));
+        }
+        mAlbumAdapter.notifyDataSetChanged();
+
+        // Update settings
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
-        updateAll();
+        mSelectionChanged = true;
+
+        if (!mShowingAlbums) {
+            hideAlbumPictures(mDstParent, mDstView, mSrcParent, mSrcView);
+        }
     }
 
     /**
@@ -325,131 +471,132 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
             } else {
                 mSelectedAlbums.addAll(album.getSelectedItems());
             }
+            for (Picture picture : album.getItems()) {
+                picture.setSelected(false);
+            }
         }
+        mAlbumAdapter.notifyDataSetChanged();
 
-        // Update all the views
-        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
-        updateAll();
-    }
-
-    /**
-     * Method that updates the current state of all the albums
-     */
-    private void updateAll() {
-        // Update every view (albums and views should have the same size)
-        int count = mAlbumsPanel.getChildCount();
-        for (int i = 0; i < count; i++) {
-            Album album = mAlbums.get(i);
-            View v = mAlbumsPanel.getChildAt(i);
-            AlbumInfo albumInfo = (AlbumInfo)v.findViewById(R.id.album_info);
-            AlbumPictures albumPictures = (AlbumPictures)v.findViewById(R.id.album_pictures);
-            albumInfo.updateView(album);
-            albumPictures.updateView(album, true);
-        }
-
-        // Restore the preference
+        // Update settings
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
         mSelectionChanged = true;
-
-        // Restore all the animations states
-        for (AlbumsFlip3dAnimationController controller : mAnimationControllers) {
-            controller.reset();
-        }
     }
 
     /**
-     * Method that creates a new album to the card layout
+     * Method that inverts the selection of an album
      *
-     * @param album The album to create
-     * @return View The view create
+     * @param album The album which to invert its selection
      */
-    View createAlbumView(final Album album) {
-        LayoutInflater li = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View albumView = li.inflate(R.layout.album, mAlbumsPanel, false);
-        final AlbumInfo albumInfo = (AlbumInfo)albumView.findViewById(R.id.album_info);
-        final AlbumPictures albumPictures = (AlbumPictures)albumView.findViewById(R.id.album_pictures);
-
-        // Load the album info
-        albumInfo.post(new Runnable() {
-            @Override
-            public void run() {
-                albumInfo.updateView(album);
+    private void invertAlbum(Album album) {
+        // Remove all pictures of the album
+        removeAlbumItems(album);
+        List<String> origSelectedItems = new ArrayList<String>(album.getSelectedItems());
+        List<String> selectedItems =  album.getSelectedItems();
+        album.getSelectedItems().clear();
+        for (Picture picture : album.getItems()) {
+            boolean selected = !origSelectedItems.contains(picture.getPath());
+            if (selected) {
+                selectedItems.add(picture.getPath());
             }
-        });
-        if (album.isSelected()) {
-            albumInfo.setSelected(true);
+            picture.setSelected(selected);
         }
-        albumInfo.addCallBackListener(new AlbumInfo.CallbacksListener() {
-            @Override
-            public void onAlbumSelected(Album ref) {
-                // Remove all pictures of the album and add the album reference
-                removeAlbumItems(ref);
-                mSelectedAlbums.add(ref.getPath());
-                ref.setSelected(true);
-                albumPictures.updateView(ref, true);
 
-                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
-                mSelectionChanged = true;
-            }
+        // Notify pictures dataset changed
+        mPictureAdapter.notifyDataSetChanged();
+        updateAlbumInfo(mDstView, album);
 
-            @Override
-            public void onAlbumDeselected(Album ref) {
-                // Remove all pictures of the album
-                removeAlbumItems(ref);
-                ref.setSelected(false);
-                albumPictures.updateView(ref, true);
-
-                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
-                mSelectionChanged = true;
-            }
-
-
-        });
-
-        // Load the album picture data
-        albumPictures.updateView(album, false);
-        albumPictures.addCallBackListener(new AlbumPictures.CallbacksListener() {
-            @Override
-            public void onBackButtonClick(View v) {
-                // Ignored
-            }
-
-            @Override
-            public void onSelectionChanged(Album ref) {
-                // Remove, add, and persist the selection
-                removeAlbumItems(ref);
-                mSelectedAlbums.addAll(ref.getSelectedItems());
-                ref.setSelected(false);
-                albumInfo.updateView(ref);
-
-                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
-                mSelectionChanged = true;
-            }
-        });
-
-        // Register the animation controller
-        AlbumsFlip3dAnimationController controller = new AlbumsFlip3dAnimationController(albumInfo, albumPictures);
-        controller.register();
-        mAnimationControllers.add(controller);
-
-        return albumView;
+        mSelectedAlbums.addAll(album.getSelectedItems());
+        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+        mSelectionChanged = true;
     }
 
     /**
-     * Method that checks if an item is selected
-     *
-     * @param item The item
-     * @return boolean if an item is selected
+     * {@inheritDoc}
      */
-    /*package*/ boolean isSelectedItem(String item) {
-        Iterator<String> it = mSelectedAlbums.iterator();
-        while (it.hasNext()) {
-            String albumPath = it.next();
-            if (item.compareTo(albumPath) == 0) {
-                return true;
-            }
+    @Override
+    public void onAlbumSelected(Album album) {
+        updateAlbumSelection(album, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onAlbumDeselected(Album album) {
+        updateAlbumSelection(album, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onAllPicturesSelected(Album album) {
+        updateAllPicturesSelection(album, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onAllPicturesDeselected(Album album) {
+        updateAllPicturesSelection(album, false);
+    }
+
+    /**
+     * Method that update the album selection
+     *
+     * @param album The album to update
+     * @param selected If the album is selected
+     */
+    private void updateAlbumSelection(Album album, boolean selected) {
+        // Remove all pictures of the album
+        removeAlbumItems(album);
+        album.setSelected(selected);
+        album.getSelectedItems().clear();
+        for (Picture picture : album.getItems()) {
+            picture.setSelected(false);
         }
-        return false;
+        if (selected) {
+            mSelectedAlbums.add(album.getPath());
+        }
+
+        if (!mShowingAlbums) {
+            // Notify pictures dataset changed
+            updateAlbumInfo(mDstView, album);
+            mPictureAdapter.notifyDataSetChanged();
+        }
+        updateAlbumInfo(mSrcView, album);
+
+        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+        mSelectionChanged = true;
+    }
+
+    /**
+     * Method that update the whole picture selection
+     *
+     * @param album The album to update
+     * @param selected If all the picture were selected
+     */
+    private void updateAllPicturesSelection(Album album, boolean selected) {
+        // Remove all pictures of the album
+        removeAlbumItems(album);
+        List<String> selectedItems = album.getSelectedItems();
+        selectedItems.clear();
+        for (Picture picture : album.getItems()) {
+            if (selected) {
+                selectedItems.add(picture.getPath());
+            }
+            picture.setSelected(selected);
+        }
+        album.setSelected(false);
+
+        // Notify pictures dataset changed
+        mPictureAdapter.notifyDataSetChanged();
+        updateAlbumInfo(mDstView, album);
+
+        mSelectedAlbums.addAll(album.getSelectedItems());
+        Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+        mSelectionChanged = true;
     }
 
     /**
@@ -457,7 +604,7 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
      *
      * @param ref The album
      */
-    /*package*/ void removeAlbumItems(Album ref) {
+    private void removeAlbumItems(Album ref) {
         Iterator<String> it = mSelectedAlbums.iterator();
         while (it.hasNext()) {
             String item = it.next();
@@ -471,26 +618,284 @@ public class ChoosePicturesFragment extends PreferenceFragment implements OnEndS
     }
 
     /**
-     * {@inheritDoc}
+     * Method that shows the album pictures while animating the view
+     *
+     * @param srcParent The source parent view
+     * @param srcView The source view
+     * @param dstParent The destination parent view
+     * @param dstView The destination view
      */
-    @Override
-    public void onEndScroll() {
-        doEndScroll(AMOUNT_OF_ADDED_STEPS, false);
+    void showAlbumPictures(final ViewGroup srcParent, final View srcView,
+            final ViewGroup dstParent, final View dstView) {
+
+        // Hide the source view
+        srcView.setAlpha(0.0f);
+
+        // Animation from bottom to top
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(dstView, "translationY",
+                srcView.getY(), srcParent.getPaddingTop());
+        anim1.setDuration(mPicturesAnimDurationIn);
+        anim1.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim1.addListener(new AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                // Ignore
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // Ignore
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Re-layout the view in its new position
+                dstView.setOnClickListener(ChoosePicturesFragment.this);
+
+                // And now finally show the new album pictures layout
+                // and fill it
+                mPicturesPanel.setVisibility(View.VISIBLE);
+                mHandler.sendMessage(mHandler.obtainMessage(MSG_LOAD_PICTURES, mAlbum));
+                mShowingAlbums = false;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                // Ignore
+            }
+        });
+        anim1.start();
+
+        // Hide the parent view
+        AlphaAnimation anim2 = new AlphaAnimation(1.0f, 0.0f);
+        anim2.setDuration(mPicturesAnimDurationIn);
+        anim2.setFillAfter(true);
+        anim2.setZAdjustment(Animation.ZORDER_BOTTOM);
+        anim2.setInterpolator(new AccelerateDecelerateInterpolator());
+        srcParent.setEnabled(false);
+        srcParent.startAnimation(anim2);
+
+        // Save the references
+        mSrcParent = srcParent;
+        mSrcView = srcView;
+        mDstParent = dstParent;
+        mDstView = dstView;
     }
 
     /**
-     * Method that performs a scroll creating new items
+     * Method that hides the album pictures while animating the view
      *
-     * @param amount The amount of items to create
-     * @param animate If the add should be animated
+     * @param srcParent The source parent view
+     * @param srcView The source view
+     * @param dstParent The destination parent view
+     * @param dstView The destination view
      */
-    /*package*/ synchronized void doEndScroll(int amount, boolean animate) {
-        for (int i = 0; i < amount; i++) {
-            //Add to the panel of cards
-            if (mAlbumViews == null || mAlbumViews.isEmpty()) {
-                break;
+    void hideAlbumPictures(final ViewGroup srcParent, final View srcView,
+            final ViewGroup dstParent, final View dstView) {
+
+        mPicturesPanel.setVisibility(View.INVISIBLE);
+
+        // Animation from top to bottom
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(srcView, "translationY",
+                dstParent.getPaddingTop(), dstView.getY());
+        anim1.setDuration(mPicturesAnimDurationOut);
+        anim1.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim1.addListener(new AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                // Ignore
             }
-            mAlbumsPanel.addCard(mAlbumViews.remove(0), animate);
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // Ignore
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Remove the source view and show the destination view
+                srcParent.removeView(srcView);
+                dstView.setAlpha(1.0f);
+                dstParent.setEnabled(true);
+                unbindDrawables(mPicturesPanel);
+                srcParent.removeView(mPicturesPanel);
+
+                mShowingAlbums = true;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                // Ignore
+            }
+        });
+        anim1.start();
+
+        // Hide the parent view
+        AlphaAnimation anim2 = new AlphaAnimation(0.0f, 1.0f);
+        anim2.setDuration(mPicturesAnimDurationOut);
+        anim2.setFillAfter(true);
+        anim2.setZAdjustment(Animation.ZORDER_BOTTOM);
+        anim2.setInterpolator(new AccelerateDecelerateInterpolator());
+        dstParent.startAnimation(anim2);
+    }
+
+    /**
+     * Method that updates an album info
+     *
+     * @param v The header view
+     * @param album The album data
+     */
+    void updateAlbumInfo(View v, Album album) {
+        Resources res = getActivity().getResources();
+
+        AlbumInfoView info = (AlbumInfoView)v.findViewById(R.id.album_info);
+        info.setAlbum(album);
+
+        ImageView icon = (ImageView)info.findViewById(R.id.album_thumbnail);
+        TextView name = (TextView)info.findViewById(R.id.album_name);
+        TextView items = (TextView)info.findViewById(R.id.album_items);
+        TextView selectedItems = (TextView)info.findViewById(R.id.album_selected_items);
+
+        icon.setImageDrawable(album.getIcon());
+        name.setText(album.getName());
+
+        int size = album.getItems().size();
+        items.setText(String.format(res.getQuantityText(
+                R.plurals.album_number_of_pictures, size).toString(), Integer.valueOf(size)));
+
+        int selected = album.getSelectedItems().size();
+        String count = String.valueOf(selected);
+        if (selected > 99) {
+            count = "99+";
         }
+        selectedItems.setText(count);
+        selectedItems.setVisibility(!album.isSelected() ? View.VISIBLE : View.INVISIBLE);
+        info.setSelected(album.isSelected());
+    }
+
+    /**
+     * Method that load all the pictures of the album
+     *
+     * @param album
+     */
+    void loadPictures(Album album) {
+        List<Picture> items = album.getItems();
+
+        // Calculate the grid dimensions
+        Resources res = getActivity().getResources();
+        int pictureWidth = (int)res.getDimension(R.dimen.picture_size);
+        int gridWidth = mPicturesPanel.getWidth();
+        int columns = gridWidth / pictureWidth;
+        int space = (gridWidth / pictureWidth) / (columns - 1);
+        if (columns < items.size()) {
+            space = (int)res.getDimension(R.dimen.small_padding);
+        }
+        mPicturesPanel.setHorizontalSpacing(space);
+        mPicturesPanel.setVerticalSpacing(space);
+        mPicturesPanel.setStretchMode(GridView.STRETCH_SPACING);
+        mPicturesPanel.setColumnWidth(pictureWidth);
+        mPicturesPanel.setNumColumns(columns);
+
+        mPictureAdapter = new AlbumPictureAdapter(getActivity(), items, mPicturesPanel);
+        mPicturesPanel.setAdapter(mPictureAdapter);
+    }
+
+    /**
+     * Method invoked when an album header was pressed
+     *
+     * @param parent The parent view
+     * @param view The header view
+     * @param position The position
+     */
+    void onHeaderPressed(AdapterView<?> parent, View view, int position) {
+        mAlbum = mAlbumAdapter.getItem(position);
+
+        // Header view
+        View header = mInflater.inflate(R.layout.album_info, null);
+        header.setTranslationY(view.getY() + parent.getPaddingTop());
+        header.setLayoutParams(new ViewGroup.LayoutParams(view.getWidth(), view.getHeight()));
+
+        // Pictures view
+        mPicturesPanel = (GridView) mInflater.inflate(R.layout.pictures_view, null);
+        if (!mPicturesPanel.isHardwareAccelerated()) {
+            mPicturesPanel.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+        mPicturesPanel.setY(view.getHeight());
+        mPicturesPanel.setLayoutParams(new ViewGroup.LayoutParams(view.getWidth(),
+                parent.getHeight() - view.getHeight() -
+                parent.getPaddingTop()  - parent.getPaddingBottom()));
+        mPicturesPanel.setVisibility(View.INVISIBLE);
+        mPicturesPanel.setOnItemClickListener(mOnItemClickListener);
+
+        // Add to the container
+        mContainer.addView(mPicturesPanel);
+        mContainer.addView(header);
+
+        // Update and display the album pictures view
+        AlbumInfoView info = (AlbumInfoView)header.findViewById(R.id.album_info);
+        info.addCallBackListener(ChoosePicturesFragment.this);
+        info.setAlbumMode(false);
+        updateAlbumInfo(header, mAlbum);
+        showAlbumPictures(parent, view, mContainer, header);
+    }
+
+    /**
+     * Method invoked when a picture view was pressed
+     *
+     * @param view The picture view
+     */
+    void onPicturePressed(View view) {
+        PictureItemView pictureView = (PictureItemView)view.findViewById(R.id.picture);
+        if (pictureView != null) {
+            Picture picture = pictureView.getPicture();
+            removeAlbumItems(mAlbum);
+            List<String> selectedItems = mAlbum.getSelectedItems();
+            if (selectedItems.contains(picture.getPath())) {
+                selectedItems.remove(picture.getPath());
+                picture.setSelected(false);
+            } else {
+                selectedItems.add(picture.getPath());
+                picture.setSelected(true);
+                mAlbum.setSelected(false);
+            }
+
+            // Notify all the views
+            pictureView.updateView(picture, false);
+            updateAlbumInfo(mDstView, mAlbum);
+            mAlbumAdapter.notifyDataSetChanged();
+
+            // Update settings
+            mSelectedAlbums.addAll(mAlbum.getSelectedItems());
+            Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+            mSelectionChanged = true;
+        }
+    }
+
+    /**
+     * Method that removes all the inexistent albums and pictures
+     *
+     * @param data The data to filter
+     * @return Set<String> The data filtered
+     */
+    private Set<String> removeObsoleteAlbumsData(Set<String> data) {
+        Set<String> validDataList = new HashSet<String>();
+        Iterator<String> it = data.iterator();
+        while (it.hasNext()) {
+            File f = new File(it.next());
+            if (f.exists()) {
+                try {
+                    validDataList.add(f.getCanonicalPath());
+                } catch (IOException ioex) {
+                    // Ignore
+                }
+            }
+        }
+        if (data.size() != validDataList.size()) {
+            // Obsolete entries were removed
+            data.clear();
+            data.addAll(validDataList);
+            Preferences.Media.setSelectedMedia(getActivity(), mOriginalSelectedAlbums);
+        }
+        return data;
     }
 }

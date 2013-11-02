@@ -96,7 +96,7 @@ public final class PreferencesProvider {
     /**
      * @hide
      */
-    /*package*/ static int[] TRANSITIONS_INTERVALS;
+    static int[] TRANSITIONS_INTERVALS;
 
     /**
      * Method that loads the all the preferences of the application
@@ -350,7 +350,12 @@ public final class PreferencesProvider {
             * @return Set<String> The list of albums and pictures to be displayed
             */
            public static Set<String> getLastDiscorevedAlbums() {
-               return getStringSet("media_last_disvored_albums", new HashSet<String>());
+               // FIXME Typo. Remove when version 1005 is obsolete and unused
+               Set<String> oldKey = getStringSet("media_last_disvored_albums", new HashSet<String>());
+               if (oldKey.size() > 0) {
+                   return oldKey;
+               }
+               return getStringSet("media_last_discovered_albums", new HashSet<String>());
            }
 
            /**
@@ -364,7 +369,9 @@ public final class PreferencesProvider {
                SharedPreferences preferences =
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
-               editor.putStringSet("media_last_disvored_albums", albums);
+               // FIXME Typo. Remove when version 1005 is obsolete and unused
+               editor.remove("media_last_disvored_albums");
+               editor.putStringSet("media_last_discovered_albums", albums);
                editor.commit();
                reload(context);
            }

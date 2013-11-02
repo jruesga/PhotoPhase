@@ -15,4 +15,4 @@ This library is released under the [Apache 2.0]
 http://www.apache.org/licenses/LICENSE-2.0.html) license.
 
 Copyright © 2010 Daniel Nilsson
-Copyright © 2013 Jorge Ruesga
+Copyright © 2013 The CyanogenMod Project

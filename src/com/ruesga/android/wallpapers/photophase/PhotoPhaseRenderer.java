@@ -62,25 +62,25 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final long mInstance;
     private static long sInstances;
 
-    /*package*/ final Context mContext;
-    /*package*/ EffectContext mEffectContext;
+    final Context mContext;
+    EffectContext mEffectContext;
     private final Handler mHandler;
-    /*package*/ final GLESSurfaceDispatcher mDispatcher;
-    /*package*/ TextureManager mTextureManager;
+    final GLESSurfaceDispatcher mDispatcher;
+    TextureManager mTextureManager;
 
-    /*package*/ PhotoPhaseWallpaperWorld mWorld;
-    /*package*/ ColorShape mOverlay;
-    /*package*/ OopsShape mOopsShape;
+    PhotoPhaseWallpaperWorld mWorld;
+    ColorShape mOverlay;
+    OopsShape mOopsShape;
 
-    /*package*/ long mLastRunningTransition;
+    long mLastRunningTransition;
 
     private long mLastTouchTime;
     private static final long TOUCH_BARRIER_TIME = 1000L;
 
-    /*package*/ int mWidth = -1;
-    /*package*/ int mHeight = -1;
+    int mWidth = -1;
+    int mHeight = -1;
     private int mStatusBarHeight = 0;
-    /*package*/ int mMeasuredHeight  = -1;
+    int mMeasuredHeight  = -1;
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjMatrix = new float[16];
@@ -88,7 +88,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
     private final Object mDrawing = new Object();
 
-    /*package*/ final Object mMediaSync = new Object();
+    final Object mMediaSync = new Object();
     private PendingIntent mMediaScanIntent;
 
     private final BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
@@ -383,13 +383,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /**
      * Method that deselect the current transition
      */
-    /*package*/ synchronized void deselectCurrentTransition() {
+    synchronized void deselectCurrentTransition() {
         mHandler.removeCallbacks(mTransitionThread);
         mWorld.deselectTransition(mMVPMatrix);
         mLastRunningTransition = 0;
     }
 
-    /*package*/ void scheduleOrCancelMediaScan() {
+    void scheduleOrCancelMediaScan() {
         int interval = Preferences.Media.getRefreshFrecuency();
         if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             scheduleMediaScan(interval);

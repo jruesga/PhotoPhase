@@ -59,8 +59,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     BackgroundPictureLoaderThread mBackgroundTask;
     /*protected*/ final MediaPictureDiscoverer mPictureDiscoverer;
 
-    /*package*/ Rect mScreenDimensions;
-    /*package*/ Rect mDimensions;
+    Rect mScreenDimensions;
+    Rect mDimensions;
 
     final GLESSurfaceDispatcher mDispatcher;
 
@@ -73,7 +73,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     /**
      * A private runnable that will run in the GLThread
      */
-    /*package*/ class PictureDispatcher implements Runnable {
+    class PictureDispatcher implements Runnable {
         File mImage;
         GLESTextureInfo ti = null;
         final Object mWait = new Object();
@@ -428,7 +428,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      * @param ti The original texture information
      * @param effect The effect to apply to the destination picture
      */
-    /*package*/ void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
+    void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
         // Check if we have to apply any correction to the image
         if (Preferences.General.isFixAspectRatio()) {
             // Transform requestor dimensions to screen dimensions
@@ -472,7 +472,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         boolean mRun;
         boolean mTaskPaused;
 
-        /*package*/ boolean mEmpty;
+        boolean mEmpty;
         private final List<File> mNewImages;
         private final List<File> mUsedImages;
 

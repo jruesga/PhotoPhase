@@ -18,6 +18,8 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.AttributeSet;
 import android.view.Menu;
@@ -40,10 +42,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A view that contains the info about an album
+ * A view that contains the view of the info of an album
  */
-public class AlbumInfo extends RelativeLayout
-    implements OnClickListener, OnMenuItemClickListener {
+public class AlbumInfoView extends RelativeLayout
+        implements OnClickListener, OnMenuItemClickListener {
 
     /**
      * A convenient listener for receive events of the AlbumPictures class
@@ -63,43 +65,70 @@ public class AlbumInfo extends RelativeLayout
          * @param album The album
          */
         void onAlbumDeselected(Album album);
+
+        /**
+         * Invoked when an all of the picture of the album were selected
+         *
+         * @param album The album
+         */
+        void onAllPicturesSelected(Album album);
+
+        /**
+         * Invoked when an all of the picture of the album were deselected
+         *
+         * @param album The album
+         */
+        void onAllPicturesDeselected(Album album);
+    }
+
+    private class OnPictureLoaded extends AsyncPictureLoaderTask.OnPictureLoaded {
+        public OnPictureLoaded(Album album) {
+            super(new Object[]{album});
+        }
+
+        @Override
+        public void onPictureLoaded(Object o, Drawable drawable) {
+            ((Album)o).setIcon(drawable);
+        }
     }
 
     private List<CallbacksListener> mCallbacks;
 
-    /*package*/ Album mAlbum;
+    private Album mAlbum;
 
-    /*package*/ AsyncPictureLoaderTask mTask;
+    private AsyncPictureLoaderTask mTask;
 
-    /*package*/ ImageView mIcon;
+    private ImageView mIcon;
     private TextView mSelectedItems;
     private TextView mName;
     private TextView mItems;
     private View mOverflowButton;
 
+    private boolean mAlbumMode;
+
     /**
-     * Constructor of <code>AlbumInfo</code>.
+     * Constructor of <code>AlbumInfoView</code>.
      *
      * @param context The current context
      */
-    public AlbumInfo(Context context) {
+    public AlbumInfoView(Context context) {
         super(context);
         init();
     }
 
     /**
-     * Constructor of <code>AlbumInfo</code>.
+     * Constructor of <code>AlbumInfoView</code>.
      *
      * @param context The current context
      * @param attrs The attributes of the XML tag that is inflating the view.
      */
-    public AlbumInfo(Context context, AttributeSet attrs) {
+    public AlbumInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
     /**
-     * Constructor of <code>AlbumInfo</code>.
+     * Constructor of <code>AlbumInfoView</code>.
      *
      * @param context The current context
      * @param attrs The attributes of the XML tag that is inflating the view.
@@ -108,7 +137,7 @@ public class AlbumInfo extends RelativeLayout
      *        either be an attribute resource, whose value will be retrieved
      *        from the current theme, or an explicit style resource.
      */
-    public AlbumInfo(Context context, AttributeSet attrs, int defStyle) {
+    public AlbumInfoView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -117,7 +146,17 @@ public class AlbumInfo extends RelativeLayout
      * Method that initializes the internal references
      */
     private void init() {
-        mCallbacks = new ArrayList<AlbumInfo.CallbacksListener>();
+        mCallbacks = new ArrayList<AlbumInfoView.CallbacksListener>();
+        mAlbumMode = true;
+    }
+
+    /**
+     * Method that set the album mode
+     *
+     * @param albumMode The album mode
+     */
+    public void setAlbumMode(boolean albumMode) {
+        this.mAlbumMode = albumMode;
     }
 
     /**
@@ -144,13 +183,6 @@ public class AlbumInfo extends RelativeLayout
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-        mIcon = (ImageView)findViewById(R.id.album_thumbnail);
-        mSelectedItems = (TextView)findViewById(R.id.album_selected_items);
-        mName = (TextView)findViewById(R.id.album_name);
-        mItems = (TextView)findViewById(R.id.album_items);
-        mOverflowButton = findViewById(R.id.overflow);
-        mOverflowButton.setOnClickListener(this);
 
         updateView(mAlbum);
     }
@@ -180,7 +212,6 @@ public class AlbumInfo extends RelativeLayout
             onPreparePopupMenu(popup.getMenu());
             popup.setOnMenuItemClickListener(this);
             popup.show();
-            return;
         }
     }
 
@@ -194,6 +225,10 @@ public class AlbumInfo extends RelativeLayout
             popup.findItem(R.id.mnu_select_album).setVisible(false);
         } else {
             popup.findItem(R.id.mnu_deselect_album).setVisible(false);
+        }
+        if (mAlbumMode) {
+            popup.findItem(R.id.mnu_select_all).setVisible(false);
+            popup.findItem(R.id.mnu_deselect_all).setVisible(false);
         }
     }
 
@@ -211,6 +246,14 @@ public class AlbumInfo extends RelativeLayout
                 doSelection(false);
                 break;
 
+            case R.id.mnu_select_all:
+                notifyPictureSelectionChanged(true);
+                break;
+
+            case R.id.mnu_deselect_all:
+                notifyPictureSelectionChanged(false);
+                break;
+
             default:
                 return false;
         }
@@ -226,8 +269,8 @@ public class AlbumInfo extends RelativeLayout
         setSelected(selected);
         mAlbum.setSelected(selected);
         mAlbum.setSelectedItems(new ArrayList<String>());
-        updateView(mAlbum);
         notifySelectionChanged();
+        updateView(mAlbum);
     }
 
     /**
@@ -245,40 +288,80 @@ public class AlbumInfo extends RelativeLayout
     }
 
     /**
+     * Method that notifies to all the registered callbacks that the selection
+     * was changed
+     */
+    private void notifyPictureSelectionChanged(boolean selected) {
+        for (CallbacksListener callback : mCallbacks) {
+            if (selected) {
+                callback.onAllPicturesSelected(mAlbum);
+            } else {
+                callback.onAllPicturesDeselected(mAlbum);
+            }
+        }
+    }
+
+    /**
+     * Method that sets the album
+     *
+     * @param album The album
+     */
+    public void setAlbum(Album album) {
+        mAlbum = album;
+    }
+
+    /**
      * Method that updates the view
      *
      * @param album The album data
      */
     @SuppressWarnings("boxing")
     public void updateView(Album album) {
-        mAlbum = album;
+        // Destroy the update drawable task
+        if (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
+                mTask.getStatus() == AsyncTask.Status.PENDING)) {
+            mTask.cancel(true);
+        }
 
-        if (mAlbum != null && mIcon != null) {
+        // Retrieve the views references
+        if (mIcon == null) {
+            mIcon = (ImageView)findViewById(R.id.album_thumbnail);
+            mSelectedItems = (TextView)findViewById(R.id.album_selected_items);
+            mName = (TextView)findViewById(R.id.album_name);
+            mItems = (TextView)findViewById(R.id.album_items);
+            mOverflowButton = findViewById(R.id.overflow_button);
+            mOverflowButton.setOnClickListener(this);
+        }
+
+        // Update the views
+        if (album != null) {
             Resources res = getContext().getResources();
 
-            int selectedItems = mAlbum.getSelectedItems().size();
+            setAlbum(album);
+
+            int selectedItems = album.getSelectedItems().size();
             String count = String.valueOf(selectedItems);
             if (selectedItems > 99) {
-                count += "+";
+                count = "99+";
             }
             mSelectedItems.setText(count);
-            mSelectedItems.setVisibility(mAlbum.isSelected() ? View.INVISIBLE : View.VISIBLE);
-            mName.setText(mAlbum.getName());
-            int items = mAlbum.getItems().size();
+            mSelectedItems.setVisibility(album.isSelected() ? View.INVISIBLE : View.VISIBLE);
+            mName.setText(album.getName());
+            int items = album.getItems().size();
             mItems.setText(String.format(res.getQuantityText(
                     R.plurals.album_number_of_pictures, items).toString(), items));
             setSelected(album.isSelected());
 
-            if (mTask == null) {
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Show as icon, the first picture
-                        mTask = new AsyncPictureLoaderTask(getContext(), mIcon);
-                        mTask.execute(new File(mAlbum.getItems().get(0)));
-                    }
-                });
+            Drawable dw = album.getIcon();
+            mIcon.setImageDrawable(dw);
+            if (dw == null) {
+                mIcon.setImageDrawable(null);
+
+                // Show as icon, the first picture
+                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, new OnPictureLoaded(album));
+                mTask.execute(new File(album.getItems().get(0).getPath()));
             }
         }
     }
+
 }

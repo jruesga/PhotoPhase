@@ -32,8 +32,34 @@ import java.io.File;
  */
 public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
 
+    /**
+     * Notify whether the picture was loaded
+     */
+    public static abstract class OnPictureLoaded {
+        Object[] mRefs;
+
+        /**
+         * Constructor of <code>OnPictureLoaded</code>
+         *
+         * @param refs References to notify
+         */
+        public OnPictureLoaded(Object...refs) {
+            super();
+            mRefs = refs;
+        }
+
+        /**
+         * Invoked when a picture is loaded
+         *
+         * @param o The original object reference
+         * @param drawable The drawable
+         */
+        public abstract void onPictureLoaded(Object o, Drawable drawable);
+    }
+
     private final Context mContext;
     private final ImageView mView;
+    private final OnPictureLoaded mCallback;
 
     /**
      * Constructor of <code>AsyncPictureLoaderTask</code>
@@ -42,9 +68,21 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      * @param v The associated view
      */
     public AsyncPictureLoaderTask(Context context, ImageView v) {
+        this(context, v, null);
+    }
+
+    /**
+     * Constructor of <code>AsyncPictureLoaderTask</code>
+     *
+     * @param context The current context
+     * @param v The associated view
+     * @param callback A callback to notify when the picture was loaded
+     */
+    public AsyncPictureLoaderTask(Context context, ImageView v, OnPictureLoaded callback) {
         super();
         mContext = context;
         mView = v;
+        mCallback = callback;
     }
 
     /**
@@ -56,7 +94,15 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
         int height = mView.getMeasuredHeight();
         Bitmap bitmap = BitmapUtils.decodeBitmap(params[0], width, height);
         if (bitmap != null) {
-            return new BitmapDrawable(mContext.getResources(), bitmap);
+            Drawable dw = new BitmapDrawable(mContext.getResources(), bitmap);
+            if (mCallback != null) {
+                for (Object o : mCallback.mRefs) {
+                    if (!isCancelled()) {
+                        mCallback.onPictureLoaded(o, dw);
+                    }
+                }
+            }
+            return dw;
         }
         return null;
     }
@@ -66,6 +112,8 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      */
     @Override
     protected void onPostExecute(Drawable result) {
-        mView.setImageDrawable(result);
+        if (!isCancelled()) {
+            mView.setImageDrawable(result);
+        }
     }
 }

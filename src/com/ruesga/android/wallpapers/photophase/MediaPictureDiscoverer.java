@@ -264,7 +264,7 @@ public class MediaPictureDiscoverer {
         }
     }
 
-    /*package*/ final Context mContext;
+    final Context mContext;
     private final OnMediaPictureDiscoveredListener mCallback;
 
     private AsyncDiscoverTask mTask;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 Jorge Ruesga
+<!--
+     Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,21 +14,22 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
-<com.ruesga.android.wallpapers.photophase.widgets.VerticalEndlessScroller
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:scrollbars="none">
+    android:layout_height="match_parent">
 
-    <com.ruesga.android.wallpapers.photophase.widgets.CardLayout
+    <!-- Albums card view -->
+    <ListView
         android:id="@+id/albums_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/small_margin" />
+        android:layout_height="match_parent"
+        android:persistentDrawingCache="animation|scrolling"
+        android:listSelector="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="@dimen/one_dp"
+        android:paddingTop="@dimen/small_margin"
+        android:paddingBottom="@dimen/small_padding"
+        android:scrollbars="none"/>
 
-</com.ruesga.android.wallpapers.photophase.widgets.VerticalEndlessScroller>
+</FrameLayout>
 

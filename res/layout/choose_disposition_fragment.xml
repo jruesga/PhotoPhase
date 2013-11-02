@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 Jorge Ruesga
+<!--
+     Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,13 +14,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="@dimen/small_margin"
-    android:layout_marginBottom="@dimen/small_margin"
-    android:orientation="vertical">
+    android:layout_marginBottom="@dimen/small_margin">
 
     <TextView android:id="@+id/advise"
         android:layout_width="match_parent"

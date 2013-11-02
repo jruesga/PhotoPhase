@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 Jorge Ruesga
+<!--
+     Copyright (C) 2013 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,20 +14,15 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/album_pictures_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/small_margin">
-
-    <include android:id="@+id/album_info"
-        layout="@layout/album_info"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" />
-
-    <include android:id="@+id/album_pictures"
-        layout="@layout/album_pictures"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" />
-
-</RelativeLayout>
+    android:layout_height="match_parent"
+    android:persistentDrawingCache="animation|scrolling"
+    android:listSelector="@android:color/transparent"
+    android:divider="@android:color/transparent"
+    android:dividerHeight="@dimen/one_dp"
+    android:scrollbars="none"
+    android:layoutAnimation="@anim/pictures_layout_animation">
+</GridView>

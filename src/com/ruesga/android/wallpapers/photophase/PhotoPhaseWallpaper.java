@@ -96,7 +96,7 @@ public class PhotoPhaseWallpaper
     class PhotoPhaseWallpaperEngine extends GLES20WallpaperService.GLES20Engine {
 
         private final Handler mHandler;
-        /*package*/ final ActivityManager mActivityManager;
+        final ActivityManager mActivityManager;
 
         /**
          * Constructor of <code>PhotoPhaseWallpaperEngine<code>
