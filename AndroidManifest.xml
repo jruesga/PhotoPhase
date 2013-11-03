@@ -16,8 +16,8 @@
  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ruesga.android.wallpapers.photophase"
-    android:versionCode="1005"
-    android:versionName="1.0.3"
+    android:versionCode="1006"
+    android:versionName="1.0.4"
     android:installLocation="auto">
 
     <original-package android:name="com.ruesga.android.wallpapers.photophase" />
@@ -56,9 +56,9 @@
             android:exported="true"
             android:label="@string/app_name"
             android:description="@string/app_description" >
-          <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-          </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -66,9 +66,20 @@
             android:exported="true"
             android:label="@string/app_name"
             android:description="@string/app_description">
-          <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-          </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".preferences.ChangeLogActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/PhotoPhase.Theme.Holo.Light.Overlay"
+            android:uiOptions="none" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
         </activity>
 
     </application>
