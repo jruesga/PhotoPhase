@@ -60,6 +60,8 @@ public abstract class DispositionFragment extends PreferenceFragment
     private MenuItem mRestoreMenu;
     private MenuItem mDeleteMenu;
 
+    private boolean mOkPressed;
+
     /**
      * Constructor of <code>DispositionFragment</code>
      */
@@ -120,6 +122,7 @@ public abstract class DispositionFragment extends PreferenceFragment
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
+        mOkPressed = false;
         setHasOptionsMenu(true);
     }
 
@@ -153,25 +156,28 @@ public abstract class DispositionFragment extends PreferenceFragment
      */
     @Override
     public void onDestroyView() {
-        boolean saved = false;
+        // Saved ?
+        if (mOkPressed) {
+            boolean saved = false;
 
-        if (mCurrentDispositionView == null) {
-            mCurrentDispositionView = mAdapter.getView(0);
-        }
-
-        if (mCurrentDispositionView != null) {
-            if (mCurrentPage != 0 || mCurrentDispositionView.isChanged()) {
-                saveDispositions(mCurrentDispositionView.getDispositions());
-                saved = true;
+            if (mCurrentDispositionView == null) {
+                mCurrentDispositionView = mAdapter.getView(0);
             }
-
-            // Notify that the settings was changed
-            Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-            if (saved) {
-                intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
-                intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+    
+            if (mCurrentDispositionView != null) {
+                if (mCurrentPage != 0 || mCurrentDispositionView.isChanged()) {
+                    saveDispositions(mCurrentDispositionView.getDispositions());
+                    saved = true;
+                }
+    
+                // Notify that the settings was changed
+                Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+                if (saved) {
+                    intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+                    intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+                }
+                getActivity().sendBroadcast(intent);
             }
-            getActivity().sendBroadcast(intent);
         }
 
         super.onDestroyView();
@@ -195,6 +201,7 @@ public abstract class DispositionFragment extends PreferenceFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mnu_ok:
+                mOkPressed = true;
                 getActivity().finish();
                 return true;
             case R.id.mnu_restore:
