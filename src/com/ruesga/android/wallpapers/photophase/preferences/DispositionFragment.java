@@ -163,13 +163,13 @@ public abstract class DispositionFragment extends PreferenceFragment
             if (mCurrentDispositionView == null) {
                 mCurrentDispositionView = mAdapter.getView(0);
             }
-    
+
             if (mCurrentDispositionView != null) {
                 if (mCurrentPage != 0 || mCurrentDispositionView.isChanged()) {
                     saveDispositions(mCurrentDispositionView.getDispositions());
                     saved = true;
                 }
-    
+
                 // Notify that the settings was changed
                 Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
                 if (saved) {

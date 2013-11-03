@@ -153,4 +153,7 @@
     <string name="color_picker_current_text">Current:</string>
     <string name="color_picker_new_text">New:</string>
     <string name="color_picker_color">Color:</string>
+
+    <!-- Changelog dialog -->
+    <string name="changelog_title">Changelog</string>
 </resources>

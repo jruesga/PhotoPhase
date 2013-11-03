@@ -19,6 +19,15 @@
     <style name="PhotoPhase">
     </style>
 
+    <style name="PhotoPhase.Theme.Holo.Light.Overlay" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/black_transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <style name="PhotoPhase.TextAppearance">
         <item name="android:textColor">@color/text_color</item>
     </style>

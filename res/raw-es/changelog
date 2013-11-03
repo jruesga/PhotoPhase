@@ -1,6 +1,14 @@
+v1.0.4
+----------------------------
+- Característica: Actividad de selección de álbumes renovada (mejor disposición, efectos y mejoras de rendimiento)
+- Característica: Disposiciones aleatorias
+- Característica: Plantillas predefinidas
+- Característica: Añadido registro de cambios
+- Corrección: Corregida la actividad de selección de álbumes cuando existen muchos álbumes
+
 v1.0.3
 ----------------------------
-- Corregido el problema que muestra la pantalla en blanco en la actividad de álbumes 
+- Corregido el problema que muestra la pantalla en blanco en la actividad de álbumes
 - Mejorada la respuesta en la actividad de álbumes
 
 v1.0.2

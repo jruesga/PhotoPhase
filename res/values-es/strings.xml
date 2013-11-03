@@ -125,4 +125,5 @@
     <string name="color_picker_current_text">Actual:</string>
     <string name="color_picker_new_text">Nuevo:</string>
     <string name="color_picker_color">Color:</string>
+    <string name="changelog_title">Registro de cambios</string>
 </resources>

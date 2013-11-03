@@ -1,0 +1,27 @@
+v1.0.4
+----------------------------
+- Feature: Album selection activity reworked (better layout, effects and performance improvements)
+- Feature: Random dispositions
+- Feature: System-defined templates
+- Feature: Added change log
+- Bugs: Fixed album selection activity when there are many albums
+
+v1.0.3
+----------------------------
+- Fixed blank white screen on albums activity
+- Improved responsiveness of albums activity
+
+v1.0.2
+----------------------------
+- Allow move the app to the external sdcard (not all the devices support this feature. If your wallpaper is reset to default after a device reboot, then your device don't support it and need to be installed in the internal sdcard)
+- Fixed an issue that prevents to start the app in the 4.0.3 version of Android (thanks for the bug reports)
+
+v1.0.1
+----------------------------
+- Transitions interval settings: Now accept values from 0 to 60 seconds (0 means no transtions at all)
+- Improved the times needed to discover new media data
+- Fixed some bugs (thanks for the bug reports)
+
+v1.0.0
+----------------------------
+- Initial release

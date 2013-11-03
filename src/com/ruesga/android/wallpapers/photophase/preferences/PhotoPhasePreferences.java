@@ -17,6 +17,7 @@
 package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
@@ -68,6 +69,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
         } catch (Exception e) {
             aboutHeader.summary = getString(R.string.pref_about_summary, ""); //$NON-NLS-1$
         }
+        aboutHeader.intent = new Intent(getApplicationContext(), ChangeLogActivity.class);
     }
 
     /**
