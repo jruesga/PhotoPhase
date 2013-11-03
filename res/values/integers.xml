@@ -21,4 +21,5 @@
     <integer name="pictures_anim_out">400</integer>
     <integer name="disposition_show_anim">600</integer>
     <integer name="disposition_hide_anim">400</integer>
+    <integer name="disposition_advise_lines">2</integer>
 </resources>

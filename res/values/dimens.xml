@@ -27,9 +27,6 @@
     <dimen name="album_margin">16dp</dimen>
     <dimen name="album_info_margin">2dp</dimen>
 
-    <dimen name="album_title_margin_top">38dp</dimen>
-    <dimen name="album_title_margin_left">-38dp</dimen>
-
     <dimen name="picture_size">80dp</dimen>
     <dimen name="picture_vertical_margin">4dp</dimen>
     <dimen name="picture_horizontal_margin">4dp</dimen>
@@ -37,8 +34,6 @@
     <dimen name="notification_min_width">32dp</dimen>
     <dimen name="notification_min_height">32dp</dimen>
     <dimen name="notification_padding">3dp</dimen>
-
-    <dimen name="toolbutton_padding">5dp</dimen>
 
     <dimen name="default_margin">16dp</dimen>
     <dimen name="small_margin">8dp</dimen>

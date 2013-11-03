@@ -227,7 +227,8 @@ public class PhotoPhaseWallpaper
     @Override
     public Renderer getNewRenderer(GLSurfaceView view) {
         if (DEBUG) Log.d(TAG, "getNewRenderer()");
-        PhotoPhaseRenderer renderer = new PhotoPhaseRenderer(this, new GLESSurfaceDispatcher(view));
+        PhotoPhaseRenderer renderer = new PhotoPhaseRenderer(this,
+                new GLESSurfaceDispatcher(view), mEngine.isPreview());
         renderer.onCreate();
         mRenderers.add(renderer);
         if (DEBUG) Log.d(TAG, "renderer" + renderer);

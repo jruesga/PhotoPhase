@@ -25,5 +25,6 @@
     <color name="notification_text_color">#ffffffff</color>
 
     <color name="disposition_frame_bg_color">#c8595757</color>
+    <color name="disposition_locked_frame_bg_color">#c87f4a4a</color>
 
 </resources>

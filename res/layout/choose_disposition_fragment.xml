@@ -27,28 +27,29 @@
         android:layout_marginLeft="@dimen/disposition_frame_margin"
         android:layout_marginRight="@dimen/disposition_frame_margin"
         android:padding="@dimen/disposition_advise_frame_padding"
-        android:gravity="center_horizontal"
+        android:gravity="center"
+        android:lines="@integer/disposition_advise_lines"
         android:textColor="@color/notification_text_color"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/pref_disposition_description" />
 
-    <com.ruesga.android.wallpapers.photophase.widgets.DispositionView
-        android:id="@+id/disposition_view"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/dispositions_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/disposition_frame_margin"
         android:layout_below="@id/advise"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true">
+    </android.support.v4.view.ViewPager>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignLeft="@id/disposition_view"
-        android:layout_alignRight="@id/disposition_view"
-        android:layout_alignTop="@id/disposition_view"
-        android:layout_alignBottom="@id/disposition_view">
+        android:layout_alignLeft="@id/dispositions_pager"
+        android:layout_alignRight="@id/dispositions_pager"
+        android:layout_alignTop="@id/dispositions_pager"
+        android:layout_alignBottom="@id/dispositions_pager">
         <com.ruesga.android.wallpapers.photophase.widgets.ResizeFrame
             android:id="@+id/resize_frame"
             android:layout_width="1dp"

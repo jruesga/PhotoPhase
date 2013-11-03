@@ -48,7 +48,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
     private static final String TAG = "TextureManager";
 
-    private static final int QUEUE_SIZE = 3;
+    private static final int QUEUE_SIZE = 8;
 
     final Context mContext;
     final Handler mHandler;

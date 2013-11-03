@@ -17,15 +17,75 @@
 package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;
 
 /**
  * A fragment class with the layout disposition
  */
 public class LayoutPreferenceFragment extends PreferenceFragment {
+
+    private static final String TAG = "LayoutPreferenceFragment";
+
+    private static final boolean DEBUG = false;
+
+    private CheckBoxPreference mRandomDispositions;
+    SeekBarProgressPreference mRandomDispositionsInterval;
+    Preference mPortraitDisposition;
+    Preference mLandscapeDisposition;
+
+    boolean mRedrawFlag;
+    boolean mDispositionIntervalFlag;
+
+    private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object newValue) {
+            String key = preference.getKey();
+            if (DEBUG) Log.d(TAG, "Preference changed: " + key + "=" + newValue);
+            if (key.compareTo("ui_disposition_random") == 0) {
+                boolean randomDispositions = ((Boolean)newValue).booleanValue();
+                mPortraitDisposition.setEnabled(!randomDispositions);
+                mLandscapeDisposition.setEnabled(!randomDispositions);
+                mRedrawFlag = true;
+            } else if (key.compareTo("ui_disposition_random_interval") == 0) {
+                mDispositionIntervalFlag = true;
+            }
+            return true;
+        }
+    };
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Reload the settings
+        PreferencesProvider.reload(getActivity());
+
+        // Notify that the settings was changed
+        Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+        if (mRedrawFlag) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+        }
+        if (mDispositionIntervalFlag) {
+            int interval = Preferences.Layout.getRandomDispositionsInterval();
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, interval);
+        }
+        getActivity().sendBroadcast(intent);
+    }
 
     /**
      * {@inheritDoc}
@@ -34,11 +94,66 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final String formatSeconds = getString(R.string.format_seconds);
+        final String formatMinutes = getString(R.string.format_minutes);
+        final String formatHours = getString(R.string.format_hours);
+        final String formatDays = getString(R.string.format_days);
+
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
+        final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
+        final Resources res = getActivity().getResources();
+
         // Add the preferences
         addPreferencesFromResource(R.xml.preferences_layout);
+
+        // -- Random dispositions
+        mRandomDispositions = (CheckBoxPreference)findPreference("ui_disposition_random");
+        mRandomDispositions.setOnPreferenceChangeListener(mOnChangeListener);
+
+        // -- Interval
+        final int[] randomDispositionsIntervals =
+                res.getIntArray(R.array.random_dispositions_intervals_values);
+        mRandomDispositionsInterval =
+                (SeekBarProgressPreference)findPreference("ui_disposition_random_interval");
+        mRandomDispositionsInterval.setMax(randomDispositionsIntervals.length - 1);
+        int transitionInterval = prefs.getInt("ui_disposition_random_interval",
+                Preferences.Layout.DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX);
+        if (transitionInterval > (randomDispositionsIntervals.length - 1)) {
+            mRandomDispositionsInterval.setProgress(
+                    Preferences.Layout.DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX);
+        }
+        mRandomDispositionsInterval.setOnDisplayProgress(new OnDisplayProgress() {
+            @Override
+            public String onDisplayProgress(int progress) {
+                if (randomDispositionsIntervals[progress] < 60000) {
+                    // Seconds
+                    mRandomDispositionsInterval.setFormat(formatSeconds);
+                    return String.valueOf(randomDispositionsIntervals[progress] / 1000);
+                } else if (randomDispositionsIntervals[progress] < 3600000) {
+                    // Minutes
+                    mRandomDispositionsInterval.setFormat(formatMinutes);
+                    return String.valueOf(randomDispositionsIntervals[progress] / 1000 / 60);
+                } else if (randomDispositionsIntervals[progress] < 86400000) {
+                    // Hours
+                    mRandomDispositionsInterval.setFormat(formatHours);
+                    return String.valueOf(randomDispositionsIntervals[progress] / 1000 / 60 / 60);
+                }
+                // Days
+                mRandomDispositionsInterval.setFormat(formatDays);
+                return String.valueOf(randomDispositionsIntervals[progress] / 1000 / 60 / 60 / 24);
+            }
+        });
+        mRandomDispositionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
+
+        // -- Portrait
+        mPortraitDisposition = findPreference("ui_disposition_portrait");
+        mPortraitDisposition.setEnabled(!Preferences.Layout.isRandomDispositions());
+
+        // -- Landscape
+        mLandscapeDisposition = findPreference("ui_disposition_landscape");
+        mLandscapeDisposition.setEnabled(!Preferences.Layout.isRandomDispositions());
     }
 }

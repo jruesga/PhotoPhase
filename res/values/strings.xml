@@ -37,12 +37,18 @@
     <string name="mnu_select_album">Select album</string>
     <string name="mnu_deselect_album">Deselect album</string>
 
+    <!-- Formats -->
+    <string name="format_seconds">%s sec.</string>
+    <string name="format_minutes">%s min.</string>
+    <string name="format_hours">%s h.</string>
+    <string name="format_days">%s d.</string>
+    <string name="format_dim">%s%%</string>
+
     <!-- Preferences -->
     <string name="pref_general">General</string>
     <string name="pref_general_summary">Access to general settings, effects and transitions</string>
     <string name="pref_general_settings">Settings</string>
     <string name="pref_general_settings_wallpaper_dim">Wallpaper dim</string>
-    <string name="pref_general_settings_wallpaper_dim_format">%s%%</string>
     <string name="pref_general_settings_wallpaper_dim_summary">Set the brightness of the wallpaper for a better visualization and battery performance</string>
     <string name="pref_general_settings_background_color">Background color</string>
     <string name="pref_general_settings_background_color_summary">Set the background color of the wallpaper</string>
@@ -56,7 +62,6 @@
     <string name="pref_general_transitions_types_summary">Select the types of transition effects to be applied</string>
     <string name="pref_general_transitions_interval">Interval</string>
     <string name="pref_general_transitions_interval_summary">Set how often are triggered the picture transitions</string>
-    <string name="pref_general_transitions_interval_format">%s sec.</string>
     <string name="pref_general_effects">Effects</string>
     <string name="pref_general_effects_types">Types</string>
     <string name="pref_general_effects_types_summary">Select the types of image effects to be applied to the pictures</string>
@@ -78,11 +83,17 @@
     <string name="pref_layout">Layout</string>
     <string name="pref_layout_summary">Select how pictures are disposed on the screen</string>
     <string name="pref_layout_disposition">Disposition</string>
+    <string name="pref_random_dispositions">Random dispositions</string>
+    <string name="pref_random_dispositions_summary">Generating random dispositions occasionally</string>
+    <string name="pref_random_dispositions_interval">Interval</string>
+    <string name="pref_random_dispositions_interval_summary">Select how often the layout disposition will be changed. Set to 0 to change the disposition only when the app is loaded or rotated</string>
     <string name="pref_disposition_portrait">Portrait disposition</string>
     <string name="pref_disposition_portrait_summary">Select how pictures are disposed on a portrait screen</string>
     <string name="pref_disposition_landscape">Landscape disposition</string>
     <string name="pref_disposition_landscape_summary">Select how pictures are disposed on a landscape screen</string>
-    <string name="pref_disposition_description">Long tap a frame to select it. Then drag \u0026 drop the borders of the frame to resize it</string>
+    <!-- [2 lines one for describe long tap and another for describe swipe] -->
+    <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders.\nSwipe left and right to show defined templates</string>
+    <string name="pref_disposition_template">Template <xliff:g id="number_of_template">%1$s</xliff:g> of <xliff:g id="total_of_templates">%2$s</xliff:g></string>
     <string name="pref_disposition_unable_delete_advise">Unable to delete the selected frame</string>
 
     <string name="pref_about">About</string>

@@ -40,6 +40,7 @@ import android.widget.ImageView.ScaleType;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.animations.Evaluators;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
+import com.ruesga.android.wallpapers.photophase.model.Dispositions;
 import com.ruesga.android.wallpapers.photophase.utils.DispositionUtil;
 import com.ruesga.android.wallpapers.photophase.utils.MERAlgorithm;
 import com.ruesga.android.wallpapers.photophase.widgets.ResizeFrame.OnResizeListener;
@@ -140,18 +141,32 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      * Method that sets the disposition to draw on this view
      *
      * @param dispositions The dispositions to draw
-     * @param cols The number of cols
-     * @param rows The number of rows
+     * @param animate If should animate the view
      */
-    public void setDispositions(
-            List<Disposition> dispositions, int cols, int rows) {
+    public void setDispositions(Dispositions dispositions, boolean animate) {
+        setDispositions(dispositions.getDispositions(), dispositions.getCols(),
+                dispositions.getRows(), animate);
+    }
+
+    /**
+     * Method that sets the disposition to draw on this view
+     *
+     * @param dispositions The dispositions to draw
+     * @param cols The number of columns
+     * @param rows The number of rows
+     * @param animate If should animate the view
+     */
+    public void setDispositions(List<Disposition> dispositions, int cols, int rows,
+            boolean animate) {
         mDispositions = dispositions;
         mCols = cols;
         mRows = rows;
 
         // Remove all the current views and add the new ones
-        recreateDispositions(true);
-        mResizeFrame.setVisibility(View.GONE);
+        recreateDispositions(animate);
+        if (mResizeFrame != null) {
+            mResizeFrame.setVisibility(View.GONE);
+        }
         mChanged = false;
     }
 
@@ -207,6 +222,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     @SuppressWarnings("boxing")
     public void deleteCurrentFrame() {
         if (mTarget == null) return;
+        if (mResizeFrame == null) return;
 
         final Disposition targetDisposition = resizerToDisposition();
 
@@ -348,7 +364,13 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         final ImageView v = new ImageView(getContext());
         v.setImageResource(R.drawable.ic_camera);
         v.setScaleType(ScaleType.CENTER);
-        v.setBackgroundColor(getResources().getColor(R.color.disposition_frame_bg_color));
+
+        // Is locked? Then change the background color
+        v.setBackgroundColor(getResources().getColor(
+                mResizeFrame == null
+                        ? R.color.disposition_locked_frame_bg_color
+                        : R.color.disposition_frame_bg_color));
+
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(r.width() - padding, r.height() - padding);
         v.setX(r.left + padding);
@@ -401,13 +423,15 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      */
     @Override
     public boolean onLongClick(View v) {
-        if (!selectTarget(v)) return false;
-        mVibrator.vibrate(300);
+        if (mResizeFrame != null && selectTarget(v)) {
+            mVibrator.vibrate(300);
+        }
         return true;
     }
 
     @Override
     public void onStartResize(int mode) {
+        if (mResizeFrame == null) return;
         mOldResizeFrameLocation = new Rect(
                                         mResizeFrame.getLeft(),
                                         mResizeFrame.getTop(),
@@ -418,6 +442,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     @Override
     public void onResize(int mode, int delta) {
         if (mTarget == null) return;
+        if (mResizeFrame == null) return;
 
         int w = getMeasuredWidth() - (getPaddingLeft() + getPaddingRight());
         int h = getMeasuredHeight() - (getPaddingTop() + getPaddingBottom());
@@ -472,6 +497,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     @Override
     public void onEndResize(final int mode) {
         if (mTarget == null) return;
+        if (mResizeFrame == null) return;
 
         // Compute the removed dispositions
         computeRemovedDispositions(mode);
@@ -555,8 +581,10 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     boolean selectTarget(View v) {
         //Do not do long click if we do not have a target
         if (mTarget != null && v.equals(mTarget)) return false;
+        if (mResizeFrame == null) return false;
 
         // Show the resize frame view just in place of the current clicked view
+
         mResizeFrame.hide();
         FrameLayout.LayoutParams frameParams =
                 (FrameLayout.LayoutParams)mResizeFrame.getLayoutParams();
@@ -666,7 +694,8 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.x + d.w) == disposition.x &&
-                        (d.y >= disposition.y) && ((d.y + d.h) <= (disposition.y + disposition.h))) {
+                        (d.y >= disposition.y) &&
+                        ((d.y + d.h) <= (disposition.y + disposition.h))) {
                         dispositions.add(d);
                     }
                 }
@@ -686,7 +715,8 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.y + d.h) == disposition.y &&
-                        (d.x >= disposition.x) && ((d.x + d.w) <= (disposition.x + disposition.w))) {
+                        (d.x >= disposition.x) &&
+                        ((d.x + d.w) <= (disposition.x + disposition.w))) {
                         dispositions.add(d);
                     }
                 }
@@ -706,7 +736,8 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.x) == (disposition.x + disposition.w) &&
-                        (d.y >= disposition.y) && ((d.y + d.h) <= (disposition.y + disposition.h))) {
+                        (d.y >= disposition.y) &&
+                        ((d.y + d.h) <= (disposition.y + disposition.h))) {
                         dispositions.add(d);
                     }
                 }
@@ -726,7 +757,8 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.y) == (disposition.y + disposition.h) &&
-                        (d.x >= disposition.x) && ((d.x + d.w) <= (disposition.x + disposition.w))) {
+                        (d.x >= disposition.x) &&
+                        ((d.x + d.w) <= (disposition.x + disposition.w))) {
                         dispositions.add(d);
                     }
                 }

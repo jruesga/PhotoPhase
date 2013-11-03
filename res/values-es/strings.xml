@@ -27,11 +27,15 @@
     <string name="mnu_invert">Invertir</string>
     <string name="mnu_select_album">Seleccionar álbum</string>
     <string name="mnu_deselect_album">Deseleccionar álbum</string>
+    <string name="format_seconds">%s sec.</string>
+    <string name="format_minutes">%s min.</string>
+    <string name="format_hours">%s h.</string>
+    <string name="format_days">%s d.</string>
+    <string name="format_dim">%s%%</string>
     <string name="pref_general">General</string>
     <string name="pref_general_summary">Accede a ajustes generales, efectos y transiciones</string>
     <string name="pref_general_settings">Ajustes</string>
     <string name="pref_general_settings_wallpaper_dim">Oscurecer fondo de escritorio</string>
-    <string name="pref_general_settings_wallpaper_dim_format">%s%%</string>
     <string name="pref_general_settings_wallpaper_dim_summary">Establece el brillo del fondo de escritorio para una mejor visualización y rendimiento de la batería</string>
     <string name="pref_general_settings_background_color">Color del fondo</string>
     <string name="pref_general_settings_background_color_summary">Establece el color del fondo de escritorio</string>
@@ -44,7 +48,6 @@
     <string name="pref_general_transitions_types_summary">Selecciona los tipos de efectos de transición a aplicar</string>
     <string name="pref_general_transitions_interval">Intervalo</string>
     <string name="pref_general_transitions_interval_summary">Establece la frecuencia en la que las imágenes son reemplazadas</string>
-    <string name="pref_general_transitions_interval_format">%s seg.</string>
     <string name="pref_general_effects">Efectos</string>
     <string name="pref_general_effects_types">Tipos</string>
     <string name="pref_general_effects_types_summary">Selecciona los tipos de efectos a aplicar a las imágenes</string>
@@ -64,11 +67,16 @@
     <string name="pref_layout">Disposición</string>
     <string name="pref_layout_summary">Selecciona como se mostraran las imágenes en pantalla</string>
     <string name="pref_layout_disposition">Disposición</string>
+    <string name="pref_random_dispositions">Disposiciones aleatorias</string>
+    <string name="pref_random_dispositions_summary">Generar disposiciones aleatorias cada cierto tiempo</string>
+    <string name="pref_random_dispositions_interval">Intervalo</string>
+    <string name="pref_random_dispositions_interval_summary">Selecciona cada cuanto tiempo se cambiará la disposición. Establece el valor a 0 para cambiar la disposición cada vez que se rote o se reinicie el equipo</string>
     <string name="pref_disposition_portrait">Disposición vertical</string>
     <string name="pref_disposition_portrait_summary">Selecciona como se mostraran las imágenes en una pantalla horizontal</string>
     <string name="pref_disposition_landscape">Disposición horizontal</string>
     <string name="pref_disposition_landscape_summary">Selecciona como se mostraran las imágenes en una pantalla vertical</string>
-    <string name="pref_disposition_description">Presiona una celda durante un segundo para seleccionarla. Entonces arrastra y suelta los bordes de la celda para redimensionarla</string>
+    <string name="pref_disposition_description">Presiona una celda y arrastre sus bordes. Deslize a izquierda y derecha para ver plantillas predefinidas</string>
+    <string name="pref_disposition_template">Plantilla <xliff:g id="number_of_template">%1$s</xliff:g> de <xliff:g id="total_of_templates">%2$s</xliff:g></string>
     <string name="pref_disposition_unable_delete_advise">No es posible borrar la celda seleccionada</string>
     <string name="pref_about">Acerca de</string>
     <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2013 Jorge Ruesga</string>

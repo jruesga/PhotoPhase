@@ -20,41 +20,44 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.adapters.DispositionAdapter;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
+import com.ruesga.android.wallpapers.photophase.model.Dispositions;
+import com.ruesga.android.wallpapers.photophase.utils.DispositionUtil;
 import com.ruesga.android.wallpapers.photophase.widgets.DispositionView;
 import com.ruesga.android.wallpapers.photophase.widgets.DispositionView.OnFrameSelectedListener;
 import com.ruesga.android.wallpapers.photophase.widgets.ResizeFrame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * An abstract fragment class that allow to choose the layout disposition of the wallpaper.
  */
-public abstract class DispositionFragment
-    extends PreferenceFragment implements OnFrameSelectedListener {
+public abstract class DispositionFragment extends PreferenceFragment
+        implements OnFrameSelectedListener, OnPageChangeListener {
 
-    private Runnable mRedraw = new Runnable() {
-        @Override
-        public void run() {
-            if (getActivity() == null) return;
-            try {
-                mDispositionView.setDispositions(getUserDispositions(), getCols(), getRows());
-            } catch (Exception ex) {
-                // Ignored
-            }
-        }
-    };
+    private ViewPager mPager;
+    private DispositionAdapter mAdapter;
+    private ResizeFrame mResizeFrame;
+    private TextView mAdvise;
 
-    DispositionView mDispositionView;
+    private DispositionView mCurrentDispositionView;
+    private int mCurrentPage;
+    private int mNumberOfTemplates;
 
+    private MenuItem mRestoreMenu;
     private MenuItem mDeleteMenu;
 
     /**
@@ -79,6 +82,13 @@ public abstract class DispositionFragment
     public abstract List<Disposition> getDefaultDispositions();
 
     /**
+     * Method that returns the system-defined dispositions templates
+     *
+     * @return String[] The system-defined dispositions templates
+     */
+    public abstract String[] getDispositionsTemplates();
+
+    /**
      * Method that request to save the dispositions
      *
      * @param dispositions The dispositions to save
@@ -93,9 +103,9 @@ public abstract class DispositionFragment
     public abstract int getRows();
 
     /**
-     * Method that returns the number of cols to use
+     * Method that returns the number of columns to use
      *
-     * @return int The number of cols
+     * @return int The number of columns
      */
     public abstract int getCols();
 
@@ -117,13 +127,24 @@ public abstract class DispositionFragment
      * {@inheritDoc}
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup v = (ViewGroup)inflater.inflate(R.layout.choose_disposition_fragment, container, false);
-        mDispositionView = (DispositionView)v.findViewById(R.id.disposition_view);
-        mDispositionView.setResizeFrame((ResizeFrame)v.findViewById(R.id.resize_frame));
-        mDispositionView.setOnFrameSelectedListener(this);
-        mDispositionView.post(mRedraw);
+        ViewGroup v = (ViewGroup)inflater.inflate(R.layout.choose_disposition_fragment,
+                container, false);
+
+        mCurrentPage = 0;
+        mNumberOfTemplates = getDispositionsTemplates().length;
+
+        mAdvise = (TextView)v.findViewById(R.id.advise);
+        mResizeFrame = (ResizeFrame)v.findViewById(R.id.resize_frame);
+
+        mAdapter = new DispositionAdapter(getActivity(), getAllDispositions(), mResizeFrame, this);
+        mPager = (ViewPager)v.findViewById(R.id.dispositions_pager);
+        mPager.setAdapter(mAdapter);
+        mPager.setOnPageChangeListener(this);
+        mPager.setCurrentItem(0);
+
         return v;
     }
 
@@ -132,21 +153,28 @@ public abstract class DispositionFragment
      */
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        if (mDispositionView != null) {
-            mDispositionView.removeCallbacks(mRedraw);
-            if (mDispositionView.isChanged()) {
-                saveDispositions(mDispositionView.getDispositions());
-            }
+        boolean saved = false;
+
+        if (mCurrentDispositionView == null) {
+            mCurrentDispositionView = mAdapter.getView(0);
         }
 
-        // Notify that the settings was changed
-        Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-        if (mDispositionView.isChanged()) {
-            intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
-            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+        if (mCurrentDispositionView != null) {
+            if (mCurrentPage != 0 || mCurrentDispositionView.isChanged()) {
+                saveDispositions(mCurrentDispositionView.getDispositions());
+                saved = true;
+            }
+
+            // Notify that the settings was changed
+            Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+            if (saved) {
+                intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+                intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+            }
+            getActivity().sendBroadcast(intent);
         }
-        getActivity().sendBroadcast(intent);
+
+        super.onDestroyView();
     }
 
     /**
@@ -155,10 +183,9 @@ public abstract class DispositionFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.dispositions, menu);
+        mRestoreMenu = menu.findItem(R.id.mnu_restore);
         mDeleteMenu = menu.findItem(R.id.mnu_delete);
-        if (mDeleteMenu != null) {
-            mDeleteMenu.setVisible(false);
-        }
+        mDeleteMenu.setVisible(false);
     }
 
     /**
@@ -185,14 +212,51 @@ public abstract class DispositionFragment
      * Method that restores the disposition view to the default state
      */
     private void restoreData() {
-        mDispositionView.setDispositions(getUserDispositions(), getCols(), getRows());
+        if (mCurrentDispositionView == null) {
+            mCurrentDispositionView = mAdapter.getView(0);
+        }
+        mCurrentDispositionView.setDispositions(getUserDispositions(), getCols(), getRows(), true);
     }
 
     /**
      * Method that restores the disposition view to the default state
      */
     private void deleteFrame() {
-        mDispositionView.deleteCurrentFrame();
+        if (mCurrentDispositionView == null) {
+            mCurrentDispositionView = mAdapter.getView(0);
+        }
+        mCurrentDispositionView.deleteCurrentFrame();
+    }
+
+    /**
+     * Method that returns the system-defined dispositions templates
+     *
+     * @return List<Dispositions> All the system-defined dispositions templates
+     */
+    public List<Dispositions> getAllDispositions() {
+        final int rows = getRows();
+        final int cols = getCols();
+
+        List<Dispositions> allDispositions = new ArrayList<Dispositions>();
+        allDispositions.add(new Dispositions(getUserDispositions(), rows, cols));
+        allDispositions.addAll(getSystemDefinedDispositions(rows, cols));
+        return allDispositions;
+    }
+    /**
+     * Method that returns the system-defined dispositions templates
+     *
+     * @param rows The number of rows
+     * @param cols The number of columns
+     * @return List<Dispositions> All the system-defined dispositions templates
+     */
+    private List<Dispositions> getSystemDefinedDispositions(int rows, int cols) {
+        String[] templates = getDispositionsTemplates();
+        List<Dispositions> systemDispositions = new ArrayList<Dispositions>(templates.length);
+        for (String template : templates) {
+            systemDispositions.add(new Dispositions(
+                    DispositionUtil.toDispositions(template), rows, cols));
+        }
+        return systemDispositions;
     }
 
     /**
@@ -214,4 +278,50 @@ public abstract class DispositionFragment
             mDeleteMenu.setVisible(false);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        // Ignored
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPageSelected(int position) {
+        // Save state
+        mCurrentPage = position;
+        mCurrentDispositionView = mAdapter.getView(position);
+
+        // Enable/Disable menus
+        if (mRestoreMenu != null) {
+            mRestoreMenu.setVisible(position == 0);
+        }
+        if (mDeleteMenu != null) {
+            mDeleteMenu.setVisible(false);
+        }
+
+        // Set the title
+        if (position == 0) {
+            mAdvise.setText(getString(R.string.pref_disposition_description));
+        } else {
+            mAdvise.setText(getString(R.string.pref_disposition_template,
+                    String.valueOf(position), String.valueOf(mNumberOfTemplates)));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        if (mDeleteMenu != null) {
+            mDeleteMenu.setVisible(false);
+        }
+        mResizeFrame.setVisibility(View.GONE);
+    }
+
 }

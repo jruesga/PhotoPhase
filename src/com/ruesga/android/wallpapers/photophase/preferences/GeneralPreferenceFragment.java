@@ -50,7 +50,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private ListPreference mTouchActions;
     private CheckBoxPreference mFixAspectRatio;
     private MultiSelectListPreference mTransitionsTypes;
-    private SeekBarProgressPreference mTransitionsInterval;
+    SeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
 
     boolean mRedrawFlag;
@@ -109,6 +109,10 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final String formatSeconds = getString(R.string.format_seconds);
+        final String formatMinutes = getString(R.string.format_minutes);
+        final String formatDim = getString(R.string.format_dim);
+
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
@@ -120,7 +124,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences_general);
 
         mWallpaperDim = (SeekBarProgressPreference)findPreference("ui_wallpaper_dim");
-        mWallpaperDim.setFormat(getString(R.string.pref_general_settings_wallpaper_dim_format));
+        mWallpaperDim.setFormat(formatDim);
         mWallpaperDim.setOnPreferenceChangeListener(mOnChangeListener);
 
         mBackgroundColor = (ColorPickerPreference)findPreference("ui_background_color");
@@ -137,7 +141,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         final int[] transitionsIntervals = res.getIntArray(R.array.transitions_intervals_values);
         mTransitionsInterval = (SeekBarProgressPreference)findPreference("ui_transition_interval");
-        mTransitionsInterval.setFormat(getString(R.string.pref_general_transitions_interval_format));
+        mTransitionsInterval.setFormat(getString(R.string.format_seconds));
         mTransitionsInterval.setMax(transitionsIntervals.length - 1);
         int transitionInterval = prefs.getInt("ui_transition_interval",
                 Preferences.General.Transitions.DEFAULT_TRANSITION_INTERVAL_INDEX);
@@ -148,7 +152,14 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTransitionsInterval.setOnDisplayProgress(new OnDisplayProgress() {
             @Override
             public String onDisplayProgress(int progress) {
-                return String.valueOf(transitionsIntervals[progress] / 1000);
+                if (transitionsIntervals[progress] < 60000) {
+                    // Seconds
+                    mTransitionsInterval.setFormat(formatSeconds);
+                    return String.valueOf(transitionsIntervals[progress] / 1000);
+                }
+                // Minutes
+                mTransitionsInterval.setFormat(formatMinutes);
+                return String.valueOf(transitionsIntervals[progress] / 1000 / 60);
             }
         });
         mTransitionsInterval.setOnPreferenceChangeListener(mOnChangeListener);

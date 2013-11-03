@@ -143,7 +143,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
          */
         @Override
         protected void onProgressUpdate(Album... albums) {
-            for(Album album : albums) {
+            for (Album album : albums) {
                 mAlbums.add(album);
             }
             mAlbumAdapter.notifyDataSetChanged();

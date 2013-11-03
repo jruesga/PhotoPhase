@@ -141,4 +141,60 @@
         <item>0</item>
     </string-array>
 
+    <integer-array name="random_dispositions_intervals_values" translatable="false">
+        <item>0</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>14400000</item>
+        <item>28800000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+    </integer-array>
+
+    <string-array name="portrait_disposition_templates" translatable="false">
+        <item>0x0:2x1|0x2:1x3|0x4:3x6|2x2:3x3|3x0:3x0|3x1:3x1</item>
+        <item>0x0:1x1|0x2:1x3|0x4:3x6|2x0:3x1|2x2:3x3</item>
+        <item>0x0:2x1|0x2:1x3|0x4:3x6|2x2:3x3|3x0:3x1</item>
+        <item>0x0:0x1|0x2:0x4|0x5:0x6|1x0:2x1|1x2:2x4|1x5:2x6|3x0:3x1|3x2:3x4|3x5:3x6</item>
+        <item>0x0:0x0|0x1:3x5|0x6:0x6|1x0:1x0|1x6:1x6|2x0:2x0|2x6:2x6|3x0:3x0|3x6:3x6</item>
+        <item>0x0:3x2|0x3:0x3|0x4:3x6|1x3:1x3|2x3:2x3|3x3:3x3</item>
+        <item>0x0:3x2|0x3:0x3|0x4:3x6|1x3:1x3|2x3:2x3|3x3:3x3</item>
+        <item>0x0:1x2|0x3:0x3|0x4:1x6|1x3:1x3|2x0:3x1|2x2:2x2|2x3:3x6|3x2:3x2</item>
+        <item>0x0:3x3|0x4:3x6</item>
+        <item>0x0:3x6</item>
+        <item>0x0:1x3|0x4:1x6|2x0:3x2|2x3:3x6</item>
+        <item>0x0:0x0|0x1:0x1|0x2:0x2|0x3:0x3|0x4:2x6|1x0:3x2|1x3:1x3|2x3:2x3|3x3:3x3|3x4:3x4|3x5:3x5|3x6:3x6</item>
+        <item>0x0:0x0|0x1:0x1|0x2:0x2|0x3:0x3|0x4:0x4|0x5:0x5|0x6:0x6|1x0:2x2|1x3:1x3|1x4:2x6|2x3:2x3|3x0:3x0|3x1:3x1|3x2:3x2|3x3:3x3|3x4:3x4|3x5:3x5|3x6:3x6</item>
+        <item>0x0:1x1|0x2:1x3|0x4:0x4|0x5:0x5|0x6:0x6|1x4:2x6|2x0:3x1|2x2:3x3|3x4:3x4|3x5:3x5|3x6:3x6</item>
+        <item>0x0:1x1|0x2:1x3|0x4:2x6|2x0:3x1|2x2:3x3|3x4:3x4|3x5:3x5|3x6:3x6</item>
+        <item>0x0:0x0|0x1:0x1|0x2:1x3|0x4:3x6|1x0:1x0|1x1:1x1|2x0:3x1|2x2:2x2|2x3:2x3|3x2:3x2|3x3:3x3</item>
+        <item>0x0:1x1|0x2:3x4|0x5:1x6|2x0:3x1|2x5:3x6</item>
+        <item>0x0:1x0|0x1:3x5|0x6:1x6|2x0:3x0|2x6:3x6</item>
+        <item>0x0:3x1|0x2:3x4|0x5:3x6</item>
+        <item>0x0:2x1|0x2:3x4|0x5:0x6|1x5:3x6|3x0:3x1</item>
+    </string-array>
+
+    <string-array name="landscape_disposition_templates" translatable="false">
+        <item>0x0:2x3|3x0:5x1|3x2:4x3|5x2:6x3|6x0:6x0|6x1:6x1</item>
+        <item>0x0:2x1|0x2:2x3|3x0:4x1|3x2:4x3|5x0:6x1|5x2:6x3</item>
+        <item>0x0:0x0|0x1:0x1|0x2:2x3|1x0:2x1|3x0:5x1|3x2:4x3|5x2:6x3|6x0:6x0|6x1:6x1</item>
+        <item>0x0:2x3|3x0:3x0|3x1:3x1|3x2:3x2|3x3:3x3|4x0:6x3</item>
+        <item>0x0:0x0|0x1:2x2|0x3:0x3|1x0:1x0|1x3:1x3|2x0:2x0|2x3:2x3|3x0:3x0|3x1:3x1|3x2:3x2|3x3:3x3|4x0:6x3</item>
+        <item>0x0:0x0|0x1:0x1|0x2:0x2|0x3:0x3|1x0:1x0|1x1:2x2|1x3:1x3|2x0:2x0|2x3:2x3|3x0:3x0|3x1:3x1|3x2:3x2|3x3:3x3|4x0:4x0|4x1:5x2|4x3:4x3|5x0:5x0|5x3:5x3|6x0:6x0|6x1:6x1|6x2:6x2|6x3:6x3</item>
+        <item>0x0:0x0|0x1:0x1|0x2:0x2|0x3:0x3|1x0:2x3|3x0:3x0|3x1:3x1|3x2:3x2|3x3:3x3|4x0:5x3|6x0:6x0|6x1:6x1|6x2:6x2|6x3:6x3</item>
+        <item>0x0:2x3|3x0:3x0|3x1:3x2|3x3:3x3|4x0:6x3</item>
+        <item>0x0:2x3|3x0:6x3</item>
+        <item>0x0:1x3|2x0:3x1|2x2:3x3|4x0:6x3</item>
+        <item>0x0:0x1|0x2:0x3|1x0:2x1|1x2:2x3|3x0:3x1|3x2:3x3|4x0:5x1|4x2:5x3|6x0:6x1|6x2:6x3</item>
+        <item>0x0:0x1|0x2:0x3|1x0:1x0|1x1:5x3|2x0:2x0|3x0:3x0|4x0:4x0|5x0:5x0|6x0:6x1|6x2:6x3</item>
+        <item>0x0:6x3</item>
+        <item>0x0:1x3|2x0:4x3|5x0:6x3</item>
+        <item>0x0:1x1|0x2:1x3|2x0:4x3|5x0:6x1|5x2:6x3</item>
+        <item>0x0:1x1|0x2:1x3|2x0:4x1|2x2:4x3|5x0:6x1|5x2:6x3</item>
+        <item>0x0:0x0|0x1:0x2|0x3:1x3|1x0:1x1|1x2:1x2|2x0:4x1|2x2:4x3|5x0:5x1|5x2:5x3|6x0:6x0|6x1:6x2|6x3:6x3</item>
+        <item>0x0:0x0|0x1:0x2|0x3:1x3|1x0:1x1|1x2:1x2|2x0:4x1|2x2:4x3|5x0:6x0|5x1:5x1|5x2:5x3|6x1:6x2|6x3:6x3</item>
+        <item>0x0:0x2|0x3:0x3|1x0:1x1|1x2:4x3|2x0:5x1|5x2:5x3|6x0:6x2|6x3:6x3</item>
+        <item>0x0:0x2|0x3:0x3|1x0:2x1|1x2:3x3|3x0:5x1|4x2:5x3|6x0:6x2|6x3:6x3</item>
+    </string-array>
+
 </resources>

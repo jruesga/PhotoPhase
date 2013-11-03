@@ -62,11 +62,18 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final long mInstance;
     private static long sInstances;
 
+    private final boolean mIsPreview;
+    boolean mIsPaused;
+    boolean mRecreateWorld;
+
     final Context mContext;
     EffectContext mEffectContext;
     private final Handler mHandler;
     final GLESSurfaceDispatcher mDispatcher;
     TextureManager mTextureManager;
+
+    final AlarmManager mAlarmManager;
+    PendingIntent mRecreateDispositionPendingIntent;
 
     PhotoPhaseWallpaperWorld mWorld;
     ColorShape mOverlay;
@@ -86,7 +93,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final float[] mProjMatrix = new float[16];
     private final float[] mVMatrix = new float[16];
 
-    private final Object mDrawing = new Object();
+    final Object mDrawing = new Object();
 
     final Object mMediaSync = new Object();
     private PendingIntent mMediaScanIntent;
@@ -95,48 +102,60 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Check what flags are been requested
-            boolean recreateWorld = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, false);
+            boolean recreateWorld = intent.getBooleanExtra(
+                    PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, false);
             boolean redraw = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, false);
-            boolean emptyTextureQueue = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, false);
-            boolean mediaReload = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, false);
-            boolean mediaIntervalChanged = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, false);
+            boolean emptyTextureQueue = intent.getBooleanExtra(
+                    PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, false);
+            boolean mediaReload = intent.getBooleanExtra(
+                    PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, false);
+            boolean mediaIntervalChanged = intent.getBooleanExtra(
+                    PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, false);
+            int dispositionInterval = intent.getIntExtra(
+                    PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, -1);
+
+            // Empty texture queue?
             if (emptyTextureQueue) {
                 if (mTextureManager != null) {
                     mTextureManager.emptyTextureQueue(true);
                 }
             }
+
+            // Media reload. Purging resources and performs a media query
             if (mediaReload) {
                 synchronized (mMediaSync) {
                     if (mTextureManager != null) {
-                        boolean userReloadRequest =
-                                intent.getBooleanExtra(
-                                        PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, false);
+                        boolean userReloadRequest = intent.getBooleanExtra(
+                                PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, false);
                         mTextureManager.reloadMedia(userReloadRequest);
                         scheduleOrCancelMediaScan();
                     }
                 }
             }
+
+            // Media scan interval was changed. Reschedule
             if (mediaIntervalChanged) {
                 scheduleOrCancelMediaScan();
             }
-            if (recreateWorld && mWorld != null) {
-                // Recreate the wallpaper world
-                try {
-                    mWorld.recreateWorld(mWidth, mMeasuredHeight);
-                } catch (GLException e) {
-                    Log.e(TAG, "Cannot recreate the wallpaper world.", e);
-                }
+
+            // Media scan interval was changed. Reschedule
+            if (dispositionInterval != -1) {
+                scheduleDispositionRecreation();
             }
+
+            // Recreate the whole world?
+            if (recreateWorld && mWorld != null) {
+                recreateWorld();
+            }
+
+            // Performs a redraw?
             if (redraw) {
-                mDispatcher.requestRender();
+                forceRedraw();
             }
         }
     };
 
     private final Runnable mTransitionThread = new Runnable() {
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void run() {
             // Run in GLES's thread
@@ -144,12 +163,14 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 @Override
                 public void run() {
                     try {
-                        // Select a new transition
-                        mWorld.selectRandomTransition();
-                        mLastRunningTransition = System.currentTimeMillis();
+                        if (!mIsPaused) {
+                            // Select a new transition
+                            mWorld.selectRandomTransition();
+                            mLastRunningTransition = System.currentTimeMillis();
 
-                        // Now force continuously render while transition is applied
-                        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                            // Now force continuously render while transition is applied
+                            mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                        }
                     } catch (Throwable ex) {
                         Log.e(TAG, "Something was wrong selecting the transition", ex);
                     }
@@ -163,14 +184,19 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      *
      * @param ctx The current context
      * @param dispatcher The GLES dispatcher
+     * @param isPreview Indicates if the renderer is in preview mode
      */
-    public PhotoPhaseRenderer(Context ctx, GLESSurfaceDispatcher dispatcher) {
+    public PhotoPhaseRenderer(Context ctx, GLESSurfaceDispatcher dispatcher, boolean isPreview) {
         super();
         mContext = ctx;
         mHandler = new Handler();
         mDispatcher = dispatcher;
         mInstance = sInstances;
+        mIsPreview = isPreview;
+        mIsPaused = true;
+        mRecreateWorld = false;
         sInstances++;
+        mAlarmManager = (AlarmManager)ctx.getSystemService(Context.ALARM_SERVICE);
     }
 
     /**
@@ -256,6 +282,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     public void onPause() {
         if (DEBUG) Log.d(TAG, "onPause [" + mInstance + "]");
+        mIsPaused = true;
         mHandler.removeCallbacks(mTransitionThread);
         if (mTextureManager != null) {
             mTextureManager.setPause(true);
@@ -269,6 +296,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (DEBUG) Log.d(TAG, "onResume [" + mInstance + "]");
         if (mTextureManager != null) {
             mTextureManager.setPause(false);
+        }
+        mIsPaused = false;
+        if (mRecreateWorld) {
+            recreateWorld();
+        } else {
+            mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            mDispatcher.requestRender();
         }
     }
 
@@ -334,7 +368,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             mContext.startActivity(intent);
                         }
                     } catch (ActivityNotFoundException ex) {
-                        Log.e(TAG, "Open activity not found for " + frame.getTextureInfo().path, ex);
+                        Log.e(TAG, "Open action not found for " + frame.getTextureInfo().path, ex);
                     }
 
                 } else if (touchAction.compareTo(TouchAction.SHARE) == 0) {
@@ -350,7 +384,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             mContext.startActivity(intent);
                         }
                     } catch (ActivityNotFoundException ex) {
-                        Log.e(TAG, "Send activity not found for " + frame.getTextureInfo().path, ex);
+                        Log.e(TAG, "Send action not found for " + frame.getTextureInfo().path, ex);
                     }
                 }
             }
@@ -390,6 +424,11 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     }
 
     void scheduleOrCancelMediaScan() {
+        // Ignored in preview mode
+        if (mIsPreview) {
+            return;
+        }
+
         int interval = Preferences.Media.getRefreshFrecuency();
         if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             scheduleMediaScan(interval);
@@ -404,14 +443,19 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      * @param interval The new interval
      */
     private void scheduleMediaScan(int interval) {
-        AlarmManager am = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+        // Ignored in preview mode
+        if (mIsPreview) {
+            return;
+        }
 
         Intent i = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         i.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
-        mMediaScanIntent = PendingIntent.getBroadcast(mContext, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
+        mMediaScanIntent = PendingIntent.getBroadcast(
+                mContext, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
         long milliseconds = Preferences.Media.getRefreshFrecuency() * 1000L;
-        am.set(AlarmManager.RTC, System.currentTimeMillis() + milliseconds, mMediaScanIntent);
+        long nextTime = System.currentTimeMillis() + milliseconds;
+        mAlarmManager.set(AlarmManager.RTC, nextTime, mMediaScanIntent);
     }
 
     /**
@@ -419,9 +463,88 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     private void cancelMediaScan() {
         if (mMediaScanIntent != null) {
-            AlarmManager am = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
-            am.cancel(mMediaScanIntent);
+            mAlarmManager.cancel(mMediaScanIntent);
             mMediaScanIntent = null;
+        }
+    }
+
+    /**
+     * Method that schedule a new recreation of the current disposition
+     */
+    void scheduleDispositionRecreation() {
+        // Ignored in preview mode
+        if (mIsPreview) {
+            return;
+        }
+
+        // Cancel current alarm
+        cancelDispositionRecreation();
+
+        // Is random disposition enabled?
+        if (!Preferences.Layout.isRandomDispositions()) {
+            return;
+        }
+
+        // Schedule the next recreation if interval has been configured
+        int interval = Preferences.Layout.getRandomDispositionsInterval();
+        if (interval > 0) {
+            // Created the intent
+            Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+            mRecreateDispositionPendingIntent = PendingIntent.getBroadcast(mContext, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+
+            // Schedule the pending intent
+            long nextTime = System.currentTimeMillis() + interval;
+            mAlarmManager.set(AlarmManager.RTC, nextTime, mRecreateDispositionPendingIntent);
+        }
+    }
+
+    /**
+     * Method that cancels a pending media scan
+     */
+    private void cancelDispositionRecreation() {
+        // Cancel current alarm
+        if (mRecreateDispositionPendingIntent != null) {
+            mAlarmManager.cancel(mRecreateDispositionPendingIntent);
+        }
+    }
+
+    /**
+     * Recreate the world
+     */
+    void recreateWorld() {
+        if (mIsPaused) {
+            mRecreateWorld = true;
+            return;
+        }
+
+        // Recreate the wallpaper world (under a GLES context)
+        mDispatcher.dispatch(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mDrawing) {
+                    try {
+                        mLastRunningTransition = 0;
+                        mWorld.recreateWorld(mWidth, mMeasuredHeight);
+                    } catch (GLException e) {
+                        Log.e(TAG, "Cannot recreate the wallpaper world.", e);
+                    } finally {
+                        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                        mDispatcher.requestRender();
+                    }
+                    scheduleDispositionRecreation();
+                }
+            }
+        });
+    }
+
+    /**
+     * Force a redraw of the screen
+     */
+    void forceRedraw() {
+        if (!mIsPaused) {
+            mDispatcher.requestRender();
         }
     }
 
@@ -500,6 +623,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         } else {
             mTextureManager.updateEffectContext(mEffectContext);
         }
+
+        // Schedule dispositions random recreation (if need it)
+        scheduleDispositionRecreation();
     }
 
     /**
@@ -585,14 +711,14 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     // Draw the background
                     drawBackground();
 
-                    if (mWorld != null) {
+                    if (!mIsPaused && mWorld != null) {
                         // Now draw the world (all the photo frames with effects)
                         mWorld.draw(mMVPMatrix);
 
                         // Check if we have some pending transition or transition has
                         // exceed its timeout
                         if (Preferences.General.Transitions.getTransitionInterval() > 0) {
-                            if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
+                            if (!mWorld.hasRunningTransition() || isTransitionTimeoutFired()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
                                 // Now start a delayed thread to generate the next effect
@@ -603,14 +729,16 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             }
                         } else {
                             // Just display the initial frames and never make transitions
-                            if (!mWorld.hasRunningTransition() || firedTransitionTimeout()) {
+                            if (!mWorld.hasRunningTransition() || isTransitionTimeoutFired()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                             }
                         }
-
-                        // Draw the overlay
-                        drawOverlay();
+                    } else if (mIsPaused) {
+                        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                     }
+
+                    // Draw the overlay
+                    drawOverlay();
                 }
             }
 
@@ -622,7 +750,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      *
      * @return boolean if the transition has exceed the timeout
      */
-    private boolean firedTransitionTimeout() {
+    private boolean isTransitionTimeoutFired() {
         long now = System.currentTimeMillis();
         long diff = now - mLastRunningTransition;
         return mLastRunningTransition != 0 && diff > Transition.MAX_TRANSTION_TIME;

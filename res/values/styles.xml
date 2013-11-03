@@ -38,10 +38,6 @@
         <item name="android:layout_marginBottom">@dimen/album_card_margin_bottom</item>
     </style>
 
-    <style name="PhotoPhase.ToolButton">
-        <item name="android:padding">@dimen/toolbutton_padding</item>
-    </style>
-
     <style name="PhotoPhase.Notification">
         <item name="android:minWidth">@dimen/notification_min_width</item>
         <item name="android:minHeight">@dimen/notification_min_height</item>
@@ -56,25 +52,8 @@
     <style name="PhotoPhase.Album" parent="@style/PhotoPhase.Card">
     </style>
 
-    <style name="PhotoPhase.Album.Title">
-        <item name="android:background">@null</item>
-        <item name="android:textSize">@dimen/secondary_text_size</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_color</item>
-        <item name="android:rotation">-90</item>
-        <item name="android:gravity">center</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:layout_marginTop">@dimen/album_title_margin_top</item>
-        <item name="android:layout_marginLeft">@dimen/album_title_margin_left</item>
-    </style>
-
     <style name="PhotoPhase.Album.MenuBar">
         <item name="android:background">@null</item>
-    </style>
-
-    <style name="PhotoPhase.Album.MenuBar.Return">
-        <item name="android:src">@drawable/ic_return</item>
     </style>
 
     <style name="PhotoPhase.Album.MenuBar.Overflow">

@@ -67,7 +67,7 @@ public class PhotoPhaseActivity extends Activity implements OnTouchListener {
         mGLSurfaceView = new GLSurfaceView(getApplicationContext());
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setEGLConfigChooser(false);
-        mRenderer = new PhotoPhaseRenderer(this, new GLESSurfaceDispatcher(mGLSurfaceView));
+        mRenderer = new PhotoPhaseRenderer(this, new GLESSurfaceDispatcher(mGLSurfaceView), false);
         mGLSurfaceView.setRenderer(mRenderer);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         mGLSurfaceView.setPreserveEGLContextOnPause(preserveEglCtx);

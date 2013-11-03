@@ -45,10 +45,12 @@ public final class PreferencesProvider {
      * @see #EXTRA_FLAG_REDRAW
      * {@hide}
      */
-    public static final String ACTION_SETTINGS_CHANGED = "com.ruesga.android.wallpapers.photophase.actions.SETTINGS_CHANGED";
+    public static final String ACTION_SETTINGS_CHANGED =
+            "com.ruesga.android.wallpapers.photophase.actions.SETTINGS_CHANGED";
 
     /**
-     * An extra setting that indicates that the changed setting request a whole recreation of the wallpaper world
+     * An extra setting that indicates that the changed setting request a whole recreation
+     * of the wallpaper world
      * {@hide}
      */
     public static final String EXTRA_FLAG_RECREATE_WORLD = "flag_recreate_world";
@@ -84,7 +86,16 @@ public final class PreferencesProvider {
      * @see #EXTRA_FLAG_MEDIA_RELOAD
      * {@hide}
      */
-    public static final String EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST = "action_media_user_reload_req";
+    public static final String EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST =
+            "action_media_user_reload_req";
+
+    /**
+     * An extra setting that indicates that the changed setting changed the disposition
+     * interval time. Contains the new interval time
+     * {@hide}
+     */
+    public static final String EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED =
+            "flag_disposition_interval_changed";
 
     /**
      * The shared preferences file
@@ -97,6 +108,10 @@ public final class PreferencesProvider {
      * @hide
      */
     static int[] TRANSITIONS_INTERVALS;
+    /**
+     * @hide
+     */
+    static int[] RANDOM_DISPOSITIONS_INTERVALS;
 
     /**
      * Method that loads the all the preferences of the application
@@ -110,6 +125,8 @@ public final class PreferencesProvider {
 
         final Resources res = context.getResources();
         TRANSITIONS_INTERVALS = res.getIntArray(R.array.transitions_intervals_values);
+        RANDOM_DISPOSITIONS_INTERVALS = res.getIntArray(
+                R.array.random_dispositions_intervals_values);
     }
 
     /**
@@ -306,7 +323,8 @@ public final class PreferencesProvider {
              * @return int The interval in seconds between updates. 0 means that updates are disabled
              */
             public static int getRefreshFrecuency() {
-                return Integer.valueOf(getString("ui_media_refresh_interval", String.valueOf(MEDIA_RELOAD_DISABLED)));
+                return Integer.valueOf(getString("ui_media_refresh_interval",
+                        String.valueOf(MEDIA_RELOAD_DISABLED)));
             }
 
             /**
@@ -334,7 +352,8 @@ public final class PreferencesProvider {
             * @param context The current context
             * @param selection The new list of albums and pictures to be displayed
             */
-           public static synchronized void setSelectedMedia(Context context, Set<String> selection) {
+           public static synchronized void setSelectedMedia(
+                   Context context, Set<String> selection) {
                SharedPreferences preferences =
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
@@ -351,7 +370,8 @@ public final class PreferencesProvider {
             */
            public static Set<String> getLastDiscorevedAlbums() {
                // FIXME Typo. Remove when version 1005 is obsolete and unused
-               Set<String> oldKey = getStringSet("media_last_disvored_albums", new HashSet<String>());
+               Set<String> oldKey = getStringSet("media_last_disvored_albums",
+                       new HashSet<String>());
                if (oldKey.size() > 0) {
                    return oldKey;
                }
@@ -365,7 +385,8 @@ public final class PreferencesProvider {
             * @param context The current context
             * @param albums The albums seen by the last media discovery scan
             */
-           public static synchronized void setLastDiscorevedAlbums(Context context, Set<String> albums) {
+           public static synchronized void setLastDiscorevedAlbums(
+                   Context context, Set<String> albums) {
                SharedPreferences preferences =
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
@@ -384,11 +405,26 @@ public final class PreferencesProvider {
 
             private static final int DEFAULT_COLS = 4;
             private static final int DEFAULT_ROWS = 7;
-            public static final String DEFAULT_PORTRAIT_DISPOSITION = "0x0:2x1|0x2:1x3|0x4:3x6|2x2:3x3|3x0:3x0|3x1:3x1";
-            public static final String DEFAULT_LANDSCAPE_DISPOSITION = "0x0:2x3|3x0:5x1|3x2:4x3|5x2:6x3|6x0:6x0|6x1:6x1";
+            private static final boolean DEFAULT_RANDOM_DISPOSITION = false;
 
             /**
-             * Method that returns the rows of the wallpaper.
+             * The default portrait disposition
+             */
+            public static final String DEFAULT_PORTRAIT_DISPOSITION =
+                    "0x0:2x1|0x2:1x3|0x4:3x6|2x2:3x3|3x0:3x0|3x1:3x1";
+            /**
+             * The default landscape disposition
+             */
+            public static final String DEFAULT_LANDSCAPE_DISPOSITION =
+                    "0x0:2x3|3x0:5x1|3x2:4x3|5x2:6x3|6x0:6x0|6x1:6x1";
+
+            /**
+             * The default transition interval
+             */
+            public static final int DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX = 0;
+
+            /**
+             * Returns the number of rows of the wallpaper.
              *
              * @return int The rows of the wallpaper
              */
@@ -397,7 +433,7 @@ public final class PreferencesProvider {
             }
 
             /**
-             * Method that returns the columns of the wallpaper.
+             * Returns the number columns of the wallpaper.
              *
              * @return int The columns of the wallpaper
              */
@@ -406,9 +442,29 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Returns if the device should generate random dispositions
+             *
+             * @return boolean If the system should generate random dispositions
+             */
+            public static boolean isRandomDispositions() {
+                return getBoolean("ui_disposition_random", DEFAULT_RANDOM_DISPOSITION);
+            }
+
+            /**
+             * Method that returns how often the random dispositions are triggered.
+             *
+             * @return int The milliseconds in which the next transition will be triggered
+             */
+            public static int getRandomDispositionsInterval() {
+                int interval = getInt("ui_disposition_random_interval",
+                        DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX);
+                return RANDOM_DISPOSITIONS_INTERVALS[interval];
+            }
+
+            /**
              * Returns the disposition of the photo frames in the wallpaper on portrait screen. The
-             * setting is stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means (position x=0, y=0,
-             * 1 cells width, 2 cells height, ...).
+             * setting is stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means
+             * (position x=0, y=0, 1 cells width, 2 cells height, ...).
              *
              * @return List<Disposition> The photo frames dispositions
              */
@@ -423,7 +479,8 @@ public final class PreferencesProvider {
              * @param context The current context
              * @param dispositions The photo frames dispositions
              */
-            public static void setPortraitDisposition(Context context, List<Disposition> dispositions) {
+            public static void setPortraitDisposition(Context context,
+                    List<Disposition> dispositions) {
                 SharedPreferences preferences =
                         context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                 Editor editor = preferences.edit();
@@ -434,15 +491,15 @@ public final class PreferencesProvider {
             }
 
             /**
-             * Returns the disposition of the photo frames in the wallpaper on landscape screen. The
-             * setting is stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means (position x=0, y=0,
-             * 1 cells width, 2 cells height, ...).
+             * Returns the disposition of the photo frames in the wallpaper on landscape screen.
+             * The setting is stored as <code>0x0:1x2|2x2:3x4|...</code>, which it means
+             * (position x=0, y=0, 1 cells width, 2 cells height, ...).
              *
              * @return List<Disposition> The photo frames dispositions
              */
             public static List<Disposition> getLandscapeDisposition() {
-                return DispositionUtil.toDispositions(
-                        getString("ui_layout_landscape_disposition", DEFAULT_LANDSCAPE_DISPOSITION));
+                return DispositionUtil.toDispositions(getString("ui_layout_landscape_disposition",
+                        DEFAULT_LANDSCAPE_DISPOSITION));
             }
 
             /**
@@ -451,7 +508,8 @@ public final class PreferencesProvider {
              * @param context The current context
              * @param dispositions The photo frames dispositions
              */
-            public static void setLandscapeDisposition(Context context, List<Disposition> dispositions) {
+            public static void setLandscapeDisposition(Context context,
+                    List<Disposition> dispositions) {
                 SharedPreferences preferences =
                         context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                 Editor editor = preferences.edit();

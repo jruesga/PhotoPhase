@@ -23,6 +23,21 @@
         android:key="category_disposition"
         android:title="@string/pref_layout_disposition">
 
+        <!-- Random dispositions -->
+        <CheckBoxPreference
+            android:key="ui_disposition_random"
+            android:title="@string/pref_random_dispositions"
+            android:summary="@string/pref_random_dispositions_summary" />
+
+        <!-- Random dispositions interval -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
+            android:key="ui_disposition_random_interval"
+            android:title="@string/pref_random_dispositions_interval"
+            android:summary="@string/pref_random_dispositions_interval_summary"
+            android:persistent="true"
+            android:defaultValue="0"
+            android:dependency="ui_disposition_random" />
+
         <!-- Portrait -->
         <Preference
             android:key="ui_disposition_portrait"

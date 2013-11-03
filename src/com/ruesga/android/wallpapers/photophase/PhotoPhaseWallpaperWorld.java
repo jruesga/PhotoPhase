@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.DispositionUtil;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.util.ArrayList;
@@ -60,6 +62,9 @@ public class PhotoPhaseWallpaperWorld {
 
     private boolean mRecycled;
 
+    private String[] mPortraitDispositions;
+    private String[] mLandscapeDispositions;
+
     /**
      * Constructor <code>PhotoPhaseWallpaperWorld</code>
      *
@@ -74,6 +79,10 @@ public class PhotoPhaseWallpaperWorld {
         mCurrent = -1;
         mUnusedTransitions = new ArrayList<Transition>();
         mRecycled = false;
+
+        Resources res = ctx.getResources();
+        mPortraitDispositions = res.getStringArray(R.array.portrait_disposition_templates);
+        mLandscapeDispositions = res.getStringArray(R.array.landscape_disposition_templates);
     }
 
     /**
@@ -200,7 +209,8 @@ public class PhotoPhaseWallpaperWorld {
             mUnusedTransitions.add(currentTransition);
 
             if (finalTarget != null) {
-                Transition transition = getOrCreateTransition(TRANSITIONS.NO_TRANSITION, finalTarget);
+                Transition transition = getOrCreateTransition(
+                        TRANSITIONS.NO_TRANSITION, finalTarget);
                 mTransitions.set(mCurrent, transition);
 
                 currentTarget.recycle();
@@ -287,11 +297,11 @@ public class PhotoPhaseWallpaperWorld {
         int rows = portrait ? Preferences.Layout.getRows() : Preferences.Layout.getCols();
         float cellw = 2.0f / cols;
         float cellh = 2.0f / rows;
-        List<Disposition> dispositions = portrait
-                            ? Preferences.Layout.getPortraitDisposition()
-                            : Preferences.Layout.getLandscapeDisposition();
-        if (DEBUG) Log.d(TAG,
-                "Dispositions: " + dispositions.size() + " | " + String.valueOf(dispositions));
+        List<Disposition> dispositions = getWorldDispositions(portrait);
+        if (DEBUG) {
+            Log.d(TAG, "Dispositions: " + dispositions.size() + " | " +
+                    String.valueOf(dispositions));
+        }
         mPhotoFrames = new ArrayList<PhotoFrame>(dispositions.size());
         mTransitions = new ArrayList<Transition>(dispositions.size());
         mTransitionsQueue = new ArrayList<Integer>(dispositions.size());
@@ -300,7 +310,8 @@ public class PhotoPhaseWallpaperWorld {
         for (Disposition disposition : dispositions) {
             // Create the photo frame
             float[] frameVertices = getVerticesFromDisposition(disposition, cellw, cellh);
-            float[] photoVertices = getFramePadding(frameVertices, portrait ? w : h, portrait ? h : w);
+            float[] photoVertices = getFramePadding(frameVertices,
+                    portrait ? w : h, portrait ? h : w);
             PhotoFrame frame =
                     new PhotoFrame(
                             mContext,
@@ -415,5 +426,30 @@ public class PhotoPhaseWallpaperWorld {
         paddingCoords[6] -= pxw;
         paddingCoords[7] -= pxh;
         return paddingCoords;
+    }
+
+    /**
+     * Method that returns the dispositions to draw in the world
+     *
+     * @param portrait If the orientation is portrait (true) or landscape (false)
+     * @return List<Disposition> The list of dispositions
+     */
+    private List<Disposition> getWorldDispositions(boolean portrait) {
+        // If user selected a random disposition, then use one of the predefined layouts
+        if (Preferences.Layout.isRandomDispositions()) {
+            // Random
+            if (portrait) {
+                // Portrait
+                int next = Utils.getNextRandom(0, mPortraitDispositions.length -1);
+                return DispositionUtil.toDispositions(mPortraitDispositions[next]);
+            }
+            // Landscape
+            int next = Utils.getNextRandom(0, mLandscapeDispositions.length -1);
+            return DispositionUtil.toDispositions(mLandscapeDispositions[next]);
+        }
+        // User-defined
+        return portrait
+                ? Preferences.Layout.getPortraitDisposition()
+                : Preferences.Layout.getLandscapeDisposition();
     }
 }
