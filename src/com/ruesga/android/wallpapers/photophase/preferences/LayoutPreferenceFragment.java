@@ -45,7 +45,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     Preference mPortraitDisposition;
     Preference mLandscapeDisposition;
 
-    boolean mRedrawFlag;
+    boolean mRecreateWorld;
     boolean mDispositionIntervalFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
@@ -57,7 +57,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
                 boolean randomDispositions = ((Boolean)newValue).booleanValue();
                 mPortraitDisposition.setEnabled(!randomDispositions);
                 mLandscapeDisposition.setEnabled(!randomDispositions);
-                mRedrawFlag = true;
+                mRecreateWorld = true;
             } else if (key.compareTo("ui_disposition_random_interval") == 0) {
                 mDispositionIntervalFlag = true;
             }
@@ -77,8 +77,8 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
 
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-        if (mRedrawFlag) {
-            intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+        if (mRecreateWorld) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
         }
         if (mDispositionIntervalFlag) {
             int interval = Preferences.Layout.getRandomDispositionsInterval();
