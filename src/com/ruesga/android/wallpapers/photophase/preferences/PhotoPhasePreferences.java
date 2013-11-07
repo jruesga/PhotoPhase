@@ -85,4 +85,12 @@ public class PhotoPhasePreferences extends PreferenceActivity {
              return super.onOptionsItemSelected(item);
        }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    // Do not use @Override because is not part of 4.0.3. Just ignored this advise
+    public boolean isValidFragment(String fragmentName) {
+        return true;
+    }
 }
