@@ -79,6 +79,15 @@ public final class AndroidHelper {
     }
 
     /**
+     * Method that returns if the device is running kitkat or greater
+     *
+     * @return boolean true if is running kitkat or greater
+     */
+    public static final boolean isKitKat() {
+        return android.os.Build.VERSION.SDK_INT >= 19;
+    }
+
+    /**
      * Calculate the dimension of the status bar
      *
      * @param context The current context
@@ -90,7 +99,9 @@ public final class AndroidHelper {
                 Settings.System.getInt(context.getContentResolver(), "expanded_desktop_state", 0) == 1 &&
                 Settings.System.getInt(context.getContentResolver(), "expanded_desktop_style", 0) == 2;
         int result = 0;
-        if (!hiddenStatusBar && !(context instanceof Activity)) {
+
+        // On kitkat we can use the translucent bars to fill all the screen
+        if (!isKitKat() && !hiddenStatusBar && !(context instanceof Activity)) {
             int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
             if (resourceId > 0) {
                 result = context.getResources().getDimensionPixelSize(resourceId);

@@ -650,7 +650,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         Rect dimensions = Utils.isTablet(mContext)
                              ? new Rect(0, 0, width / 2, height / 2)
                              : new Rect(0, 0, width / 4, height / 4);
-        Rect screenDimensions = new Rect(0, mStatusBarHeight, width, height);
+        Rect screenDimensions = new Rect(0, AndroidHelper.isKitKat() ? 0 : mStatusBarHeight,
+                width, AndroidHelper.isKitKat() ? height + mStatusBarHeight : height);
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setScreenDimesions(screenDimensions);
         mTextureManager.setPause(false);
@@ -674,7 +675,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mOopsShape = new OopsShape(mContext, R.string.no_pictures_oops_msg);
 
         // Set the viewport and the fustrum
-        GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
+        GLES20.glViewport(0, AndroidHelper.isKitKat() ? 0 : -mStatusBarHeight, mWidth,
+                AndroidHelper.isKitKat() ? mHeight + mStatusBarHeight : mHeight);
         GLESUtil.glesCheckError("glViewport");
         Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
 
