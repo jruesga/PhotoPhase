@@ -71,9 +71,9 @@ public class ChangeLogActivity extends Activity implements OnCancelListener, OnD
             builder.setTitle(R.string.changelog_title);
             builder.setMessage(sb);
             builder.setPositiveButton(getString(R.string.mnu_ok), null);
-            builder.setOnDismissListener(this);
-            builder.setOnCancelListener(this);
             AlertDialog dialog = builder.create();
+            dialog.setOnDismissListener(this);
+            dialog.setOnCancelListener(this);
             dialog.show();
 
         } catch (Exception e) {
