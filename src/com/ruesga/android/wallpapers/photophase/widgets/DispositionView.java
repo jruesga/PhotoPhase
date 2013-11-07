@@ -375,9 +375,6 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         v.setX(r.left + padding);
         v.setY(r.top + padding);
         v.setOnLongClickListener(this);
-        if (animate) {
-//            v.setVisibility(View.INVISIBLE);
-        }
         addView(v, params);
 
         // Animate the view
