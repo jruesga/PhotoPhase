@@ -29,8 +29,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -377,22 +376,24 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         v.setY(r.top + padding);
         v.setOnLongClickListener(this);
         if (animate) {
-            v.setVisibility(View.INVISIBLE);
+//            v.setVisibility(View.INVISIBLE);
         }
         addView(v, params);
 
         // Animate the view
         if (animate) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    Animation anim = AnimationUtils.loadAnimation(
-                                        getContext(), R.anim.display_with_bounce);
-                    anim.setFillBefore(true);
-                    anim.setFillAfter(true);
-                    v.startAnimation(anim);
-                }
-            });
+            List<Animator> animators = new ArrayList<Animator>();
+            animators.add(ObjectAnimator.ofFloat(v, "scaleX", 0.0f, 1.0f));
+            animators.add(ObjectAnimator.ofFloat(v, "scaleY", 0.0f, 1.0f));
+            animators.add(ObjectAnimator.ofFloat(v, "alpha", 0.0f, 1.0f));
+            animators.add(ObjectAnimator.ofFloat(v, "alpha", 0.0f, 1.0f));
+
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(animators);
+            animSet.setDuration(getResources().getInteger(R.integer.disposition_show_anim));
+            animSet.setInterpolator(new BounceInterpolator());
+            animSet.setTarget(v);
+            animSet.start();
         }
 
         return v;
