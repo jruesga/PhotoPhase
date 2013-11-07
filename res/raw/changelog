@@ -1,3 +1,8 @@
+v1.0.5
+----------------------------
+- Added support for AOSP 4.4 (KitKat)
+- Fixed various bugs
+
 v1.0.4
 ----------------------------
 - Feature: Album selection activity reworked (better layout, effects and performance improvements)
