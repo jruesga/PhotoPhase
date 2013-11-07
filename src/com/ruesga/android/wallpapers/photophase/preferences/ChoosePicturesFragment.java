@@ -564,8 +564,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
             // Notify pictures dataset changed
             updateAlbumInfo(mDstView, album);
             mPictureAdapter.notifyDataSetChanged();
+        } else {
+            mAlbumAdapter.notifyDataSetChanged();
         }
-        updateAlbumInfo(mSrcView, album);
 
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
         mSelectionChanged = true;
