@@ -73,7 +73,7 @@ import java.util.Set;
  * A fragment class for select the picture that will be displayed on the wallpaper
  */
 public class ChoosePicturesFragment extends PreferenceFragment
-        implements AlbumInfoView.CallbacksListener, OnClickListener {
+        implements AlbumInfoView.CallbacksListener, OnClickListener, OnBackPressedListener {
 
     private static final String TAG = "ChoosePicturesFragment";
 
@@ -210,11 +210,13 @@ public class ChoosePicturesFragment extends PreferenceFragment
          * @return boolean if an item is selected
          */
         private boolean isSelectedItem(String item) {
-            Iterator<String> it = mSelectedAlbums.iterator();
-            while (it.hasNext()) {
-                String albumPath = it.next();
-                if (item.compareTo(albumPath) == 0) {
-                    return true;
+            if (mSelectedAlbums != null) {
+                Iterator<String> it = mSelectedAlbums.iterator();
+                while (it.hasNext()) {
+                    String albumPath = it.next();
+                    if (item.compareTo(albumPath) == 0) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -562,6 +564,19 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @Override
     public void onAllPicturesDeselected(Album album) {
         updateAllPicturesSelection(album, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onBackPressed() {
+        if (!mShowingAlbums) {
+            // Hide album pictures
+            hideAlbumPictures(mDstParent, mDstView, mSrcParent, mSrcView);
+            return true;
+        }
+        return false;
     }
 
     /**

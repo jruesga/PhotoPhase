@@ -17,9 +17,11 @@
 package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import com.ruesga.android.wallpapers.photophase.R;
@@ -30,6 +32,8 @@ import java.util.List;
  * The PhotoPhase Live Wallpaper preferences.
  */
 public class PhotoPhasePreferences extends PreferenceActivity {
+
+    private OnBackPressedListener mCallback;
 
     /**
      * {@inheritDoc}
@@ -51,6 +55,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
                 ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        mCallback = null;
     }
 
     /**
@@ -79,11 +84,40 @@ public class PhotoPhasePreferences extends PreferenceActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
        switch (item.getItemId()) {
           case android.R.id.home:
-              finish();
+              if (mCallback == null || !mCallback.onBackPressed()) {
+                  finish();
+              }
               return true;
           default:
              return super.onOptionsItemSelected(item);
        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mCallback == null || !mCallback.onBackPressed()) {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof OnBackPressedListener) {
+            mCallback = (OnBackPressedListener)fragment;
+        } else {
+            mCallback = null;
+        }
     }
 
     /**
