@@ -19,6 +19,7 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -282,6 +283,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mHandler = new Handler(mCallback);
         mShowingAlbums = true;
 
@@ -298,7 +300,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
         mSelectionChanged = false;
 
-        Resources res = getActivity().getResources();
+        final Resources res = getResources();
         mPicturesAnimDurationIn = res.getInteger(R.integer.pictures_anim_in);
         mPicturesAnimDurationOut = res.getInteger(R.integer.pictures_anim_out);
 
@@ -310,10 +312,6 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        if (mTask.getStatus().compareTo(Status.PENDING) == 0) {
-            mTask.cancel(true);
-        }
         unbindDrawables(mAlbumsPanel);
         unregister();
 
@@ -332,6 +330,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);
+
+        super.onDestroy();
     }
 
     private void unregister() {
@@ -385,11 +385,33 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
         // Load the albums
         unregister();
-        mTask.execute();
 
         return root;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mTask.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDetach() {
+        if (mTask.getStatus().compareTo(Status.PENDING) == 0) {
+            mTask.cancel(true);
+        }
+        super.onDetach();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onClick(View v) {
         // Hide the albums picture with animation
@@ -747,7 +769,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param album The album data
      */
     void updateAlbumInfo(View v, Album album) {
-        Resources res = getActivity().getResources();
+        final Resources res = getResources();
 
         AlbumInfoView info = (AlbumInfoView)v.findViewById(R.id.album_info);
         info.setAlbum(album);
@@ -783,7 +805,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         List<Picture> items = album.getItems();
 
         // Calculate the grid dimensions
-        Resources res = getActivity().getResources();
+        final Resources res = getResources();
         int pictureWidth = (int)res.getDimension(R.dimen.picture_size);
         int gridWidth = mPicturesPanel.getWidth();
         int columns = gridWidth / pictureWidth;
