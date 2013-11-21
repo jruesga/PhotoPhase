@@ -524,18 +524,18 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mDispatcher.dispatch(new Runnable() {
             @Override
             public void run() {
-                synchronized (mDrawing) {
-                    try {
+                try {
+                    synchronized (mDrawing) {
                         mLastRunningTransition = 0;
                         mWorld.recreateWorld(mWidth, mMeasuredHeight);
-                    } catch (GLException e) {
-                        Log.e(TAG, "Cannot recreate the wallpaper world.", e);
-                    } finally {
-                        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-                        mDispatcher.requestRender();
                     }
-                    scheduleDispositionRecreation();
+                } catch (GLException e) {
+                    Log.e(TAG, "Cannot recreate the wallpaper world.", e);
+                } finally {
+                    mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                    mDispatcher.requestRender();
                 }
+                scheduleDispositionRecreation();
             }
         });
     }
@@ -698,28 +698,29 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     @Override
     public void onDrawFrame(GL10 glUnused) {
-        synchronized (mDrawing) {
-            // Set the projection, view and model
-            GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
-            Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-            Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+    
+        // Set the projection, view and model
+        GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
+        Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
-            if (mTextureManager != null) {
-                if (mTextureManager.getStatus() == 1 && mTextureManager.isEmpty()) {
-                    // Advise the user and stop
-                    drawOops();
-                    mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        if (mTextureManager != null) {
+            if (mTextureManager.getStatus() == 1 && mTextureManager.isEmpty()) {
+                // Advise the user and stop
+                drawOops();
+                mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-                } else {
-                    // Draw the background
-                    drawBackground();
+            } else {
+                // Draw the background
+                drawBackground();
 
-                    if (!mIsPaused && mWorld != null) {
-                        // Now draw the world (all the photo frames with effects)
-                        mWorld.draw(mMVPMatrix);
+                if (!mIsPaused && mWorld != null) {
+                    // Now draw the world (all the photo frames with effects)
+                    mWorld.draw(mMVPMatrix);
 
-                        // Check if we have some pending transition or transition has
-                        // exceed its timeout
+                    // Check if we have some pending transition or transition has
+                    // exceed its timeout
+                    synchronized (mDrawing) {
                         if (Preferences.General.Transitions.getTransitionInterval() > 0) {
                             if (!mWorld.hasRunningTransition() || isTransitionTimeoutFired()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -736,15 +737,14 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                             }
                         }
-                    } else if (mIsPaused) {
-                        mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                     }
-
-                    // Draw the overlay
-                    drawOverlay();
+                } else if (mIsPaused) {
+                    mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                 }
-            }
 
+                // Draw the overlay
+                drawOverlay();
+            }
         }
     }
 
