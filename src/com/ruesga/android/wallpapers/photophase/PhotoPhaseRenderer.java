@@ -518,6 +518,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             mRecreateWorld = true;
             return;
         }
+        mRecreateWorld = false;
 
         // Recreate the wallpaper world (under a GLES context)
         mDispatcher.dispatch(new Runnable() {
