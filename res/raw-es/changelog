@@ -1,3 +1,8 @@
+v1.0.6
+----------------------------
+- Mejor detección de botón Atrás en la selección de álbumes
+- Corregidos varios errores
+
 v1.0.5
 ----------------------------
 - Añadido soporte para AOSP 4.4 (KitKat)

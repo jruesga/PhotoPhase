@@ -16,8 +16,8 @@
  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ruesga.android.wallpapers.photophase"
-    android:versionCode="1007"
-    android:versionName="1.0.5"
+    android:versionCode="1008"
+    android:versionName="1.0.6"
     android:installLocation="auto">
 
     <original-package android:name="com.ruesga.android.wallpapers.photophase" />
