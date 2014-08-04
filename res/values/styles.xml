@@ -44,7 +44,6 @@
 
     <style name="PhotoPhase.Card">
         <item name="android:background">@drawable/card</item>
-        <item name="android:layout_marginBottom">@dimen/album_card_margin_bottom</item>
     </style>
 
     <style name="PhotoPhase.Notification">
