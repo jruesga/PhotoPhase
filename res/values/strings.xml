@@ -87,7 +87,7 @@
     <string name="pref_random_dispositions_summary">Generate random arrangements at a chosen interval</string>
     <string name="pref_random_dispositions_interval">Interval</string>
     <string name="pref_random_dispositions_interval_summary">Select how often the layout will be changed. Set to 0 to re-layout only when the app is loaded or rotated</string>
-    <string name="pref_disposition_portrait">Portrait arrangment</string>
+    <string name="pref_disposition_portrait">Portrait arrangement</string>
     <string name="pref_disposition_portrait_summary">Select how pictures are arranged on a portrait screen</string>
     <string name="pref_disposition_landscape">Landscape arrangement</string>
     <string name="pref_disposition_landscape_summary">Select how pictures are arranged on a landscape screen</string>
@@ -134,7 +134,7 @@
     <string name="effects_grain">Grain</string>
     <string name="effects_grayscale">Grayscale</string>
     <string name="effects_halftone">Halftone</string>
-    <string name="effects_lomoish">Lomoish</string>
+    <string name="effects_lomoish">Lomo-ish</string>
     <string name="effects_mirror">Mirror</string>
     <string name="effects_negative">Negative</string>
     <string name="effects_outline">Outline</string>
