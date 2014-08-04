@@ -9,7 +9,9 @@ This source was released under the terms of [Apache 2.0]
 (http://www.apache.org/licenses/LICENSE-2.0.html) license. This software includes
 third party libraries which are released under the next licenses:
 
-* Parts of code the Android Support 4.0 licensed by Google Inc. under [Apache 2.0]
+* Parts of the Android Open Source Project licensed by Google Inc. under [Apache 2.0]
+(http://www.apache.org/licenses/LICENSE-2.0.html)
+* Parts of the Android Support 4.0 library licensed by Google Inc. under [Apache 2.0]
 (http://www.apache.org/licenses/LICENSE-2.0.html)
 * mColorPicker licensed by Daniel Nilsson under [Apache 2.0]
 (http://www.apache.org/licenses/LICENSE-2.0.html)
@@ -17,4 +19,4 @@ third party libraries which are released under the next licenses:
 Visit [Github](https://github.com/jruesga/PhotoPhase) to get the source and
 submit patches.
 
-Copyright © 2013 Jorge Ruesga
+Copyright © 2014 Jorge Ruesga
