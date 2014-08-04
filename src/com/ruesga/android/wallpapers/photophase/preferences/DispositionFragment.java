@@ -52,6 +52,7 @@ public abstract class DispositionFragment extends PreferenceFragment
     private DispositionAdapter mAdapter;
     private ResizeFrame mResizeFrame;
     private TextView mAdvise;
+    private int mAdviseLines = -1;
 
     private DispositionView mCurrentDispositionView;
     private int mCurrentPage;
@@ -315,6 +316,10 @@ public abstract class DispositionFragment extends PreferenceFragment
         if (position == 0) {
             mAdvise.setText(getString(R.string.pref_disposition_description));
         } else {
+            if (mAdviseLines == -1) {
+                mAdviseLines = mAdvise.getLineCount();
+                mAdvise.setLines(mAdviseLines);
+            }
             mAdvise.setText(getString(R.string.pref_disposition_template,
                     String.valueOf(position), String.valueOf(mNumberOfTemplates)));
         }

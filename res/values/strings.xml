@@ -92,7 +92,7 @@
     <string name="pref_disposition_landscape">Landscape arrangement</string>
     <string name="pref_disposition_landscape_summary">Select how pictures are arranged on a landscape screen</string>
     <!-- [2 lines one for describe long tap and another for describe swipe] -->
-    <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders.\nSwipe left and right to show defined templates</string>
+    <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders. Swipe left and right to show defined templates</string>
     <string name="pref_disposition_template">Template <xliff:g id="number_of_template">%1$s</xliff:g> of <xliff:g id="total_of_templates">%2$s</xliff:g></string>
     <string name="pref_disposition_unable_delete_advise">Unable to delete the selected frame</string>
 

@@ -28,7 +28,6 @@
         android:layout_marginRight="@dimen/disposition_frame_margin"
         android:padding="@dimen/disposition_advise_frame_padding"
         android:gravity="center"
-        android:lines="@integer/disposition_advise_lines"
         android:textColor="@color/notification_text_color"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/pref_disposition_description" />
