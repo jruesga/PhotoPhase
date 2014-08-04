@@ -302,7 +302,6 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             recreateWorld();
         } else {
             mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-            mDispatcher.requestRender();
         }
     }
 
@@ -533,7 +532,6 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     Log.e(TAG, "Cannot recreate the wallpaper world.", e);
                 } finally {
                     mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-                    mDispatcher.requestRender();
                 }
                 scheduleDispositionRecreation();
             }
