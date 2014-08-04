@@ -24,7 +24,7 @@
     <string name="app_description">PhotoPhase Live Wallpaper</string>
 
     <!-- No images message -->
-    <string name="no_pictures_oops_msg">Oops, no pictures</string>
+    <string name="no_pictures_oops_msg">No pictures found</string>
 
     <!-- Menus -->
     <string name="mnu_ok" translatable="false">@android:string/ok</string>
@@ -46,51 +46,51 @@
 
     <!-- Preferences -->
     <string name="pref_general">General</string>
-    <string name="pref_general_summary">Access to general settings, effects and transitions</string>
+    <string name="pref_general_summary">General settings, effects and transitions</string>
     <string name="pref_general_settings">Settings</string>
     <string name="pref_general_settings_wallpaper_dim">Wallpaper dim</string>
-    <string name="pref_general_settings_wallpaper_dim_summary">Set the brightness of the wallpaper for a better visualization and battery performance</string>
+    <string name="pref_general_settings_wallpaper_dim_summary">Set the brightness to balance for visualization and battery performance</string>
     <string name="pref_general_settings_background_color">Background color</string>
-    <string name="pref_general_settings_background_color_summary">Set the background color of the wallpaper</string>
+    <string name="pref_general_settings_background_color_summary">Set the background color</string>
     <string name="pref_general_touch_action">Touch action</string>
-    <string name="pref_general_touch_action_summary">Select the action to apply when touch a frame</string>
+    <string name="pref_general_touch_action_summary">Select the action to apply when touching a frame</string>
     <string name="pref_general_aspect_ratio_correction">Aspect ratio</string>
     <string name="pref_general_aspect_ratio_correction_summary">Try to fix the picture\'s aspect ratio by cropping it to fit the destination frame</string>
 
     <string name="pref_general_transitions">Transitions</string>
     <string name="pref_general_transitions_types">Types</string>
-    <string name="pref_general_transitions_types_summary">Select the types of transition effects to be applied</string>
+    <string name="pref_general_transitions_types_summary">Select the transition effects to be applied</string>
     <string name="pref_general_transitions_interval">Interval</string>
-    <string name="pref_general_transitions_interval_summary">Set how often are triggered the picture transitions</string>
+    <string name="pref_general_transitions_interval_summary">Set how often picture transitions are triggered</string>
     <string name="pref_general_effects">Effects</string>
     <string name="pref_general_effects_types">Types</string>
-    <string name="pref_general_effects_types_summary">Select the types of image effects to be applied to the pictures</string>
+    <string name="pref_general_effects_types_summary">Select the image effects to be applied</string>
 
     <string name="pref_media">Media</string>
-    <string name="pref_media_summary">Set the pictures and albums to be displayed, the refresh interval and other media settings</string>
+    <string name="pref_media_summary">Select albums to be displayed, the refresh interval, and other media settings</string>
     <string name="pref_media_settings">Settings</string>
     <string name="pref_media_settings_refresh_interval">Refresh interval</string>
-    <string name="pref_media_settings_refresh_interval_disable">The search of new pictures is disabled</string>
+    <string name="pref_media_settings_refresh_interval_disable">Searching for new pictures is disabled</string>
     <string name="pref_media_settings_refresh_interval_summary">Search for new pictures every <xliff:g id="interval">%1$s</xliff:g></string>
     <string name="pref_media_settings_refresh_now">Refresh now</string>
-    <string name="pref_media_settings_refresh_now_summary">Refresh the pictures and albums database right now</string>
+    <string name="pref_media_settings_refresh_now_summary">Manually refresh the picture database</string>
     <string name="pref_media_pictures">Pictures</string>
     <string name="pref_media_albums">Albums</string>
     <string name="pref_media_albums_summary">Set the albums and pictures that will be displayed on the wallpaper</string>
     <string name="pref_media_auto_select_new">Auto select albums</string>
-    <string name="pref_media_auto_select_new_summary">Select automatically new albums when media discovery occurs</string>
+    <string name="pref_media_auto_select_new_summary">Automatically select new albums when media discovery occurs</string>
 
     <string name="pref_layout">Layout</string>
-    <string name="pref_layout_summary">Select how pictures are disposed on the screen</string>
-    <string name="pref_layout_disposition">Disposition</string>
-    <string name="pref_random_dispositions">Random dispositions</string>
-    <string name="pref_random_dispositions_summary">Generating random dispositions occasionally</string>
+    <string name="pref_layout_summary">Select how pictures are positioned on the screen</string>
+    <string name="pref_layout_disposition">Arrangement</string>
+    <string name="pref_random_dispositions">Random</string>
+    <string name="pref_random_dispositions_summary">Generate random arrangements at a chosen interval</string>
     <string name="pref_random_dispositions_interval">Interval</string>
-    <string name="pref_random_dispositions_interval_summary">Select how often the layout disposition will be changed. Set to 0 to change the disposition only when the app is loaded or rotated</string>
-    <string name="pref_disposition_portrait">Portrait disposition</string>
-    <string name="pref_disposition_portrait_summary">Select how pictures are disposed on a portrait screen</string>
-    <string name="pref_disposition_landscape">Landscape disposition</string>
-    <string name="pref_disposition_landscape_summary">Select how pictures are disposed on a landscape screen</string>
+    <string name="pref_random_dispositions_interval_summary">Select how often the layout will be changed. Set to 0 to relayout only when the app is loaded or rotated</string>
+    <string name="pref_disposition_portrait">Portrait arrangment</string>
+    <string name="pref_disposition_portrait_summary">Select how pictures are arrangement on a portrait screen</string>
+    <string name="pref_disposition_landscape">Landscape arrangement</string>
+    <string name="pref_disposition_landscape_summary">Select how pictures are arrangement on a landscape screen</string>
     <!-- [2 lines one for describe long tap and another for describe swipe] -->
     <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders.\nSwipe left and right to show defined templates</string>
     <string name="pref_disposition_template">Template <xliff:g id="number_of_template">%1$s</xliff:g> of <xliff:g id="total_of_templates">%2$s</xliff:g></string>
@@ -109,7 +109,7 @@
 
     <!-- Touch actions -->
     <string name="touch_actions_none">None</string>
-    <string name="touch_actions_transition">Do transition</string>
+    <string name="touch_actions_transition">Perform transition</string>
     <string name="touch_actions_open">Open</string>
     <string name="touch_actions_share">Share</string>
 
@@ -122,7 +122,7 @@
     <string name="transitions_window">Window</string>
 
     <!-- Effects -->
-    <string name="effects_noeffect">No effect</string>
+    <string name="effects_noeffect">Normal</string>
     <string name="effects_autofix">Autofix</string>
     <string name="effects_blur">Blur</string>
     <string name="effects_crossprocess">Cross process</string>
