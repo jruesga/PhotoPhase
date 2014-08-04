@@ -126,6 +126,9 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mWallpaperDim = (SeekBarProgressPreference)findPreference("ui_wallpaper_dim");
         mWallpaperDim.setFormat(formatDim);
         mWallpaperDim.setOnPreferenceChangeListener(mOnChangeListener);
+        // An excessive dim will just display a black screen. Restrict the max value to
+        // a proper translucent value
+        mWallpaperDim.setMax(70);
 
         mBackgroundColor = (ColorPickerPreference)findPreference("ui_background_color");
         mBackgroundColor.setOnPreferenceChangeListener(mOnChangeListener);
