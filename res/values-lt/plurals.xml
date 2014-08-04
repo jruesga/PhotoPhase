@@ -17,11 +17,13 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="album_number_of_pictures">
-    <item quantity="one">1 imagen</item>
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> imágenes</item>
+    <item quantity="one">1 nuotrauka</item>
+    <item quantity="few"><xliff:g id="pictures" example="7">%d</xliff:g> nuotraukos</item>
+    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> nuotraukų</item>
   </plurals>
   <plurals name="msg_media_reload_complete">
-    <item quantity="one">Refresco de los medios completado. 1 imagen encontrada.</item>
-    <item quantity="other">Refresco de los medios completado. <xliff:g id="pictures" example="7">%d</xliff:g> imágenes encontradas.</item>
+    <item quantity="one">Medijos perkrovimas užbaigtas. Rasta 1 nuotrauka.</item>
+    <item quantity="few">Medijos perkrovimas užbaigtas. <xliff:g id="pictures" example="7">%d</xliff:g> rastos nuotraukos.</item>
+    <item quantity="other">Medijos perkrovimas užbaigtas. <xliff:g id="pictures" example="7">%d</xliff:g> rastų nuotraukų.</item>
   </plurals>
 </resources>

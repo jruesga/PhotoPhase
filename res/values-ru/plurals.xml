@@ -17,11 +17,13 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="album_number_of_pictures">
-    <item quantity="one">1 imagen</item>
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> imágenes</item>
+    <item quantity="one"><xliff:g id="pictures" example="1">%d</xliff:g> фотография</item>
+    <item quantity="few"><xliff:g id="pictures" example="2">%d</xliff:g> фотографии</item>
+    <item quantity="other"><xliff:g id="pictures" example="5">%d</xliff:g> фотографий</item>
   </plurals>
   <plurals name="msg_media_reload_complete">
-    <item quantity="one">Refresco de los medios completado. 1 imagen encontrada.</item>
-    <item quantity="other">Refresco de los medios completado. <xliff:g id="pictures" example="7">%d</xliff:g> imágenes encontradas.</item>
+    <item quantity="one">База мультимедиа обновлена. Найдена <xliff:g id="pictures" example="1">%d</xliff:g> фотография.</item>
+    <item quantity="few">База мультимедиа обновлена. Найдено <xliff:g id="pictures" example="2">%d</xliff:g> фотографии.</item>
+    <item quantity="other">База мультимедиа обновлена. Найдено <xliff:g id="pictures" example="5">%d</xliff:g> фотографий.</item>
   </plurals>
 </resources>

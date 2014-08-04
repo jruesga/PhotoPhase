@@ -17,11 +17,9 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="album_number_of_pictures">
-    <item quantity="one">1 imagen</item>
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> imágenes</item>
+    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g>개 사진</item>
   </plurals>
   <plurals name="msg_media_reload_complete">
-    <item quantity="one">Refresco de los medios completado. 1 imagen encontrada.</item>
-    <item quantity="other">Refresco de los medios completado. <xliff:g id="pictures" example="7">%d</xliff:g> imágenes encontradas.</item>
+    <item quantity="other">미디어 갱신을 완료했습니다. <xliff:g id="pictures" example="7">%d</xliff:g>개의 사진을 찾았습니다.</item>
   </plurals>
 </resources>
