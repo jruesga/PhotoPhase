@@ -49,7 +49,7 @@
     <string name="pref_general_summary">General settings, effects and transitions</string>
     <string name="pref_general_settings">Settings</string>
     <string name="pref_general_settings_wallpaper_dim">Wallpaper dim</string>
-    <string name="pref_general_settings_wallpaper_dim_summary">Set the brightness to balance for visualization and battery performance</string>
+    <string name="pref_general_settings_wallpaper_dim_summary">Set the brightness to balance visualization and battery performance</string>
     <string name="pref_general_settings_background_color">Background color</string>
     <string name="pref_general_settings_background_color_summary">Set the background color</string>
     <string name="pref_general_touch_action">Touch action</string>
@@ -67,7 +67,7 @@
     <string name="pref_general_effects_types_summary">Select the image effects to be applied</string>
 
     <string name="pref_media">Media</string>
-    <string name="pref_media_summary">Select albums to be displayed, the refresh interval, and other media settings</string>
+    <string name="pref_media_summary">Select albums to be displayed, refresh interval, and other media settings</string>
     <string name="pref_media_settings">Settings</string>
     <string name="pref_media_settings_refresh_interval">Refresh interval</string>
     <string name="pref_media_settings_refresh_interval_disable">Searching for new pictures is disabled</string>
@@ -86,11 +86,11 @@
     <string name="pref_random_dispositions">Random</string>
     <string name="pref_random_dispositions_summary">Generate random arrangements at a chosen interval</string>
     <string name="pref_random_dispositions_interval">Interval</string>
-    <string name="pref_random_dispositions_interval_summary">Select how often the layout will be changed. Set to 0 to relayout only when the app is loaded or rotated</string>
+    <string name="pref_random_dispositions_interval_summary">Select how often the layout will be changed. Set to 0 to re-layout only when the app is loaded or rotated</string>
     <string name="pref_disposition_portrait">Portrait arrangment</string>
-    <string name="pref_disposition_portrait_summary">Select how pictures are arrangement on a portrait screen</string>
+    <string name="pref_disposition_portrait_summary">Select how pictures are arranged on a portrait screen</string>
     <string name="pref_disposition_landscape">Landscape arrangement</string>
-    <string name="pref_disposition_landscape_summary">Select how pictures are arrangement on a landscape screen</string>
+    <string name="pref_disposition_landscape_summary">Select how pictures are arranged on a landscape screen</string>
     <!-- [2 lines one for describe long tap and another for describe swipe] -->
     <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders.\nSwipe left and right to show defined templates</string>
     <string name="pref_disposition_template">Template <xliff:g id="number_of_template">%1$s</xliff:g> of <xliff:g id="total_of_templates">%2$s</xliff:g></string>
@@ -129,7 +129,7 @@
     <string name="effects_documentary">Documentary</string>
     <string name="effects_duotone">Duotone</string>
     <string name="effects_emboss">Emboss</string>
-    <string name="effects_fisheye">Fish Eye</string>
+    <string name="effects_fisheye">Fisheye</string>
     <string name="effects_glow">Glow</string>
     <string name="effects_grain">Grain</string>
     <string name="effects_grayscale">Grayscale</string>
