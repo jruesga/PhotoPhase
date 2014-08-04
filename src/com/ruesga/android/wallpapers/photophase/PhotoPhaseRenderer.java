@@ -735,7 +735,11 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             }
                         }
                     }
-                } else if (mIsPaused) {
+                } else {
+                    if (mWorld != null) {
+                        // Just draw the world before notify GLView to goto sleep
+                        mWorld.draw(mMVPMatrix);
+                    }
                     mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                 }
 
