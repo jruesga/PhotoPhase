@@ -123,7 +123,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
     /**
      * {@inheritDoc}
      */
-    // Do not use @Override because is not part of 4.0.3. Just ignored this advise
+    @Override
     public boolean isValidFragment(String fragmentName) {
         return true;
     }

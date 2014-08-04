@@ -698,7 +698,6 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     @Override
     public void onDrawFrame(GL10 glUnused) {
-    
         // Set the projection, view and model
         GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
         Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
