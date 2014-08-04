@@ -44,11 +44,29 @@
     public static <fields>;
 }
 
-#keep preference's classes
--keep public class * extends android.preference.PreferenceFragment {
-  public <init>(...);
-}
--keep public class * extends android.preference.Preference {
-  public <init>(...);
+#keep all enumerations
+-keep public enum * {
+    **[] $VALUES;
+    public *;
 }
 
+#keep preference's classes
+-keep public class * extends android.preference.PreferenceFragment {
+    public <init>(...);
+}
+-keep public class * extends android.preference.Preference {
+    public <init>(...);
+}
+
+#keep effects and transitions classes public
+-keep public class com.ruesga.android.wallpapers.photophase.effects.* {
+    public <init>(...);
+    public String getName();
+    public void apply(...);
+    public void setParameter(...);
+    public void setUpdateListener(...);
+    public void release(...);
+}
+-keep public class com.ruesga.android.wallpapers.photophase.transitions.* {
+    public <init>(...);
+}
