@@ -17,7 +17,8 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/album_card_margin_bottom">
 
     <com.ruesga.android.wallpapers.photophase.widgets.AlbumInfoView
         android:id="@+id/album_info"
@@ -54,9 +55,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/album_thumbnail"
-            android:layout_toLeftOf="@id/overflow_button"
             android:layout_alignTop="@id/album_thumbnail"
             android:layout_alignBottom="@id/album_thumbnail"
+            android:layout_alignParentEnd="true"
             android:orientation="vertical"
             style="@style/PhotoPhase.Album.Info">
 
