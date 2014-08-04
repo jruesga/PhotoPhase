@@ -33,7 +33,7 @@ import java.io.InputStream;
  */
 public class ChangeLogActivity extends Activity implements OnCancelListener, OnDismissListener {
 
-    private static final String TAG = "ChangeLogActivity"; //$NON-NLS-1$
+    private static final String TAG = "ChangeLogActivity";
 
     /**
      * {@inheritDoc}
@@ -52,7 +52,7 @@ public class ChangeLogActivity extends Activity implements OnCancelListener, OnD
     private void init() {
         InputStream is = getApplicationContext().getResources().openRawResource(R.raw.changelog);
         if (is == null) {
-            Log.e(TAG, "Changelog file not exists"); //$NON-NLS-1$
+            Log.e(TAG, "Changelog file not exists");
             finish();
             return;
         }
@@ -77,7 +77,7 @@ public class ChangeLogActivity extends Activity implements OnCancelListener, OnD
             dialog.show();
 
         } catch (Exception e) {
-            Log.e(TAG, "Failed to read changelog file", e); //$NON-NLS-1$
+            Log.e(TAG, "Failed to read changelog file", e);
             finish();
 
         } finally {

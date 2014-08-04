@@ -65,10 +65,10 @@ public class ColorDialogView extends FrameLayout
     private TextView tvColorLabel;
     private EditText etColor;
 
-    private String mCurrentLabelText = "Current:"; //$NON-NLS-1$
-    private String mNewLabelText = "New:"; //$NON-NLS-1$
+    private String mCurrentLabelText = "Current:";
+    private String mNewLabelText = "New:";
 
-    private String mColorLabelText = "Color:"; //$NON-NLS-1$
+    private String mColorLabelText = "Color:";
 
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
@@ -186,7 +186,7 @@ public class ColorDialogView extends FrameLayout
             @Override
             public CharSequence filter(CharSequence source, int start,
                     int end, Spanned dest, int dstart, int dend) {
-                if (start >= end) return ""; //$NON-NLS-1$
+                if (start >= end) return "";
                 String s = source.subSequence(start, end).toString();
                 StringBuilder sb = new StringBuilder();
                 int cc = s.length();
@@ -267,7 +267,7 @@ public class ColorDialogView extends FrameLayout
                 0);
         lp2.setMargins(dlgMarging, 0, dlgMarging, 0);
         sep1.setLayoutParams(lp2);
-        sep1.setText(" "); //$NON-NLS-1$
+        sep1.setText(" ");
         sep1.setTextSize(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP);
 
         LinearLayout ll1 = new LinearLayout(getContext());
@@ -298,7 +298,7 @@ public class ColorDialogView extends FrameLayout
                 0);
         lp2.setMargins(dlgMarging, 0, dlgMarging, 0);
         sep2.setLayoutParams(lp2);
-        sep2.setText("-"); //$NON-NLS-1$
+        sep2.setText("-");
         sep2.setTextSize(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP);
 
         LinearLayout ll2 = new LinearLayout(getContext());
@@ -468,7 +468,7 @@ public class ColorDialogView extends FrameLayout
      * @return int The ARGB color
      */
     private static int toARGB(String hex) {
-        return Color.parseColor("#" + hex); //$NON-NLS-1$
+        return Color.parseColor("#" + hex);
     }
 
     /**
@@ -480,7 +480,7 @@ public class ColorDialogView extends FrameLayout
     private static String toHexString(byte v) {
         String hex = Integer.toHexString(v & 0xff);
         if (hex.length() == 1) {
-            hex = "0" + hex; //$NON-NLS-1$
+            hex = "0" + hex;
         }
         return hex.toUpperCase(Locale.getDefault());
     }
