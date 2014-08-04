@@ -33,7 +33,6 @@
         <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
             android:key="ui_disposition_random_interval"
             android:title="@string/pref_random_dispositions_interval"
-            android:summary="@string/pref_random_dispositions_interval_summary"
             android:persistent="true"
             android:defaultValue="0"
             android:dependency="ui_disposition_random" />
@@ -42,7 +41,6 @@
         <Preference
             android:key="ui_disposition_portrait"
             android:title="@string/pref_disposition_portrait"
-            android:summary="@string/pref_disposition_portrait_summary"
             android:fragment="com.ruesga.android.wallpapers.photophase.preferences.PortraitDispositionFragment"
             android:persistent="false" />
 
@@ -50,7 +48,6 @@
         <Preference
             android:key="ui_disposition_landscape"
             android:title="@string/pref_disposition_landscape"
-            android:summary="@string/pref_disposition_landscape_summary"
             android:fragment="com.ruesga.android.wallpapers.photophase.preferences.LandscapeDispositionFragment"
             android:persistent="false" />
 

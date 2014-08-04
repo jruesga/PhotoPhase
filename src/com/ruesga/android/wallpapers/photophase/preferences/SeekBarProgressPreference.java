@@ -20,6 +20,7 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.R;
@@ -96,7 +97,7 @@ public class SeekBarProgressPreference extends SeekBarPreference {
     protected void onBindView(View view) {
         super.onBindView(view);
         mTextView = (TextView) view.findViewById(R.id.text);
-        setText();
+        setText(getProgress());
     }
 
     /**
@@ -108,18 +109,37 @@ public class SeekBarProgressPreference extends SeekBarPreference {
     @Override
     protected void setProgress(int progress, boolean notifyChanged) {
         super.setProgress(progress, notifyChanged);
-        setText();
+        setText(progress);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        super.onProgressChanged(seekBar, progress, fromUser);
+        if (fromUser) {
+            setText(progress);
+            syncProgress(seekBar);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        super.onStopTrackingTouch(seekBar);
+        setText(getProgress());
     }
 
     /**
      * Method that displays the progress value
      */
-    private void setText() {
+    private void setText(int progress) {
         if (mTextView != null) {
-            String value = String.valueOf(getProgress());
-            if (mOnDisplayProgress != null) {
-                value = mOnDisplayProgress.onDisplayProgress(getProgress());
-            }
+            String value = mOnDisplayProgress != null
+                    ? mOnDisplayProgress.onDisplayProgress(progress) : String.valueOf(progress);
             mTextView.setText(String.format(mFormat, value));
         }
     }

@@ -156,7 +156,7 @@ public abstract class DispositionFragment extends PreferenceFragment
      * {@inheritDoc}
      */
     @Override
-    public void onDestroyView() {
+    public void onPause() {
         // Saved ?
         if (mOkPressed) {
             boolean saved = false;
@@ -181,7 +181,7 @@ public abstract class DispositionFragment extends PreferenceFragment
             }
         }
 
-        super.onDestroyView();
+        super.onPause();
     }
 
     /**

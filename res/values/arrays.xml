@@ -41,6 +41,13 @@
         <item>@string/touch_actions_share</item>
     </string-array>
 
+    <string-array name="touch_actions_summaries" translatable="false">
+        <item>@string/touch_actions_none_summary</item>
+        <item>@string/touch_actions_transition_summary</item>
+        <item>@string/touch_actions_open_summary</item>
+        <item>@string/touch_actions_share_summary</item>
+    </string-array>
+
     <string-array name="touch_actions_values" translatable="false">
         <item>0</item>
         <item>1</item>

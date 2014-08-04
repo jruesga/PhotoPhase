@@ -38,6 +38,8 @@
     <string name="mnu_deselect_album">Deselect album</string>
 
     <!-- Formats -->
+    <string name="format_disabled">Disabled</string>
+    <string name="format_rotate_only">On rotation</string>
     <string name="format_seconds">%s sec.</string>
     <string name="format_minutes">%s min.</string>
     <string name="format_hours">%s h.</string>
@@ -49,25 +51,23 @@
     <string name="pref_general_summary">General settings, effects and transitions</string>
     <string name="pref_general_settings">Settings</string>
     <string name="pref_general_settings_wallpaper_dim">Wallpaper dim</string>
-    <string name="pref_general_settings_wallpaper_dim_summary">Set the brightness to balance visualization and battery performance</string>
     <string name="pref_general_settings_background_color">Background color</string>
     <string name="pref_general_settings_background_color_summary">Set the background color</string>
     <string name="pref_general_touch_action">Touch action</string>
-    <string name="pref_general_touch_action_summary">Select the action to apply when touching a frame</string>
+    <string name="pref_general_touch_action_summary_format"><xliff:g id="action_summary">%1$s</xliff:g> when touching a frame</string>
     <string name="pref_general_aspect_ratio_correction">Aspect ratio</string>
     <string name="pref_general_aspect_ratio_correction_summary">Try to fix the picture\'s aspect ratio by cropping it to fit the destination frame</string>
 
     <string name="pref_general_transitions">Transitions</string>
     <string name="pref_general_transitions_types">Types</string>
-    <string name="pref_general_transitions_types_summary">Select the transition effects to be applied</string>
+    <string name="pref_general_transitions_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> of <xliff:g id="total">%2$d</xliff:g> types selected</string>
     <string name="pref_general_transitions_interval">Interval</string>
-    <string name="pref_general_transitions_interval_summary">Set how often picture transitions are triggered</string>
     <string name="pref_general_effects">Effects</string>
     <string name="pref_general_effects_types">Types</string>
-    <string name="pref_general_effects_types_summary">Select the image effects to be applied</string>
+    <string name="pref_general_effects_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> of <xliff:g id="total">%2$d</xliff:g> image effects selected</string>
 
     <string name="pref_media">Media</string>
-    <string name="pref_media_summary">Select albums to be displayed, refresh interval, and other media settings</string>
+    <string name="pref_media_summary">Albums to be displayed, refresh interval, and other media settings</string>
     <string name="pref_media_settings">Settings</string>
     <string name="pref_media_settings_refresh_interval">Refresh interval</string>
     <string name="pref_media_settings_refresh_interval_disable">Searching for new pictures is disabled</string>
@@ -81,16 +81,20 @@
     <string name="pref_media_auto_select_new_summary">Automatically select new albums when media discovery occurs</string>
 
     <string name="pref_layout">Layout</string>
-    <string name="pref_layout_summary">Select how pictures are positioned on the screen</string>
+    <string name="pref_layout_summary">Positioning of pictures on the screen</string>
     <string name="pref_layout_disposition">Arrangement</string>
     <string name="pref_random_dispositions">Random</string>
     <string name="pref_random_dispositions_summary">Generate random arrangements at a chosen interval</string>
     <string name="pref_random_dispositions_interval">Interval</string>
-    <string name="pref_random_dispositions_interval_summary">Select how often the layout will be changed. Set to 0 to re-layout only when the app is loaded or rotated</string>
     <string name="pref_disposition_portrait">Portrait arrangement</string>
-    <string name="pref_disposition_portrait_summary">Select how pictures are arranged on a portrait screen</string>
     <string name="pref_disposition_landscape">Landscape arrangement</string>
-    <string name="pref_disposition_landscape_summary">Select how pictures are arranged on a landscape screen</string>
+    <plurals name="pref_disposition_summary_format">
+        <item quantity="one">1 image is shown in <xliff:g id="orientation">%2$s</xliff:g></item>
+        <item quantity="other"><xliff:g id="count">%1$d</xliff:g> images are shown in <xliff:g id="orientation">%2$s</xliff:g></item>
+    </plurals>
+    <string name="disposition_orientation_portrait">portrait orientation</string>
+    <string name="disposition_orientation_landscape">landscape orientation</string>
+
     <!-- [2 lines one for describe long tap and another for describe swipe] -->
     <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders. Swipe left and right to show defined templates</string>
     <string name="pref_disposition_template">Template <xliff:g id="number_of_template">%1$s</xliff:g> of <xliff:g id="total_of_templates">%2$s</xliff:g></string>
@@ -112,6 +116,10 @@
     <string name="touch_actions_transition">Perform transition</string>
     <string name="touch_actions_open">Open</string>
     <string name="touch_actions_share">Share</string>
+    <string name="touch_actions_none_summary">Do nothing</string>
+    <string name="touch_actions_transition_summary">Perform image transition</string>
+    <string name="touch_actions_open_summary">Open the image</string>
+    <string name="touch_actions_share_summary">Share the image</string>
 
     <!-- Transitions -->
     <string name="transitions_cube">Cube</string>

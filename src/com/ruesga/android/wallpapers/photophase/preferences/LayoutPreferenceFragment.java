@@ -45,7 +45,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     Preference mPortraitDisposition;
     Preference mLandscapeDisposition;
 
-    boolean mRecreateWorld;
+    boolean mRedrawFlag;
     boolean mDispositionIntervalFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
@@ -57,7 +57,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
                 boolean randomDispositions = ((Boolean)newValue).booleanValue();
                 mPortraitDisposition.setEnabled(!randomDispositions);
                 mLandscapeDisposition.setEnabled(!randomDispositions);
-                mRecreateWorld = true;
+                mRedrawFlag = true;
             } else if (key.compareTo("ui_disposition_random_interval") == 0) {
                 mDispositionIntervalFlag = true;
             }
@@ -77,8 +77,8 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
 
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-        if (mRecreateWorld) {
-            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+        if (mRedrawFlag) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
         }
         if (mDispositionIntervalFlag) {
             int interval = Preferences.Layout.getRandomDispositionsInterval();
@@ -94,6 +94,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final String formatOnRotation = getString(R.string.format_rotate_only);
         final String formatSeconds = getString(R.string.format_seconds);
         final String formatMinutes = getString(R.string.format_minutes);
         final String formatHours = getString(R.string.format_hours);
@@ -128,22 +129,27 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
         mRandomDispositionsInterval.setOnDisplayProgress(new OnDisplayProgress() {
             @Override
             public String onDisplayProgress(int progress) {
-                if (randomDispositionsIntervals[progress] < 60000) {
+                int interval = randomDispositionsIntervals[progress];
+                if (interval == 0) {
+                    // Disabled
+                    mRandomDispositionsInterval.setFormat(formatOnRotation);
+                    return null;
+                } else if (interval < 60000) {
                     // Seconds
                     mRandomDispositionsInterval.setFormat(formatSeconds);
-                    return String.valueOf(randomDispositionsIntervals[progress] / 1000);
-                } else if (randomDispositionsIntervals[progress] < 3600000) {
+                    return String.valueOf(interval / 1000);
+                } else if (interval < 3600000) {
                     // Minutes
                     mRandomDispositionsInterval.setFormat(formatMinutes);
-                    return String.valueOf(randomDispositionsIntervals[progress] / 1000 / 60);
-                } else if (randomDispositionsIntervals[progress] < 86400000) {
+                    return String.valueOf(interval / 1000 / 60);
+                } else if (interval < 86400000) {
                     // Hours
                     mRandomDispositionsInterval.setFormat(formatHours);
-                    return String.valueOf(randomDispositionsIntervals[progress] / 1000 / 60 / 60);
+                    return String.valueOf(interval / 1000 / 60 / 60);
                 }
                 // Days
                 mRandomDispositionsInterval.setFormat(formatDays);
-                return String.valueOf(randomDispositionsIntervals[progress] / 1000 / 60 / 60 / 24);
+                return String.valueOf(interval / 1000 / 60 / 60 / 24);
             }
         });
         mRandomDispositionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
@@ -155,5 +161,24 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
         // -- Landscape
         mLandscapeDisposition = findPreference("ui_disposition_landscape");
         mLandscapeDisposition.setEnabled(!Preferences.Layout.isRandomDispositions());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateArrangementSummary(mPortraitDisposition,
+                PreferencesProvider.Preferences.Layout.getPortraitDisposition().size(),
+                R.string.disposition_orientation_portrait);
+        updateArrangementSummary(mLandscapeDisposition,
+                PreferencesProvider.Preferences.Layout.getLandscapeDisposition().size(),
+                R.string.disposition_orientation_landscape);
+    }
+
+    private void updateArrangementSummary(Preference pref, int count, int orientationLabelResId) {
+        String orientation = getString(orientationLabelResId);
+        String summary = getResources().getQuantityString(
+                R.plurals.pref_disposition_summary_format, count, count, orientation);
+        pref.setSummary(summary);
     }
 }

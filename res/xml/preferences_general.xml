@@ -25,7 +25,6 @@
         <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
             android:key="ui_wallpaper_dim"
             android:title="@string/pref_general_settings_wallpaper_dim"
-            android:summary="@string/pref_general_settings_wallpaper_dim_summary"
             android:persistent="true"
             android:defaultValue="0" />
 
@@ -66,7 +65,6 @@
         <MultiSelectListPreference
             android:key="ui_transition_types"
             android:title="@string/pref_general_transitions_types"
-            android:summary="@string/pref_general_transitions_types_summary"
             android:persistent="true"
             android:entries="@array/transitions_labels"
             android:entryValues="@array/transitions_values"
@@ -76,7 +74,6 @@
         <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
             android:key="ui_transition_interval"
             android:title="@string/pref_general_transitions_interval"
-            android:summary="@string/pref_general_transitions_interval_summary"
             android:persistent="true"
             android:defaultValue="2" />
 
