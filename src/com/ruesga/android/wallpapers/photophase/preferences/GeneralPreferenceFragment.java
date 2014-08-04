@@ -184,7 +184,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         mEffectsTypes = (MultiSelectListPreference)findPreference("ui_effect_types");
         mEffectsTypes.setOnPreferenceChangeListener(mOnChangeListener);
-        updateEffectTypeSummary(mTransitionsTypes.getValues());
+        updateEffectTypeSummary(mEffectsTypes.getValues());
     }
 
     private void updateTouchActionSummary(String value) {
