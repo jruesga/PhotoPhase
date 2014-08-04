@@ -40,7 +40,6 @@
         <ListPreference
             android:key="ui_touch_action"
             android:title="@string/pref_general_touch_action"
-            android:summary="@string/pref_general_touch_action_summary"
             android:persistent="true"
             android:entries="@array/touch_actions_labels"
             android:entryValues="@array/touch_actions_values"
@@ -88,7 +87,6 @@
         <MultiSelectListPreference
             android:key="ui_effect_types"
             android:title="@string/pref_general_effects_types"
-            android:summary="@string/pref_general_effects_types_summary"
             android:persistent="true"
             android:entries="@array/effects_labels"
             android:entryValues="@array/effects_values"
