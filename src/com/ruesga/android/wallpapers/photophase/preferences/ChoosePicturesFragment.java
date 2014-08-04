@@ -757,6 +757,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
                 dstParent.setEnabled(true);
                 unbindDrawables(mPicturesPanel);
                 srcParent.removeView(mPicturesPanel);
+                mAlbumAdapter.notifyDataSetChanged();
 
                 mShowingAlbums = true;
             }
