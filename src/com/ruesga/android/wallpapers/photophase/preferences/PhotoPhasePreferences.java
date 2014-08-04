@@ -51,8 +51,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
      */
     private void initTitleActionBar() {
         //Configure the action bar options
-        getActionBar().setDisplayOptions(
-                ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME |
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         mCallback = null;
