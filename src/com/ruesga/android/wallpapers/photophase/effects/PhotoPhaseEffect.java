@@ -139,9 +139,9 @@ public abstract class PhotoPhaseEffect extends Effect {
         // Save the GLES state
         saveGLState();
 
+        int[] fb = new int[1];
         try {
             // Create a framebuffer object and call the effect apply method to draw the effect
-            int[] fb = new int[1];
             GLES20.glGenFramebuffers(1, fb, 0);
             GLESUtil.glesCheckError("glGenFramebuffers");
             if (GLESUtil.DEBUG_GL_MEMOBJS) {
@@ -175,6 +175,13 @@ public abstract class PhotoPhaseEffect extends Effect {
         } finally {
             // Restore the GLES state
             restoreGLState();
+
+            // Clean framebuffer memory
+            if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteFramebuffers: " + fb[0]);
+            }
+            GLES20.glDeleteFramebuffers(1, fb, 0);
+            GLESUtil.glesCheckError("glDeleteFramebuffers");
         }
 
     }
