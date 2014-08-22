@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.shapes;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
@@ -137,6 +138,9 @@ public class ColorShape implements DrawableShape {
      */
     public void recycle() {
         if (GLES20.glIsProgram(mProgramHandler)) {
+            if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteProgram: " + mProgramHandler);
+            }
             GLES20.glDeleteProgram(mProgramHandler);
             GLESUtil.glesCheckError("glDeleteProgram");
         }

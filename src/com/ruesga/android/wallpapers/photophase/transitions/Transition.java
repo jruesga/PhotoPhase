@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
@@ -192,6 +193,10 @@ public abstract class Transition {
         int cc = mProgramHandlers.length;
         for (int i = 0; i < cc; i++) {
             if (GLES20.glIsProgram(mProgramHandlers[i])) {
+                if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                    Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteProgram: "
+                            + mProgramHandlers[i]);
+                }
                 GLES20.glDeleteProgram(mProgramHandlers[i]);
                 GLESUtil.glesCheckError("glDeleteProgram");
             }

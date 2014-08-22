@@ -281,6 +281,10 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 for (GLESTextureInfo info : all) {
                     if (GLES20.glIsTexture(info.handle)) {
                         int[] textures = new int[] {info.handle};
+                        if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                            Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                                    + info.handle + "]");
+                        }
                         GLES20.glDeleteTextures(1, textures, 0);
                         GLESUtil.glesCheckError("glDeleteTextures");
                     }
@@ -449,6 +453,10 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
 
             // Destroy references
             int[] textures = new int[]{ti.handle};
+            if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                        + ti.handle + "]");
+            }
             GLES20.glDeleteTextures(1, textures, 0);
             GLESUtil.glesCheckError("glDeleteTextures");
             if (ti.bitmap != null) {

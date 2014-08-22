@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.Colors;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
@@ -239,6 +240,10 @@ public class OopsShape implements DrawableShape {
     public void recycle() {
         // Remove textures
         if (mOopsImageTexture != null && mOopsImageTexture.handle != 0) {
+            if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                        + mOopsImageTexture.handle + "]");
+            }
             int[] textures = new int[]{mOopsImageTexture.handle};
             GLES20.glDeleteTextures(1, textures, 0);
             GLESUtil.glesCheckError("glDeleteTextures");
@@ -246,6 +251,10 @@ public class OopsShape implements DrawableShape {
         mOopsImageTexture = null;
         if (mOopsTextTexture != null && mOopsTextTexture.handle != 0) {
             int[] textures = new int[]{mOopsTextTexture.handle};
+            if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                        + mOopsTextTexture.handle + "]");
+            }
             GLES20.glDeleteTextures(1, textures, 0);
             GLESUtil.glesCheckError("glDeleteTextures");
         }
@@ -263,6 +272,10 @@ public class OopsShape implements DrawableShape {
 
         for (int i = 0; i < 2; i++) {
             if (GLES20.glIsProgram(mProgramHandlers[i])) {
+                if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                    Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteProgram: "
+                            + mProgramHandlers[i]);
+                }
                 GLES20.glDeleteProgram(mProgramHandlers[i]);
                 GLESUtil.glesCheckError("glDeleteProgram(" + i + ")");
             }
