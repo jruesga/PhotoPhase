@@ -1,3 +1,8 @@
+v1.0.8
+----------------------------
+- Fixed a memory leak bug
+- Precache font assets to avoid resource leaks
+
 v1.0.7
 ----------------------------
 - Fixed some OpenGL and UI bugs
