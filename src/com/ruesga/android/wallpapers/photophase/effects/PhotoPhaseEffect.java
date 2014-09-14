@@ -158,12 +158,14 @@ public abstract class PhotoPhaseEffect extends Effect {
             mIdentityEffect.apply(inputTexId, width, height, outputTexId);
 
             // Create the framebuffer
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20. GL_TEXTURE_2D, outputTexId, 0);
+            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                    GLES20. GL_TEXTURE_2D, outputTexId, 0);
             GLESUtil.glesCheckError("glFramebufferTexture2D");
 
             // Check if the buffer was built successfully
-            if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
-                // Something when wrong. Throw an exception
+            final int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
+            if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+                // Something was wrong. Throw an exception
                 GLESUtil.glesCheckError("glCheckFramebufferStatus");
                 int error = GLES20.glGetError();
                 throw new android.opengl.GLException(error, GLUtils.getEGLErrorString(error));

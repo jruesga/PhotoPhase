@@ -41,6 +41,7 @@ public class BitmapUtils {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferQualityOverSpeed = false;
         options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inDither = false;
         return BitmapFactory.decodeStream(bitmap, null, options);
     }
 
@@ -56,6 +57,7 @@ public class BitmapUtils {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
         // Calculate inSampleSize (use 1024 as maximum size, the minimum supported
@@ -70,7 +72,6 @@ public class BitmapUtils {
         options.inPreferQualityOverSpeed = false;
         options.inPurgeable = true;
         options.inInputShareable = true;
-        options.inDither = true;
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         if (bitmap == null) {
             return null;

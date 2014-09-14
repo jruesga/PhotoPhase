@@ -179,7 +179,8 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     private void updateArrangementSummary(Preference pref, int count, int orientationLabelResId) {
         String orientation = getString(orientationLabelResId);
         String summary = getResources().getQuantityString(
-                R.plurals.pref_disposition_summary_format, count, count, orientation);
+                R.plurals.pref_disposition_summary_format, count, Integer.valueOf(count),
+                orientation);
         pref.setSummary(summary);
     }
 }

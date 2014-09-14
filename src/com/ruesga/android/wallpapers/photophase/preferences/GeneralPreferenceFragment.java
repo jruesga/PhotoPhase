@@ -61,7 +61,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
         @Override
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "synthetic-access"})
         public boolean onPreferenceChange(final Preference preference, Object newValue) {
             String key = preference.getKey();
             if (DEBUG) Log.d(TAG, "Preference changed: " + key + "=" + newValue);
@@ -197,13 +197,15 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private void updateTransitionTypeSummary(Set<String> selected) {
         CharSequence summary = getString(R.string.pref_general_transitions_types_summary_format,
-                selected.size(), mTransitionsTypes.getEntries().length);
+                Integer.valueOf(selected.size()),
+                Integer.valueOf(mTransitionsTypes.getEntries().length));
         mTransitionsTypes.setSummary(summary);
     }
 
     private void updateEffectTypeSummary(Set<String> selected) {
         CharSequence summary = getString(R.string.pref_general_effects_types_summary_format,
-                selected.size(), mEffectsTypes.getEntries().length);
+                Integer.valueOf(selected.size()),
+                Integer.valueOf(mEffectsTypes.getEntries().length));
         mEffectsTypes.setSummary(summary);
     }
 }
