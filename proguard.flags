@@ -61,7 +61,7 @@
 #keep effects and transitions classes public
 -keep public class com.ruesga.android.wallpapers.photophase.effects.* {
     public <init>(...);
-    public String getName();
+    public java.lang.String getName();
     public void apply(...);
     public void setParameter(...);
     public void setUpdateListener(...);
