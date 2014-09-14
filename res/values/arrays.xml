@@ -87,6 +87,13 @@
         <item>15000</item>
         <item>30000</item>
         <item>60000</item>
+        <item>120000</item>
+        <item>240000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>86400000</item>
     </integer-array>
 
     <string-array name="effects_labels" translatable="false">

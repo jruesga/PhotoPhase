@@ -121,6 +121,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         final String formatDisabled = getString(R.string.format_disabled);
         final String formatSeconds = getString(R.string.format_seconds);
         final String formatMinutes = getString(R.string.format_minutes);
+        final String formatHours = getString(R.string.format_hours);
+        final String formatDays = getString(R.string.format_days);
         final String formatDim = getString(R.string.format_dim);
 
         // Change the preference manager
@@ -175,10 +177,19 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                     // Seconds
                     mTransitionsInterval.setFormat(formatSeconds);
                     return String.valueOf(interval / 1000);
+                } else if (interval < 3600000) {
+                    // Minutes
+                    mTransitionsInterval.setFormat(formatMinutes);
+                    return String.valueOf(interval / 1000 / 60);
+                } else if (interval < 86400000) {
+                    // Hours
+                    mTransitionsInterval.setFormat(formatHours);
+                    return String.valueOf(interval / 1000 / 60 / 60);
                 }
-                // Minutes
-                mTransitionsInterval.setFormat(formatMinutes);
-                return String.valueOf(interval / 1000 / 60);
+
+                // Days
+                mTransitionsInterval.setFormat(formatDays);
+                return String.valueOf(interval / 1000 / 60 / 60 / 24);
             }
         });
         mTransitionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
