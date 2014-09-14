@@ -80,6 +80,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     OopsShape mOopsShape;
 
     long mLastRunningTransition;
+    long mLastTransition;
 
     private long mLastTouchTime;
     private static final long TOUCH_BARRIER_TIME = 1000L;
@@ -167,6 +168,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             // Select a new transition
                             mWorld.selectRandomTransition();
                             mLastRunningTransition = System.currentTimeMillis();
+                            mLastTransition = System.currentTimeMillis();
 
                             // Now force continuously render while transition is applied
                             mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -582,6 +584,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mMeasuredHeight = -1;
         mStatusBarHeight = 0;
 
+        mLastTransition = System.currentTimeMillis();
+
         // We have a 2d (fake) scenario, disable all unnecessary tests. Deep are
         // necessary for some 3d effects
         GLES20.glDisable(GL10.GL_DITHER);
@@ -718,15 +722,16 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     // Check if we have some pending transition or transition has
                     // exceed its timeout
                     synchronized (mDrawing) {
-                        if (Preferences.General.Transitions.getTransitionInterval() > 0) {
+                        final int interval = Preferences.General.Transitions.getTransitionInterval();
+                        if (interval > 0) {
                             if (!mWorld.hasRunningTransition() || isTransitionTimeoutFired()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
                                 // Now start a delayed thread to generate the next effect
                                 deselectCurrentTransition();
-                                mLastRunningTransition = 0;
-                                mHandler.postDelayed(mTransitionThread,
-                                        Preferences.General.Transitions.getTransitionInterval());
+                                long diff = System.currentTimeMillis() - mLastTransition;
+                                long delay = Math.max(200, interval - diff);
+                                mHandler.postDelayed(mTransitionThread, delay);
                             }
                         } else {
                             // Just display the initial frames and never make transitions
