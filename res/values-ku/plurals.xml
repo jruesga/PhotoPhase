@@ -18,9 +18,11 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="album_number_of_pictures">
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g>枚の写真</item>
+    <item quantity="one">1 وێنە</item>
+    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> وێنه‌</item>
   </plurals>
   <plurals name="msg_media_reload_complete">
-    <item quantity="other">メディアの再読み込みが完了しました。<xliff:g id="pictures" example="7">%d</xliff:g>枚の写真が見つかりました。</item>
+    <item quantity="one">نانانه‌وه‌ی ڕاگه‌یه‌نه‌کان ته‌واو. 1 وێنه‌ دۆزرایه‌وه‌.</item>
+    <item quantity="other">نانانه‌وه‌ی ڕاگه‌یه‌نه‌کان ته‌واو. <xliff:g id="pictures" example="7">%d</xliff:g> وێنه‌ دۆزرایه‌وه‌.</item>
   </plurals>
 </resources>

@@ -18,9 +18,15 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="album_number_of_pictures">
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g>枚の写真</item>
+    <item quantity="one">1 слика</item>
+    <item quantity="few"><xliff:g id="pictures" example="7">%d</xliff:g> слике</item>
+    <item quantity="many"><xliff:g id="pictures" example="7">%d</xliff:g> слика</item>
+    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> слике</item>
   </plurals>
   <plurals name="msg_media_reload_complete">
-    <item quantity="other">メディアの再読み込みが完了しました。<xliff:g id="pictures" example="7">%d</xliff:g>枚の写真が見つかりました。</item>
+    <item quantity="one">Поновно учитавање медија завршено. 1 слика пронађена.</item>
+    <item quantity="few">Поновно учитавање медија завршено. <xliff:g id="pictures" example="7">%d</xliff:g> слике пронађене.</item>
+    <item quantity="many">Поновно учитавање медија завршено. <xliff:g id="pictures" example="7">%d</xliff:g> слика пронађено.</item>
+    <item quantity="other">Поновно учитавање медија завршено. <xliff:g id="pictures" example="7">%d</xliff:g> слике пронађене.</item>
   </plurals>
 </resources>

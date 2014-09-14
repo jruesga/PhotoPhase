@@ -17,10 +17,6 @@
      limitations under the License.
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <plurals name="album_number_of_pictures">
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g>枚の写真</item>
-  </plurals>
-  <plurals name="msg_media_reload_complete">
-    <item quantity="other">メディアの再読み込みが完了しました。<xliff:g id="pictures" example="7">%d</xliff:g>枚の写真が見つかりました。</item>
-  </plurals>
+  <string name="pref_general_aspect_ratio_correction_summary">嘗試修復圖片的縱橫比透過裁剪以適合目標幀</string>
+  <string name="changelog_title">更新日誌</string>
 </resources>
