@@ -1,3 +1,8 @@
+v1.0.9
+----------------------------
+- Use compressed etc1 textures if is supported to reduce memory footprint
+- Update translations
+
 v1.0.8
 ----------------------------
 - Fixed a memory leak bug
