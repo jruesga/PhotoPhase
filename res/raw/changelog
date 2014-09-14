@@ -1,6 +1,7 @@
 v1.0.9
 ----------------------------
 - Use compressed etc1 textures if is supported to reduce memory footprint
+- Allow to choose more than one minute in transition intervals
 - Update translations
 
 v1.0.8
@@ -44,7 +45,7 @@ v1.0.2
 
 v1.0.1
 ----------------------------
-- Transitions interval settings: Now accept values from 0 to 60 seconds (0 means no transtions at all)
+- Transitions interval settings: Now accept values from 0 to 60 seconds (0 means no transitions at all)
 - Improved the times needed to discover new media data
 - Fixed some bugs (thanks for the bug reports)
 
