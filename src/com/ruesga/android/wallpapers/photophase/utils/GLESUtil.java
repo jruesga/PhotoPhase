@@ -54,7 +54,7 @@ public final class GLESUtil {
 
     private static final Object SYNC = new Object();
 
-    private static final int MAX_ACEPTABLE_COMPRESSION_TIME = 1000;
+    private static final int MAX_ACEPTABLE_COMPRESSION_TIME = 2500;
     private static boolean sDisabledTextureCompression = false;
 
     /**
