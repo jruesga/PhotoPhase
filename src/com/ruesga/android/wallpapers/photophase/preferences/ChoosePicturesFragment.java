@@ -156,6 +156,13 @@ public class ChoosePicturesFragment extends PreferenceFragment
         @Override
         protected void onPostExecute(Void result) {
             mAlbumAdapter.notifyDataSetChanged();
+
+            if (mRestoreMenuItem != null) {
+                mRestoreMenuItem.setVisible(true);
+            }
+            if (mInvertMenuItem != null) {
+                mInvertMenuItem.setVisible(true);
+            }
         }
 
         /**
@@ -278,6 +285,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
     LayoutInflater mInflater;
 
     boolean mShowingAlbums;
+
+    MenuItem mRestoreMenuItem;
+    MenuItem mInvertMenuItem;
 
     /**
      * {@inheritDoc}
@@ -428,6 +438,14 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.albums, menu);
+        mRestoreMenuItem = menu.findItem(R.id.mnu_restore);
+        mInvertMenuItem = menu.findItem(R.id.mnu_invert);
+        if (mRestoreMenuItem != null) {
+            mRestoreMenuItem.setVisible(false);
+        }
+        if (mInvertMenuItem != null) {
+            mInvertMenuItem.setVisible(false);
+        }
     }
 
     /**
