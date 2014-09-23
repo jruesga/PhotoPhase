@@ -276,7 +276,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      * Method called when system runs under low memory
      */
     public void onLowMemory() {
-        mTextureManager.emptyTextureQueue(false);
+        if (mTextureManager != null) {
+            mTextureManager.emptyTextureQueue(false);
+        }
     }
 
     /**
