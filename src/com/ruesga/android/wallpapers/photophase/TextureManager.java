@@ -97,10 +97,9 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                 // Load and bind to the GLES context. The effect is applied when the image
                 // is associated to the destination target (only if aspect ratio will be applied)
                 if (!Preferences.General.isFixAspectRatio()) {
-                    ti = GLESUtil.loadTexture(
-                            mImage, mDimensions, effect, mDimensions, false, enqueue);
+                    ti = GLESUtil.loadTexture(mImage, mDimensions, effect, mDimensions, false);
                 } else {
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false, enqueue);
+                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
                     ti.effect = effect;
                 }
 
@@ -109,7 +108,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                     if (!enqueue) {
                         // Invalid textures are also reported, so requestor can handle it
                         TextureRequestor requestor = mPendingRequests.remove(0);
-                        fixAspectRatio(requestor, ti, false);
+                        fixAspectRatio(requestor, ti);
                         requestor.setTextureHandle(ti);
 
                         // Clean up memory
@@ -252,7 +251,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
         synchronized (mSync) {
             try {
                 GLESTextureInfo ti = mQueue.remove();
-                fixAspectRatio(requestor, ti, true);
+                fixAspectRatio(requestor, ti);
                 requestor.setTextureHandle(ti);
 
                 // Clean up memory
@@ -436,9 +435,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
      * @param request The requestor target
      * @param ti The original texture information
      * @param effect The effect to apply to the destination picture
-     * @param compress Compress the texture
      */
-    void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti, boolean compress) {
+    void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
         // Check if we have to apply any correction to the image
         if (Preferences.General.isFixAspectRatio()) {
             // Transform requestor dimensions to screen dimensions
@@ -455,7 +453,7 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
                                     pixels.width(),
                                     pixels.height(),
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, pixels, compress);
+            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, pixels);
 
             // Destroy references
             int[] textures = new int[]{ti.handle};

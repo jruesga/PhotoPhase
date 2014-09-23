@@ -22,9 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.effect.Effect;
-import android.opengl.ETC1;
-import android.opengl.ETC1Util;
-import android.opengl.ETC1Util.ETC1Texture;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
@@ -34,9 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 
 /**
@@ -53,9 +47,6 @@ public final class GLESUtil {
     public static final String DEBUG_GL_MEMOBJS_DEL_TAG = "MEMOBJS_DEL";
 
     private static final Object SYNC = new Object();
-
-    private static final int MAX_ACEPTABLE_COMPRESSION_TIME = 2500;
-    private static boolean sDisabledTextureCompression = false;
 
     /**
      * A helper class to deal with OpenGL float colors.
@@ -339,11 +330,10 @@ public final class GLESUtil {
      * @param effect The effect to apply to the image or null if no effect is needed
      * @param dimen The new dimensions
      * @param recycle If the bitmap should be recycled
-     * @param compress Try to compress the bitmap into ETC1
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(File file, Rect dimensions, Effect effect,
-            Rect dimen, boolean recycle, boolean compress) {
+            Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)
@@ -354,7 +344,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen, compress);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen);
             ti.path = file;
             return ti;
 
@@ -380,11 +370,10 @@ public final class GLESUtil {
      * @param effect The effect to apply to the image or null if no effect is needed
      * @param dimen The new dimensions
      * @param recycle If the bitmap should be recycled
-     * @param compress Try to compress the bitmap into ETC1
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(Context ctx, int resourceId, Effect effect,
-            Rect dimen, boolean recycle, boolean compress) {
+            Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         InputStream raw = null;
         try {
@@ -398,7 +387,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen, compress);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen);
             return ti;
 
         } catch (Exception e) {
@@ -429,11 +418,9 @@ public final class GLESUtil {
      * @param bitmap The bitmap reference
      * @param effect The effect to apply to the image or null if no effect is needed
      * @param dimen The new dimensions
-     * @param compress Try to compress the bitmap into ETC1
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Rect dimen,
-            boolean compress) {
+    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Rect dimen) {
         // Check that we have a valid image name reference
         if (bitmap == null) {
             return new GLESTextureInfo();
@@ -468,52 +455,11 @@ public final class GLESUtil {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         GLESUtil.glesCheckError("glTexParameteri");
 
-        // Load the texture. Check weather the device supports ETC1 compressed format
-        // AOSP ETC1 implementation doesn't support alpha channel
-        boolean fallback = true;
-        int bytesPerPixel = bitmap.getRowBytes() / bitmap.getWidth();
-        boolean hasAlpha = bitmap.hasAlpha() || (bytesPerPixel < 2 || bytesPerPixel > 3);
-        if (!sDisabledTextureCompression && compress && ETC1Util.isETC1Supported() && !hasAlpha) {
-            // Compress the texture
-            long start = System.currentTimeMillis();
-            ETC1Texture texture = createETC1CompressedTextureFromBitmap(bitmap);
-            if (texture != null) {
-                try {
-                    long time = System.currentTimeMillis() - start;
-                    if (DEBUG) {
-                        Log.d(TAG, "Compression time: " + time + " ms");
-                    }
-                    if (time > MAX_ACEPTABLE_COMPRESSION_TIME) {
-                        sDisabledTextureCompression = true;
-                        Log.e(TAG, "Excessive compression time (" + time + " ms). " +
-                                "Disabling compression");
-                    }
-
-                    // Load the compressed texture
-                    int width = texture.getWidth();
-                    int height = texture.getHeight();
-                    Buffer data = texture.getData();
-                    int imageSize = data.remaining();
-                    GLES20.glCompressedTexImage2D(GLES20.GL_TEXTURE_2D, 0, ETC1.ETC1_RGB8_OES,
-                            width, height, 0, imageSize, data);
-                    GLESUtil.glesCheckError("glCompressedTexImage2D");
-                    fallback = !GLES20.glIsTexture(textureHandles[0]);
-                } finally {
-                    texture = null;
-                }
-            }
-        }
-        if (fallback) {
-            if (DEBUG) {
-                Log.d(TAG, "Fallback to uncompressed texture.");
-            }
-
-            // Fallback to uncompressed texture
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-            if (!GLES20.glIsTexture(textureHandles[0])) {
-                Log.e(TAG, "Failed to load a valid texture");
-                return new GLESTextureInfo();
-            }
+        // Load the texture
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+        if (!GLES20.glIsTexture(textureHandles[0])) {
+            Log.e(TAG, "Failed to load a valid texture");
+            return new GLESTextureInfo();
         }
 
         // Has a effect?
@@ -605,39 +551,6 @@ public final class GLESUtil {
                 // Ignore
             }
         }
-    }
-
-    /**
-     * Method that compress a uncompressed bitmap to an compressed ETC1 texture
-     *
-     * @param bitmap The uncompressed bitmap
-     * @return ETC1Texture The ETC1 compressed texture
-     */
-    private static ETC1Texture createETC1CompressedTextureFromBitmap(Bitmap bitmap) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        int dataSize = bitmap.getRowBytes() * height;
-        int bytesPerPixel = bitmap.getRowBytes() / width;
-        int stride = bitmap.getRowBytes();
-
-        ByteBuffer dataBuffer = ByteBuffer.allocateDirect(dataSize).order(ByteOrder.nativeOrder());
-        try {
-            bitmap.copyPixelsToBuffer(dataBuffer);
-            dataBuffer.position(0);
-
-            int encodedImageSize = ETC1.getEncodedDataSize(width, height);
-            ByteBuffer compressedImage = ByteBuffer.allocateDirect(encodedImageSize).
-                    order(ByteOrder.nativeOrder());
-            try {
-                ETC1.encodeImage(dataBuffer, width, height, bytesPerPixel, stride, compressedImage);
-                return new ETC1Util.ETC1Texture(width, height, compressedImage);
-            } catch (IllegalArgumentException ex) {
-                compressedImage = null;
-            }
-        } finally {
-            dataBuffer = null;
-        }
-        return null;
     }
 
 }
