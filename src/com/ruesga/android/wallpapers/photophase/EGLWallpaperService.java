@@ -51,6 +51,14 @@ public abstract class EGLWallpaperService extends WallpaperService {
             }
 
             /**
+             * {@inheritDoc}
+             */
+            @Override
+            public SurfaceHolder getHolder() {
+                return getSurfaceHolder();
+            }
+
+            /**
              * Should be called when the {@link GLSurfaceView} is not needed anymore.
              */
             public void onDestroy() {
