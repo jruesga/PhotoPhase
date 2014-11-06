@@ -478,7 +478,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private void restoreData() {
         // Restore and the albums the selection
         mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
-        int count = mAlbums.size();
+        int count = Math.min(mAlbums.size(), mOriginalAlbums.size());
         for (int i = 0; i < count ; i++) {
             Album album = mAlbums.get(i);
             Album originalAlbum = mOriginalAlbums.get(i);
