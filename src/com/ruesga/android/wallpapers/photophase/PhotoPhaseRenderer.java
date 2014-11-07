@@ -18,10 +18,8 @@ package com.ruesga.android.wallpapers.photophase;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,7 +34,6 @@ import android.opengl.GLException;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Handler;
-import android.os.Process;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
@@ -187,12 +184,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final Runnable mEGLContextWatchDog = new Runnable() {
         @Override
         public void run() {
-            // Restart the service
-            Process.killProcess(Process.myPid());
-            Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-            intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                    new ComponentName(mContext, PhotoPhaseWallpaper.class));
-            mContext.startActivity(intent);
+            // Restart the wallpaper
+            AndroidHelper.restartWallpaper(mContext);
         }
     };
 

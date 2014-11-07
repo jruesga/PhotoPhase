@@ -349,8 +349,11 @@ public final class GLESUtil {
             return ti;
 
         } catch (Exception e) {
-            String msg = "Failed to generate a valid texture from file: " + file.getAbsolutePath();
-            Log.e(TAG, msg, e);
+            if (DEBUG)  {
+                String msg = "Failed to generate a valid texture from file: " +
+                        file.getAbsolutePath();
+                Log.e(TAG, msg, e);
+            }
             return new GLESTextureInfo();
 
         } finally {

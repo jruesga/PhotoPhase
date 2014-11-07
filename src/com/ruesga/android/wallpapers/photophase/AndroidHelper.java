@@ -17,9 +17,13 @@
 package com.ruesga.android.wallpapers.photophase;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Process;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.ViewConfiguration;
@@ -108,5 +112,19 @@ public final class AndroidHelper {
             }
         }
         return result;
+    }
+
+    /**
+     * Method that restart the wallpaper
+     *
+     * @param ctx The current context
+     */
+    public static void restartWallpaper(Context ctx) {
+        // Restart the service
+        Process.killProcess(Process.myPid());
+        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+        intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                new ComponentName(ctx, PhotoPhaseWallpaper.class));
+        ctx.startActivity(intent);
     }
 }
