@@ -20,4 +20,7 @@
   <plurals name="album_number_of_pictures">
     <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> 張圖片</item>
   </plurals>
+  <plurals name="msg_media_reload_complete">
+    <item quantity="other">媒體重新載入完成。找到 <xliff:g id="pictures" example="7">%d</xliff:g> 張圖片。</item>
+  </plurals>
 </resources>

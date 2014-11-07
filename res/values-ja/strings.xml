@@ -35,7 +35,7 @@
   <string name="format_days">%s日</string>
   <string name="format_dim">%s%%</string>
   <string name="pref_general">全般</string>
-  <string name="pref_general_summary">全般の設定、効果、トランジション</string>
+  <string name="pref_general_summary">全般設定、効果、トランジション</string>
   <string name="pref_general_settings">設定</string>
   <string name="pref_general_settings_wallpaper_dim">壁紙の調光</string>
   <string name="pref_general_settings_background_color">背景色</string>

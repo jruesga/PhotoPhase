@@ -101,14 +101,14 @@
   <string name="transitions_fade">Desvanecer</string>
   <string name="transitions_flip">Virar</string>
   <string name="transitions_swap">Trocar</string>
-  <string name="transitions_translation">Tradução</string>
+  <string name="transitions_translation">Translação</string>
   <string name="transitions_window">Janela</string>
   <string name="effects_noeffect">Normal</string>
-  <string name="effects_autofix">AutoFix</string>
+  <string name="effects_autofix">Ajuste automático</string>
   <string name="effects_blur">Desfocar</string>
   <string name="effects_crossprocess">Processo transversal</string>
   <string name="effects_documentary">Documentário</string>
-  <string name="effects_duotone">Duotone</string>
+  <string name="effects_duotone">Tom duplo</string>
   <string name="effects_emboss">Relevo</string>
   <string name="effects_fisheye">Olho de peixe</string>
   <string name="effects_glow">Brilho</string>
@@ -126,7 +126,7 @@
   <string name="effects_scanlines">Linhas de varredura</string>
   <string name="effects_sepia">Sépia</string>
   <string name="effects_temperature">Temperatura</string>
-  <string name="effects_tint">Tom</string>
+  <string name="effects_tint">Colorir</string>
   <string name="effects_vignette">Vinheta</string>
   <string name="color_picker_alpha_slider_text">Transparência</string>
   <string name="color_picker_current_text">Atual:</string>

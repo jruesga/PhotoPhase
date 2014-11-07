@@ -18,13 +18,11 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="album_number_of_pictures">
-    <item quantity="one">1 nuotrauka</item>
-    <item quantity="few"><xliff:g id="pictures" example="7">%d</xliff:g> nuotraukos</item>
-    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> nuotraukų</item>
+    <item quantity="one">1 Bild</item>
+    <item quantity="other"><xliff:g id="pictures" example="7">%d</xliff:g> Biller</item>
   </plurals>
   <plurals name="msg_media_reload_complete">
-    <item quantity="one">Medijos perkrovimas užbaigtas. Rasta 1 nuotrauka.</item>
-    <item quantity="few">Medijos perkrovimas užbaigtas. Rastos <xliff:g id="pictures" example="7">%d</xliff:g> nuotraukos.</item>
-    <item quantity="other">Medijos perkrovimas užbaigtas. Rastą <xliff:g id="pictures" example="7">%d</xliff:g> nuotraukų.</item>
+    <item quantity="one">D\'Medie goufen nei gelueden. 1 Bild fonnt.</item>
+    <item quantity="other">D\'Medie goufen nei gelueden. <xliff:g id="pictures" example="7">%d</xliff:g> Biller fonnt.</item>
   </plurals>
 </resources>

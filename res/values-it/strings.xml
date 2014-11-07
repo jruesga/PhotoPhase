@@ -17,7 +17,7 @@
      limitations under the License.
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="app_description">PhotoPhase Live Wallpaper</string>
+  <string name="app_description">Sfondo Animato PhotoPhase</string>
   <string name="no_pictures_oops_msg">Nessuna immagine trovata</string>
   <string name="mnu_restore">Ripristina</string>
   <string name="mnu_delete">Elimina</string>
