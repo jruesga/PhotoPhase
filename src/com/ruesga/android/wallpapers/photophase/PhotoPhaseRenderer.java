@@ -317,7 +317,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
 
         // Set a watchdog to detect EGL bad context and restart the wallpaper
-        mHandler.postDelayed(mEGLContextWatchDog, 1000L);
+        if (!mIsPreview) {
+            mHandler.postDelayed(mEGLContextWatchDog, 1000L);
+        }
     }
 
     /**
@@ -714,7 +716,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 glUnused) {
         // Remove the EGL context watchdog
-        mHandler.removeCallbacks(mEGLContextWatchDog);
+        if (!mIsPreview) {
+            mHandler.removeCallbacks(mEGLContextWatchDog);
+        }
 
         // Set the projection, view and model
         GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
