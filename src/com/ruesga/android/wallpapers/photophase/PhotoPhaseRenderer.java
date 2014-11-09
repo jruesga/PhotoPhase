@@ -318,7 +318,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
         // Set a watchdog to detect EGL bad context and restart the wallpaper
         if (!mIsPreview) {
-            mHandler.postDelayed(mEGLContextWatchDog, 1000L);
+            mHandler.postDelayed(mEGLContextWatchDog, 15000L);
         }
     }
 
