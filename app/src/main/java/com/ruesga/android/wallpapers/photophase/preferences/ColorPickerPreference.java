@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.ruesga.android.wallpapers.photophase.widgets;
-
-import afzkl.development.mColorPicker.views.ColorDialogView;
-import afzkl.development.mColorPicker.views.ColorPanelView;
+package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -25,14 +22,29 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 
+import com.github.danielnilsson9.colorpickerview.view.ColorPanelView;
+import com.github.danielnilsson9.colorpickerview.view.ColorPickerView;
 import com.ruesga.android.wallpapers.photophase.R;
+
+import java.util.Locale;
 
 /**
  * A {@link Preference} that allow to select/pick a color in a new window dialog.
@@ -42,7 +54,112 @@ public class ColorPickerPreference extends DialogPreference {
     private ColorPanelView mColorPicker;
     private int mColor;
 
-    private ColorDialogView mColorDlg;
+    private static class ColorDialogView extends FrameLayout implements TextWatcher {
+        private EditText mColorText;
+        private ColorPickerView mColorPicker;
+        private ColorPanelView mCurrentColor;
+        private ColorPanelView mNewColor;
+
+        private boolean mIgnoreTextChanged;
+
+        public ColorDialogView(Context context) {
+            super(context);
+            init();
+        }
+
+        private void init() {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View v = inflater.inflate(R.layout.color_picker_pref_dialog_view, this, false);
+            mColorText = (EditText) v.findViewById(R.id.color_picker_pref_color_text);
+            mColorPicker = (ColorPickerView) v.findViewById(R.id.color_picker_pref_color_picker);
+            mCurrentColor = (ColorPanelView) v.findViewById(R.id.color_picker_pref_color_current);
+            mNewColor = (ColorPanelView) v.findViewById(R.id.color_picker_pref_color_new);
+
+            // Configure the color picker with alpha slider
+            mColorPicker.setAlphaSliderVisible(true);
+            mColorPicker.setAlphaSliderText(R.string.color_picker_alpha_slider_text);
+            mColorPicker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
+                @Override
+                public void onColorChanged(int newColor) {
+                    mNewColor.setColor(newColor);
+                    mIgnoreTextChanged = true;
+                    mColorText.setText(String.format("%06X", newColor));
+                    mIgnoreTextChanged = false;
+                }
+            });
+
+            // Allow reset by clicking the current color
+            mCurrentColor.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setColor(mCurrentColor.getColor());
+                }
+            });
+
+            // Configure the edittext and listen for text changes (only allow valid hex colors)
+            mIgnoreTextChanged = false;
+            InputFilter[] filters = new InputFilter[2];
+            filters[0] = new InputFilter.LengthFilter(8);
+            filters[1] = new InputFilter() {
+                @Override
+                public CharSequence filter(CharSequence source,
+                        int start, int end, Spanned dest, int dstart, int dend) {
+                    if (start >= end) return "";
+                    String s = source.subSequence(start, end).toString();
+                    StringBuilder sb = new StringBuilder();
+                    int cc = s.length();
+                    for (int i = 0; i < cc; i++) {
+                        char c = s.charAt(i);
+                        if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
+                                (c >= 'A' && c <= 'F')) {
+                            sb.append(c);
+                        }
+                    }
+                    return sb.toString().toUpperCase(Locale.getDefault());
+                }
+            };
+            mColorText.setFilters(filters);
+            mColorText.addTextChangedListener(this);
+
+            addView(v);
+        }
+
+        public int getColor() {
+            return mColorPicker.getColor();
+        }
+
+        public void setColor(int newColor) {
+            setColor(newColor, false);
+        }
+
+        private void setColor(int newColor, boolean user) {
+            mColorPicker.setColor(newColor, false);
+            mCurrentColor.setColor(newColor);
+            mNewColor.setColor(newColor);
+            if (!user) {
+                mColorText.setText(String.format("%06X", newColor));
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // Ignore
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            // Ignore
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!mIgnoreTextChanged && s.length() == 8) {
+                try {
+                    setColor(Color.parseColor("#" + s.toString()), true);
+                } catch (Exception e) {/**NON BLOCK**/}
+            }
+        }
+    }
 
     /**
      * Constructor of <code>ColorPickerPreference</code>
@@ -70,7 +187,7 @@ public class ColorPickerPreference extends DialogPreference {
      * @return The color of the picker.
      */
     public int getColor() {
-        return this.mColor;
+        return mColor;
     }
 
     /**
@@ -80,18 +197,16 @@ public class ColorPickerPreference extends DialogPreference {
      */
     public void setColor(int color) {
         // Always persist/notify the first time; don't assume the field's default of false.
-        final boolean changed = this.mColor != color;
+        final boolean changed = mColor != color;
         if (changed) {
-            this.mColor = color;
+            mColor = color;
             // when called from onSetInitialValue the view is still not set
-            if (this.mColorPicker != null) {
-                this.mColorPicker.setColor(color);
+            if (mColorPicker != null) {
+                mColorPicker.setColor(color);
             }
             persistInt(color);
-            if (changed) {
-                notifyDependencyChange(shouldDisableDependents());
-                notifyChanged();
-            }
+            notifyDependencyChange(shouldDisableDependents());
+            notifyChanged();
         }
     }
 
@@ -100,7 +215,7 @@ public class ColorPickerPreference extends DialogPreference {
      */
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return Integer.valueOf(a.getColor(index, 0));
+        return a.getColor(index, 0);
     }
 
     /**
@@ -108,7 +223,7 @@ public class ColorPickerPreference extends DialogPreference {
      */
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setColor(restoreValue ? getPersistedInt(0) : ((Integer)defaultValue).intValue());
+        setColor(restoreValue ? getPersistedInt(0) : (Integer) defaultValue);
     }
 
     /**
@@ -119,44 +234,41 @@ public class ColorPickerPreference extends DialogPreference {
         super.onPrepareDialogBuilder(builder);
 
         // Configure the dialog
-        this.mColorDlg = new ColorDialogView(getContext());
-        this.mColorDlg.setColor(this.mColor);
-        this.mColorDlg.showAlphaSlider(true);
-        this.mColorDlg.setAlphaSliderText(
-                getContext().getString(R.string.color_picker_alpha_slider_text));
-        this.mColorDlg.setCurrentColorText(
-                getContext().getString(R.string.color_picker_current_text));
-        this.mColorDlg.setNewColorText(
-                getContext().getString(R.string.color_picker_new_text));
-        this.mColorDlg.setColorLabelText(
-                getContext().getString(R.string.color_picker_color));
-        builder.setView(this.mColorDlg);
+        final ColorDialogView v = new ColorDialogView(getContext());
+        v.setColor(mColor);
+        builder.setView(v);
 
         // The color is selected by the user and confirmed by clicking ok
         builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
             @Override
             @SuppressWarnings("synthetic-access")
             public void onClick(DialogInterface dialog, int which) {
-                int color = ColorPickerPreference.this.mColorDlg.getColor();
-                if (callChangeListener(Integer.valueOf(color))) {
+                int color = v.getColor();
+                if (callChangeListener(color)) {
                     setColor(color);
                 }
                 dialog.dismiss();
             }
         });
+
     }
 
+    @Override
+    protected void showDialog(Bundle state) {
+        super.showDialog(state);
+        getDialog().getWindow().setFormat(PixelFormat.RGBA_8888);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void onBindView(View view) {
+    protected void onBindView(@NonNull View view) {
         super.onBindView(view);
         View v = view.findViewById(R.id.color_picker);
         if (v != null && v instanceof ColorPanelView) {
-            this.mColorPicker = (ColorPanelView)v;
-            this.mColorPicker.setColor(this.mColor);
+            mColorPicker = (ColorPanelView)v;
+            mColorPicker.setColor(mColor);
         }
     }
 
@@ -205,7 +317,7 @@ public class ColorPickerPreference extends DialogPreference {
          */
         public SavedState(Parcel source) {
             super(source);
-            this.color = source.readInt();
+            color = source.readInt();
         }
 
         /**
@@ -221,9 +333,9 @@ public class ColorPickerPreference extends DialogPreference {
          * {@inheritDoc}
          */
         @Override
-        public void writeToParcel(Parcel dest, int flags) {
+        public void writeToParcel(@NonNull Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
-            dest.writeInt(this.color);
+            dest.writeInt(color);
         }
 
         /**

@@ -18,7 +18,7 @@
     android:layout_width="48dp"
     android:layout_height="32dp"
     android:background="@android:color/darker_gray">
-    <afzkl.development.mColorPicker.views.ColorPanelView
+    <com.github.danielnilsson9.colorpickerview.view.ColorPanelView
         android:id="@+id/color_picker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

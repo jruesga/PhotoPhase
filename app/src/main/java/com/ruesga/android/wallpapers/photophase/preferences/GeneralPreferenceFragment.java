@@ -35,7 +35,6 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;
-import com.ruesga.android.wallpapers.photophase.widgets.ColorPickerPreference;
 
 import java.util.Set;
 

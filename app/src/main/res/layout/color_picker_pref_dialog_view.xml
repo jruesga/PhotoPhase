@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2015 Jorge Ruesga
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/color_picker_color"/>
+            <Space
+                android:layout_width="3dp"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/color_picker_pref_color_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <com.github.danielnilsson9.colorpickerview.view.ColorPickerView
+            android:id="@+id/color_picker_pref_color_picker"
+            android:layout_width="match_parent"
+            android:layout_height="192dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:text="@string/color_picker_current_text"/>
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:text="@string/color_picker_new_text"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
+            <com.github.danielnilsson9.colorpickerview.view.ColorPanelView
+                android:id="@+id/color_picker_pref_color_current"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="0.5"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:clickable="false" />
+            <TextView
+                android:layout_width="16dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="-"
+                tools:ignore="HardcodedText" />
+            <com.github.danielnilsson9.colorpickerview.view.ColorPanelView
+                android:id="@+id/color_picker_pref_color_new"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="0.5"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:clickable="false" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

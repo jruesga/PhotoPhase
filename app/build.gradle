@@ -27,18 +27,19 @@ apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile 'com.android.support:support-v4:23.0.1'
+    compile "com.github.danielnilsson9:color-picker-view:1.4.0"
 
 /*    compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
-    compile 'com.android.support:support-v4:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'*/
 
-/*    compile 'com.github.danielnilsson9:color-picker-view:1.4.0'
+/*
     compile 'com.google.api-client:google-api-client:1.19.1'
     compile 'org.adw.library:discrete-seekbar:1.0.0'*/
 }

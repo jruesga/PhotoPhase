@@ -30,7 +30,7 @@
             android:defaultValue="0" />
 
         <!-- Background color -->
-        <com.ruesga.android.wallpapers.photophase.widgets.ColorPickerPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.ColorPickerPreference
             android:key="ui_background_color"
             android:title="@string/pref_general_settings_background_color"
             android:summary="@string/pref_general_settings_background_color_summary"
