@@ -77,7 +77,7 @@ public class PhotoPhaseWallpaperWorld {
         mContext = ctx;
         mTextureManager = textureManager;
         mCurrent = -1;
-        mUnusedTransitions = new ArrayList<Transition>();
+        mUnusedTransitions = new ArrayList<>();
         mRecycled = false;
 
         Resources res = ctx.getResources();
@@ -136,8 +136,8 @@ public class PhotoPhaseWallpaperWorld {
 
         // Get a random frame to which apply the transition
         int item = Utils.getNextRandom(0, mTransitionsQueue.size() - 1);
-        int pos = mTransitionsQueue.remove(item).intValue();
-        mUsedTransitionsQueue.add(Integer.valueOf(pos));
+        int pos = mTransitionsQueue.remove(item);
+        mUsedTransitionsQueue.add(pos);
         PhotoFrame frame = mPhotoFrames.get(pos);
 
         // Select the transition
@@ -159,7 +159,7 @@ public class PhotoPhaseWallpaperWorld {
             return;
         }
         mTransitionsQueue.remove(Integer.valueOf(pos));
-        mUsedTransitionsQueue.add(Integer.valueOf(pos));
+        mUsedTransitionsQueue.add(pos);
 
         // Select the transition
         selectTransition(frame, pos);
@@ -302,10 +302,10 @@ public class PhotoPhaseWallpaperWorld {
             Log.d(TAG, "Dispositions: " + dispositions.size() + " | " +
                     String.valueOf(dispositions));
         }
-        mPhotoFrames = new ArrayList<PhotoFrame>(dispositions.size());
-        mTransitions = new ArrayList<Transition>(dispositions.size());
-        mTransitionsQueue = new ArrayList<Integer>(dispositions.size());
-        mUsedTransitionsQueue = new ArrayList<Integer>(dispositions.size());
+        mPhotoFrames = new ArrayList<>(dispositions.size());
+        mTransitions = new ArrayList<>(dispositions.size());
+        mTransitionsQueue = new ArrayList<>(dispositions.size());
+        mUsedTransitionsQueue = new ArrayList<>(dispositions.size());
         int i = 0;
         for (Disposition disposition : dispositions) {
             // Create the photo frame
@@ -326,7 +326,7 @@ public class PhotoPhaseWallpaperWorld {
             transition.select(frame);
             mTransitions.add(transition);
 
-            mTransitionsQueue.add(Integer.valueOf(i));
+            mTransitionsQueue.add(i);
             i++;
         }
     }
@@ -407,7 +407,7 @@ public class PhotoPhaseWallpaperWorld {
     /**
      * Method that applies a padding to the frame
      *
-     * @param texCoords The source coordinates
+     * @param coords The source coordinates
      * @param screenWidth The screen width
      * @param screenHeight The screen height
      * @return float[] The new coordinates

@@ -130,6 +130,7 @@ public final class GLESUtil {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("SimplifiableIfStatement")
         public boolean equals(Object obj) {
             if (this == obj)
                 return true;
@@ -255,7 +256,7 @@ public final class GLESUtil {
     public static int createProgram(String vertexShaderSrc, String fragmentShaderSrc) {
         int vshader = 0;
         int fshader = 0;
-        int progid = 0;
+        int progid;
         int[] link = new int[1];
 
         try {
@@ -358,7 +359,6 @@ public final class GLESUtil {
             // Recycle the bitmap
             if (bitmap != null && recycle) {
                 bitmap.recycle();
-                bitmap = null;
             }
         }
     }
@@ -407,7 +407,6 @@ public final class GLESUtil {
             // Recycle the bitmap
             if (bitmap != null && recycle) {
                 bitmap.recycle();
-                bitmap = null;
             }
         }
     }
@@ -528,14 +527,13 @@ public final class GLESUtil {
      * @param res The resources reference
      * @param resId The resource identifier
      * @return String The shader source
-     * @throws IOException If an error occurs while loading the resource
      */
     private static String readResource(Resources res, int resId) {
         Reader reader = new InputStreamReader(res.openRawResource(resId));
         try {
             final int BUFFER = 1024;
             char[] data = new char[BUFFER];
-            int read = 0;
+            int read;
             StringBuilder sb = new StringBuilder();
             while ((read = reader.read(data, 0, BUFFER)) != -1) {
                 sb.append(data, 0, read);

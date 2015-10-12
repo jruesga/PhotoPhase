@@ -44,7 +44,7 @@ public class PhotoPhaseWallpaper
 
     private static final boolean DEBUG = false;
 
-    private List<PhotoPhaseRenderer> mRenderers;
+    private List<Renderer> mRenderers;
     private PhotoPhaseWallpaperEngine mEngine;
 
     private boolean mPreserveEGLContext;
@@ -77,8 +77,8 @@ public class PhotoPhaseWallpaper
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "onDestroy");
         super.onDestroy();
-        for (PhotoPhaseRenderer renderer : mRenderers) {
-            renderer.onDestroy();
+        for (Renderer renderer : mRenderers) {
+            ((PhotoPhaseRenderer) renderer).onDestroy();
         }
     }
 
@@ -171,10 +171,10 @@ public class PhotoPhaseWallpaper
     public void onLowMemory() {
         super.onLowMemory();
         Log.i(TAG, "onLowMemory");
-        for (PhotoPhaseRenderer renderer : mRenderers) {
+        for (Renderer renderer : mRenderers) {
             // Pause the wallpaper and destroy the cached textures
-            renderer.onPause();
-            renderer.onLowMemory();
+            ((PhotoPhaseRenderer) renderer).onPause();
+            ((PhotoPhaseRenderer) renderer).onLowMemory();
         }
     }
 

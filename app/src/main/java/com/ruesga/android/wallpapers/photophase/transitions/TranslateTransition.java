@@ -116,9 +116,7 @@ public class TranslateTransition extends Transition {
         super.select(target);
 
         // Discard all non-supported modes
-        List<TRANSLATE_MODES> modes =
-                new ArrayList<TranslateTransition.TRANSLATE_MODES>(
-                        Arrays.asList(TRANSLATE_MODES.values()));
+        List<TRANSLATE_MODES> modes = new ArrayList<>(Arrays.asList(TRANSLATE_MODES.values()));
         float[] vertex = target.getFrameVertex();
         if (vertex[4] != -1.0f) {
             modes.remove(TRANSLATE_MODES.RIGHT_TO_LEFT);

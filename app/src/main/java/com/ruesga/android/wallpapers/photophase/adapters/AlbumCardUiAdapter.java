@@ -52,7 +52,7 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
         Animator mCardAnimator;
     }
 
-    private List<Album> mData = new ArrayList<Album>();
+    private List<Album> mData = new ArrayList<>();
 
     private AlbumInfoView.CallbacksListener mAlbumInfoCallback;
 

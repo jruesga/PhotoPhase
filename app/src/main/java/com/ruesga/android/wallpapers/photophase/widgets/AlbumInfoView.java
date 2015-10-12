@@ -146,7 +146,7 @@ public class AlbumInfoView extends RelativeLayout
      * Method that initializes the internal references
      */
     private void init() {
-        mCallbacks = new ArrayList<AlbumInfoView.CallbacksListener>();
+        mCallbacks = new ArrayList<>();
         mAlbumMode = true;
     }
 

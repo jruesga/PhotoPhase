@@ -16,6 +16,8 @@
 
 package com.ruesga.android.wallpapers.photophase.model;
 
+import android.support.annotation.NonNull;
+
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 
 /**
@@ -57,6 +59,7 @@ public class Disposition implements Comparable<Disposition> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("SimplifiableIfStatement")
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -86,7 +89,7 @@ public class Disposition implements Comparable<Disposition> {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(Disposition another) {
+    public int compareTo(@NonNull Disposition another) {
         if (x == another.x && y == another.y && w == another.w && h == another.h) {
             return 0;
         }

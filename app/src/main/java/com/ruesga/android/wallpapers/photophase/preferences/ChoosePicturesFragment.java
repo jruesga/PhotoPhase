@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,6 +64,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -104,8 +106,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
                     long start = System.currentTimeMillis();
                     if (DEBUG) Log.v(TAG, "Media library:");
                     int count = 0;
-                    List<Album> pending = new ArrayList<Album>();
-                    List<Album> all = new ArrayList<Album>();
+                    List<Album> pending = new ArrayList<>();
+                    List<Album> all = new ArrayList<>();
                     Album album = null;
                     while (c.moveToNext()) {
                         album = processPath(all, pending, album, c.getString(0));
@@ -144,9 +146,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
          */
         @Override
         protected void onProgressUpdate(Album... albums) {
-            for (Album album : albums) {
-                mAlbums.add(album);
-            }
+            Collections.addAll(mAlbums, albums);
             mAlbumAdapter.notifyDataSetChanged();
         }
 
@@ -218,9 +218,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
          */
         private boolean isSelectedItem(String item) {
             if (mSelectedAlbums != null) {
-                Iterator<String> it = mSelectedAlbums.iterator();
-                while (it.hasNext()) {
-                    String albumPath = it.next();
+                for (String albumPath : mSelectedAlbums) {
                     if (item.compareTo(albumPath) == 0) {
                         return true;
                     }
@@ -300,8 +298,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
         mShowingAlbums = true;
 
         // Create an empty album
-        mAlbums = new ArrayList<Album>();
-        mOriginalAlbums = new ArrayList<Album>();
+        mAlbums = new ArrayList<>();
+        mOriginalAlbums = new ArrayList<>();
 
         // Change the preference manager
         getPreferenceManager().setSharedPreferencesName(PreferencesProvider.PREFERENCES_FILE);
@@ -309,7 +307,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
         // Load the albums user selection
         mOriginalSelectedAlbums = removeObsoleteAlbumsData(Preferences.Media.getSelectedMedia());
-        mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
+        mSelectedAlbums = new HashSet<>(mOriginalSelectedAlbums);
         mSelectionChanged = false;
 
         final Resources res = getResources();
@@ -371,7 +369,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * {@inheritDoc}
      */
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+    public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
             Bundle savedInstanceState) {
 
         mContainer = container;
@@ -405,6 +403,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mTask.execute();
@@ -477,7 +476,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void restoreData() {
         // Restore and the albums the selection
-        mSelectedAlbums = new HashSet<String>(mOriginalSelectedAlbums);
+        mSelectedAlbums = new HashSet<>(mOriginalSelectedAlbums);
         int count = Math.min(mAlbums.size(), mOriginalAlbums.size());
         for (int i = 0; i < count ; i++) {
             Album album = mAlbums.get(i);
@@ -485,8 +484,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
             // Update selected status
             album.setSelected(originalAlbum.isSelected());
-            album.setItems(new ArrayList<Picture>(originalAlbum.getItems()));
-            album.setSelectedItems(new ArrayList<String>(originalAlbum.getSelectedItems()));
+            album.setItems(new ArrayList<>(originalAlbum.getItems()));
+            album.setSelectedItems(new ArrayList<>(originalAlbum.getSelectedItems()));
         }
         mAlbumAdapter.notifyDataSetChanged();
 
@@ -504,7 +503,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void invertAll() {
         // Restore and the albums the selection
-        mSelectedAlbums = new HashSet<String>();
+        mSelectedAlbums = new HashSet<>();
         for (Album album : mAlbums) {
             album.setSelected(!album.isSelected());
             album.setSelectedItems(new ArrayList<String>());
@@ -532,7 +531,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private void invertAlbum(Album album) {
         // Remove all pictures of the album
         removeAlbumItems(album);
-        List<String> origSelectedItems = new ArrayList<String>(album.getSelectedItems());
+        List<String> origSelectedItems = new ArrayList<>(album.getSelectedItems());
         List<String> selectedItems =  album.getSelectedItems();
         album.getSelectedItems().clear();
         for (Picture picture : album.getItems()) {
@@ -818,7 +817,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
         int size = album.getItems().size();
         items.setText(String.format(res.getQuantityText(
-                R.plurals.album_number_of_pictures, size).toString(), Integer.valueOf(size)));
+                R.plurals.album_number_of_pictures, size).toString(), size));
 
         int selected = album.getSelectedItems().size();
         String count = String.valueOf(selected);
@@ -833,7 +832,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     /**
      * Method that load all the pictures of the album
      *
-     * @param album
+     * @param album The album for which load all its pictures
      */
     private void loadPictures(Album album) {
         List<Picture> items = album.getItems();
@@ -929,16 +928,15 @@ public class ChoosePicturesFragment extends PreferenceFragment
     }
 
     /**
-     * Method that removes all the inexistent albums and pictures
+     * Method that removes all the nonexistent albums and pictures
      *
      * @param data The data to filter
      * @return Set<String> The data filtered
      */
     private Set<String> removeObsoleteAlbumsData(Set<String> data) {
-        Set<String> validDataList = new HashSet<String>();
-        Iterator<String> it = data.iterator();
-        while (it.hasNext()) {
-            File f = new File(it.next());
+        Set<String> validDataList = new HashSet<>();
+        for (String val : data) {
+            File f = new File(val);
             if (f.exists()) {
                 try {
                     validDataList.add(f.getCanonicalPath());

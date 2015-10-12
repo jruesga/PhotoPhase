@@ -97,7 +97,7 @@ public class MediaPictureDiscoverer {
             mFilter = Preferences.Media.getSelectedMedia();
             mLastAlbums = Preferences.Media.getLastDiscorevedAlbums();
             mIsAutoSelectNewAlbums = Preferences.Media.isAutoSelectNewAlbums();
-            mNewAlbums = new HashSet<String>();
+            mNewAlbums = new HashSet<>();
             mUserRequest = userRequest;
         }
 
@@ -133,7 +133,7 @@ public class MediaPictureDiscoverer {
                 Log.e(TAG, "AsyncDiscoverTask failed.", e);
 
                 // Return and empty list
-                return new ArrayList<File>();
+                return new ArrayList<>();
             } finally {
                 // Save the filter (could have new albums)
                 Preferences.Media.setSelectedMedia(mContext, mFilter);
@@ -190,8 +190,8 @@ public class MediaPictureDiscoverer {
         private List<File> getPictures(
                 Uri uri, String[] projection, String where, String[] args) {
             long start = System.currentTimeMillis();
-            List<File> paths = new ArrayList<File>();
-            List<File> partial = new ArrayList<File>();
+            List<File> paths = new ArrayList<>();
+            List<File> partial = new ArrayList<>();
             Cursor c = mFinalContentResolver.query(uri, projection, where, args, null);
             if (c != null) {
                 try {

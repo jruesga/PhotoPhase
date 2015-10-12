@@ -83,7 +83,6 @@ public class BitmapUtils {
         Bitmap out = decodeExifBitmap(file, bitmap);
         if (!out.equals(bitmap)) {
             bitmap.recycle();
-            bitmap = null;
         }
         return out;
     }

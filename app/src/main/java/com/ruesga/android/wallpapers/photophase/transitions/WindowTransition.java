@@ -121,9 +121,7 @@ public class WindowTransition extends Transition {
         mAmount = getAmount();
 
         // Discard all non-supported modes
-        List<WINDOW_MODES> modes =
-                new ArrayList<WindowTransition.WINDOW_MODES>(
-                        Arrays.asList(WINDOW_MODES.values()));
+        List<WINDOW_MODES> modes = new ArrayList<>(Arrays.asList(WINDOW_MODES.values()));
         float[] vertex = target.getFrameVertex();
         if (vertex[4] != -1.0f) {
             modes.remove(WINDOW_MODES.RIGHT_TO_LEFT);
@@ -198,7 +196,6 @@ public class WindowTransition extends Transition {
      *
      * @param delta The delta time
      * @param matrix The model-view-projection matrix
-     * @param target The photo frame target
      */
     private void applySrcTransition(float delta, float[] matrix) {
         // Bind default FBO

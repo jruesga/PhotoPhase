@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -138,7 +139,7 @@ public class ResizeFrame extends RelativeLayout {
         LayoutParams lp;
         mLeftHandle = new ImageView(getContext());
         mLeftHandle.setImageResource(R.drawable.resize_handle_left);
-        mLeftHandle.setTag(Gravity.LEFT);
+        mLeftHandle.setTag(Gravity.START);
         lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
         lp.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -146,7 +147,7 @@ public class ResizeFrame extends RelativeLayout {
 
         mRightHandle = new ImageView(getContext());
         mRightHandle.setImageResource(R.drawable.resize_handle_right);
-        mRightHandle.setTag(Gravity.RIGHT);
+        mRightHandle.setTag(Gravity.START);
         lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
         lp.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -207,7 +208,7 @@ public class ResizeFrame extends RelativeLayout {
      * {@inheritDoc}
      */
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(@NonNull MotionEvent ev) {
         final int action = ev.getAction();
         final float x = ev.getX();
         final float y = ev.getY();
@@ -222,7 +223,7 @@ public class ResizeFrame extends RelativeLayout {
 
                 // Start motion
                 if (mOnResizeListener != null) {
-                    mOnResizeListener.onStartResize(((Integer)mHandle.getTag()).intValue());
+                    mOnResizeListener.onStartResize((Integer) mHandle.getTag());
                 }
                 return true;
             }
@@ -232,9 +233,9 @@ public class ResizeFrame extends RelativeLayout {
             if (mHandle != null) {
                 // Resize
                 if (mOnResizeListener != null) {
-                    int handle = ((Integer)mHandle.getTag()).intValue();
+                    int handle = (Integer) mHandle.getTag();
                     int delta =
-                            handle == Gravity.LEFT || handle == Gravity.RIGHT
+                            handle == Gravity.START || handle == Gravity.END
                             ? Math.round(x - mLastTouchX)
                             : Math.round(y - mLastTouchY);
                     mOnResizeListener.onResize(handle, delta);
@@ -249,7 +250,7 @@ public class ResizeFrame extends RelativeLayout {
         case MotionEvent.ACTION_UP:
             if (mHandle != null) {
                 if (mOnResizeListener != null) {
-                    mOnResizeListener.onEndResize(((Integer)mHandle.getTag()).intValue());
+                    mOnResizeListener.onEndResize((Integer) mHandle.getTag());
                     return true;
                 }
                 cancelMotion();

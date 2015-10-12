@@ -46,7 +46,7 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         PictureItemView mPictureItemView;
     }
 
-    private List<Picture> mData = new ArrayList<Picture>();
+    private List<Picture> mData = new ArrayList<>();
     private AdapterView<?> mParent;
 
     /**

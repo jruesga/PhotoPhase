@@ -17,6 +17,7 @@
 package com.ruesga.android.wallpapers.photophase.utils;
 
 import android.animation.IntEvaluator;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -42,10 +43,11 @@ public class Evaluators {
         }
 
         @Override
+        @NonNull
         public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
             Integer num = super.evaluate(fraction, startValue, endValue);
             ViewGroup.LayoutParams params = mView.getLayoutParams();
-            params.width = num.intValue();
+            params.width = num;
             mView.setLayoutParams(params);
             return num;
         }
@@ -68,10 +70,11 @@ public class Evaluators {
         }
 
         @Override
+        @NonNull
         public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
             Integer num = super.evaluate(fraction, startValue, endValue);
             ViewGroup.LayoutParams params = mView.getLayoutParams();
-            params.height = num.intValue();
+            params.height = num;
             mView.setLayoutParams(params);
             return num;
         }

@@ -49,7 +49,7 @@ public class MediaPreferenceFragment extends PreferenceFragment {
             String key = preference.getKey();
             if (DEBUG) Log.d(TAG, "Preference changed: " + key + "=" + newValue);
             if (key.compareTo("ui_media_refresh_interval") == 0) {
-                setRefreshIntervalSummary(Integer.valueOf(String.valueOf(newValue)).intValue());
+                setRefreshIntervalSummary(Integer.valueOf(String.valueOf(newValue)));
                 mMediaIntevalChangedFlag = true;
             }
             return true;

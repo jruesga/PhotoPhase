@@ -65,7 +65,7 @@ public abstract class Transition {
         // Compile every program
         if(mVertexShader.length != mFragmentShader.length) {
             throw new IllegalArgumentException("mVertexShader.length != mFragmentShader.length");
-        };
+        }
         int cc = mVertexShader.length;
         mProgramHandlers = new int[cc];
         mTextureHandlers = new int[cc];

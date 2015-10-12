@@ -43,7 +43,6 @@ public final class PreferencesProvider {
     /**
      * Internal broadcast action to communicate that some setting was changed
      * @see #EXTRA_FLAG_REDRAW
-     * {@hide}
      */
     public static final String ACTION_SETTINGS_CHANGED =
             "com.ruesga.android.wallpapers.photophase.actions.SETTINGS_CHANGED";
@@ -51,32 +50,27 @@ public final class PreferencesProvider {
     /**
      * An extra setting that indicates that the changed setting request a whole recreation
      * of the wallpaper world
-     * {@hide}
      */
     public static final String EXTRA_FLAG_RECREATE_WORLD = "flag_recreate_world";
 
     /**
      * An extra setting that indicates that the changed setting request a redraw of the wallpaper
-     * {@hide}
      */
     public static final String EXTRA_FLAG_REDRAW = "flag_redraw";
 
     /**
      * An extra setting that indicates that the changed setting request to empty the texture queue
-     * {@hide}
      */
     public static final String EXTRA_FLAG_EMPTY_TEXTURE_QUEUE = "flag_empty_texture_queue";
 
     /**
      * An extra setting that indicates that the changed setting request a reload of the media data
-     * {@hide}
      */
     public static final String EXTRA_FLAG_MEDIA_RELOAD = "flag_media_reload";
 
     /**
      * An extra setting that indicates that the changed setting notifies that the media
      * interval was changed
-     * {@hide}
      */
     public static final String EXTRA_FLAG_MEDIA_INTERVAL_CHANGED = "flag_media_interval_changed";
 
@@ -84,7 +78,6 @@ public final class PreferencesProvider {
      * An extra setting that indicates that the media reload becomes from a user
      *
      * @see #EXTRA_FLAG_MEDIA_RELOAD
-     * {@hide}
      */
     public static final String EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST =
             "action_media_user_reload_req";
@@ -92,7 +85,6 @@ public final class PreferencesProvider {
     /**
      * An extra setting that indicates that the changed setting changed the disposition
      * interval time. Contains the new interval time
-     * {@hide}
      */
     public static final String EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED =
             "flag_disposition_interval_changed";
@@ -288,7 +280,7 @@ public final class PreferencesProvider {
                  * @return EFFECTS[] The effects to apply to the wallpaper's pictures
                  */
                 public static EFFECTS[] getEffectTypes() {
-                    Set<String> defaults = new HashSet<String>();
+                    Set<String> defaults = new HashSet<>();
                     defaults.add(String.valueOf(EFFECTS.NO_EFFECT.ordinal()));
                     Set<String> set = getStringSet("ui_effect_types", defaults);
                     String[] values = set.toArray(new String[set.size()]);

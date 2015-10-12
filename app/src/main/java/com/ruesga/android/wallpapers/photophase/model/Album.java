@@ -116,8 +116,8 @@ public class Album implements Comparable<Album>, Cloneable {
         album.mPath = mPath;
         album.mName = mName;
         album.mDate = mDate;
-        album.mItems = new ArrayList<Picture>(mItems);
-        album.mSelectedItems = new ArrayList<String>(mSelectedItems);
+        album.mItems = new ArrayList<>(mItems);
+        album.mSelectedItems = new ArrayList<>(mSelectedItems);
         album.mSelected = mSelected;
         album.mDisplayed = mDisplayed;
         return album;

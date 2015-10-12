@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
@@ -139,7 +140,7 @@ public abstract class DispositionFragment extends PreferenceFragment
      * {@inheritDoc}
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup v = (ViewGroup)inflater.inflate(R.layout.choose_disposition_fragment,
@@ -253,7 +254,7 @@ public abstract class DispositionFragment extends PreferenceFragment
         final int rows = getRows();
         final int cols = getCols();
 
-        List<Dispositions> allDispositions = new ArrayList<Dispositions>();
+        List<Dispositions> allDispositions = new ArrayList<>();
         allDispositions.add(new Dispositions(getUserDispositions(), rows, cols));
         allDispositions.addAll(getSystemDefinedDispositions(rows, cols));
         return allDispositions;
@@ -267,7 +268,7 @@ public abstract class DispositionFragment extends PreferenceFragment
      */
     private List<Dispositions> getSystemDefinedDispositions(int rows, int cols) {
         String[] templates = getDispositionsTemplates();
-        List<Dispositions> systemDispositions = new ArrayList<Dispositions>(templates.length);
+        List<Dispositions> systemDispositions = new ArrayList<>(templates.length);
         for (String template : templates) {
             systemDispositions.add(new Dispositions(
                     DispositionUtil.toDispositions(template), rows, cols));

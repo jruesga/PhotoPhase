@@ -63,7 +63,7 @@ public class DispositionAdapter extends PagerAdapter {
         mCallback = callback;
         mFirstAnimation = true;
         mInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mCurrentViews = new SparseArray<DispositionView>();
+        mCurrentViews = new SparseArray<>();
     }
 
     /**
