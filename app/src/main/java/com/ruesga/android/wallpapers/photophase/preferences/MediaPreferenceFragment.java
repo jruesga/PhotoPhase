@@ -38,10 +38,10 @@ public class MediaPreferenceFragment extends PreferenceFragment {
 
     private static final boolean DEBUG = false;
 
-    ListPreference mRefreshInterval;
-    Preference mRefreshNow;
+    private ListPreference mRefreshInterval;
+    private Preference mRefreshNow;
 
-    boolean mMediaIntevalChangedFlag;
+    private boolean mMediaIntevalChangedFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
         @Override
@@ -111,7 +111,7 @@ public class MediaPreferenceFragment extends PreferenceFragment {
      *
      * @param interval The interval value
      */
-    void setRefreshIntervalSummary(int interval) {
+    private void setRefreshIntervalSummary(int interval) {
         String v = String.valueOf(interval);
         String[] labels = getResources().getStringArray(R.array.refresh_intervals_labels);
         String[] values = getResources().getStringArray(R.array.refresh_intervals_values);

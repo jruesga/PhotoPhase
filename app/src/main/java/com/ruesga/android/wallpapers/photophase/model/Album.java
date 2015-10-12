@@ -17,6 +17,7 @@
 package com.ruesga.android.wallpapers.photophase.model;
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,11 +104,12 @@ public class Album implements Comparable<Album>, Cloneable {
     }
 
     @Override
-    public int compareTo(Album another) {
+    public int compareTo(@NonNull Album another) {
         return mPath.compareTo(another.mPath);
     }
 
     @Override
+    @SuppressWarnings("CloneDoesntCallSuperClone")
     public Object clone() {
         Album album = new Album();
         album.mIcon = mIcon;

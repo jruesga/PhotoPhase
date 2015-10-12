@@ -42,9 +42,9 @@ public enum TouchAction {
     /**
      * Constructor of <code>TouchAction</code>
      *
-     * @param id The unique identifier
+     * @param value The internal value
      */
-    private TouchAction(int value) {
+    TouchAction(int value) {
         mValue = value;
     }
 
@@ -63,7 +63,7 @@ public enum TouchAction {
      * @param value The value
      * @return TouchAction The reference
      */
-    public static final TouchAction fromValue(int value) {
+    public static TouchAction fromValue(int value) {
         if (value == TRANSITION.mValue) return TRANSITION;
         if (value == OPEN.mValue) return OPEN;
         if (value == SHARE.mValue) return SHARE;

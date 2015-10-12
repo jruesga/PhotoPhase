@@ -30,6 +30,7 @@
             android:layout_width="@dimen/album_size"
             android:layout_height="@dimen/album_size"
             android:scaleType="fitXY"
+            android:layout_marginEnd="@dimen/album_margin"
             android:layout_marginRight="@dimen/album_margin"
             android:contentDescription="@null"
             style="@style/PhotoPhase.Album.Thumbnail" />
@@ -37,6 +38,7 @@
         <TextView android:id="@+id/album_selected_items"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/album_thumbnail"
             android:layout_alignRight="@id/album_thumbnail"
             android:layout_alignBottom="@id/album_thumbnail"
             style="@style/PhotoPhase.Notification" />
@@ -44,6 +46,7 @@
         <ImageView android:id="@+id/overflow_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignBottom="@id/album_thumbnail"
             android:layout_gravity="top"
@@ -54,10 +57,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toEndOf="@id/album_thumbnail"
             android:layout_toRightOf="@id/album_thumbnail"
             android:layout_alignTop="@id/album_thumbnail"
             android:layout_alignBottom="@id/album_thumbnail"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:orientation="vertical"
             style="@style/PhotoPhase.Album.Info">
 

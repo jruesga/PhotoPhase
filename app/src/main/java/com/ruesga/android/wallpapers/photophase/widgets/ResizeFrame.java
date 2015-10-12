@@ -64,7 +64,6 @@ public class ResizeFrame extends RelativeLayout {
         /**
          * Called when the resize was cancelled
          *
-         * @param mode The resize mode (left, right, top, bottom)
          * @see Gravity
          */
         void onCancel();

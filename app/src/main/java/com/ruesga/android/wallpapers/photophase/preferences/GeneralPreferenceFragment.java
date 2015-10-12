@@ -44,20 +44,17 @@ import java.util.Set;
  */
 public class GeneralPreferenceFragment extends PreferenceFragment {
 
-    private static final String TAG = "GeneralPreferenceFragment";
+    private static final String TAG = "GeneralPrefFragment";
 
     private static final boolean DEBUG = false;
 
-    private SeekBarProgressPreference mWallpaperDim;
-    private ColorPickerPreference mBackgroundColor;
     private ListPreference mTouchActions;
-    private CheckBoxPreference mFixAspectRatio;
     private MultiSelectListPreference mTransitionsTypes;
-    SeekBarProgressPreference mTransitionsInterval;
+    private SeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
 
-    boolean mRedrawFlag;
-    boolean mEmptyTextureQueueFlag;
+    private boolean mRedrawFlag;
+    private boolean mEmptyTextureQueueFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
         @Override
@@ -69,8 +66,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_background_color") == 0) {
                 mRedrawFlag = true;
-                int color = ((Integer)newValue).intValue();
-                Colors.setBackground(new GLColor(color));
+                Colors.setBackground(new GLColor((Integer) newValue));
             } else if (key.compareTo("ui_fix_aspect_ratio") == 0) {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
@@ -135,22 +131,25 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         // Add the preferences
         addPreferencesFromResource(R.xml.preferences_general);
 
-        mWallpaperDim = (SeekBarProgressPreference)findPreference("ui_wallpaper_dim");
-        mWallpaperDim.setFormat(formatDim);
-        mWallpaperDim.setOnPreferenceChangeListener(mOnChangeListener);
+        SeekBarProgressPreference wallpaperDim =
+                (SeekBarProgressPreference) findPreference("ui_wallpaper_dim");
+        wallpaperDim.setFormat(formatDim);
+        wallpaperDim.setOnPreferenceChangeListener(mOnChangeListener);
         // A excessive dim will just display a black screen. Restrict the max value to
         // a proper translucent value
-        mWallpaperDim.setMax(70);
+        wallpaperDim.setMax(70);
 
-        mBackgroundColor = (ColorPickerPreference)findPreference("ui_background_color");
-        mBackgroundColor.setOnPreferenceChangeListener(mOnChangeListener);
+        ColorPickerPreference backgroundColor =
+                (ColorPickerPreference) findPreference("ui_background_color");
+        backgroundColor.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTouchActions = (ListPreference)findPreference("ui_touch_action");
         mTouchActions.setOnPreferenceChangeListener(mOnChangeListener);
         updateTouchActionSummary(mTouchActions.getValue());
 
-        mFixAspectRatio = (CheckBoxPreference)findPreference("ui_fix_aspect_ratio");
-        mFixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
+        CheckBoxPreference fixAspectRatio =
+                (CheckBoxPreference) findPreference("ui_fix_aspect_ratio");
+        fixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
@@ -208,15 +207,15 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private void updateTransitionTypeSummary(Set<String> selected) {
         CharSequence summary = getString(R.string.pref_general_transitions_types_summary_format,
-                Integer.valueOf(selected.size()),
-                Integer.valueOf(mTransitionsTypes.getEntries().length));
+                selected.size(),
+                mTransitionsTypes.getEntries().length);
         mTransitionsTypes.setSummary(summary);
     }
 
     private void updateEffectTypeSummary(Set<String> selected) {
         CharSequence summary = getString(R.string.pref_general_effects_types_summary_format,
-                Integer.valueOf(selected.size()),
-                Integer.valueOf(mEffectsTypes.getEntries().length));
+                selected.size(),
+                mEffectsTypes.getEntries().length);
         mEffectsTypes.setSummary(summary);
     }
 }

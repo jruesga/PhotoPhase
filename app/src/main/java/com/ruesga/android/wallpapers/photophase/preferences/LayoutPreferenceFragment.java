@@ -37,17 +37,16 @@ import com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPrefe
  */
 public class LayoutPreferenceFragment extends PreferenceFragment {
 
-    private static final String TAG = "LayoutPreferenceFragment";
+    private static final String TAG = "LayoutPrefFragment";
 
     private static final boolean DEBUG = false;
 
-    private CheckBoxPreference mRandomDispositions;
-    SeekBarProgressPreference mRandomDispositionsInterval;
-    Preference mPortraitDisposition;
-    Preference mLandscapeDisposition;
+    private SeekBarProgressPreference mRandomDispositionsInterval;
+    private Preference mPortraitDisposition;
+    private Preference mLandscapeDisposition;
 
-    boolean mRedrawFlag;
-    boolean mDispositionIntervalFlag;
+    private boolean mRedrawFlag;
+    private boolean mDispositionIntervalFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
         @Override
@@ -55,7 +54,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
             String key = preference.getKey();
             if (DEBUG) Log.d(TAG, "Preference changed: " + key + "=" + newValue);
             if (key.compareTo("ui_disposition_random") == 0) {
-                boolean randomDispositions = ((Boolean)newValue).booleanValue();
+                boolean randomDispositions = (Boolean) newValue;
                 mPortraitDisposition.setEnabled(!randomDispositions);
                 mLandscapeDisposition.setEnabled(!randomDispositions);
                 mRedrawFlag = true;
@@ -112,8 +111,9 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences_layout);
 
         // -- Random dispositions
-        mRandomDispositions = (CheckBoxPreference)findPreference("ui_disposition_random");
-        mRandomDispositions.setOnPreferenceChangeListener(mOnChangeListener);
+        CheckBoxPreference randomDispositions =
+                (CheckBoxPreference) findPreference("ui_disposition_random");
+        randomDispositions.setOnPreferenceChangeListener(mOnChangeListener);
 
         // -- Interval
         final int[] randomDispositionsIntervals =
@@ -179,8 +179,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     private void updateArrangementSummary(Preference pref, int count, int orientationLabelResId) {
         String orientation = getString(orientationLabelResId);
         String summary = getResources().getQuantityString(
-                R.plurals.pref_disposition_summary_format, count, Integer.valueOf(count),
-                orientation);
+                R.plurals.pref_disposition_summary_format, count, count, orientation);
         pref.setSummary(summary);
     }
 }

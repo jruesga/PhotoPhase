@@ -104,14 +104,8 @@ public final class PreferencesProvider {
 
     private static Map<String, ?> mPreferences = new HashMap<String, Object>();
 
-    /**
-     * @hide
-     */
-    static int[] TRANSITIONS_INTERVALS;
-    /**
-     * @hide
-     */
-    static int[] RANDOM_DISPOSITIONS_INTERVALS;
+    private static int[] TRANSITIONS_INTERVALS;
+    private static int[] RANDOM_DISPOSITIONS_INTERVALS;
 
     /**
      * Method that loads the all the preferences of the application
@@ -136,7 +130,7 @@ public final class PreferencesProvider {
      * @param def The default value
      * @return int The integer property value
      */
-    static int getInt(String key, int def) {
+    private static int getInt(String key, int def) {
         return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Integer ?
                 (Integer) mPreferences.get(key) : def;
     }
@@ -148,7 +142,7 @@ public final class PreferencesProvider {
      * @param def The default value
      * @return long The long property value
      */
-    static long getLong(String key, long def) {
+    private static long getLong(String key, long def) {
         return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Long ?
                 (Long) mPreferences.get(key) : def;
     }
@@ -160,7 +154,7 @@ public final class PreferencesProvider {
      * @param def The default value
      * @return boolean The boolean property value
      */
-    static boolean getBoolean(String key, boolean def) {
+    private static boolean getBoolean(String key, boolean def) {
         return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Boolean ?
                 (Boolean) mPreferences.get(key) : def;
     }
@@ -172,7 +166,7 @@ public final class PreferencesProvider {
      * @param def The default value
      * @return String The string property value
      */
-    static String getString(String key, String def) {
+    private static String getString(String key, String def) {
         return mPreferences.containsKey(key) && mPreferences.get(key) instanceof String ?
                 (String) mPreferences.get(key) : def;
     }
@@ -185,7 +179,7 @@ public final class PreferencesProvider {
      * @return Set<String> The string property value
      */
     @SuppressWarnings("unchecked")
-    static Set<String> getStringSet(String key, Set<String> def) {
+    private static Set<String> getStringSet(String key, Set<String> def) {
         return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Set<?> ?
                 (Set<String>) mPreferences.get(key) : def;
     }
@@ -358,7 +352,7 @@ public final class PreferencesProvider {
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
                editor.putStringSet("media_selected_media", selection);
-               editor.commit();
+               editor.apply();
                reload(context);
            }
 
@@ -393,7 +387,7 @@ public final class PreferencesProvider {
                // FIXME Typo. Remove when version 1005 is obsolete and unused
                editor.remove("media_last_disvored_albums");
                editor.putStringSet("media_last_discovered_albums", albums);
-               editor.commit();
+               editor.apply();
                reload(context);
            }
         }
@@ -486,7 +480,7 @@ public final class PreferencesProvider {
                 Editor editor = preferences.edit();
                 editor.putString("ui_layout_portrait_disposition",
                                     DispositionUtil.fromDispositions(dispositions));
-                editor.commit();
+                editor.apply();
                 reload(context);
             }
 
@@ -515,7 +509,7 @@ public final class PreferencesProvider {
                 Editor editor = preferences.edit();
                 editor.putString("ui_layout_landscape_disposition",
                             DispositionUtil.fromDispositions(dispositions));
-                editor.commit();
+                editor.apply();
                 reload(context);
             }
         }

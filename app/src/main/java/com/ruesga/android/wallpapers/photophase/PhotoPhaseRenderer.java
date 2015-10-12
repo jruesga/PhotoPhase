@@ -185,7 +185,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         @Override
         public void run() {
             // Restart the wallpaper
-            AndroidHelper.restartWallpaper(mContext);
+            AndroidHelper.restartWallpaper();
         }
     };
 
@@ -232,9 +232,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (getClass() != obj.getClass())
             return false;
         PhotoPhaseRenderer other = (PhotoPhaseRenderer) obj;
-        if (mInstance != other.mInstance)
-            return false;
-        return true;
+        return mInstance == other.mInstance;
     }
 
     /**
@@ -332,9 +330,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (mWorld != null) {
             // Do user action
             TouchAction touchAction = Preferences.General.getTouchAction();
-            if (touchAction.compareTo(TouchAction.NONE) == 0) {
-                //Ignore
-            } else {
+            if (touchAction.compareTo(TouchAction.NONE) != 0) {
                 // Avoid to handle multiple touchs
                 long touchTime = System.currentTimeMillis();
                 long diff = touchTime - mLastTouchTime;
@@ -469,7 +465,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mMediaScanIntent = PendingIntent.getBroadcast(
                 mContext, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        long milliseconds = Preferences.Media.getRefreshFrecuency() * 1000L;
+        long milliseconds = interval * 1000L;
         long nextTime = System.currentTimeMillis() + milliseconds;
         mAlarmManager.set(AlarmManager.RTC, nextTime, mMediaScanIntent);
     }
@@ -668,8 +664,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         Rect dimensions = Utils.isTablet(mContext)
                              ? new Rect(0, 0, width / 2, height / 2)
                              : new Rect(0, 0, width / 4, height / 4);
-        Rect screenDimensions = new Rect(0, AndroidHelper.isKitKat() ? 0 : mStatusBarHeight,
-                width, AndroidHelper.isKitKat() ? height + mStatusBarHeight : height);
+        Rect screenDimensions = new Rect(0, AndroidHelper.isKitKatOrGreater() ? 0 : mStatusBarHeight,
+                width, AndroidHelper.isKitKatOrGreater() ? height + mStatusBarHeight : height);
         mTextureManager.setDimensions(dimensions);
         mTextureManager.setScreenDimesions(screenDimensions);
         mTextureManager.setPause(false);
@@ -693,8 +689,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mOopsShape = new OopsShape(mContext, R.string.no_pictures_oops_msg);
 
         // Set the viewport and the fustrum
-        GLES20.glViewport(0, AndroidHelper.isKitKat() ? 0 : -mStatusBarHeight, mWidth,
-                AndroidHelper.isKitKat() ? mHeight + mStatusBarHeight : mHeight);
+        GLES20.glViewport(0, AndroidHelper.isKitKatOrGreater() ? 0 : -mStatusBarHeight, mWidth,
+                AndroidHelper.isKitKatOrGreater() ? mHeight + mStatusBarHeight : mHeight);
         GLESUtil.glesCheckError("glViewport");
         Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
 

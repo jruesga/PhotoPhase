@@ -17,44 +17,16 @@
 package com.ruesga.android.wallpapers.photophase;
 
 import android.app.Activity;
-import android.app.WallpaperManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Process;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
-import android.view.ViewConfiguration;
 
 /**
  * A helper class with useful methods for deal with android.
  */
 public final class AndroidHelper {
-
-    /**
-     * Method that returns if the device is a tablet
-     *
-     * @param ctx The current context
-     * @return boolean If device is a table
-     */
-    public static boolean isTablet(Context ctx) {
-        Configuration configuration = ctx.getResources().getConfiguration();
-        return (configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)
-                    >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-    }
-
-    /**
-    * Method that returns if an option menu has to be displayed
-    *
-    * @param ctx The current context
-    * @return boolean If an option menu has to be displayed
-    */
-    public static boolean showOptionsMenu(Context ctx) {
-        // Show overflow button?
-        return !ViewConfiguration.get(ctx).hasPermanentMenuKey();
-    }
 
     /**
      * This method converts dp unit to equivalent device specific value in pixels.
@@ -70,24 +42,11 @@ public final class AndroidHelper {
     }
 
     /**
-     * This method converts device specific pixels to device independent pixels.
-     *
-     * @param ctx The current context
-     * @param px A value in px (pixels) unit
-     * @return A float value to represent dp equivalent to px value
-     */
-    public static float convertPixelsToDp(Context ctx, float px) {
-        Resources resources = ctx.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        return px / (metrics.densityDpi / 160f);
-    }
-
-    /**
      * Method that returns if the device is running kitkat or greater
      *
      * @return boolean true if is running kitkat or greater
      */
-    public static final boolean isKitKat() {
+    public static boolean isKitKatOrGreater() {
         return android.os.Build.VERSION.SDK_INT >= 19;
     }
 
@@ -97,16 +56,18 @@ public final class AndroidHelper {
      * @param context The current context
      * @return The height of the status bar
      */
+
     public static int calculateStatusBarHeight(Context context) {
         // CyanogenMod specific featured (DO NOT RELAY IN INTERNAL VARS)
-        boolean hiddenStatusBar =
-                Settings.System.getInt(context.getContentResolver(), "expanded_desktop_state", 0) == 1 &&
-                Settings.System.getInt(context.getContentResolver(), "expanded_desktop_style", 0) == 2;
-        int result = 0;
+        boolean hiddenStatusBar = Settings.System.getInt(context.getContentResolver(),
+                "expanded_desktop_state", 0) == 1 && Settings.System.getInt(
+                context.getContentResolver(), "expanded_desktop_style", 0) == 2;
 
         // On kitkat we can use the translucent bars to fill all the screen
-        if (!isKitKat() && !hiddenStatusBar && !(context instanceof Activity)) {
-            int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int result = 0;
+        if (!isKitKatOrGreater() && !hiddenStatusBar && !(context instanceof Activity)) {
+            int resourceId = context.getResources().getIdentifier(
+                    "status_bar_height", "dimen", "android");
             if (resourceId > 0) {
                 result = context.getResources().getDimensionPixelSize(resourceId);
             }
@@ -116,15 +77,10 @@ public final class AndroidHelper {
 
     /**
      * Method that restart the wallpaper
-     *
-     * @param ctx The current context
      */
-    public static void restartWallpaper(Context ctx) {
+    public static void restartWallpaper() {
         // Restart the service
         Process.killProcess(Process.myPid());
-        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-        intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                new ComponentName(ctx, PhotoPhaseWallpaper.class));
-        ctx.startActivity(intent);
     }
+
 }

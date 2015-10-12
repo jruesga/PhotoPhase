@@ -83,7 +83,7 @@ public class AlbumInfoView extends RelativeLayout
 
     private class OnPictureLoaded extends AsyncPictureLoaderTask.OnPictureLoaded {
         public OnPictureLoaded(Album album) {
-            super(new Object[]{album});
+            super(album);
         }
 
         @Override
@@ -220,7 +220,7 @@ public class AlbumInfoView extends RelativeLayout
      *
      * @param popup The popup menu
      */
-    public void onPreparePopupMenu(Menu popup) {
+    private void onPreparePopupMenu(Menu popup) {
         if (isSelected()) {
             popup.findItem(R.id.mnu_select_album).setVisible(false);
         } else {
@@ -265,7 +265,7 @@ public class AlbumInfoView extends RelativeLayout
      *
      * @param selected whether the album is selected
      */
-    public void doSelection(boolean selected) {
+    private void doSelection(boolean selected) {
         setSelected(selected);
         mAlbum.setSelected(selected);
         mAlbum.setSelectedItems(new ArrayList<String>());

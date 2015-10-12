@@ -61,6 +61,9 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     private final ImageView mView;
     private final OnPictureLoaded mCallback;
 
+    private int mWidth;
+    private int mHeight;
+
     /**
      * Constructor of <code>AsyncPictureLoaderTask</code>
      *
@@ -83,6 +86,8 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
         mContext = context;
         mView = v;
         mCallback = callback;
+        mWidth = mView.getMeasuredWidth();
+        mHeight = mView.getMeasuredHeight();
     }
 
     /**
@@ -90,9 +95,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      */
     @Override
     protected Drawable doInBackground(File... params) {
-        int width = mView.getMeasuredWidth();
-        int height = mView.getMeasuredHeight();
-        Bitmap bitmap = BitmapUtils.decodeBitmap(params[0], width, height);
+        Bitmap bitmap = BitmapUtils.decodeBitmap(params[0], mWidth, mHeight);
         if (bitmap != null) {
             Drawable dw = new BitmapDrawable(mContext.getResources(), bitmap);
             if (mCallback != null) {

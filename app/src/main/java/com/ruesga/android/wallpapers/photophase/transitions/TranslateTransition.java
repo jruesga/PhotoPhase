@@ -145,11 +145,8 @@ public class TranslateTransition extends Transition {
     @Override
     public boolean isSelectable(PhotoFrame frame) {
         float[] vertex = frame.getFrameVertex();
-        if (vertex[4] == -1.0f || vertex[6] == 1.0f ||
-            vertex[5] == 1.0f || vertex[1] == -1.0f) {
-            return true;
-        }
-        return false;
+        return vertex[4] == -1.0f || vertex[6] == 1.0f ||
+                vertex[5] == 1.0f || vertex[1] == -1.0f;
     }
 
     /**

@@ -144,9 +144,7 @@ public final class GLESUtil {
                 return false;
             if (Float.floatToIntBits(g) != Float.floatToIntBits(other.g))
                 return false;
-            if (Float.floatToIntBits(r) != Float.floatToIntBits(other.r))
-                return false;
-            return true;
+            return Float.floatToIntBits(r) == Float.floatToIntBits(other.r);
         }
 
         /**
@@ -186,7 +184,7 @@ public final class GLESUtil {
      * @param src The source shader
      * @return int The handler identifier of the shader
      */
-    public static int loadVertexShader(String src) {
+    private static int loadVertexShader(String src) {
         return loadShader(src, GLES20.GL_VERTEX_SHADER);
     }
 
@@ -196,7 +194,7 @@ public final class GLESUtil {
      * @param src The source shader
      * @return int The handler identifier of the shader
      */
-    public static int loadFragmentShader(String src) {
+    private static int loadFragmentShader(String src) {
         return loadShader(src, GLES20.GL_FRAGMENT_SHADER);
     }
 
@@ -390,8 +388,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen);
-            return ti;
+            return loadTexture(bitmap, effect, dimen);
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from resource: " + resourceId;

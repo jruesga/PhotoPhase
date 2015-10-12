@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class PhotoPhaseWallpaperWorld {
 
-    private static final String TAG = "PhotoPhaseWallpaperWorld";
+    private static final String TAG = "PhotoPhaseWPWorld";
 
     private static final boolean DEBUG = false;
 

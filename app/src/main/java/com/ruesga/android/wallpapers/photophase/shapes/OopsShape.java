@@ -77,8 +77,6 @@ public class OopsShape implements DrawableShape {
     private int[] mTextureCoordHandlers;
     private int[] mMVPMatrixHandlers;
 
-    private String mMessage;
-
     private GLESTextureInfo mOopsImageTexture;
     private GLESTextureInfo mOopsTextTexture;
 
@@ -139,19 +137,15 @@ public class OopsShape implements DrawableShape {
             GLESUtil.glesCheckError("glGetUniformLocation");
         }
 
-        // Get the localized message
-        mMessage = ctx.getString(resourceMessageId);
-
         // Load the textures
         mOopsImageTexture = GLESUtil.loadTexture(ctx, R.drawable.bg_oops, null, null, false);
-        Bitmap textBitmap = text2Bitmap(ctx, mMessage);
+        Bitmap textBitmap = text2Bitmap(ctx.getString(resourceMessageId));
         mOopsTextTexture = GLESUtil.loadTexture(textBitmap, null, null);
 
         // Recycle
         mOopsImageTexture.bitmap.recycle();
         mOopsImageTexture.bitmap = null;
         textBitmap.recycle();
-        textBitmap = null;
         mOopsTextTexture.bitmap.recycle();
         mOopsTextTexture.bitmap = null;
     }
@@ -290,11 +284,10 @@ public class OopsShape implements DrawableShape {
     /**
      * Method that converts a text to a bitmap
      *
-     * @param ctx The current context
      * @param text The text to draw to the bitmap
      * @return Bitmap The bitmap with the text
      */
-    public Bitmap text2Bitmap(Context ctx, String text) {
+    public Bitmap text2Bitmap(String text) {
         Paint paint = new Paint();
         paint.setTypeface(sFont);
         paint.setColor(Color.WHITE);
@@ -304,7 +297,7 @@ public class OopsShape implements DrawableShape {
         Bitmap src = mOopsImageTexture.bitmap;
         Bitmap image = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
-        canvas.drawText(text, src.getWidth()/2, src.getHeight() - (src.getHeight() * 0.33f), paint);
+        canvas.drawText(text, src.getWidth() /2, src.getHeight() - (src.getHeight() * 0.33f), paint);
         return image;
     }
 }

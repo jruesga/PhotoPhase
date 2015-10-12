@@ -17,6 +17,7 @@
 package com.ruesga.android.wallpapers.photophase;
 
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -62,7 +63,7 @@ public class PhotoPhaseWallpaper
 
         // Load the configuration
         mPreserveEGLContext = getResources().getBoolean(R.bool.config_preserve_egl_context);
-        mRenderers = new ArrayList<PhotoPhaseRenderer>();
+        mRenderers = new ArrayList<>();
 
         // Instance the application
         PreferencesProvider.reload(this);
@@ -137,12 +138,14 @@ public class PhotoPhaseWallpaper
             if (action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
                 mHandler.postDelayed(new Runnable() {
                     @Override
+                    @SuppressWarnings("deprecation")
                     public void run() {
                         // Only if the wallpaper is visible after a long press and
                         // not in preview mode
                         if (isVisible() && !isPreview()) {
-                            List<ActivityManager.RunningTaskInfo> taskInfo =
-                                                    mActivityManager.getRunningTasks(1);
+                            // This is still valid, because we need the HOME task which is still
+                            // part of the list after LOLLIPOP, and valid prior to this api
+                            List<RunningTaskInfo> taskInfo = mActivityManager.getRunningTasks(1);
                             String topActivity = taskInfo.get(0).topActivity.getClassName();
                             for (String activity : TOP_ACTIVITIES) {
                                 if (activity.compareTo(topActivity) == 0) {

@@ -16,6 +16,8 @@
 
 package com.ruesga.android.wallpapers.photophase.model;
 
+import android.support.annotation.NonNull;
+
 import java.io.File;
 
 /**
@@ -53,11 +55,12 @@ public class Picture implements Comparable<Picture>, Cloneable {
     }
 
     @Override
-    public int compareTo(Picture another) {
+    public int compareTo(@NonNull Picture another) {
         return mPath.compareTo(another.mPath);
     }
 
     @Override
+    @SuppressWarnings("CloneDoesntCallSuperClone")
     public Object clone() {
         return new Picture(mPath, mSelected);
     }

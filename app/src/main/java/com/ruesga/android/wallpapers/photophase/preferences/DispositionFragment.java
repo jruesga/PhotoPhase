@@ -50,6 +50,7 @@ public abstract class DispositionFragment extends PreferenceFragment
         implements OnFrameSelectedListener, OnPageChangeListener {
 
     private ViewPager mPager;
+
     private DispositionAdapter mAdapter;
     private ResizeFrame mResizeFrame;
     private TextView mAdvise;
@@ -128,6 +129,12 @@ public abstract class DispositionFragment extends PreferenceFragment
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mPager.removeOnPageChangeListener(this);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -145,9 +152,9 @@ public abstract class DispositionFragment extends PreferenceFragment
         mResizeFrame = (ResizeFrame)v.findViewById(R.id.resize_frame);
 
         mAdapter = new DispositionAdapter(getActivity(), getAllDispositions(), mResizeFrame, this);
-        mPager = (ViewPager)v.findViewById(R.id.dispositions_pager);
+        mPager = (ViewPager) v.findViewById(R.id.dispositions_pager);
         mPager.setAdapter(mAdapter);
-        mPager.setOnPageChangeListener(this);
+        mPager.addOnPageChangeListener(this);
         mPager.setCurrentItem(0);
 
         return v;

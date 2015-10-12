@@ -50,7 +50,7 @@ public class Utils {
      * @param context The {@link Context} to use.
      * @return True if the device is a tablet, false otherwise.
      */
-    public static final boolean isTablet(final Context context) {
+    public static boolean isTablet(final Context context) {
         final int layout = context.getResources().getConfiguration().screenLayout;
         return (layout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }

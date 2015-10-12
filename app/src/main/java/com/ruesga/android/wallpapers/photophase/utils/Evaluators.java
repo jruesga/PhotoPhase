@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ruesga.android.wallpapers.photophase.animations;
+package com.ruesga.android.wallpapers.photophase.utils;
 
 import android.animation.IntEvaluator;
 import android.view.View;

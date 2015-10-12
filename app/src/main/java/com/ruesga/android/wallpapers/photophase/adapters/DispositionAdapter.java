@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class DispositionAdapter extends PagerAdapter {
 
-    final List<Dispositions> mDispositions;
+    private final List<Dispositions> mDispositions;
     private final ResizeFrame mResizeFrame;
     private final OnFrameSelectedListener mCallback;
 
@@ -45,7 +45,7 @@ public class DispositionAdapter extends PagerAdapter {
 
     private LayoutInflater mInflater;
 
-    boolean mFirstAnimation;
+    private boolean mFirstAnimation;
 
     /**
      * Constructor of <code>DispositionAdapter</code>.
@@ -80,7 +80,7 @@ public class DispositionAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         final DispositionView view = (DispositionView)mInflater.inflate(
-                R.layout.disposition_view, null);
+                R.layout.disposition_view, null, false);
         if (position == 0) {
             view.setResizeFrame(mResizeFrame);
             view.setOnFrameSelectedListener(mCallback);
@@ -93,7 +93,7 @@ public class DispositionAdapter extends PagerAdapter {
                 mFirstAnimation = false;
             }
         });
-        ((ViewPager)container).addView(view, 0);
+        container.addView(view, 0);
         mCurrentViews.put(position, view);
         return view;
     }
@@ -104,7 +104,7 @@ public class DispositionAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         mCurrentViews.remove(position);
-        ((ViewPager)container).removeView((View)object);
+        container.removeView((View) object);
     }
 
     /**
@@ -122,7 +122,7 @@ public class DispositionAdapter extends PagerAdapter {
      */
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((View)object) || view == mResizeFrame;
+        return view == object || view == mResizeFrame;
     }
 
 }

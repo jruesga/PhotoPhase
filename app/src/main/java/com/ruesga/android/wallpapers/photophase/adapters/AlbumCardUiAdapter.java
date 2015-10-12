@@ -66,7 +66,7 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
      */
     public AlbumCardUiAdapter(Context context, AdapterView<?> parent, List<Album> data,
             AlbumInfoView.CallbacksListener callback) {
-        super(context, R.id.album_name, data);
+        super(context, R.layout.album_info, R.id.album_name, data);
         mData = data;
         mAlbumInfoCallback = callback;
     }

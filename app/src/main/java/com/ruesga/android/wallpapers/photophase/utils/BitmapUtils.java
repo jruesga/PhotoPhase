@@ -53,6 +53,7 @@ public class BitmapUtils {
      * @param reqHeight The request height
      * @return Bitmap The decoded bitmap
      */
+    @SuppressWarnings("deprecation")
     public static Bitmap decodeBitmap(File file, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -70,6 +71,7 @@ public class BitmapUtils {
         // Decode the bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         options.inPreferQualityOverSpeed = false;
+        // Deprecated, but still valids for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);

@@ -71,9 +71,7 @@ public class Disposition implements Comparable<Disposition> {
             return false;
         if (x != other.x)
             return false;
-        if (y != other.y)
-            return false;
-        return true;
+        return y == other.y;
     }
 
     /**

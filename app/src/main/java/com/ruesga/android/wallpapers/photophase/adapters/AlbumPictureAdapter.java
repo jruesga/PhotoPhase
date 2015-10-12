@@ -56,7 +56,7 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
      * @param data The pictures data
      */
     public AlbumPictureAdapter(Context context, List<Picture> data, AdapterView<?> parent) {
-        super(context, R.id.picture_thumbnail, data);
+        super(context, R.layout.picture_item, R.id.picture_thumbnail, data);
         mData = data;
         mParent = parent;
     }

@@ -241,7 +241,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
     };
 
-    OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+    private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mShowingAlbums) {
@@ -254,40 +254,40 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
     private static final int MSG_LOAD_PICTURES = 1;
 
-    List<Album> mAlbums;
-    List<Album> mOriginalAlbums;
+    private List<Album> mAlbums;
+    private List<Album> mOriginalAlbums;
 
-    Set<String> mSelectedAlbums;
+    private Set<String> mSelectedAlbums;
     private Set<String> mOriginalSelectedAlbums;
 
-    ViewGroup mContainer;
+    private ViewGroup mContainer;
 
-    ListView mAlbumsPanel;
-    AlbumCardUiAdapter mAlbumAdapter;
+    private ListView mAlbumsPanel;
+    private AlbumCardUiAdapter mAlbumAdapter;
 
-    GridView mPicturesPanel;
-    AlbumPictureAdapter mPictureAdapter;
+    private GridView mPicturesPanel;
+    private AlbumPictureAdapter mPictureAdapter;
 
     private boolean mSelectionChanged;
 
     // Animation references
-    ViewGroup mSrcParent;
-    View mSrcView;
-    ViewGroup mDstParent;
-    View mDstView;
+    private ViewGroup mSrcParent;
+    private View mSrcView;
+    private ViewGroup mDstParent;
+    private View mDstView;
 
-    Album mAlbum;
+    private Album mAlbum;
 
     private int mPicturesAnimDurationIn;
     private int mPicturesAnimDurationOut;
 
-    Handler mHandler;
-    LayoutInflater mInflater;
+    private Handler mHandler;
+    private LayoutInflater mInflater;
 
-    boolean mShowingAlbums;
+    private boolean mShowingAlbums;
 
-    MenuItem mRestoreMenuItem;
-    MenuItem mInvertMenuItem;
+    private MenuItem mRestoreMenuItem;
+    private MenuItem mInvertMenuItem;
 
     /**
      * {@inheritDoc}
@@ -356,7 +356,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      *
      * @param view The root view
      */
-    void unbindDrawables(View view) {
+    private void unbindDrawables(View view) {
         if (view.getBackground() != null) {
             view.getBackground().setCallback(null);
         }
@@ -681,7 +681,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param dstParent The destination parent view
      * @param dstView The destination view
      */
-    void showAlbumPictures(final ViewGroup srcParent, final View srcView,
+    private void showAlbumPictures(final ViewGroup srcParent, final View srcView,
             final ViewGroup dstParent, final View dstView) {
 
         // Hide the source view
@@ -746,7 +746,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param dstParent The destination parent view
      * @param dstView The destination view
      */
-    void hideAlbumPictures(final ViewGroup srcParent, final View srcView,
+    private void hideAlbumPictures(final ViewGroup srcParent, final View srcView,
             final ViewGroup dstParent, final View dstView) {
 
         mPicturesPanel.setVisibility(View.INVISIBLE);
@@ -802,7 +802,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param v The header view
      * @param album The album data
      */
-    void updateAlbumInfo(View v, Album album) {
+    private void updateAlbumInfo(View v, Album album) {
         final Resources res = getResources();
 
         AlbumInfoView info = (AlbumInfoView)v.findViewById(R.id.album_info);
@@ -835,7 +835,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      *
      * @param album
      */
-    void loadPictures(Album album) {
+    private void loadPictures(Album album) {
         List<Picture> items = album.getItems();
 
         // Calculate the grid dimensions
@@ -864,16 +864,16 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param view The header view
      * @param position The position
      */
-    void onHeaderPressed(AdapterView<?> parent, View view, int position) {
+    private void onHeaderPressed(AdapterView<?> parent, View view, int position) {
         mAlbum = mAlbumAdapter.getItem(position);
 
         // Header view
-        View header = mInflater.inflate(R.layout.album_info, null);
+        View header = mInflater.inflate(R.layout.album_info, null, false);
         header.setTranslationY(view.getY() + parent.getPaddingTop());
         header.setLayoutParams(new ViewGroup.LayoutParams(view.getWidth(), view.getHeight()));
 
         // Pictures view
-        mPicturesPanel = (GridView) mInflater.inflate(R.layout.pictures_view, null);
+        mPicturesPanel = (GridView) mInflater.inflate(R.layout.pictures_view, null, false);
         if (!mPicturesPanel.isHardwareAccelerated()) {
             mPicturesPanel.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
@@ -901,7 +901,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      *
      * @param view The picture view
      */
-    void onPicturePressed(View view) {
+    private void onPicturePressed(View view) {
         PictureItemView pictureView = (PictureItemView)view.findViewById(R.id.picture);
         if (pictureView != null) {
             Picture picture = pictureView.getPicture();

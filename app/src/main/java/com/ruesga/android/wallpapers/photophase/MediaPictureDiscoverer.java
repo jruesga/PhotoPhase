@@ -108,7 +108,7 @@ public class MediaPictureDiscoverer {
         protected List<File> doInBackground(Void...params) {
             try {
                 // Start progress
-                publishProgress(new File[]{});
+                publishProgress();
 
                 // The columns to read
                 final String[] projection = {MediaStore.MediaColumns.DATA};
@@ -264,7 +264,7 @@ public class MediaPictureDiscoverer {
         }
     }
 
-    final Context mContext;
+    private final Context mContext;
     private final OnMediaPictureDiscoveredListener mCallback;
 
     private AsyncDiscoverTask mTask;

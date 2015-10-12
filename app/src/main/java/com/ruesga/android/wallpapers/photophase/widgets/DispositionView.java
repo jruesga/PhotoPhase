@@ -24,6 +24,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Vibrator;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -37,10 +38,10 @@ import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.animations.Evaluators;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.model.Dispositions;
 import com.ruesga.android.wallpapers.photophase.utils.DispositionUtil;
+import com.ruesga.android.wallpapers.photophase.utils.Evaluators;
 import com.ruesga.android.wallpapers.photophase.utils.MERAlgorithm;
 import com.ruesga.android.wallpapers.photophase.widgets.ResizeFrame.OnResizeListener;
 
@@ -74,7 +75,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     private int mCols;
     private int mRows;
 
-    View mTarget;
+    private View mTarget;
     private ResizeFrame mResizeFrame;
     private int mInternalPadding;
     private Rect mOldResizeFrameLocation;
@@ -234,11 +235,11 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
             return;
         }
 
-        // Hide resizer
+        // Hide resize rubber
         mResizeFrame.setVisibility(View.GONE);
 
-        // Animate adjacents views
-        List<Animator> animators = new ArrayList<Animator>();
+        // Animate adjacent views
+        List<Animator> animators = new ArrayList<>();
         animators.add(ObjectAnimator.ofFloat(mTarget, "scaleX", 1.0f, 0.0f));
         animators.add(ObjectAnimator.ofFloat(mTarget, "scaleY", 1.0f, 0.0f));
 
@@ -338,7 +339,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      *
      * @param target The disposition target
      */
-    void finishDeleteAnimation(Disposition target) {
+    private void finishDeleteAnimation(Disposition target) {
         removeView(mTarget);
         mDispositions.remove(target);
         Collections.sort(mDispositions);
@@ -365,10 +366,9 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         v.setScaleType(ScaleType.CENTER);
 
         // Is locked? Then change the background color
-        v.setBackgroundColor(getResources().getColor(
-                mResizeFrame == null
-                        ? R.color.disposition_locked_frame_bg_color
-                        : R.color.disposition_frame_bg_color));
+        v.setBackgroundColor(ContextCompat.getColor(getContext(), mResizeFrame == null
+                ? R.color.disposition_locked_frame_bg_color
+                : R.color.disposition_frame_bg_color));
 
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(r.width() - padding, r.height() - padding);
@@ -379,7 +379,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
         // Animate the view
         if (animate) {
-            List<Animator> animators = new ArrayList<Animator>();
+            List<Animator> animators = new ArrayList<>();
             animators.add(ObjectAnimator.ofFloat(v, "scaleX", 0.0f, 1.0f));
             animators.add(ObjectAnimator.ofFloat(v, "scaleY", 0.0f, 1.0f));
             animators.add(ObjectAnimator.ofFloat(v, "alpha", 0.0f, 1.0f));
@@ -450,7 +450,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         FrameLayout.LayoutParams params =
                 (FrameLayout.LayoutParams)mResizeFrame.getLayoutParams();
         switch (mode) {
-            case Gravity.LEFT:
+            case Gravity.START:
                 float newpos = mResizeFrame.getX() + delta;
                 if ((delta < 0 && newpos < (getPaddingLeft() * -1)) ||
                     (delta > 0 && newpos > (mResizeFrame.getX() + params.width - minWidth))) {
@@ -459,7 +459,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
                 mResizeFrame.setX(newpos);
                 params.width -= delta;
                 break;
-            case Gravity.RIGHT:
+            case Gravity.END:
                 if ((delta < 0 && ((params.width + delta) < minWidth)) ||
                     (delta > 0 && (mResizeFrame.getX() + delta + params.width) > (getPaddingLeft() + getMeasuredWidth()))) {
                     return;
@@ -498,9 +498,9 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         if (mResizeFrame == null) return;
 
         // Compute the removed dispositions
-        computeRemovedDispositions(mode);
+        computeRemovedDispositions();
         recreateDispositions(false);
-        computeNewDispositions(mode);
+        computeNewDispositions();
 
         // Finish resize (select the target and create the new dispositions)
         post(new Runnable() {
@@ -538,7 +538,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      *
      * @return The target view
      */
-    View findTargetFromResizeFrame() {
+    private View findTargetFromResizeFrame() {
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View v = getChildAt(i);
@@ -576,7 +576,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      *
      * @param v The target view
      */
-    boolean selectTarget(View v) {
+    private boolean selectTarget(View v) {
         //Do not do long click if we do not have a target
         if (mTarget != null && v.equals(mTarget)) return false;
         if (mResizeFrame == null) return false;
@@ -603,24 +603,22 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
     /**
      * Computes the removed layout disposition based on the actual resize frame
-     *
-     * @param mode The resize mode
      */
-    private void computeRemovedDispositions(int mode) {
-        // Transform the resizer to a dispositions object
-        Disposition resizer = resizerToDisposition();
+    private void computeRemovedDispositions() {
+        // Transform the resize rubber to a dispositions object
+        Disposition resizeRubber = resizerToDisposition();
 
         // Delete all overlapped
         int count = mDispositions.size();
         for (int i = count - 1; i >= 0; i--) {
             Disposition disposition = mDispositions.get(i);
-            if (!isVisible(disposition) || isOverlapped(resizer, disposition)) {
+            if (!isVisible(disposition) || isOverlapped(resizeRubber, disposition)) {
                 mDispositions.remove(disposition);
             }
         }
 
         // Add the new disposition
-        mDispositions.add(resizer);
+        mDispositions.add(resizeRubber);
         Collections.sort(mDispositions);
 
         mChanged = true;
@@ -628,15 +626,13 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
     /**
      * Computes the new layout disposition based on the actual resize frame
-     *
-     * @param mode The resize mode
      */
-    private void computeNewDispositions(int mode) {
+    private void computeNewDispositions() {
         // Fill the empty areas
         do {
             byte[][] dispositionMatrix = DispositionUtil.toMatrix(mDispositions, mCols, mRows);
             Rect rect = MERAlgorithm.getMaximalEmptyRectangle(dispositionMatrix);
-            if (rect.width() == 0 && rect.height() == 0) {
+            if (rect == null || rect.width() == 0 && rect.height() == 0) {
                 // No more empty areas
                 break;
             }
@@ -688,7 +684,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
         // Check left size
         if (disposition.x != 0) {
-            List<Disposition> dispositions = new ArrayList<Disposition>();
+            List<Disposition> dispositions = new ArrayList<>();
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.x + d.w) == disposition.x &&
@@ -709,7 +705,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         }
         // Check top size
         if (disposition.y != 0) {
-            List<Disposition> dispositions = new ArrayList<Disposition>();
+            List<Disposition> dispositions = new ArrayList<>();
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.y + d.h) == disposition.y &&
@@ -730,7 +726,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         }
         // Check right size
         if ((disposition.x + disposition.w) != mCols) {
-            List<Disposition> dispositions = new ArrayList<Disposition>();
+            List<Disposition> dispositions = new ArrayList<>();
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.x) == (disposition.x + disposition.w) &&
@@ -751,7 +747,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         }
         // Check bottom size
         if ((disposition.y + disposition.h) != mRows) {
-            List<Disposition> dispositions = new ArrayList<Disposition>();
+            List<Disposition> dispositions = new ArrayList<>();
             for (Disposition d : mDispositions) {
                 if (d.compareTo(disposition) != 0) {
                     if ((d.y) == (disposition.y + disposition.h) &&

@@ -26,5 +26,5 @@ public interface OnBackPressedListener {
      *
      * @return boolean If the action was handled
      */
-    public boolean onBackPressed();
+    boolean onBackPressed();
 }

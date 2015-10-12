@@ -36,7 +36,7 @@ public class FadeTransition extends NullTransition {
     private boolean mRunning;
     private long mTime;
 
-    ColorShape mOverlay;
+    private ColorShape mOverlay;
 
     /**
      * Constructor of <code>FadeTransition</code>

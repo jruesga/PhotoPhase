@@ -269,14 +269,19 @@ public abstract class PhotoPhaseEffect extends Effect {
         // Do nothing
     }
 
-
-    private final void saveGLState() {
+    /**
+     * Save GL state
+     */
+    private void saveGLState() {
         GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, mOldState, GL_STATE_FBO);
         GLES20.glGetIntegerv(GLES20.GL_CURRENT_PROGRAM, mOldState, GL_STATE_PROGRAM);
         GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, mOldState, GL_STATE_ARRAYBUFFER);
     }
 
-    private final void restoreGLState() {
+    /**
+     * Restore GL state
+     */
+    private void restoreGLState() {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mOldState[GL_STATE_FBO]);
         GLES20.glUseProgram(mOldState[GL_STATE_PROGRAM]);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mOldState[GL_STATE_ARRAYBUFFER]);
