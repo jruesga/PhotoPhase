@@ -66,7 +66,7 @@ public class OopsShape implements DrawableShape {
                                                              0.5f,  0.75f
                                                           };
 
-    private static Typeface sRobotoFont;
+    private static Typeface sFont;
 
     private FloatBuffer mPositionBuffer;
     private FloatBuffer mTextureBuffer;
@@ -91,8 +91,8 @@ public class OopsShape implements DrawableShape {
     public OopsShape(Context ctx, int resourceMessageId) {
         super();
 
-        if (sRobotoFont == null) {
-            sRobotoFont = Typeface.createFromAsset(ctx.getAssets(), "fonts/Roboto-Bold.ttf");
+        if (sFont == null) {
+            sFont = Typeface.createFromAsset(ctx.getAssets(), "fonts/NotoSans-Bold.ttf");
         }
 
         int orientation = ctx.getResources().getConfiguration().orientation;
@@ -296,7 +296,7 @@ public class OopsShape implements DrawableShape {
      */
     public Bitmap text2Bitmap(Context ctx, String text) {
         Paint paint = new Paint();
-        paint.setTypeface(sRobotoFont);
+        paint.setTypeface(sFont);
         paint.setColor(Color.WHITE);
         paint.setTextSize(24.0f);
         paint.setAntiAlias(true);
