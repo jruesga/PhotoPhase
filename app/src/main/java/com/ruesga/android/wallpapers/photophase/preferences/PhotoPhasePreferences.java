@@ -16,11 +16,11 @@
 
 package com.ruesga.android.wallpapers.photophase.preferences;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * The PhotoPhase Live Wallpaper preferences.
  */
-public class PhotoPhasePreferences extends PreferenceActivity {
+public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
 
     private OnBackPressedListener mCallback;
 
@@ -41,8 +41,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Initialize action bars
+        setContentView(R.layout.preference_activity);
         initTitleActionBar();
     }
 
@@ -50,10 +49,9 @@ public class PhotoPhasePreferences extends PreferenceActivity {
      * Method that initializes the titlebar of the activity.
      */
     private void initTitleActionBar() {
-        //Configure the action bar options
-        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
-                ActionBar.DISPLAY_SHOW_TITLE);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         mCallback = null;
     }
 
@@ -96,7 +94,7 @@ public class PhotoPhasePreferences extends PreferenceActivity {
      * {@inheritDoc}
      */
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mCallback == null || !mCallback.onBackPressed()) {
                 finish();

@@ -30,7 +30,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:description="@string/app_description"
-        android:theme="@android:style/Theme.Holo.Light"
+        android:theme="@style/PhotoPhaseTheme"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:largeHeap="true">
@@ -52,11 +52,9 @@
             android:icon="@mipmap/ic_launcher"
             android:exported="true"
             android:label="@string/app_name"
-            android:description="@string/app_description" >
+            android:description="@string/app_description">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -65,13 +63,18 @@
             android:exported="true"
             android:label="@string/app_name"
             android:description="@string/app_description">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".preferences.ChangeLogActivity"
             android:exported="false"
             android:label="@string/app_name"
-            android:theme="@style/PhotoPhase.Theme.Holo.Light.Overlay"
+            android:theme="@style/PhotoPhaseTheme.Overlay"
             android:uiOptions="none" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

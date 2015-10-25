@@ -16,10 +16,16 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="PhotoPhase">
+    <style name="PhotoPhaseTheme" parent="PhotoPhaseTheme.Base" />
+
+    <style name="PhotoPhaseTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="toolbarStyle">@style/PhotoPhaseTheme.Toolbar</item>
     </style>
 
-    <style name="PhotoPhase.Theme.Holo.Light.Overlay" parent="@android:style/Theme.Holo.Light">
+    <style name="PhotoPhaseTheme.Overlay" parent="PhotoPhaseTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/black_transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -28,25 +34,30 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="PhotoPhase.TextAppearance">
+    <style name="PhotoPhaseTheme.Toolbar" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="navigationIcon">?attr/homeAsUpIndicator</item>
+    </style>
+
+    <style name="PhotoPhaseTheme.TextAppearance">
         <item name="android:textColor">@color/text_color</item>
     </style>
 
-    <style name="PhotoPhase.TextAppearance.Primary">
+    <style name="PhotoPhaseTheme.TextAppearance.Primary">
         <item name="android:textSize">@dimen/primary_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="PhotoPhase.TextAppearance.Secondary">
+    <style name="PhotoPhaseTheme.TextAppearance.Secondary">
         <item name="android:textSize">@dimen/secondary_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="PhotoPhase.Card">
+    <style name="PhotoPhaseTheme.Card">
         <item name="android:background">@drawable/card</item>
     </style>
 
-    <style name="PhotoPhase.Notification">
+    <style name="PhotoPhaseTheme.Notification">
         <item name="android:minWidth">@dimen/notification_min_width</item>
         <item name="android:minHeight">@dimen/notification_min_height</item>
         <item name="android:padding">@dimen/notification_padding</item>
@@ -57,22 +68,22 @@
         <item name="android:textColor">@color/notification_text_color</item>
     </style>
 
-    <style name="PhotoPhase.Album" parent="@style/PhotoPhase.Card">
+    <style name="PhotoPhaseTheme.Album" parent="@style/PhotoPhaseTheme.Card">
     </style>
 
-    <style name="PhotoPhase.Album.MenuBar">
+    <style name="PhotoPhaseTheme.Album.MenuBar">
         <item name="android:background">@null</item>
     </style>
 
-    <style name="PhotoPhase.Album.MenuBar.Overflow">
+    <style name="PhotoPhaseTheme.Album.MenuBar.Overflow">
         <item name="android:src">@drawable/ic_overflow</item>
     </style>
 
-    <style name="PhotoPhase.Album.Thumbnail">
+    <style name="PhotoPhaseTheme.Album.Thumbnail">
         <item name="android:background">@color/album_thumbnail_color</item>
     </style>
 
-    <style name="PhotoPhase.Album.Info">
+    <style name="PhotoPhaseTheme.Album.Info">
         <item name="android:background">@null</item>
         <item name="android:layout_marginTop">@dimen/default_margin</item>
         <item name="android:layout_marginLeft">@dimen/small_margin</item>
@@ -80,7 +91,7 @@
         <item name="android:layout_marginBottom">@dimen/default_margin</item>
     </style>
 
-    <style name="PhotoPhase.Album.Picture">
+    <style name="PhotoPhaseTheme.Album.Picture">
         <item name="android:background">@drawable/card</item>
         <item name="android:layout_marginTop">@dimen/picture_vertical_margin</item>
         <item name="android:layout_marginBottom">@dimen/picture_vertical_margin</item>

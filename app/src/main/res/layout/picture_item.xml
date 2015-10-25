@@ -23,7 +23,7 @@
         android:id="@+id/picture"
         android:layout_width="@dimen/picture_size"
         android:layout_height="@dimen/picture_size"
-        style="@style/PhotoPhase.Album.Picture">
+        style="@style/PhotoPhaseTheme.Album.Picture">
 
         <ImageView android:id="@+id/picture_thumbnail"
             android:layout_width="match_parent"
