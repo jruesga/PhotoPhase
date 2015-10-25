@@ -22,31 +22,33 @@ import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.ruesga.android.wallpapers.photophase.R;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar.OnProgressChangeListener;
+
 /**
- * A preference with a seekbar widget
+ * A preference with a discrete seekbar widget
  */
-public class SeekBarPreference extends Preference implements OnSeekBarChangeListener {
+public class DiscreteSeekBarPreference extends Preference implements OnProgressChangeListener {
 
     private int mProgress;
     private int mMax;
     private boolean mTrackingTouch;
 
     /**
-     * Constructor of <code>SeekBarPreference</code>
+     * Constructor of <code>DiscreteSeekBarPreference</code>
      *
      * @param context The current context
      * @param attrs The attributes of the view
      * @param defStyle The resource with the style
      */
-    public SeekBarPreference(
+    public DiscreteSeekBarPreference(
             Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setMax(100);
@@ -54,21 +56,21 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
     }
 
     /**
-     * Constructor of <code>SeekBarPreference</code>
+     * Constructor of <code>DiscreteSeekBarPreference</code>
      *
      * @param context The current context
      * @param attrs The attributes of the view
      */
-    public SeekBarPreference(Context context, AttributeSet attrs) {
+    public DiscreteSeekBarPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
     /**
-     * Constructor of <code>SeekBarPreference</code>
+     * Constructor of <code>DiscreteSeekBarPreference</code>
      *
      * @param context The current context
      */
-    public SeekBarPreference(Context context) {
+    public DiscreteSeekBarPreference(Context context) {
         this(context, null);
     }
 
@@ -76,10 +78,10 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
      * {@inheritDoc}
      */
     @Override
-    protected void onBindView(View view) {
+    protected void onBindView(@NonNull View view) {
         super.onBindView(view);
-        SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
-        seekBar.setOnSeekBarChangeListener(this);
+        DiscreteSeekBar seekBar = (DiscreteSeekBar) view.findViewById(R.id.seekbar);
+        seekBar.setOnProgressChangeListener(this);
         seekBar.setMax(mMax);
         seekBar.setProgress(mProgress);
         seekBar.setEnabled(isEnabled());
@@ -113,6 +115,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
      * @param event The key event
      * @return True if the Preference handled the key. Returns false by default.
      */
+    @SuppressWarnings("unused")
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (event.getAction() != KeyEvent.ACTION_UP) {
             if (keyCode == KeyEvent.KEYCODE_PLUS
@@ -187,7 +190,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
      * returns boolean True, otherwise set the seekBar's progress to the stored value
      */
     @SuppressWarnings("boxing")
-    void syncProgress(SeekBar seekBar) {
+    void syncProgress(DiscreteSeekBar seekBar) {
         int progress = seekBar.getProgress();
         if (progress != mProgress) {
             if (callChangeListener(progress)) {
@@ -202,7 +205,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
      * {@inheritDoc}
      */
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
         if (fromUser && !mTrackingTouch) {
             syncProgress(seekBar);
         }
@@ -212,7 +215,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
      * {@inheritDoc}
      */
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
+    public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
         mTrackingTouch = true;
     }
 
@@ -220,7 +223,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
      * {@inheritDoc}
      */
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+    public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
         mTrackingTouch = false;
         if (seekBar.getProgress() != mProgress) {
             syncProgress(seekBar);
@@ -289,7 +292,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
         }
 
         @Override
-        public void writeToParcel(Parcel dest, int flags) {
+        public void writeToParcel(@NonNull Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
 
             // Save the click counter

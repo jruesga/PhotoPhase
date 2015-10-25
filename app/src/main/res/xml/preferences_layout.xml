@@ -15,9 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:photophase="http://schemas.android.com/apk/res/com.ruesga.android.wallpapers.photophase">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Disposition -->
     <PreferenceCategory
@@ -31,7 +29,7 @@
             android:summary="@string/pref_random_dispositions_summary" />
 
         <!-- Random dispositions interval -->
-        <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
             android:key="ui_disposition_random_interval"
             android:title="@string/pref_random_dispositions_interval"
             android:persistent="true"

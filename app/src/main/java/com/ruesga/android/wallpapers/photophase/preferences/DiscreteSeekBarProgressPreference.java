@@ -19,17 +19,20 @@
 package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.R;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
 /**
- * A preference with a seekbar widget that display the progress
+ * A preference with a discrete seekbar widget that display the progress
  */
-public class SeekBarProgressPreference extends SeekBarPreference {
+@SuppressWarnings("unused")
+public class DiscreteSeekBarProgressPreference extends DiscreteSeekBarPreference {
 
     /**
      * Interface to intercept the progress value to display on screen
@@ -50,34 +53,37 @@ public class SeekBarProgressPreference extends SeekBarPreference {
     TextView mTextView;
 
     /**
-     * Constructor of <code>SeekBarProgressPreference</code>
+     * Constructor of <code>DiscreteSeekBarProgressPreference</code>
      *
      * @param context The current context
      * @param attrs The attributes of the view
      * @param defStyle The resource with the style
      */
-    public SeekBarProgressPreference(Context context, AttributeSet attrs, int defStyle) {
+    @SuppressWarnings("unused")
+    public DiscreteSeekBarProgressPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
     /**
-     * Constructor of <code>SeekBarProgressPreference</code>
+     * Constructor of <code>DiscreteSeekBarProgressPreference</code>
      *
      * @param context The current context
      * @param attrs The attributes of the view
      */
-    public SeekBarProgressPreference(Context context, AttributeSet attrs) {
+    @SuppressWarnings("unused")
+    public DiscreteSeekBarProgressPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
     /**
-     * Constructor of <code>SeekBarProgressPreference</code>
+     * Constructor of <code>DiscreteSeekBarProgressPreference</code>
      *
      * @param context The current context
      */
-    public SeekBarProgressPreference(Context context) {
+    @SuppressWarnings("unused")
+    public DiscreteSeekBarProgressPreference(Context context) {
         super(context);
         init();
     }
@@ -95,7 +101,7 @@ public class SeekBarProgressPreference extends SeekBarPreference {
      * {@inheritDoc}
      */
     @Override
-    protected void onBindView(View view) {
+    protected void onBindView(@NonNull View view) {
         super.onBindView(view);
         mTextView = (TextView) view.findViewById(R.id.text);
         setText(getProgress());
@@ -113,23 +119,16 @@ public class SeekBarProgressPreference extends SeekBarPreference {
         setText(progress);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        super.onProgressChanged(seekBar, progress, fromUser);
+    public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+        super.onProgressChanged(seekBar, value, fromUser);
         if (fromUser) {
-            setText(progress);
-            syncProgress(seekBar);
+            setText(value);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+    public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
         super.onStopTrackingTouch(seekBar);
         setText(getProgress());
     }
@@ -151,6 +150,7 @@ public class SeekBarProgressPreference extends SeekBarPreference {
      *
      * @param onDisplayProgress The callback
      */
+    @SuppressWarnings("unused")
     public void setOnDisplayProgress(OnDisplayProgress onDisplayProgress) {
         this.mOnDisplayProgress = onDisplayProgress;
     }
@@ -160,6 +160,7 @@ public class SeekBarProgressPreference extends SeekBarPreference {
      *
      * @param format The format of the string progress
      */
+    @SuppressWarnings("unused")
     public void setFormat(String format) {
         mFormat = format;
     }

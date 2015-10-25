@@ -30,7 +30,7 @@ import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
-import com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;
+import com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference.OnDisplayProgress;
 
 /**
  * A fragment class with the layout disposition
@@ -41,7 +41,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
 
     private static final boolean DEBUG = false;
 
-    private SeekBarProgressPreference mRandomDispositionsInterval;
+    private DiscreteSeekBarProgressPreference mRandomDispositionsInterval;
     private Preference mPortraitDisposition;
     private Preference mLandscapeDisposition;
 
@@ -119,7 +119,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
         final int[] randomDispositionsIntervals =
                 res.getIntArray(R.array.random_dispositions_intervals_values);
         mRandomDispositionsInterval =
-                (SeekBarProgressPreference)findPreference("ui_disposition_random_interval");
+                (DiscreteSeekBarProgressPreference)findPreference("ui_disposition_random_interval");
         mRandomDispositionsInterval.setMax(randomDispositionsIntervals.length - 1);
         int transitionInterval = prefs.getInt("ui_disposition_random_interval",
                 Preferences.Layout.DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX);

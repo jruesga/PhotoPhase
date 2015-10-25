@@ -23,7 +23,7 @@
         android:title="@string/pref_general_settings">
 
         <!-- Dim screen -->
-        <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
             android:key="ui_wallpaper_dim"
             android:title="@string/pref_general_settings_wallpaper_dim"
             android:persistent="true"
@@ -71,7 +71,7 @@
             android:defaultValue="@array/transitions_default" />
 
         <!-- Transitions Interval -->
-        <com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
             android:key="ui_transition_interval"
             android:title="@string/pref_general_transitions_interval"
             android:persistent="true"

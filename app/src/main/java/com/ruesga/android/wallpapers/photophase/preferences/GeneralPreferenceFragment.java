@@ -31,10 +31,10 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.Colors;
+import com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference.OnDisplayProgress;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
-import com.ruesga.android.wallpapers.photophase.preferences.SeekBarProgressPreference.OnDisplayProgress;
 
 import java.util.Set;
 
@@ -49,7 +49,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private ListPreference mTouchActions;
     private MultiSelectListPreference mTransitionsTypes;
-    private SeekBarProgressPreference mTransitionsInterval;
+    private DiscreteSeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
 
     private boolean mRedrawFlag;
@@ -130,8 +130,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         // Add the preferences
         addPreferencesFromResource(R.xml.preferences_general);
 
-        SeekBarProgressPreference wallpaperDim =
-                (SeekBarProgressPreference) findPreference("ui_wallpaper_dim");
+        DiscreteSeekBarProgressPreference wallpaperDim =
+                (DiscreteSeekBarProgressPreference) findPreference("ui_wallpaper_dim");
         wallpaperDim.setFormat(formatDim);
         wallpaperDim.setOnPreferenceChangeListener(mOnChangeListener);
         // A excessive dim will just display a black screen. Restrict the max value to
@@ -155,7 +155,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         updateTransitionTypeSummary(mTransitionsTypes.getValues());
 
         final int[] transitionsIntervals = res.getIntArray(R.array.transitions_intervals_values);
-        mTransitionsInterval = (SeekBarProgressPreference)findPreference("ui_transition_interval");
+        mTransitionsInterval =
+                (DiscreteSeekBarProgressPreference)findPreference("ui_transition_interval");
         mTransitionsInterval.setFormat(getString(R.string.format_seconds));
         mTransitionsInterval.setMax(transitionsIntervals.length - 1);
         int transitionInterval = prefs.getInt("ui_transition_interval",
@@ -165,8 +166,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                     Preferences.General.Transitions.DEFAULT_TRANSITION_INTERVAL_INDEX);
         }
         mTransitionsInterval.setOnDisplayProgress(new OnDisplayProgress() {
-            @Override
-            public String onDisplayProgress(int progress) {
+              @Override
+              public String onDisplayProgress(int progress) {
                 int interval = transitionsIntervals[progress];
                 if (interval == 0) {
                     mTransitionsInterval.setFormat(formatDisabled);
