@@ -23,7 +23,7 @@
         android:title="@string/pref_layout_disposition">
 
         <!-- Random dispositions -->
-        <CheckBoxPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
             android:key="ui_disposition_random"
             android:title="@string/pref_random_dispositions"
             android:summary="@string/pref_random_dispositions_summary" />

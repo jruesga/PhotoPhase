@@ -47,7 +47,7 @@
             android:defaultValue="0" />
 
         <!-- Aspect ratio correction -->
-        <CheckBoxPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
             android:key="ui_fix_aspect_ratio"
             android:title="@string/pref_general_aspect_ratio_correction"
             android:summary="@string/pref_general_aspect_ratio_correction_summary"

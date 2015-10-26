@@ -53,7 +53,7 @@
             android:persistent="false" />
 
         <!--  Auto select new albums -->
-        <CheckBoxPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
             android:key="ui_media_auto_select_new"
             android:title="@string/pref_media_auto_select_new"
             android:summary="@string/pref_media_auto_select_new_summary"
