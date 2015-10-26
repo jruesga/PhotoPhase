@@ -22,7 +22,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.ruesga.android.wallpapers.photophase.R;
 
@@ -41,17 +43,22 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.preference_activity);
-        initTitleActionBar();
+        initToolbar();
     }
 
     /**
-     * Method that initializes the titlebar of the activity.
+     * Method that initializes the toolbar of the activity.
      */
-    private void initTitleActionBar() {
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+    private void initToolbar() {
+        // Add a toolbar
+        ViewGroup root = (ViewGroup) findViewById(
+                android.R.id.list).getParent().getParent().getParent();
+        Toolbar toolbar = (Toolbar) LayoutInflater.from(this).inflate(
+                R.layout.preference_toolbar, root, false);
+        root.addView(toolbar, 0);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mCallback = null;
     }
 
@@ -65,9 +72,9 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
         // Retrieve the about header
         Header aboutHeader = target.get(target.size() - 1);
         try {
-            String appver =
+            String appVer =
                     this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-            aboutHeader.summary = getString(R.string.pref_about_summary, appver);
+            aboutHeader.summary = getString(R.string.pref_about_summary, appVer);
         } catch (Exception e) {
             aboutHeader.summary = getString(R.string.pref_about_summary, "");
         }
