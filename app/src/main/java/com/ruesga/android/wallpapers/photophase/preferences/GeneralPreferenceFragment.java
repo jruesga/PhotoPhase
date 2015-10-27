@@ -191,6 +191,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 return String.valueOf(interval / 1000 / 60 / 60 / 24);
             }
         });
+        mTransitionsInterval.setShowPopUpIndicator(false);
         mTransitionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
 
         mEffectsTypes = (MultiSelectListPreference)findPreference("ui_effect_types");

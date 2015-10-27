@@ -153,6 +153,7 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
                 return String.valueOf(interval / 1000 / 60 / 60 / 24);
             }
         });
+        mRandomDispositionsInterval.setShowPopUpIndicator(false);
         mRandomDispositionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
 
         // -- Portrait

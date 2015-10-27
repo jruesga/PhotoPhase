@@ -40,6 +40,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
     private int mProgress;
     private int mMax;
     private boolean mTrackingTouch;
+    DiscreteSeekBar mSeekBar;
 
     /**
      * Constructor of <code>DiscreteSeekBarPreference</code>
@@ -80,11 +81,12 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
     @Override
     protected void onBindView(@NonNull View view) {
         super.onBindView(view);
-        DiscreteSeekBar seekBar = (DiscreteSeekBar) view.findViewById(R.id.seekbar);
-        seekBar.setOnProgressChangeListener(this);
-        seekBar.setMax(mMax);
-        seekBar.setProgress(mProgress);
-        seekBar.setEnabled(isEnabled());
+        mSeekBar = (DiscreteSeekBar) view.findViewById(R.id.seekbar);
+        mSeekBar.setOnProgressChangeListener(this);
+        mSeekBar.setMax(0);
+        mSeekBar.setMax(mMax);
+        mSeekBar.setProgress(mProgress);
+        mSeekBar.setEnabled(isEnabled());
     }
 
     /**

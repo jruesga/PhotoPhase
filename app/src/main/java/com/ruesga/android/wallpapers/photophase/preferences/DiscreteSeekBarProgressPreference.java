@@ -47,10 +47,12 @@ public class DiscreteSeekBarProgressPreference extends DiscreteSeekBarPreference
         String onDisplayProgress(int progress);
     }
 
+    private boolean mShowPopUpIndicator = true;
     private String mFormat;
     private OnDisplayProgress mOnDisplayProgress;
 
-    TextView mTextView;
+    private TextView mTextView;
+
 
     /**
      * Constructor of <code>DiscreteSeekBarProgressPreference</code>
@@ -105,6 +107,7 @@ public class DiscreteSeekBarProgressPreference extends DiscreteSeekBarPreference
         super.onBindView(view);
         mTextView = (TextView) view.findViewById(R.id.text);
         setText(getProgress());
+        mSeekBar.setIndicatorPopupEnabled(mShowPopUpIndicator);
     }
 
     /**
@@ -163,5 +166,16 @@ public class DiscreteSeekBarProgressPreference extends DiscreteSeekBarPreference
     @SuppressWarnings("unused")
     public void setFormat(String format) {
         mFormat = format;
+    }
+
+    /**
+     * Method that enabled/disabled the discrete seekBar popup
+     */
+    @SuppressWarnings("unused")
+    public void setShowPopUpIndicator(boolean show) {
+        if (mSeekBar != null) {
+            mSeekBar.setIndicatorPopupEnabled(show);
+        }
+        mShowPopUpIndicator = show;
     }
 }
