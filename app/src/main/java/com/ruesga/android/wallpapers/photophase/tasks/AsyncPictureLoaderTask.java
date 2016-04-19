@@ -71,7 +71,23 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      * @param v The associated view
      */
     public AsyncPictureLoaderTask(Context context, ImageView v) {
-        this(context, v, null);
+        this(context, v, v.getMeasuredWidth(), v.getMeasuredHeight(), null);
+    }
+
+    /**
+     * Constructor of <code>AsyncPictureLoaderTask</code>
+     *
+     * @param context The current context
+     * @param v The associated view
+     * @param callback A callback to notify when the picture was loaded
+     */
+    public AsyncPictureLoaderTask(Context context, ImageView v, int w, int h, OnPictureLoaded callback) {
+        super();
+        mContext = context;
+        mView = v;
+        mCallback = callback;
+        mWidth = w;
+        mHeight = h;
     }
 
     /**
@@ -97,15 +113,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     protected Drawable doInBackground(File... params) {
         Bitmap bitmap = BitmapUtils.decodeBitmap(params[0], mWidth, mHeight);
         if (bitmap != null) {
-            Drawable dw = new BitmapDrawable(mContext.getResources(), bitmap);
-            if (mCallback != null) {
-                for (Object o : mCallback.mRefs) {
-                    if (!isCancelled()) {
-                        mCallback.onPictureLoaded(o, dw);
-                    }
-                }
-            }
-            return dw;
+            return new BitmapDrawable(mContext.getResources(), bitmap);
         }
         return null;
     }
@@ -115,8 +123,13 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      */
     @Override
     protected void onPostExecute(Drawable result) {
-        if (!isCancelled()) {
-            mView.setImageDrawable(result);
+        mView.setImageDrawable(result);
+        if (mCallback != null) {
+            for (Object o : mCallback.mRefs) {
+                if (!isCancelled()) {
+                    mCallback.onPictureLoaded(o, result);
+                }
+            }
         }
     }
 }

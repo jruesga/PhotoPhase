@@ -17,6 +17,7 @@
 package com.ruesga.android.wallpapers.photophase.widgets;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.AttributeSet;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
+import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -171,7 +173,7 @@ public class PictureItemView extends FrameLayout {
      *
      * @param picture The picture data
      */
-    public void updateView(Picture picture, boolean refreshIcon) {
+    public void updateView(final Picture picture, boolean refreshIcon) {
         // Destroy the update drawable task
         if (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
                 mTask.getStatus() == AsyncTask.Status.PENDING)) {
@@ -180,22 +182,22 @@ public class PictureItemView extends FrameLayout {
 
         // Retrieve the views references
         if (mIcon == null) {
-            mIcon = (ImageView)findViewById(R.id.picture_thumbnail);
+            mIcon = (ImageView) findViewById(R.id.picture_thumbnail);
         }
 
         // Update the views
         if (picture != null) {
             setPicture(picture);
-
             setSelected(picture.isSelected());
 
-            // Do no try to cache the images (this generates a lot of memory an we want
+            // Do no try to cache the images (this generates a lot of memory and we want
             // to have a low memory footprint)
             if (refreshIcon) {
                 mIcon.setImageDrawable(null);
 
                 // Show as icon, the first picture
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon);
+                int size = (int) getContext().getResources().getDimension(R.dimen.picture_size);
+                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, size, size, null);
                 mTask.execute(new File(picture.getPath()));
             }
         }

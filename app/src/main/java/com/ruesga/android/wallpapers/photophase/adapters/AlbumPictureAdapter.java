@@ -103,13 +103,12 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         View v = convertView;
         if (v == null) {
             //Create the view holder
-            LayoutInflater li =
-                    (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater li = LayoutInflater.from(getContext());
             v = li.inflate(R.layout.picture_item, parent, false);
 
             // Create the controller for the view
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.mPictureItemView = (PictureItemView)v.findViewById(R.id.picture);
+            viewHolder.mPictureItemView = (PictureItemView) v.findViewById(R.id.picture);
             viewHolder.mPictureItemView.setPicture(picture);
             v.setTag(viewHolder);
         }
