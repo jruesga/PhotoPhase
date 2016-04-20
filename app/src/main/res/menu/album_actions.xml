@@ -14,17 +14,18 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/mnu_select_album"
         android:title="@string/mnu_select_album"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
     <item android:id="@+id/mnu_deselect_album"
         android:title="@string/mnu_deselect_album"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
     <item android:id="@+id/mnu_select_all"
         android:title="@string/mnu_select_all"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
     <item android:id="@+id/mnu_deselect_all"
         android:title="@string/mnu_deselect_all"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
 </menu>

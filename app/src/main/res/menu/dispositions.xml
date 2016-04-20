@@ -14,17 +14,18 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/mnu_delete"
         android:title="@string/mnu_delete"
         android:icon="@drawable/ic_delete"
-        android:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/mnu_restore"
         android:title="@string/mnu_restore"
         android:icon="@drawable/ic_restore"
-        android:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/mnu_ok"
         android:title="@string/mnu_ok"
         android:icon="@drawable/ic_accept"
-        android:showAsAction="always|withText" />
+        app:showAsAction="always|withText" />
 </menu>
