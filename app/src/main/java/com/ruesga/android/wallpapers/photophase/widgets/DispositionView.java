@@ -23,19 +23,19 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
-import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.ImageView.ScaleType;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
@@ -82,8 +82,6 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
     private OnFrameSelectedListener mOnFrameSelectedListener;
 
-    private Vibrator mVibrator;
-
     /**
      * Constructor of <code>DispositionView</code>.
      *
@@ -124,7 +122,6 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
      * Initialize the view
      */
     private void init() {
-        mVibrator = (Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE);
         mInternalPadding = (int)getResources().getDimension(R.dimen.disposition_frame_padding);
     }
 
@@ -422,7 +419,9 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     @Override
     public boolean onLongClick(View v) {
         if (mResizeFrame != null && selectTarget(v)) {
-            mVibrator.vibrate(300);
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                            | HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
         }
         return true;
     }
