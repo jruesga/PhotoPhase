@@ -359,7 +359,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     private View createFrame(Rect r, boolean animate) {
         int padding = (int)getResources().getDimension(R.dimen.disposition_frame_padding);
         final ImageView v = new ImageView(getContext());
-        v.setImageResource(R.drawable.ic_camera);
+        v.setImageResource(R.drawable.ic_photo);
         v.setScaleType(ScaleType.CENTER);
 
         // Is locked? Then change the background color

@@ -26,6 +26,6 @@
         app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/mnu_ok"
         android:title="@string/mnu_ok"
-        android:icon="@drawable/ic_accept"
+        android:icon="@drawable/ic_done"
         app:showAsAction="always|withText" />
 </menu>

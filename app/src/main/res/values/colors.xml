@@ -14,11 +14,10 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <color name="color_primary">#ff9e9e9e</color>
-    <color name="color_primary_dark">#ff9e9e9e</color>
-    <color name="color_accent">#009688</color>
+<resources>
+    <color name="color_primary">#4caf50</color>
+    <color name="color_primary_dark">#388e3c</color>
+    <color name="color_accent">#607d8b</color>
 
     <color name="black_transparent">#99000000</color>
 

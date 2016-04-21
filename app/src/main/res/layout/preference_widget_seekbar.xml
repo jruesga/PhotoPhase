@@ -90,7 +90,11 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             dsb:dsb_min="0"
-            dsb:dsb_max="100" />
+            dsb:dsb_max="100"
+            dsb:dsb_indicatorPopupEnabled="false"
+            dsb:dsb_indicatorColor="?attr/colorAccent"
+            dsb:dsb_trackColor="?attr/colorAccent"
+            dsb:dsb_progressColor="?attr/colorAccent"/>
 
     </RelativeLayout>
 
