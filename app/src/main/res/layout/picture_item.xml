@@ -14,24 +14,26 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<FrameLayout
+<com.ruesga.android.wallpapers.photophase.widgets.PictureItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:id="@+id/picture"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="1dp">
 
-    <com.ruesga.android.wallpapers.photophase.widgets.PictureItemView
-        android:id="@+id/picture"
-        android:layout_width="@dimen/picture_size"
-        android:layout_height="@dimen/picture_size"
-        style="@style/PhotoPhaseTheme.Album.Picture">
+    <com.ruesga.android.wallpapers.photophase.widgets.SquareImageView
+        android:id="@+id/picture_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@color/album_thumbnail_color"
+        android:contentDescription="@null"/>
 
-        <ImageView android:id="@+id/picture_thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:background="@color/album_thumbnail_color"
-            android:contentDescription="@null" />
+    <CheckBox
+        android:id="@+id/picture_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:theme="@style/PhotoPhaseTheme.PictureCheckBox"/>
 
-    </com.ruesga.android.wallpapers.photophase.widgets.PictureItemView>
-
-</FrameLayout>
+</com.ruesga.android.wallpapers.photophase.widgets.PictureItemView>

@@ -59,6 +59,7 @@ import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.widgets.AlbumInfoView;
 import com.ruesga.android.wallpapers.photophase.widgets.PictureItemView;
+import com.ruesga.android.wallpapers.photophase.widgets.PictureItemView.CallbacksListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -250,6 +251,18 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
     };
 
+    private CallbacksListener mPictureListener = new CallbacksListener() {
+        @Override
+        public void onPictureSelected(View v) {
+            onPicturePressed(v);
+        }
+
+        @Override
+        public void onPictureDeselected(View v) {
+            onPicturePressed(v);
+        }
+    };
+
     private static final int MSG_LOAD_PICTURES = 1;
 
     private List<Album> mAlbums;
@@ -340,6 +353,10 @@ public class ChoosePicturesFragment extends PreferenceFragment
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);
+
+        if (mPictureAdapter != null) {
+            mPictureAdapter.dispose();
+        }
 
         super.onDestroy();
     }
@@ -837,22 +854,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private void loadPictures(Album album) {
         List<Picture> items = album.getItems();
 
-        // Calculate the grid dimensions
-        final Resources res = getResources();
-        int pictureWidth = (int)res.getDimension(R.dimen.picture_size);
-        int gridWidth = mPicturesPanel.getWidth();
-        int columns = gridWidth / pictureWidth;
-        int space = (gridWidth / pictureWidth) / (columns - 1);
-        if (columns < items.size()) {
-            space = (int)res.getDimension(R.dimen.small_padding);
-        }
-        mPicturesPanel.setHorizontalSpacing(space);
-        mPicturesPanel.setVerticalSpacing(space);
-        mPicturesPanel.setStretchMode(GridView.STRETCH_SPACING);
-        mPicturesPanel.setColumnWidth(pictureWidth);
-        mPicturesPanel.setNumColumns(columns);
-
-        mPictureAdapter = new AlbumPictureAdapter(getActivity(), items, mPicturesPanel);
+        mPictureAdapter = new AlbumPictureAdapter(
+                getActivity(), album, items, mPicturesPanel, mPictureListener);
         mPicturesPanel.setAdapter(mPictureAdapter);
     }
 
@@ -904,26 +907,31 @@ public class ChoosePicturesFragment extends PreferenceFragment
         PictureItemView pictureView = (PictureItemView)view.findViewById(R.id.picture);
         if (pictureView != null) {
             Picture picture = pictureView.getPicture();
-            removeAlbumItems(mAlbum);
-            List<String> selectedItems = mAlbum.getSelectedItems();
-            if (selectedItems.contains(picture.getPath())) {
-                selectedItems.remove(picture.getPath());
-                picture.setSelected(false);
-            } else {
-                selectedItems.add(picture.getPath());
-                picture.setSelected(true);
-                mAlbum.setSelected(false);
-            }
+            onPictureChanged(picture);
 
             // Notify all the views
-            pictureView.updateView(picture, false);
+            pictureView.updateView(picture, mAlbum.getSelectedItems().size() > 0, false);
             updateAlbumInfo(mDstView, mAlbum);
             mAlbumAdapter.notifyDataSetChanged();
+            mPictureAdapter.notifyDataSetChanged();
 
             // Update settings
             mSelectedAlbums.addAll(mAlbum.getSelectedItems());
             Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
             mSelectionChanged = true;
+        }
+    }
+
+    private void onPictureChanged(Picture picture) {
+        removeAlbumItems(mAlbum);
+        List<String> selectedItems = mAlbum.getSelectedItems();
+        if (selectedItems.contains(picture.getPath())) {
+            selectedItems.remove(picture.getPath());
+            picture.setSelected(false);
+        } else {
+            selectedItems.add(picture.getPath());
+            picture.setSelected(true);
+            mAlbum.setSelected(false);
         }
     }
 

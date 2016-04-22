@@ -24,8 +24,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.model.Album;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.widgets.PictureItemView;
+import com.ruesga.android.wallpapers.photophase.widgets.PictureItemView.CallbacksListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +48,10 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         PictureItemView mPictureItemView;
     }
 
+    private Album mAlbum;
     private List<Picture> mData = new ArrayList<>();
     private AdapterView<?> mParent;
+    private CallbacksListener mCallback;
 
     /**
      * Constructor of <code>AlbumPictureAdapter</code>.
@@ -55,10 +59,13 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
      * @param context The current context
      * @param data The pictures data
      */
-    public AlbumPictureAdapter(Context context, List<Picture> data, AdapterView<?> parent) {
+    public AlbumPictureAdapter(Context context, Album album, List<Picture> data,
+            AdapterView<?> parent, CallbacksListener cb) {
         super(context, R.layout.picture_item, R.id.picture_thumbnail, data);
+        mAlbum = album;
         mData = data;
         mParent = parent;
+        mCallback = cb;
     }
 
     /**
@@ -110,6 +117,7 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.mPictureItemView = (PictureItemView) v.findViewById(R.id.picture);
             viewHolder.mPictureItemView.setPicture(picture);
+            viewHolder.mPictureItemView.addCallBackListener(mCallback);
             v.setTag(viewHolder);
         }
 
@@ -117,7 +125,7 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         ViewHolder viewHolder = (ViewHolder)v.getTag();
 
         // Retrieve the view holder and update the view
-        viewHolder.mPictureItemView.updateView(picture, refreshIcon);
+        viewHolder.mPictureItemView.updateView(picture, mAlbum.getSelectedItems().size() > 0, refreshIcon);
 
         // Return the view
         return v;

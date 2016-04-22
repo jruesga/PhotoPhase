@@ -91,12 +91,9 @@
         <item name="android:layout_marginBottom">@dimen/default_margin</item>
     </style>
 
-    <style name="PhotoPhaseTheme.Album.Picture">
-        <item name="android:background">@drawable/card</item>
-        <item name="android:layout_marginTop">@dimen/picture_vertical_margin</item>
-        <item name="android:layout_marginBottom">@dimen/picture_vertical_margin</item>
-        <item name="android:layout_marginLeft">@dimen/picture_horizontal_margin</item>
-        <item name="android:layout_marginRight">@dimen/picture_horizontal_margin</item>
+    <style name="PhotoPhaseTheme.PictureCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/white</item>
     </style>
 
 </resources>

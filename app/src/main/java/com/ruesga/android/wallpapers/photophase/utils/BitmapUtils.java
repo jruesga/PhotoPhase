@@ -80,11 +80,11 @@ public class BitmapUtils {
         }
 
         // Test if the bitmap has exif format, and decode properly
-        Bitmap out = decodeExifBitmap(file, bitmap);
-        if (!out.equals(bitmap)) {
-            bitmap.recycle();
-        }
-        return out;
+//        Bitmap out = decodeExifBitmap(file, bitmap);
+//        if (!out.equals(bitmap)) {
+//            bitmap.recycle();
+//        }
+        return bitmap;
     }
 
     /**
@@ -133,14 +133,16 @@ public class BitmapUtils {
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-            // Calculate ratios of height and width to requested height and width
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
 
-            // Choose the smallest ratio as inSampleSize value, this will guarantee
-            // a final image with both dimensions larger than or equal to the
-            // requested height and width.
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
         }
 
         return inSampleSize;

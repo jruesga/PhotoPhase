@@ -20,4 +20,9 @@
         <item name="android:windowContentTransitions">true</item>
     </style>
 
+    <style name="PhotoPhaseTheme.PictureCheckBox" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlNormal">@android:color/white</item>
+        <item name="android:colorControlActivated">@android:color/white</item>
+    </style>
+
 </resources>

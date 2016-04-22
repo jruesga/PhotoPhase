@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2015 Jorge Ruesga
+     Copyright (C) 2014 Jorge Ruesga
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/card_selector" />
-    <item android:drawable="@drawable/bg_card" />
-</layer-list>
+<resources>
+    <integer name="pictures_per_album">5</integer>
+</resources>

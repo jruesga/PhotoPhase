@@ -19,11 +19,14 @@
     android:id="@+id/album_pictures_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/pictures_margin_top"
+    android:paddingTop="8dp"
     android:persistentDrawingCache="animation|scrolling"
     android:listSelector="@android:color/transparent"
     android:divider="@android:color/transparent"
     android:dividerHeight="@dimen/one_dp"
     android:scrollbars="none"
-    android:layoutAnimation="@anim/pictures_layout_animation">
-</GridView>
+    android:layoutAnimation="@anim/pictures_layout_animation"
+    android:verticalSpacing="0dp"
+    android:horizontalSpacing="0dp"
+    android:stretchMode="columnWidth"
+    android:numColumns="@integer/pictures_per_album"/>

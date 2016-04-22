@@ -32,4 +32,7 @@
     <color name="disposition_frame_bg_color">#c8595757</color>
     <color name="disposition_locked_frame_bg_color">#c87f4a4a</color>
 
+    <color name="album_selector">#db4b38</color>
+    <color name="album_selector_pressed">#e53935</color>
+
 </resources>

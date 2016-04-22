@@ -17,17 +17,19 @@
 package com.ruesga.android.wallpapers.photophase.widgets;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
-import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,19 +46,32 @@ public class PictureItemView extends FrameLayout {
      */
     public interface CallbacksListener {
         /**
-         * Invoked when an Picture was selected
+         * Invoked when a picture was selected
          *
-         * @param Picture The Picture
+         * @param v The view
          */
-        void onPictureSelected(Picture Picture);
+        void onPictureSelected(View v);
 
         /**
-         * Invoked when an Picture was deselected
+         * Invoked when an picture was deselected
          *
-         * @param Picture The Picture
+         * @param v The view
          */
-        void onPictureDeselected(Picture Picture);
+        void onPictureDeselected(View v);
     }
+
+    private OnCheckedChangeListener mSelectionListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            for (CallbacksListener cb : mCallbacks) {
+                if (isChecked) {
+                    cb.onPictureSelected(PictureItemView.this);
+                } else {
+                    cb.onPictureDeselected(PictureItemView.this);
+                }
+            }
+        }
+    };
 
     private List<CallbacksListener> mCallbacks;
 
@@ -65,6 +80,7 @@ public class PictureItemView extends FrameLayout {
     private AsyncPictureLoaderTask mTask;
 
     private ImageView mIcon;
+    private CheckBox mCheckbox;
 
     /**
      * Constructor of <code>PictureItemView</code>.
@@ -106,7 +122,7 @@ public class PictureItemView extends FrameLayout {
      * Method that initializes the internal references
      */
     private void init() {
-        mCallbacks = new ArrayList<PictureItemView.CallbacksListener>();
+        mCallbacks = new ArrayList<>();
     }
 
     /**
@@ -125,16 +141,6 @@ public class PictureItemView extends FrameLayout {
      */
     public void removeCallBackListener(CallbacksListener callback) {
         this.mCallbacks.remove(callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-
-        updateView(mPicture, true);
     }
 
     /**
@@ -173,7 +179,7 @@ public class PictureItemView extends FrameLayout {
      *
      * @param picture The picture data
      */
-    public void updateView(final Picture picture, boolean refreshIcon) {
+    public void updateView(final Picture picture, boolean editMode, boolean refreshIcon) {
         // Destroy the update drawable task
         if (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
                 mTask.getStatus() == AsyncTask.Status.PENDING)) {
@@ -184,11 +190,18 @@ public class PictureItemView extends FrameLayout {
         if (mIcon == null) {
             mIcon = (ImageView) findViewById(R.id.picture_thumbnail);
         }
+        if (mCheckbox == null) {
+            mCheckbox = (CheckBox) findViewById(R.id.picture_selector);
+        }
 
         // Update the views
+        setPicture(picture);
         if (picture != null) {
-            setPicture(picture);
             setSelected(picture.isSelected());
+            mCheckbox.setOnCheckedChangeListener(null);
+            mCheckbox.setChecked(picture.isSelected());
+            mCheckbox.setVisibility(editMode ? View.VISIBLE : View.GONE);
+            mCheckbox.setOnCheckedChangeListener(mSelectionListener);
 
             // Do no try to cache the images (this generates a lot of memory and we want
             // to have a low memory footprint)
@@ -196,8 +209,8 @@ public class PictureItemView extends FrameLayout {
                 mIcon.setImageDrawable(null);
 
                 // Show as icon, the first picture
-                int size = (int) getContext().getResources().getDimension(R.dimen.picture_size);
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, size, size, null);
+                int minSize = (int) getResources().getDimension(R.dimen.picture_size);
+                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, minSize, minSize, null);
                 mTask.execute(new File(picture.getPath()));
             }
         }
