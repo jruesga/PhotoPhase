@@ -358,7 +358,8 @@ public class AlbumInfoView extends RelativeLayout
                 mIcon.setImageDrawable(null);
 
                 // Show as icon, the first picture
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, new OnPictureLoaded(album));
+                int size = (int) getContext().getResources().getDimension(R.dimen.album_size);
+                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, size, size, new OnPictureLoaded(album));
                 mTask.execute(new File(album.getItems().get(0).getPath()));
             }
         }
