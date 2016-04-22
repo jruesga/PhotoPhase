@@ -20,6 +20,7 @@
     <color name="color_accent">#607d8b</color>
 
     <color name="black_transparent">#99000000</color>
+    <color name="black_translucent">#44000000</color>
 
     <color name="wallpaper_background_color">#ff202020</color>
     <color name="wallpaper_overlay_color">#aa202020</color>

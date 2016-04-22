@@ -19,8 +19,13 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -46,29 +51,18 @@ public class PictureItemView extends FrameLayout {
      */
     public interface CallbacksListener {
         /**
-         * Invoked when a picture was selected
+         * Invoked when a picture was pressed
          *
          * @param v The view
          */
-        void onPictureSelected(View v);
-
-        /**
-         * Invoked when an picture was deselected
-         *
-         * @param v The view
-         */
-        void onPictureDeselected(View v);
+        void onPictureItemViewPressed(View v);
     }
 
     private OnCheckedChangeListener mSelectionListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             for (CallbacksListener cb : mCallbacks) {
-                if (isChecked) {
-                    cb.onPictureSelected(PictureItemView.this);
-                } else {
-                    cb.onPictureDeselected(PictureItemView.this);
-                }
+                cb.onPictureItemViewPressed(PictureItemView.this);
             }
         }
     };
@@ -79,8 +73,14 @@ public class PictureItemView extends FrameLayout {
 
     private AsyncPictureLoaderTask mTask;
 
+    private Animation mScaleInAnimation;
+    private Animation mScaleOutAnimation;
+
     private ImageView mIcon;
     private CheckBox mCheckbox;
+    private View mOverlay;
+
+    private boolean mInEditMode;
 
     /**
      * Constructor of <code>PictureItemView</code>.
@@ -123,6 +123,56 @@ public class PictureItemView extends FrameLayout {
      */
     private void init() {
         mCallbacks = new ArrayList<>();
+
+        mScaleInAnimation = new ScaleAnimation(
+                1f, 0.98f, 1f, 0.98f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        mScaleInAnimation.setFillAfter(true);
+        mScaleInAnimation.setDuration(100L);
+        mScaleInAnimation.setInterpolator(new AccelerateInterpolator());
+
+        mScaleOutAnimation = new ScaleAnimation(
+                0.98f, 1f, 0.98f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        mScaleOutAnimation.setFillAfter(true);
+        mScaleOutAnimation.setDuration(100L);
+        mScaleOutAnimation.setInterpolator(new AccelerateInterpolator());
+
+        setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mScaleInAnimation.cancel();
+                mScaleOutAnimation.cancel();
+                for (CallbacksListener cb : mCallbacks) {
+                    cb.onPictureItemViewPressed(PictureItemView.this);
+                }
+                return true;
+            }
+        });
+
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!mInEditMode) {
+                    final int action = MotionEventCompat.getActionMasked(event);
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            mScaleOutAnimation.cancel();
+                            startAnimation(mScaleInAnimation);
+                            break;
+
+                        case MotionEvent.ACTION_CANCEL:
+                        case MotionEvent.ACTION_UP:
+                            mScaleInAnimation.cancel();
+                            startAnimation(mScaleOutAnimation);
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -193,15 +243,20 @@ public class PictureItemView extends FrameLayout {
         if (mCheckbox == null) {
             mCheckbox = (CheckBox) findViewById(R.id.picture_selector);
         }
+        if (mOverlay == null) {
+            mOverlay = findViewById(R.id.picture_overlay);
+        }
 
         // Update the views
         setPicture(picture);
+        mInEditMode = editMode;
         if (picture != null) {
             setSelected(picture.isSelected());
             mCheckbox.setOnCheckedChangeListener(null);
             mCheckbox.setChecked(picture.isSelected());
             mCheckbox.setVisibility(editMode ? View.VISIBLE : View.GONE);
             mCheckbox.setOnCheckedChangeListener(mSelectionListener);
+            mOverlay.setVisibility(editMode ? View.VISIBLE : View.GONE);
 
             // Do no try to cache the images (this generates a lot of memory and we want
             // to have a low memory footprint)

@@ -29,6 +29,12 @@
         android:background="@color/album_thumbnail_color"
         android:contentDescription="@null"/>
 
+    <View
+        android:id="@+id/picture_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_translucent"/>
+
     <CheckBox
         android:id="@+id/picture_selector"
         android:layout_width="wrap_content"

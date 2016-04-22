@@ -39,6 +39,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -245,20 +246,13 @@ public class ChoosePicturesFragment extends PreferenceFragment
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mShowingAlbums) {
                 onHeaderPressed(parent, view, position);
-            } else {
-                onPicturePressed(view);
             }
         }
     };
 
     private CallbacksListener mPictureListener = new CallbacksListener() {
         @Override
-        public void onPictureSelected(View v) {
-            onPicturePressed(v);
-        }
-
-        @Override
-        public void onPictureDeselected(View v) {
+        public void onPictureItemViewPressed(View v) {
             onPicturePressed(v);
         }
     };
@@ -884,7 +878,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
                 parent.getHeight() - view.getHeight() -
                 parent.getPaddingTop()  - parent.getPaddingBottom()));
         mPicturesPanel.setVisibility(View.INVISIBLE);
-        mPicturesPanel.setOnItemClickListener(mOnItemClickListener);
+//        mPicturesPanel.setOnItemClickListener(mOnItemClickListener);
 
         // Add to the container
         mContainer.addView(mPicturesPanel);
