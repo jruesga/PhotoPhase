@@ -125,11 +125,8 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
             // Card Animation
             viewHolder.mCardAnimation = AnimationUtils.loadAnimation(
                     getContext(), R.anim.cards_slide_up);
+            viewHolder.mCardAnimation.setStartOffset(Math.min(250, position * 30));
             v.startAnimation(viewHolder.mCardAnimation);
-            viewHolder.mCardAnimator = AnimatorInflater.loadAnimator(getContext(),
-                    R.animator.cards_rotate_animator);
-            viewHolder.mCardAnimator.setTarget(v);
-            viewHolder.mCardAnimator.start();
         }
 
         // Return the view
