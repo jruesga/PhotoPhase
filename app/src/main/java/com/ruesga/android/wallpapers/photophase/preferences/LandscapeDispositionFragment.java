@@ -79,6 +79,12 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public void saveDispositions(List<Disposition> dispositions) {
         Preferences.Layout.setLandscapeDisposition(getActivity(), dispositions);
+        Preferences.Layout.setLandscapeDispositionTemplate(getActivity(), getTemplatePage());
+    }
+
+    @Override
+    protected int getSavedTemplatePage() {
+        return Preferences.Layout.getLandscapeDispositionTemplate();
     }
 
     /**
