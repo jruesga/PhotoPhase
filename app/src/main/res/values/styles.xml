@@ -34,6 +34,12 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="PhotoPhaseTheme.FullScreen" parent="PhotoPhaseTheme.Base">
+        <item name="colorPrimary">@android:color/background_dark</item>
+        <item name="android:windowBackground">@android:color/background_dark</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="PhotoPhaseTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="navigationIcon">?attr/homeAsUpIndicator</item>

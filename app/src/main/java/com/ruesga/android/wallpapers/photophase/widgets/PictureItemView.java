@@ -17,6 +17,7 @@
 package com.ruesga.android.wallpapers.photophase.widgets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.support.v4.view.MotionEventCompat;
@@ -34,6 +35,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.ruesga.android.wallpapers.photophase.PhotoViewerActivity;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
@@ -292,5 +294,8 @@ public class PictureItemView extends FrameLayout {
     }
 
     private void performDisplayPicture() {
+        Intent intent = new Intent(getContext(), PhotoViewerActivity.class);
+        intent.putExtra(PhotoViewerActivity.EXTRA_PHOTO, getPicture().getPath());
+        getContext().startActivity(intent);
     }
 }

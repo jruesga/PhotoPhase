@@ -27,6 +27,7 @@ apply plugin: 'com.android.application'
 
 repositories {
     jcenter()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -35,6 +36,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.github.danielnilsson9:color-picker-view:1.4.0'
     compile 'org.adw.library:discrete-seekbar:1.0.0'
+    compile 'com.github.chrisbanes:PhotoView:1.2.6'
 }
 
 android {

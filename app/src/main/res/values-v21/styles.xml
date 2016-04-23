@@ -20,6 +20,13 @@
         <item name="android:windowContentTransitions">true</item>
     </style>
 
+    <style name="PhotoPhaseTheme.FullScreen" parent="PhotoPhaseTheme.Base">
+        <item name="colorPrimary">@android:color/background_dark</item>
+        <item name="android:windowBackground">@android:color/background_dark</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
     <style name="PhotoPhaseTheme.PictureCheckBox" parent="Theme.AppCompat.Light">
         <item name="android:colorControlNormal">@android:color/white</item>
         <item name="android:colorControlActivated">@android:color/white</item>

@@ -74,11 +74,13 @@
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/PhotoPhaseTheme.Overlay"
-            android:uiOptions="none" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
+            android:uiOptions="none">
         </activity>
+
+        <activity
+            android:name=".PhotoViewerActivity"
+            android:exported="false"
+            android:theme="@style/PhotoPhaseTheme.FullScreen"/>
 
     </application>
 
