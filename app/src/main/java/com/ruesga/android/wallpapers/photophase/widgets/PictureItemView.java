@@ -21,7 +21,9 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -78,9 +80,11 @@ public class PictureItemView extends FrameLayout {
 
     private ImageView mIcon;
     private CheckBox mCheckbox;
+    private View mExpand;
     private View mOverlay;
 
     private boolean mInEditMode;
+    private boolean mLongClickFired;
 
     /**
      * Constructor of <code>PictureItemView</code>.
@@ -143,12 +147,13 @@ public class PictureItemView extends FrameLayout {
         setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                mLongClickFired = true;
                 mScaleInAnimation.cancel();
                 mScaleOutAnimation.cancel();
                 for (CallbacksListener cb : mCallbacks) {
                     cb.onPictureItemViewPressed(PictureItemView.this);
                 }
-                return true;
+                return false;
             }
         });
 
@@ -159,6 +164,7 @@ public class PictureItemView extends FrameLayout {
                     final int action = MotionEventCompat.getActionMasked(event);
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
+                            mLongClickFired = false;
                             mScaleOutAnimation.cancel();
                             startAnimation(mScaleInAnimation);
                             break;
@@ -167,6 +173,10 @@ public class PictureItemView extends FrameLayout {
                         case MotionEvent.ACTION_UP:
                             mScaleInAnimation.cancel();
                             startAnimation(mScaleOutAnimation);
+                            if (action == MotionEvent.ACTION_UP && !mLongClickFired) {
+                                playSoundEffect(SoundEffectConstants.CLICK);
+                                performDisplayPicture();
+                            }
                             break;
                     }
                 }
@@ -243,6 +253,15 @@ public class PictureItemView extends FrameLayout {
         if (mCheckbox == null) {
             mCheckbox = (CheckBox) findViewById(R.id.picture_selector);
         }
+        if (mExpand == null) {
+            mExpand = findViewById(R.id.picture_expand);
+            mExpand.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    performDisplayPicture();
+                }
+            });
+        }
         if (mOverlay == null) {
             mOverlay = findViewById(R.id.picture_overlay);
         }
@@ -256,6 +275,7 @@ public class PictureItemView extends FrameLayout {
             mCheckbox.setChecked(picture.isSelected());
             mCheckbox.setVisibility(editMode ? View.VISIBLE : View.GONE);
             mCheckbox.setOnCheckedChangeListener(mSelectionListener);
+            mExpand.setVisibility(editMode ? View.VISIBLE : View.GONE);
             mOverlay.setVisibility(editMode ? View.VISIBLE : View.GONE);
 
             // Do no try to cache the images (this generates a lot of memory and we want
@@ -271,4 +291,6 @@ public class PictureItemView extends FrameLayout {
         }
     }
 
+    private void performDisplayPicture() {
+    }
 }

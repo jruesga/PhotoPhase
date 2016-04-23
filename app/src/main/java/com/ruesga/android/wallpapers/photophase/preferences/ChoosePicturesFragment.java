@@ -39,7 +39,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -348,10 +347,6 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
         getActivity().sendBroadcast(intent);
 
-        if (mPictureAdapter != null) {
-            mPictureAdapter.dispose();
-        }
-
         super.onDestroy();
     }
 
@@ -554,8 +549,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
 
         // Notify pictures dataset changed
-        mPictureAdapter.notifyDataSetChanged();
         updateAlbumInfo(mDstView, album);
+        mPictureAdapter.notifyViewChanged();
 
         mSelectedAlbums.addAll(album.getSelectedItems());
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
@@ -628,7 +623,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         if (!mShowingAlbums) {
             // Notify pictures dataset changed
             updateAlbumInfo(mDstView, album);
-            mPictureAdapter.notifyDataSetChanged();
+            mPictureAdapter.notifyViewChanged();
         } else {
             mAlbumAdapter.notifyDataSetChanged();
         }
@@ -656,13 +651,13 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
         album.setSelected(false);
 
-        // Notify pictures dataset changed
-        mPictureAdapter.notifyDataSetChanged();
-        updateAlbumInfo(mDstView, album);
-
         mSelectedAlbums.addAll(album.getSelectedItems());
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
         mSelectionChanged = true;
+
+        // Notify pictures dataset changed
+        updateAlbumInfo(mDstView, album);
+        mPictureAdapter.notifyViewChanged();
     }
 
     /**
@@ -907,7 +902,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             pictureView.updateView(picture, mAlbum.getSelectedItems().size() > 0, false);
             updateAlbumInfo(mDstView, mAlbum);
             mAlbumAdapter.notifyDataSetChanged();
-            mPictureAdapter.notifyDataSetChanged();
+            mPictureAdapter.notifyViewChanged();
 
             // Update settings
             mSelectedAlbums.addAll(mAlbum.getSelectedItems());

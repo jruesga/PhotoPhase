@@ -42,4 +42,13 @@
         android:layout_gravity="top|end"
         android:theme="@style/PhotoPhaseTheme.PictureCheckBox"/>
 
+    <ImageView
+        android:id="@+id/picture_expand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_expand"
+        android:padding="3dp"
+        android:contentDescription="@null"/>
+
 </com.ruesga.android.wallpapers.photophase.widgets.PictureItemView>

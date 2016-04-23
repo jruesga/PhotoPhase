@@ -68,21 +68,11 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         mCallback = cb;
     }
 
-    /**
-     * Method that dispose the elements of the adapter.
-     */
-    public void dispose() {
-        clear();
-        this.mData = null;
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        int start = mParent.getFirstVisiblePosition();
-        int last = mParent.getLastVisiblePosition();
-        for (int i = start; i <= last; i++) {
+    public void notifyViewChanged() {
+        int count = mParent.getChildCount();
+        for (int i = 0; i < count; i++) {
             View v = mParent.getChildAt(i);
-            getView(i, v, mParent, false);
+            getView(mParent.getPositionForView(v), v, mParent, false);
         }
     }
 
