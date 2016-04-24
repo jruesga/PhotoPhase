@@ -148,4 +148,32 @@ public class BitmapUtils {
         return inSampleSize;
     }
 
+    /**
+     * Check if the bitmap is a power of two
+     *
+     * @param bitmap The bitmap to check
+     * @return boolean if the size is power of two
+     */
+    public static boolean isPowerOfTwo(Bitmap bitmap){
+        int w = bitmap.getWidth();
+        int h = bitmap.getWidth();
+        return (w & (w - 1)) == 0 && (h & (h - 1)) == 0;
+    }
+
+    /**
+     * Return the nearest upper power of two size
+     *
+     * @param v The original value
+     * @return The nearest upper power
+     */
+    public static int calculateUpperPowerOfTwo(int v) {
+        v--;
+        v |= v >>> 1;
+        v |= v >>> 2;
+        v |= v >>> 4;
+        v |= v >>> 8;
+        v |= v >>> 16;
+        v++;
+        return v;
+    }
 }

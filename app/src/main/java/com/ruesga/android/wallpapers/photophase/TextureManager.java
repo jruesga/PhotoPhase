@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.ruesga.android.wallpapers.photophase.FixedQueue.EmptyQueueException;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
@@ -432,9 +433,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
     /**
      * Method that fix the aspect ratio of a image to fit the destination target
      *
-     * @param request The requestor target
+     * @param requestor The requestor target
      * @param ti The original texture information
-     * @param effect The effect to apply to the destination picture
      */
     void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
         // Check if we have to apply any correction to the image
@@ -450,8 +450,8 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             // Create a thumbnail of the image
             Bitmap thumb = ThumbnailUtils.extractThumbnail(
                                     ti.bitmap,
-                                    pixels.width(),
-                                    pixels.height(),
+                                    BitmapUtils.calculateUpperPowerOfTwo(pixels.width()),
+                                    BitmapUtils.calculateUpperPowerOfTwo(pixels.height()),
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
             GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, pixels);
 
@@ -463,15 +463,41 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             }
             GLES20.glDeleteTextures(1, textures, 0);
             GLESUtil.glesCheckError("glDeleteTextures");
-            if (ti.bitmap != null) {
-                ti.bitmap.recycle();
-                ti.bitmap = null;
-            }
 
             // Swap references
             ti.bitmap = dst.bitmap;
             ti.handle = dst.handle;
             ti.effect = null;
+        } else {
+            if (!BitmapUtils.isPowerOfTwo(ti.bitmap)) {
+                // Transform requestor dimensions to screen dimensions
+                int w = BitmapUtils.calculateUpperPowerOfTwo(ti.bitmap.getWidth());
+                int h = BitmapUtils.calculateUpperPowerOfTwo(ti.bitmap.getWidth());
+                Rect pixels = new Rect(0, 0, w, h);
+
+                // Create a power of two bitmap
+                Bitmap out = Bitmap.createScaledBitmap(ti.bitmap, w, h, false);
+                GLESTextureInfo dst = GLESUtil.loadTexture(out, ti.effect, pixels);
+
+                // Destroy references
+                int[] textures = new int[]{ti.handle};
+                if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                    Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                            + ti.handle + "]");
+                }
+                GLES20.glDeleteTextures(1, textures, 0);
+                GLESUtil.glesCheckError("glDeleteTextures");
+                if (ti.bitmap != null) {
+                    ti.bitmap.recycle();
+                    ti.bitmap = null;
+                }
+
+
+                // Swap references
+                ti.bitmap = dst.bitmap;
+                ti.handle = dst.handle;
+                ti.effect = null;
+            }
         }
     }
 

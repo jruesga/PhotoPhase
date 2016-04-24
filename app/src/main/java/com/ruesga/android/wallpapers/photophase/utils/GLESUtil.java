@@ -468,7 +468,7 @@ public final class GLESUtil {
             synchronized (SYNC) {
                 // No more than 1024 (the minimum supported by all the gles20 devices)
                 int w = Math.min(dimen.width(), 1024);
-                int h = Math.min(dimen.width(), 1024);
+                int h = Math.min(dimen.height(), 1024);
                 effect.apply(textureHandles[0], w, h, textureHandles[1]);
             }
             handle = textureHandles[1];
