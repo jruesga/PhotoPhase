@@ -79,12 +79,6 @@ public class PortraitDispositionFragment extends DispositionFragment {
     @Override
     public void saveDispositions(List<Disposition> dispositions) {
         Preferences.Layout.setPortraitDisposition(getActivity(), dispositions);
-        Preferences.Layout.setPortraitDispositionTemplate(getActivity(), getTemplatePage());
-    }
-
-    @Override
-    protected int getSavedTemplatePage() {
-        return Preferences.Layout.getPortraitDispositionTemplate();
     }
 
     /**

@@ -404,8 +404,6 @@ public final class PreferencesProvider {
             public static final String DEFAULT_LANDSCAPE_DISPOSITION =
                     "0x0:2x3|3x0:5x1|3x2:4x3|5x2:6x3|6x0:6x0|6x1:6x1";
 
-            public static final int DEFAULT_DISPOSITION_TEMPLATE = -1;
-
             /**
              * The default transition interval
              */
@@ -462,7 +460,7 @@ public final class PreferencesProvider {
             }
 
             /**
-             * Sets the disposition of the photo frames in the wallpaper on portrait screen.
+             * Sets the disposition of the photo frames in the wallpaper on landscape screen.
              *
              * @param context The current context
              * @param dispositions The photo frames dispositions
@@ -474,32 +472,6 @@ public final class PreferencesProvider {
                 Editor editor = preferences.edit();
                 editor.putString("ui_layout_portrait_disposition",
                                     DispositionUtil.fromDispositions(dispositions));
-                editor.apply();
-                reload(context);
-            }
-
-            /**
-             * Returns the template of disposition of the photo frames in the wallpaper
-             * on portrait screen.
-             *
-             * @return int The portrait disposition template
-             */
-            public static int getPortraitDispositionTemplate() {
-                return getInt("ui_layout_portrait_disposition_template", DEFAULT_DISPOSITION_TEMPLATE);
-            }
-
-            /**
-             * Sets the template of disposition of the photo frames in the wallpaper
-             * on portrait screen.
-             *
-             * @param context The current context
-             * @param template The portrait disposition template
-             */
-            public static void setPortraitDispositionTemplate(Context context, int template) {
-                SharedPreferences preferences =
-                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-                Editor editor = preferences.edit();
-                editor.putInt("ui_layout_portrait_disposition_template", template);
                 editor.apply();
                 reload(context);
             }
@@ -529,32 +501,6 @@ public final class PreferencesProvider {
                 Editor editor = preferences.edit();
                 editor.putString("ui_layout_landscape_disposition",
                             DispositionUtil.fromDispositions(dispositions));
-                editor.apply();
-                reload(context);
-            }
-
-            /**
-             * Returns the template of disposition of the photo frames in the wallpaper
-             * on landscape screen.
-             *
-             * @return int The landscape disposition template
-             */
-            public static int getLandscapeDispositionTemplate() {
-                return getInt("ui_layout_landscape_disposition_template", DEFAULT_DISPOSITION_TEMPLATE);
-            }
-
-            /**
-             * Sets the template of disposition of the photo frames in the wallpaper
-             * on landscape screen.
-             *
-             * @param context The current context
-             * @param template The landscape disposition template
-             */
-            public static void setLandscapeDispositionTemplate(Context context, int template) {
-                SharedPreferences preferences =
-                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-                Editor editor = preferences.edit();
-                editor.putInt("ui_layout_landscape_disposition_template", template);
                 editor.apply();
                 reload(context);
             }

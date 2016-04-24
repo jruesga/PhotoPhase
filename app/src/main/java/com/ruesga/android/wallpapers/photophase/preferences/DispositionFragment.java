@@ -55,6 +55,7 @@ public abstract class DispositionFragment extends PreferenceFragment
     private DispositionAdapter mAdapter;
     private ResizeFrame mResizeFrame;
     private TextView mAdvise;
+    private int mAdviseLines = -1;
 
     private DispositionView mCurrentDispositionView;
     private int mCurrentPage;
@@ -131,31 +132,8 @@ public abstract class DispositionFragment extends PreferenceFragment
 
     @Override
     public void onDestroyView() {
-        mPager.removeOnPageChangeListener(this);
-        saveDispositions();
         super.onDestroyView();
-    }
-
-    private void saveDispositions() {
-        boolean saved = false;
-        System.out.println("jrc: mCurrentDispositionView != null: " + (mCurrentDispositionView != null));
-        if (mCurrentDispositionView != null) {
-            System.out.println("jrc: mCurrentPage: " + mCurrentPage);
-            System.out.println("jrc: mCurrentDispositionView.isChanged(): " + mCurrentDispositionView.isChanged());
-            int item = getSavedTemplatePage() + 1;
-            if (mCurrentPage != item || mCurrentDispositionView.isChanged()) {
-                saveDispositions(mCurrentDispositionView.getDispositions());
-                saved = true;
-            }
-
-            // Notify that the settings was changed
-            Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-            if (saved) {
-                intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
-                intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
-            }
-            getActivity().sendBroadcast(intent);
-        }
+        mPager.removeOnPageChangeListener(this);
     }
 
     /**
@@ -178,23 +156,41 @@ public abstract class DispositionFragment extends PreferenceFragment
         mPager = (ViewPager) v.findViewById(R.id.dispositions_pager);
         mPager.setAdapter(mAdapter);
         mPager.addOnPageChangeListener(this);
-        final int item = getSavedTemplatePage() + 1;
-        mPager.setCurrentItem(item);
-        if (getActivity() != null) {
-            onPageSelected(item);
-        }
+        mPager.setCurrentItem(0);
 
         return v;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        final int item = getSavedTemplatePage() + 1;
-        if (mAdapter != null) {
-            onPageSelected(item);
+    public void onPause() {
+        // Saved ?
+        if (mOkPressed) {
+            boolean saved = false;
+
+            if (mCurrentDispositionView == null) {
+                mCurrentDispositionView = mAdapter.getView(0);
+            }
+
+            if (mCurrentDispositionView != null) {
+                if (mCurrentPage != 0 || mCurrentDispositionView.isChanged()) {
+                    saveDispositions(mCurrentDispositionView.getDispositions());
+                    saved = true;
+                }
+
+                // Notify that the settings was changed
+                Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+                if (saved) {
+                    intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
+                    intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+                }
+                getActivity().sendBroadcast(intent);
+            }
         }
 
+        super.onPause();
     }
 
     /**
@@ -216,7 +212,6 @@ public abstract class DispositionFragment extends PreferenceFragment
         switch (item.getItemId()) {
             case R.id.mnu_ok:
                 mOkPressed = true;
-                saveDispositions();
                 getActivity().finish();
                 return true;
             case R.id.mnu_restore:
@@ -330,6 +325,10 @@ public abstract class DispositionFragment extends PreferenceFragment
         if (position == 0) {
             mAdvise.setText(getString(R.string.pref_disposition_description));
         } else {
+            if (mAdviseLines == -1) {
+                mAdviseLines = mAdvise.getLineCount();
+                mAdvise.setLines(mAdviseLines);
+            }
             mAdvise.setText(getString(R.string.pref_disposition_template,
                     String.valueOf(position), String.valueOf(mNumberOfTemplates)));
         }
@@ -344,12 +343,6 @@ public abstract class DispositionFragment extends PreferenceFragment
             mDeleteMenu.setVisible(false);
         }
         mResizeFrame.setVisibility(View.GONE);
-    }
-
-    protected abstract int getSavedTemplatePage();
-
-    protected int getTemplatePage() {
-        return mPager.getCurrentItem() - 1;
     }
 
 }
