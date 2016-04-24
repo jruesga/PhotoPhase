@@ -425,6 +425,8 @@ public final class GLESUtil {
             return new GLESTextureInfo();
         }
 
+        Bitmap texture = ensurePowerOfTwoTexture(bitmap);
+
         int num = effect == null ? 1 : 2;
 
         int[] textureHandles = new int[num];
@@ -455,7 +457,7 @@ public final class GLESUtil {
         GLESUtil.glesCheckError("glTexParameteri");
 
         // Load the texture
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
         if (!GLES20.glIsTexture(textureHandles[0])) {
             Log.e(TAG, "Failed to load a valid texture");
             return new GLESTextureInfo();
@@ -486,9 +488,22 @@ public final class GLESUtil {
         // Return the texture handle identifier and the associated info
         GLESTextureInfo ti = new GLESTextureInfo();
         ti.handle = handle;
-        ti.bitmap = bitmap;
+        ti.bitmap = texture;
         ti.path = null;
         return ti;
+    }
+
+    private static Bitmap ensurePowerOfTwoTexture(Bitmap src) {
+        if (!BitmapUtils.isPowerOfTwo(src)) {
+            int w = BitmapUtils.calculateUpperPowerOfTwo(src.getWidth());
+            int h = BitmapUtils.calculateUpperPowerOfTwo(src.getWidth());
+
+            // Create a power of two bitmap
+            Bitmap out = Bitmap.createScaledBitmap(src, w, h, false);
+            src.recycle();
+            return out;
+        }
+        return src;
     }
 
     /**

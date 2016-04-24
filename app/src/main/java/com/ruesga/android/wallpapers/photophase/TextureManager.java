@@ -468,36 +468,6 @@ public class TextureManager implements OnMediaPictureDiscoveredListener {
             ti.bitmap = dst.bitmap;
             ti.handle = dst.handle;
             ti.effect = null;
-        } else {
-            if (!BitmapUtils.isPowerOfTwo(ti.bitmap)) {
-                // Transform requestor dimensions to screen dimensions
-                int w = BitmapUtils.calculateUpperPowerOfTwo(ti.bitmap.getWidth());
-                int h = BitmapUtils.calculateUpperPowerOfTwo(ti.bitmap.getWidth());
-                Rect pixels = new Rect(0, 0, w, h);
-
-                // Create a power of two bitmap
-                Bitmap out = Bitmap.createScaledBitmap(ti.bitmap, w, h, false);
-                GLESTextureInfo dst = GLESUtil.loadTexture(out, ti.effect, pixels);
-
-                // Destroy references
-                int[] textures = new int[]{ti.handle};
-                if (GLESUtil.DEBUG_GL_MEMOBJS) {
-                    Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
-                            + ti.handle + "]");
-                }
-                GLES20.glDeleteTextures(1, textures, 0);
-                GLESUtil.glesCheckError("glDeleteTextures");
-                if (ti.bitmap != null) {
-                    ti.bitmap.recycle();
-                    ti.bitmap = null;
-                }
-
-
-                // Swap references
-                ti.bitmap = dst.bitmap;
-                ti.handle = dst.handle;
-                ti.effect = null;
-            }
         }
     }
 
