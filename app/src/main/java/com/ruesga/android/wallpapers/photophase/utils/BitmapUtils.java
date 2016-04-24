@@ -71,7 +71,7 @@ public class BitmapUtils {
         // Decode the bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         options.inPreferQualityOverSpeed = false;
-        // Deprecated, but still valids for KitKat and lower apis
+        // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
@@ -80,10 +80,10 @@ public class BitmapUtils {
         }
 
         // Test if the bitmap has exif format, and decode properly
-//        Bitmap out = decodeExifBitmap(file, bitmap);
-//        if (!out.equals(bitmap)) {
-//            bitmap.recycle();
-//        }
+        Bitmap out = decodeExifBitmap(file, bitmap);
+        if (!out.equals(bitmap)) {
+            bitmap.recycle();
+        }
         return bitmap;
     }
 
