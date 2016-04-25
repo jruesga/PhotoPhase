@@ -493,6 +493,12 @@ public final class GLESUtil {
         return ti;
     }
 
+    /**
+     * Ensure that the passed bitmap can be used a as power of two texture
+     *
+     * @param src The source bitmap
+     * @return A bitmap which is power of two
+     */
     private static Bitmap ensurePowerOfTwoTexture(Bitmap src) {
         if (!BitmapUtils.isPowerOfTwo(src)) {
             int w = BitmapUtils.calculateUpperPowerOfTwo(src.getWidth());

@@ -164,7 +164,7 @@ public class BitmapUtils {
      * Return the nearest upper power of two size
      *
      * @param v The original value
-     * @return The nearest upper power
+     * @return The nearest upper power of two
      */
     public static int calculateUpperPowerOfTwo(int v) {
         v--;
