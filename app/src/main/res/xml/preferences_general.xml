@@ -37,6 +37,29 @@
             android:persistent="true"
             android:defaultValue="@color/wallpaper_background_color" />
 
+        <!-- Aspect ratio correction -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_fix_aspect_ratio"
+            android:title="@string/pref_general_aspect_ratio_correction"
+            android:summary="@string/pref_general_aspect_ratio_correction_summary"
+            android:persistent="true"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <!-- Touch behaviour -->
+    <PreferenceCategory
+        android:key="category_touch"
+        android:title="@string/pref_general_touch">
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_touch_mode"
+            android:title="@string/pref_general_touch_mode"
+            android:summaryOn="@string/pref_general_touch_mode_on"
+            android:summaryOff="@string/pref_general_touch_mode_off"
+            android:persistent="true"
+            android:defaultValue="true" />
+
         <!-- Touch action -->
         <ListPreference
             android:key="ui_touch_action"
@@ -45,14 +68,6 @@
             android:entries="@array/touch_actions_labels"
             android:entryValues="@array/touch_actions_values"
             android:defaultValue="0" />
-
-        <!-- Aspect ratio correction -->
-        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
-            android:key="ui_fix_aspect_ratio"
-            android:title="@string/pref_general_aspect_ratio_correction"
-            android:summary="@string/pref_general_aspect_ratio_correction_summary"
-            android:persistent="true"
-            android:defaultValue="true" />
 
     </PreferenceCategory>
 

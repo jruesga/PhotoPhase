@@ -329,7 +329,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     public void onTouch(float x , float y) {
         if (mWorld != null) {
             // Do user action
-            TouchAction touchAction = Preferences.General.getTouchAction();
+            TouchAction touchAction = Preferences.General.Touch.getTouchAction();
             if (touchAction.compareTo(TouchAction.NONE) != 0) {
                 // Avoid to handle multiple touchs
                 long touchTime = System.currentTimeMillis();

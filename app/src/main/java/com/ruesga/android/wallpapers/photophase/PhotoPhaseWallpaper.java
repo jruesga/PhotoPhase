@@ -20,11 +20,13 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ViewConfiguration;
 
 import com.ruesga.android.wallpapers.photophase.GLESWallpaperService.GLESEngineListener;
@@ -99,6 +101,12 @@ public class PhotoPhaseWallpaper
         private final Handler mHandler;
         final ActivityManager mActivityManager;
 
+        private long mLastTouch = -1;
+        private Point mLastPoint = new Point();
+
+        private static final int DOUBLE_TAP_MIN_TIME = 40;
+        private final int mDoubleTapSlop;
+
         /**
          * Constructor of <code>PhotoPhaseWallpaperEngine<code>
          *
@@ -113,6 +121,9 @@ public class PhotoPhaseWallpaper
             setGLESEngineListener(wallpaper);
             setWallpaperGLSurfaceView(new PhotoPhaseWallpaperGLSurfaceView(wallpaper));
             setPauseOnPreview(true);
+
+            mDoubleTapSlop = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
         }
 
         /**
@@ -135,32 +146,56 @@ public class PhotoPhaseWallpaper
         @Override
         public Bundle onCommand(final String action, final int x, final int y, final int z,
                 final Bundle extras, final boolean resultRequested) {
-            if (action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    @SuppressWarnings("deprecation")
-                    public void run() {
-                        // Only if the wallpaper is visible after a long press and
-                        // not in preview mode
-                        if (isVisible() && !isPreview()) {
-                            // This is still valid, because we need the HOME task which is still
-                            // part of the list after LOLLIPOP, and valid prior to this api
-                            List<RunningTaskInfo> taskInfo = mActivityManager.getRunningTasks(1);
-                            String topActivity = taskInfo.get(0).topActivity.getClassName();
-                            for (String activity : TOP_ACTIVITIES) {
-                                if (activity.compareTo(topActivity) == 0) {
-                                    // Ignore tap event
-                                    return;
+            // Ignore commands in preview mode
+            if (!isPreview() && action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
+                if (isDoubleTap(x, y)) {
+                    // Pass the x and y position to the renderer
+                    ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y);
+                } else if (!PreferencesProvider.Preferences.General.Touch.getTouchMode()) {
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        @SuppressWarnings("deprecation")
+                        public void run() {
+                            // Only if the wallpaper is visible after a long press and
+                            // not in preview mode
+                            if (isVisible() && !isPreview()) {
+                                // This is still valid, because we need the HOME task which is still
+                                // part of the list after LOLLIPOP, and valid prior to this api
+                                List<RunningTaskInfo> taskInfo = mActivityManager.getRunningTasks(1);
+                                String topActivity = taskInfo.get(0).topActivity.getClassName();
+                                for (String activity : TOP_ACTIVITIES) {
+                                    if (activity.compareTo(topActivity) == 0) {
+                                        // Ignore tap event
+                                        return;
+                                    }
                                 }
-                            }
 
-                            // Pass the x and y position to the renderer
-                            ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y);
+                                // Pass the x and y position to the renderer
+                                ((PhotoPhaseRenderer) getRenderer()).onTouch(x, y);
+                            }
                         }
-                    }
-                }, ViewConfiguration.getLongPressTimeout() + 100L);
+                    }, ViewConfiguration.getLongPressTimeout() + 100L);
+                }
+
+                mLastTouch = System.currentTimeMillis();
+                mLastPoint.set(x, y);
             }
             return super.onCommand(action, x, y, z, extras, resultRequested);
+        }
+
+        private boolean isDoubleTap(final int x, final int y) {
+            if (PreferencesProvider.Preferences.General.Touch.getTouchMode()) {
+                // User preference is double tap
+                long diff = System.currentTimeMillis() - mLastTouch;
+                if (diff > 0 && diff >= DOUBLE_TAP_MIN_TIME
+                        && diff <= ViewConfiguration.getDoubleTapTimeout()) {
+                    if (Math.abs(mLastPoint.x - x) < mDoubleTapSlop
+                            && Math.abs(mLastPoint.y - y) < mDoubleTapSlop) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 

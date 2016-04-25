@@ -209,15 +209,6 @@ public final class PreferencesProvider {
             }
 
             /**
-             * Return the current user preference of the action to do when a frame is tap.
-             *
-             * @return TouchAction The action (default NONE)
-             */
-            public static TouchAction getTouchAction() {
-                return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0")));
-            }
-
-            /**
              * Return the current user preference about fix or not fix the aspect ratio
              * of the image by cropping the image.
              *
@@ -225,6 +216,31 @@ public final class PreferencesProvider {
              */
             public static boolean isFixAspectRatio() {
                 return getBoolean("ui_fix_aspect_ratio", true);
+            }
+
+            /**
+             * Touch behaviour preferences
+             */
+            public static class Touch {
+
+                /**
+                 * Return the current user preference of touch detection mode.
+                 *
+                 * @return boolean true: double tap; false: single tap
+                 */
+                public static boolean getTouchMode() {
+                    return getBoolean("ui_touch_mode", true);
+                }
+
+
+                /**
+                 * Return the current user preference of the action to do when a frame is tap.
+                 *
+                 * @return TouchAction The action (default NONE)
+                 */
+                public static TouchAction getTouchAction() {
+                    return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0")));
+                }
             }
 
             /**
