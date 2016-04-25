@@ -48,6 +48,9 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
             mRefs = refs;
         }
 
+        public void onPreloadImage() {
+        }
+
         /**
          * Invoked when a picture is loaded
          *
@@ -111,6 +114,10 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      */
     @Override
     protected Drawable doInBackground(File... params) {
+        if (mCallback != null) {
+            mCallback.onPreloadImage();
+        }
+
         Bitmap bitmap = BitmapUtils.decodeBitmap(params[0], mWidth, mHeight);
         if (bitmap != null) {
             return new BitmapDrawable(mContext.getResources(), bitmap);

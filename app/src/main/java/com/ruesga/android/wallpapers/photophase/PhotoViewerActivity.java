@@ -16,11 +16,15 @@
 
 package com.ruesga.android.wallpapers.photophase;
 
+import android.annotation.TargetApi;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
@@ -39,10 +43,19 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private ImageView mPhotoView;
     private AsyncPictureLoaderTask mTask;
 
+    private boolean mHasTransition;
+
+    // To avoid passing a bitmap in a extra
+    public static Bitmap sThumbnail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_viewer);
+
+        if (savedInstanceState != null) {
+            mHasTransition = savedInstanceState.getBoolean("has_transition", true);
+        }
 
         if (getIntent() != null) {
             String photo = getIntent().getStringExtra(EXTRA_PHOTO);
@@ -60,23 +73,69 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
         initToolbar();
         mPhotoView = (ImageView) findViewById(R.id.photo);
+        if (mPhotoView != null) {
+            mPhotoView.setImageBitmap(sThumbnail);
+            mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
+        }
+        addTransitionListener();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void addTransitionListener() {
+        getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                performAsyncPhotoLoading();
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+            }
+        });
+    }
+
+    private void performAsyncPhotoLoading() {
+        mTask = new AsyncPictureLoaderTask(
+                this, mPhotoView, 1024, 1024, new AsyncPictureLoaderTask.OnPictureLoaded() {
+            @Override
+            public void onPreloadImage() {
+                try {
+                    Thread.sleep(300L);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+
+            @Override
+            public void onPictureLoaded(Object o, Drawable drawable) {
+                if (mPhotoView != null) {
+                    mPhotoViewAttacher.update();
+                }
+            }
+        });
+        mTask.execute(new File(mPhoto.getPath()));
     }
 
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        mTask = new AsyncPictureLoaderTask(this, mPhotoView, 1024, 1024, new AsyncPictureLoaderTask.OnPictureLoaded() {
-
-
-            @Override
-            public void onPictureLoaded(Object o, Drawable drawable) {
-                if (mPhotoView != null) {
-                    mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
-                }
-            }
-        });
-        mTask.execute(new File(mPhoto.getPath()));
+        // Transition is not supported
+        if (!AndroidHelper.isLollipopOrGreater() || !mHasTransition) {
+            performAsyncPhotoLoading();
+        }
     }
 
     @Override
@@ -87,6 +146,12 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 mTask.getStatus() == AsyncTask.Status.PENDING)) {
             mTask.cancel(true);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("has_transition", false);
     }
 
     private void initToolbar() {
@@ -102,7 +167,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            finish();
+            finishActivity();
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -110,6 +175,13 @@ public class PhotoViewerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        finishActivity();
+    }
+
+    private void finishActivity() {
+        if (mPhotoViewAttacher != null) {
+            mPhotoViewAttacher.cleanup();
+        }
+        supportFinishAfterTransition();
     }
 }

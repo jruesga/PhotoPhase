@@ -19,6 +19,7 @@ package com.ruesga.android.wallpapers.photophase;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Process;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -42,12 +43,30 @@ public final class AndroidHelper {
     }
 
     /**
+     * Method that returns if the device is running jellybean or greater
+     *
+     * @return boolean true if is running jellybean or greater
+     */
+    public static boolean isJellyBeanOrGreater() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    /**
+     * Method that returns if the device is running lollipop or greater
+     *
+     * @return boolean true if is running lollipop or greater
+     */
+    public static boolean isLollipopOrGreater() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    /**
      * Method that returns if the device is running kitkat or greater
      *
      * @return boolean true if is running kitkat or greater
      */
     public static boolean isKitKatOrGreater() {
-        return android.os.Build.VERSION.SDK_INT >= 19;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
     /**

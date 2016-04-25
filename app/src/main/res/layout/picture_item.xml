@@ -16,18 +16,21 @@
  -->
 <com.ruesga.android.wallpapers.photophase.widgets.PictureItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/picture"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="1dp">
 
     <com.ruesga.android.wallpapers.photophase.widgets.SquareImageView
-        android:id="@+id/picture_thumbnail"
+        android:id="@+id/photo"
+        android:transitionName="photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:background="@color/album_thumbnail_color"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null"
+        tools:ignore="UnusedAttribute"/>
 
     <View
         android:id="@+id/picture_overlay"

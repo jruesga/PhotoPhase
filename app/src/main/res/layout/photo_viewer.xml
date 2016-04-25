@@ -16,15 +16,18 @@
 -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/photo"
+        android:transitionName="photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null"
+        tools:ignore="UnusedAttribute"/>
 
     <include layout="@layout/preference_toolbar" />
 

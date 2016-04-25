@@ -873,7 +873,6 @@ public class ChoosePicturesFragment extends PreferenceFragment
                 parent.getHeight() - view.getHeight() -
                 parent.getPaddingTop()  - parent.getPaddingBottom()));
         mPicturesPanel.setVisibility(View.INVISIBLE);
-//        mPicturesPanel.setOnItemClickListener(mOnItemClickListener);
 
         // Add to the container
         mContainer.addView(mPicturesPanel);

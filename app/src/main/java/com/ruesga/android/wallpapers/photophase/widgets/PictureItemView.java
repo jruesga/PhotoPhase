@@ -16,13 +16,15 @@
 
 package com.ruesga.android.wallpapers.photophase.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
@@ -35,6 +37,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.PhotoViewerActivity;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
@@ -177,7 +180,7 @@ public class PictureItemView extends FrameLayout {
                             startAnimation(mScaleOutAnimation);
                             if (action == MotionEvent.ACTION_UP && !mLongClickFired) {
                                 playSoundEffect(SoundEffectConstants.CLICK);
-                                performDisplayPicture();
+                                performDisplayPicture(mIcon);
                             }
                             break;
                     }
@@ -250,7 +253,7 @@ public class PictureItemView extends FrameLayout {
 
         // Retrieve the views references
         if (mIcon == null) {
-            mIcon = (ImageView) findViewById(R.id.picture_thumbnail);
+            mIcon = (ImageView) findViewById(R.id.photo);
         }
         if (mCheckbox == null) {
             mCheckbox = (CheckBox) findViewById(R.id.picture_selector);
@@ -260,7 +263,7 @@ public class PictureItemView extends FrameLayout {
             mExpand.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    performDisplayPicture();
+                    performDisplayPicture(mIcon);
                 }
             });
         }
@@ -293,9 +296,17 @@ public class PictureItemView extends FrameLayout {
         }
     }
 
-    private void performDisplayPicture() {
+    private void performDisplayPicture(ImageView photo) {
         Intent intent = new Intent(getContext(), PhotoViewerActivity.class);
         intent.putExtra(PhotoViewerActivity.EXTRA_PHOTO, getPicture().getPath());
-        getContext().startActivity(intent);
+        PhotoViewerActivity.sThumbnail = ((BitmapDrawable) photo.getDrawable()).getBitmap();
+        if (AndroidHelper.isJellyBeanOrGreater()) {
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            ((Activity) getContext()), photo, "photo");
+            getContext().startActivity(intent, options.toBundle());
+        } else {
+            getContext().startActivity(intent);
+        }
     }
 }
