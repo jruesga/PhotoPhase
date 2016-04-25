@@ -213,6 +213,13 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         }
     }
 
+    public void deselectCurrentFrame() {
+        mTarget = null;
+        if (mResizeFrame != null) {
+            mResizeFrame.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * Method that request the deletion of the current selected frame
      */

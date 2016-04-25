@@ -312,6 +312,7 @@ public abstract class DispositionFragment extends PreferenceFragment
         // Save state
         mCurrentPage = position;
         mCurrentDispositionView = mAdapter.getView(position);
+        mCurrentDispositionView.deselectCurrentFrame();
 
         // Enable/Disable menus
         if (mRestoreMenu != null) {
