@@ -103,11 +103,11 @@ public class BitmapUtils {
                 return src;
             }
             Matrix matrix = new Matrix();
-            if (orientation == 6) {
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                 matrix.postRotate(90);
-            } else if (orientation == 3) {
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
                 matrix.postRotate(180);
-            } else if (orientation == 8) {
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                 matrix.postRotate(270);
             }
             // Rotate the bitmap
