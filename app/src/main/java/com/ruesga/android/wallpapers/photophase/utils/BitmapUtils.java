@@ -99,7 +99,8 @@ public class BitmapUtils {
             // Try to load the bitmap as a bitmap file
             ExifInterface exif = new ExifInterface(file.getAbsolutePath());
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-            if (orientation == 0) {
+            if (orientation == ExifInterface.ORIENTATION_UNDEFINED
+                    || orientation == ExifInterface.ORIENTATION_NORMAL) {
                 return src;
             }
             Matrix matrix = new Matrix();
@@ -109,6 +110,12 @@ public class BitmapUtils {
                 matrix.postRotate(180);
             } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                 matrix.postRotate(270);
+            } else if (orientation == ExifInterface.ORIENTATION_FLIP_HORIZONTAL) {
+                matrix.setScale(-1, 1);
+                matrix.postTranslate(src.getWidth(), 0);
+            } else if (orientation == ExifInterface.ORIENTATION_FLIP_VERTICAL) {
+                matrix.setScale(1, -1);
+                matrix.postTranslate(0, src.getHeight());
             }
             // Rotate the bitmap
             return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
