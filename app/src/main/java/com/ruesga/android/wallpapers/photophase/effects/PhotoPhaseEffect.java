@@ -54,7 +54,7 @@ public abstract class PhotoPhaseEffect extends Effect {
     private final int GL_STATE_FBO          = 0;
     private final int GL_STATE_PROGRAM      = 1;
     private final int GL_STATE_ARRAYBUFFER  = 2;
-    private final int GL_STATE_COUNT        = 3;
+    private final int GL_STATE_COUNT        = GL_STATE_ARRAYBUFFER + 1;
 
     private int[] mOldState = new int[GL_STATE_COUNT];
 
