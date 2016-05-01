@@ -24,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -57,7 +58,7 @@ public class ResizeFrame extends FrameLayout {
          * @param delta The delta motion
          * @see Gravity
          */
-        void onResize(int mode, int delta);
+        void onResize(int mode, float delta);
         /**
          * Called when the resize was ended
          *
@@ -222,6 +223,7 @@ public class ResizeFrame extends FrameLayout {
      * {@inheritDoc}
      */
     @Override
+    @SuppressLint("RtlHardcoded")
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
         final int action = ev.getAction();
         final float x = ev.getX();
@@ -248,12 +250,11 @@ public class ResizeFrame extends FrameLayout {
                 // Resize
                 if (mOnResizeListener != null) {
                     int handle = (Integer) mHandle.getTag();
-                    int delta =
-                            handle == Gravity.START || handle == Gravity.END
-                            ? Math.round(x - mLastTouchX)
-                            : Math.round(y - mLastTouchY);
+                    float delta = handle == Gravity.RIGHT || handle == Gravity.LEFT
+                            ? x - mLastTouchX
+                            : y - mLastTouchY;
                     mOnResizeListener.onResize(handle, delta);
-                    invalidate();
+                    ViewCompat.postInvalidateOnAnimation(this);
                 }
                 mLastTouchX = x;
                 mLastTouchY = y;
@@ -265,10 +266,9 @@ public class ResizeFrame extends FrameLayout {
             if (mHandle != null) {
                 if (mOnResizeListener != null) {
                     mOnResizeListener.onEndResize((Integer) mHandle.getTag());
+                    cancelMotion();
                     return true;
                 }
-                cancelMotion();
-                break;
             }
 
         //$FALL-THROUGH$

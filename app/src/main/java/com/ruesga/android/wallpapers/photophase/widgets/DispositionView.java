@@ -446,7 +446,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
 
     @Override
     @SuppressLint("RtlHardcoded")
-    public void onResize(int mode, int delta) {
+    public void onResize(int mode, float delta) {
         if (mTarget == null) return;
         if (mResizeFrame == null) return;
 
