@@ -16,16 +16,20 @@
 
 package com.ruesga.android.wallpapers.photophase.preferences;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,6 +55,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.adapters.AlbumCardUiAdapter;
 import com.ruesga.android.wallpapers.photophase.adapters.AlbumPictureAdapter;
@@ -84,8 +89,10 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
     private static final int PROGRESS_STEPS = 5;
 
+    private static final int READ_EXTERNAL_STORAGE_PERM_REQUEST = 0;
+
     // The album loader task
-    private final AsyncTask<Void, Album, Void> mTask = new AsyncTask<Void, Album, Void>() {
+    private class AlbumLoaderTask extends AsyncTask<Void, Album, Void> {
 
         private DateFormat mDateFormat;
 
@@ -227,7 +234,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
             }
             return false;
         }
-    };
+    }
+    private AlbumLoaderTask mTask;
 
     private final Handler.Callback mCallback = new Handler.Callback() {
         @Override
@@ -266,6 +274,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
     private ViewGroup mContainer;
 
+    private View mEmpty;
     private ListView mAlbumsPanel;
     private AlbumCardUiAdapter mAlbumAdapter;
 
@@ -385,8 +394,23 @@ public class ChoosePicturesFragment extends PreferenceFragment
         FrameLayout root =
                 (FrameLayout)mInflater.inflate(
                         R.layout.choose_picture_fragment, container, false);
+
+        mEmpty = root.findViewById(android.R.id.empty);
+        mEmpty.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!requestAlbumData(getActivity(), false)) {
+                    requestStoragePermission(true);
+                }
+            }
+        });
+        if (getActivity() != null) {
+            updateEmptyMsg(AndroidHelper.hasReadExternalStoragePermissionGranted(getActivity()));
+        }
+
         mAlbumsPanel = (ListView)root.findViewById(R.id.albums_panel);
         mAlbumsPanel.setSmoothScrollbarEnabled(true);
+        mAlbumsPanel.setEmptyView(mEmpty);
         mAlbumAdapter = new AlbumCardUiAdapter(getActivity(), mAlbumsPanel, mAlbums, this);
         mAlbumsPanel.setAdapter(mAlbumAdapter);
         mAlbumsPanel.setOnItemClickListener(mOnItemClickListener);
@@ -412,7 +436,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mTask.execute();
+        if (!requestAlbumData(activity, false)) {
+            requestStoragePermission(false);
+        }
     }
 
     /**
@@ -420,7 +446,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     @Override
     public void onDetach() {
-        if (mTask.getStatus().compareTo(Status.PENDING) == 0) {
+        if (mTask != null && mTask.getStatus().compareTo(Status.FINISHED) != 0) {
             mTask.cancel(true);
         }
         super.onDetach();
@@ -474,6 +500,59 @@ public class ChoosePicturesFragment extends PreferenceFragment
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case READ_EXTERNAL_STORAGE_PERM_REQUEST:
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestAlbumData(getActivity(), true);
+                }
+                break;
+        }
+    }
+
+    private boolean requestAlbumData(Context context, boolean ignoreGrants) {
+        if (mTask != null && mTask.getStatus().compareTo(Status.FINISHED) != 0) {
+            mTask.cancel(true);
+        }
+
+        if (ignoreGrants || AndroidHelper.hasReadExternalStoragePermissionGranted(context)) {
+            updateEmptyMsg(true);
+            mTask = new AlbumLoaderTask();
+            mTask.execute();
+            return true;
+        } else {
+            updateEmptyMsg(false);
+        }
+        return false;
+    }
+
+    @TargetApi(value= Build.VERSION_CODES.M)
+    private void requestStoragePermission(boolean manual) {
+        if (!manual && shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return;
+        }
+        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                READ_EXTERNAL_STORAGE_PERM_REQUEST);
+    }
+
+
+    private void updateEmptyMsg(boolean hasStorageGrants) {
+        if (mEmpty != null) {
+            TextView title = (TextView) mEmpty.findViewById(R.id.empty_title);
+            TextView msg = (TextView) mEmpty.findViewById(R.id.empty_msg);
+            if (hasStorageGrants) {
+                title.setText(R.string.no_pictures_albums_found_msg);
+                msg.setText(R.string.no_pictures_albums_tap_to_refresh_msg);
+            } else {
+                title.setText(R.string.no_pictures_albums_not_granted_permission_msg);
+                msg.setText(R.string.no_pictures_albums_tap_to_request_permission_msg);
+            }
         }
     }
 

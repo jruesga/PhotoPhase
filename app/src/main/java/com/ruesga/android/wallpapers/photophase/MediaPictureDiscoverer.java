@@ -16,6 +16,7 @@
 
 package com.ruesga.android.wallpapers.photophase;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,6 +24,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
@@ -290,9 +292,16 @@ public class MediaPictureDiscoverer {
         if (mTask != null && mTask.getStatus().compareTo(Status.FINISHED) != 0 &&
                 !mTask.isCancelled()) {
             mTask.cancel(true);
+            mTask = null;
         }
-        mTask = new AsyncDiscoverTask(mContext.getContentResolver(), mCallback, userRequest);
-        mTask.execute();
+
+        if (AndroidHelper.hasReadExternalStoragePermissionGranted(mContext)) {
+            mTask = new AsyncDiscoverTask(mContext.getContentResolver(), mCallback, userRequest);
+            mTask.execute();
+        } else {
+            // Notify that we don't have any files
+            mCallback.onEndMediaDiscovered(new File[0], userRequest);
+        }
     }
 
     /**

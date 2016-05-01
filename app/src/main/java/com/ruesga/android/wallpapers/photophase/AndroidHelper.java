@@ -16,12 +16,18 @@
 
 package com.ruesga.android.wallpapers.photophase;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Process;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 
 /**
@@ -52,6 +58,15 @@ public final class AndroidHelper {
     }
 
     /**
+     * Method that returns if the device is running kitkat or greater
+     *
+     * @return boolean true if is running kitkat or greater
+     */
+    public static boolean isKitKatOrGreater() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+    /**
      * Method that returns if the device is running lollipop or greater
      *
      * @return boolean true if is running lollipop or greater
@@ -61,12 +76,12 @@ public final class AndroidHelper {
     }
 
     /**
-     * Method that returns if the device is running kitkat or greater
+     * Method that returns if the device is running marshmallow or greater
      *
-     * @return boolean true if is running kitkat or greater
+     * @return boolean true if is running marshmallow or greater
      */
-    public static boolean isKitKatOrGreater() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    public static boolean isMarshmallowOrGreater() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
     /**
@@ -100,6 +115,15 @@ public final class AndroidHelper {
     public static void restartWallpaper() {
         // Restart the service
         Process.killProcess(Process.myPid());
+    }
+
+    @TargetApi(value=Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean hasReadExternalStoragePermissionGranted(Context context) {
+        // We only are interested in MM permissions model. In other cases we explicit have
+        // this permission granted by the system
+        return !isMarshmallowOrGreater() || ContextCompat.checkSelfPermission(
+                context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED;
     }
 
 }

@@ -27,6 +27,12 @@
     <!-- No images message -->
     <string name="no_pictures_oops_msg">No pictures found</string>
 
+    <!-- No albums message -->
+    <string name="no_pictures_albums_found_msg">No albums found</string>
+    <string name="no_pictures_albums_tap_to_refresh_msg">Tap to refresh</string>
+    <string name="no_pictures_albums_not_granted_permission_msg">No granted permission</string>
+    <string name="no_pictures_albums_tap_to_request_permission_msg">Tap to request permission</string>
+
     <!-- Menus -->
     <string name="mnu_ok" translatable="false">@android:string/ok</string>
     <string name="mnu_restore">Restore</string>
