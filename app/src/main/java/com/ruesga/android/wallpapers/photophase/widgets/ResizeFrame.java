@@ -16,17 +16,20 @@
 
 package com.ruesga.android.wallpapers.photophase.widgets;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.ruesga.android.wallpapers.photophase.R;
 
@@ -34,7 +37,7 @@ import com.ruesga.android.wallpapers.photophase.R;
  * The hold view to resize a frame. A square with 4 handles in every border
  * to drag and resize a view
  */
-public class ResizeFrame extends RelativeLayout {
+public class ResizeFrame extends FrameLayout {
 
     /**
      * An interface to communicate resize event states
@@ -93,7 +96,7 @@ public class ResizeFrame extends RelativeLayout {
      */
     public ResizeFrame(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     /**
@@ -104,7 +107,7 @@ public class ResizeFrame extends RelativeLayout {
      */
     public ResizeFrame(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     /**
@@ -119,57 +122,68 @@ public class ResizeFrame extends RelativeLayout {
      */
     public ResizeFrame(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
     /**
      * Method that initializes the view
      */
-    @SuppressWarnings("boxing")
-    private void init() {
-        setBackgroundResource(R.drawable.resize_frame);
-        setPadding(0, 0, 0, 0);
+    @SuppressLint("RtlHardcoded")
+    private void init(Context context) {
+        final Resources res = context.getResources();
+
+        final int handleMargin = res.getDimensionPixelSize(R.dimen.resize_frame_handle_margin);
+        mExtraHandlingSpace = res.getDimension(R.dimen.resize_frame_extra_handling_space);
+        mNeededPadding = handleMargin;
+        int overlayColor = ContextCompat.getColor(context, R.color.color_primary);
 
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
-        o.inTargetDensity = DisplayMetrics.DENSITY_DEFAULT;
-        BitmapFactory.decodeResource(getContext().getResources(), R.drawable.resize_handle_left, o);
-        mNeededPadding = (int)(o.outWidth / 1.5f);
+        BitmapFactory.decodeResource(res, R.drawable.resize_frame_handle, o);
+        mNeededPadding = handleMargin + (o.outWidth / 2);
+
+        setBackgroundResource(R.drawable.resize_frame_shadow);
+        Drawable dw = ContextCompat.getDrawable(context, R.drawable.resize_frame);
+        dw.setColorFilter(overlayColor, PorterDuff.Mode.SRC_ATOP);
+        setForeground(dw);
+        setPadding(0, 0, 0, 0);
 
         LayoutParams lp;
-        mLeftHandle = new ImageView(getContext());
-        mLeftHandle.setImageResource(R.drawable.resize_handle_left);
-        mLeftHandle.setTag(Gravity.START);
-        lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        mLeftHandle = new ImageView(context);
+        mLeftHandle.setImageResource(R.drawable.resize_frame_handle);
+        mLeftHandle.setColorFilter(overlayColor, PorterDuff.Mode.SRC_ATOP);
+        mLeftHandle.setTag(Gravity.LEFT);
+        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+                Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        lp.leftMargin = handleMargin;
         addView(mLeftHandle, lp);
 
-        mRightHandle = new ImageView(getContext());
-        mRightHandle.setImageResource(R.drawable.resize_handle_right);
-        mRightHandle.setTag(Gravity.START);
-        lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        mRightHandle = new ImageView(context);
+        mRightHandle.setImageResource(R.drawable.resize_frame_handle);
+        mRightHandle.setColorFilter(overlayColor, PorterDuff.Mode.SRC_ATOP);
+        mRightHandle.setTag(Gravity.RIGHT);
+        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+                Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        lp.rightMargin = handleMargin;
         addView(mRightHandle, lp);
 
-        mTopHandle = new ImageView(getContext());
-        mTopHandle.setImageResource(R.drawable.resize_handle_top);
+        mTopHandle = new ImageView(context);
+        mTopHandle.setImageResource(R.drawable.resize_frame_handle);
+        mTopHandle.setColorFilter(overlayColor, PorterDuff.Mode.SRC_ATOP);
         mTopHandle.setTag(Gravity.TOP);
-        lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+        lp.topMargin = handleMargin;
         addView(mTopHandle, lp);
 
-        mBottomHandle = new ImageView(getContext());
-        mBottomHandle.setImageResource(R.drawable.resize_handle_bottom);
+        mBottomHandle = new ImageView(context);
+        mBottomHandle.setImageResource(R.drawable.resize_frame_handle);
+        mBottomHandle.setColorFilter(overlayColor, PorterDuff.Mode.SRC_ATOP);
         mBottomHandle.setTag(Gravity.BOTTOM);
-        lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
+        lp.bottomMargin = handleMargin;
         addView(mBottomHandle, lp);
-
-        mExtraHandlingSpace = getResources().getDimension(R.dimen.resize_frame_extra_handling_space);
     }
 
     /**

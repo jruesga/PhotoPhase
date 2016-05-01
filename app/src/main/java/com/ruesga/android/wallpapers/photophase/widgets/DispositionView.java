@@ -21,6 +21,7 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
@@ -444,6 +445,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
     }
 
     @Override
+    @SuppressLint("RtlHardcoded")
     public void onResize(int mode, int delta) {
         if (mTarget == null) return;
         if (mResizeFrame == null) return;
@@ -456,7 +458,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         FrameLayout.LayoutParams params =
                 (FrameLayout.LayoutParams)mResizeFrame.getLayoutParams();
         switch (mode) {
-            case Gravity.START:
+            case Gravity.LEFT:
                 float newpos = mResizeFrame.getX() + delta;
                 if ((delta < 0 && newpos < (getPaddingLeft() * -1)) ||
                     (delta > 0 && newpos > (mResizeFrame.getX() + params.width - minWidth))) {
@@ -465,7 +467,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
                 mResizeFrame.setX(newpos);
                 params.width -= delta;
                 break;
-            case Gravity.END:
+            case Gravity.RIGHT:
                 if ((delta < 0 && ((params.width + delta) < minWidth)) ||
                     (delta > 0 && (mResizeFrame.getX() + delta + params.width) > (getPaddingLeft() + getMeasuredWidth()))) {
                     return;

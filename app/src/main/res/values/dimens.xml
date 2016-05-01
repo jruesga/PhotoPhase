@@ -45,6 +45,8 @@
     <dimen name="disposition_frame_margin">12dp</dimen>
     <dimen name="disposition_frame_padding">1dp</dimen>
     <dimen name="disposition_advise_frame_padding">4dp</dimen>
+
+    <dimen name="resize_frame_handle_margin">13dp</dimen>
     <dimen name="resize_frame_extra_handling_space">16dp</dimen>
 
 </resources>
