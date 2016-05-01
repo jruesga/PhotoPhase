@@ -19,6 +19,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Fondo de pantalla animado PhotoPhase</string>
   <string name="no_pictures_oops_msg">No se han encontrado imágenes</string>
+  <string name="no_pictures_albums_found_msg">No hay álbumes</string>
+  <string name="no_pictures_albums_tap_to_refresh_msg">Toca para refrescar</string>
+  <string name="no_pictures_albums_not_granted_permission_msg">Sin permisos</string>
+  <string name="no_pictures_albums_tap_to_request_permission_msg">Toca para solicitar permisos</string>
   <string name="mnu_restore">Restaurar</string>
   <string name="mnu_delete">Eliminar</string>
   <string name="mnu_settings">Ajustes</string>
@@ -40,6 +44,10 @@
   <string name="pref_general_settings_wallpaper_dim">Oscurecer fondo de pantalla</string>
   <string name="pref_general_settings_background_color">Color del fondo</string>
   <string name="pref_general_settings_background_color_summary">Ajustar el color del fondo de la pantalla</string>
+  <string name="pref_general_touch">Tocar</string>
+  <string name="pref_general_touch_mode">Modo tocar</string>
+  <string name="pref_general_touch_mode_on">Con doble toque</string>
+  <string name="pref_general_touch_mode_off">Con simple toque</string>
   <string name="pref_general_touch_action">Acción al tocar</string>
   <string name="pref_general_touch_action_summary_format"><xliff:g id="action_summary">%1$s</xliff:g> al tocar una imagen</string>
   <string name="pref_general_aspect_ratio_correction">Relación de aspecto</string>
@@ -50,7 +58,7 @@
   <string name="pref_general_transitions_interval">Intervalo</string>
   <string name="pref_general_effects">Efectos</string>
   <string name="pref_general_effects_types">Tipos</string>
-  <string name="pref_general_effects_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> de <xliff:g id="total">%2$d</xliff:g> efectos de imágen seleccionados</string>
+  <string name="pref_general_effects_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> de <xliff:g id="total">%2$d</xliff:g> efectos de imagen seleccionados</string>
   <string name="pref_media">Medios</string>
   <string name="pref_media_summary">Álbumes que serán mostrados, intervalo de refresco y otros ajustes de los medios</string>
   <string name="pref_media_settings">Ajustes</string>
