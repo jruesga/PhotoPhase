@@ -29,7 +29,7 @@
         <ImageView android:id="@+id/album_thumbnail"
             android:layout_width="@dimen/album_size"
             android:layout_height="@dimen/album_size"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:layout_marginEnd="@dimen/album_margin"
             android:layout_marginRight="@dimen/album_margin"
             android:contentDescription="@null"
