@@ -30,14 +30,13 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
-import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.Colors;
-import com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference.OnDisplayProgress;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference.OnDisplayProgress;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 
 import java.util.Set;
 
@@ -50,7 +49,6 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private static final boolean DEBUG = false;
 
-    private SwitchPreference mAppShortcut;
     private ListPreference mTouchActions;
     private MultiSelectListPreference mTransitionsTypes;
     private DiscreteSeekBarProgressPreference mTransitionsInterval;
@@ -136,9 +134,9 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         // Add the preferences
         addPreferencesFromResource(R.xml.preferences_general);
 
-        mAppShortcut = (SwitchPreference) findPreference("app_shortcut");
-        mAppShortcut.setChecked(isAppShortcutEnabled());
-        mAppShortcut.setOnPreferenceChangeListener(mOnChangeListener);
+        SwitchPreference appShortcut = (SwitchPreference) findPreference("app_shortcut");
+        appShortcut.setChecked(isAppShortcutEnabled());
+        appShortcut.setOnPreferenceChangeListener(mOnChangeListener);
 
         DiscreteSeekBarProgressPreference wallpaperDim =
                 (DiscreteSeekBarProgressPreference) findPreference("ui_wallpaper_dim");

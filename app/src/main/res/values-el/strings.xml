@@ -82,7 +82,6 @@
   <string name="pref_disposition_template">Πρότυπο <xliff:g id="number_of_template">%1$s</xliff:g> από <xliff:g id="total_of_templates">%2$s</xliff:g></string>
   <string name="pref_disposition_unable_delete_advise">Αδυναμία διαγραφής του επιλεγμένου πλαισίου</string>
   <string name="pref_about">Σχετικά</string>
-  <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2014 Jorge Ruesga</string>
   <string name="refresh_intervals_disabled">Απενεργοποιημένο</string>
   <string name="refresh_intervals_1h">1 ώρα</string>
   <string name="refresh_intervals_4h">4 ώρες</string>

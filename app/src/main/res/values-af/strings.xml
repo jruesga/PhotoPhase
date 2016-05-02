@@ -82,7 +82,6 @@
   <string name="pref_disposition_template">Voorbeelde <xliff:g id="number_of_template">%1$s</xliff:g> of <xliff:g id="total_of_templates">%2$s</xliff:g></string>
   <string name="pref_disposition_unable_delete_advise">Kan nie die gekose raam verwyder nie</string>
   <string name="pref_about">Aangaande</string>
-  <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nKopiereg \u00A9 2014 Jorge Ruesga</string>
   <string name="refresh_intervals_disabled">Gedeaktiveer</string>
   <string name="refresh_intervals_1h">1 uur</string>
   <string name="refresh_intervals_4h">4 ure</string>

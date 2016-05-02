@@ -16,14 +16,14 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="PhotoPhaseTheme" parent="PhotoPhaseTheme.Base" />
-
     <style name="PhotoPhaseTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="toolbarStyle">@style/PhotoPhaseTheme.Toolbar</item>
     </style>
+
+    <style name="PhotoPhaseTheme" parent="PhotoPhaseTheme.Base" />
 
     <style name="PhotoPhaseTheme.Overlay" parent="PhotoPhaseTheme">
         <item name="android:windowIsTranslucent">true</item>

@@ -54,7 +54,6 @@
   <string name="pref_media_summary">Göstəriləcək albom, yeniləmə intervalı və digər media tənzimlənmələri</string>
   <string name="pref_media_settings">Tənzimləmələr</string>
   <string name="pref_about">Haqqında</string>
-  <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nMüəlliflik hüququ \u00A9 2014 Jorge Ruesga</string>
   <string name="refresh_intervals_disabled">Bağlı</string>
   <string name="refresh_intervals_1h">1 saat</string>
   <string name="refresh_intervals_4h">4 saat</string>

@@ -82,7 +82,6 @@
   <string name="pref_disposition_template">Template <xliff:g id="number_of_template">%1$s</xliff:g> di <xliff:g id="total_of_templates">%2$s</xliff:g></string>
   <string name="pref_disposition_unable_delete_advise">Impossibile eliminare il frame selezionato</string>
   <string name="pref_about">Info</string>
-  <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2014 Jorge Ruesga</string>
   <string name="refresh_intervals_disabled">Disattivato</string>
   <string name="refresh_intervals_1h">1 ora</string>
   <string name="refresh_intervals_4h">4 ore</string>

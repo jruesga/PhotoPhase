@@ -18,16 +18,23 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
+import com.mikepenz.aboutlibraries.util.Colors;
 import com.ruesga.android.wallpapers.photophase.R;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -36,6 +43,7 @@ import java.util.List;
 public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
 
     private OnBackPressedListener mCallback;
+    private Header mAboutHeader;
 
     /**
      * {@inheritDoc}
@@ -70,15 +78,35 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
         loadHeadersFromResource(R.xml.preferences_headers, target);
 
         // Retrieve the about header
-        Header aboutHeader = target.get(target.size() - 1);
-        try {
-            String appVer =
-                    this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-            aboutHeader.summary = getString(R.string.pref_about_summary, appVer);
-        } catch (Exception e) {
-            aboutHeader.summary = getString(R.string.pref_about_summary, "");
+        mAboutHeader = target.get(target.size() - 1);
+    }
+
+    @Override
+    public void onHeaderClick(Header header, int position) {
+        // Open the about libraries intent
+        if (header.equals(mAboutHeader)) {
+            // Build the legal stuff string
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            String legal = getString(R.string.app_legal, String.valueOf(year));
+
+            // Open the attribution library
+            new LibsBuilder()
+                    .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                    .withAboutIconShown(true)
+                    .withAboutVersionShown(true)
+                    .withLicenseShown(true)
+                    .withSortEnabled(true)
+                    .withAboutSpecial1("Special")
+                    .withActivityTitle(getString(R.string.pref_about))
+                    .withAboutDescription(getString(R.string.app_description) + "\n" + legal)
+                    .withActivityColor(new Colors(
+                            ContextCompat.getColor(getApplicationContext(), R.color.color_primary),
+                            ContextCompat.getColor(getApplicationContext(), R.color.color_primary_dark)))
+                    .start(this);
+            return;
         }
-        aboutHeader.intent = new Intent(getApplicationContext(), ChangeLogActivity.class);
+
+        super.onHeaderClick(header, position);
     }
 
     /**

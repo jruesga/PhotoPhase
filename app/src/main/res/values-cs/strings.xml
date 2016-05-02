@@ -83,7 +83,6 @@
   <string name="pref_disposition_template">Šablona <xliff:g id="number_of_template">%1$s</xliff:g> z <xliff:g id="total_of_templates">%2$s</xliff:g></string>
   <string name="pref_disposition_unable_delete_advise">Nelze odstranit zvolené políčko</string>
   <string name="pref_about">O aplikaci</string>
-  <string name="pref_about_summary">PhotoPhase v<xliff:g id="version">%1$s</xliff:g>\nCopyright \u00A9 2014 Jorge Ruesga</string>
   <string name="refresh_intervals_disabled">Vypnuto</string>
   <string name="refresh_intervals_1h">1 hodina</string>
   <string name="refresh_intervals_4h">4 hodiny</string>

@@ -83,7 +83,6 @@
   <string name="pref_disposition_template">Шаблон <xliff:g id="number_of_template">%1$s</xliff:g> із <xliff:g id="total_of_templates">%2$s</xliff:g></string>
   <string name="pref_disposition_unable_delete_advise">Неможливо видалити вибраний кадр</string>
   <string name="pref_about">Про</string>
-  <string name="pref_about_summary">PhotoPhase, версія <xliff:g id="version">%1$s</xliff:g>\n\u00A9 2014 Jorge Ruesga</string>
   <string name="refresh_intervals_disabled">Вимкнено</string>
   <string name="refresh_intervals_1h">1 година</string>
   <string name="refresh_intervals_4h">4 години</string>
