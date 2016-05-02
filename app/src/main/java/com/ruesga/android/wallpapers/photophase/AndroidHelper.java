@@ -27,11 +27,8 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Process;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 /**
  * A helper class with useful methods for deal with android.
