@@ -21,6 +21,7 @@
 
     <color name="black_transparent">#99000000</color>
     <color name="black_translucent">#44000000</color>
+    <color name="black_opaque">#cc000000</color>
 
     <color name="wallpaper_background_color">#ff202020</color>
     <color name="wallpaper_overlay_color">#aa202020</color>
@@ -35,5 +36,8 @@
 
     <color name="album_selector">#db4b38</color>
     <color name="album_selector_pressed">#e53935</color>
+
+    <color name="photoviewer_details_color">#cecece</color>
+    <color name="photoviewer_control_color">#b14d4d4d</color>
 
 </resources>

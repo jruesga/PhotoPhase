@@ -30,6 +30,15 @@
         android:contentDescription="@null"
         tools:ignore="UnusedAttribute"/>
 
+    <FrameLayout
+        android:id="@+id/photo_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_opaque"
+        android:visibility="gone">
+        <include layout="@layout/photo_viewer_details" />
+    </FrameLayout>
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_height="wrap_content"

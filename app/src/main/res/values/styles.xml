@@ -102,4 +102,18 @@
         <item name="colorControlActivated">@android:color/white</item>
     </style>
 
+    <style name="PhotoPhaseTheme.PhotoViewer">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="PhotoPhaseTheme.PhotoViewer.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/photoviewer_title_text_size</item>
+    </style>
+
+    <style name="PhotoPhaseTheme.PhotoViewer.Detail">
+        <item name="android:textColor">@color/photoviewer_details_color</item>
+        <item name="android:textSize">@dimen/photoviewer_detail_text_size</item>
+    </style>
+
 </resources>

@@ -22,6 +22,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Process;
 import android.provider.Settings;
@@ -29,6 +31,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 /**
  * A helper class with useful methods for deal with android.
@@ -90,7 +93,6 @@ public final class AndroidHelper {
      * @param context The current context
      * @return The height of the status bar
      */
-
     public static int calculateStatusBarHeight(Context context) {
         // CyanogenMod specific featured (DO NOT RELAY IN INTERNAL VARS)
         boolean hiddenStatusBar = Settings.System.getInt(context.getContentResolver(),
@@ -124,6 +126,12 @@ public final class AndroidHelper {
         return !isMarshmallowOrGreater() || ContextCompat.checkSelfPermission(
                 context, Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        return !(info == null || !info.isConnectedOrConnecting() || !info.isAvailable());
     }
 
 }

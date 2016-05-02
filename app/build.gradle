@@ -37,6 +37,8 @@ dependencies {
     compile 'com.github.danielnilsson9:color-picker-view:1.4.0'
     compile 'org.adw.library:discrete-seekbar:1.0.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.okio:okio:1.6.0'
 }
 
 android {
