@@ -17,9 +17,11 @@
 
 package com.ruesga.android.wallpapers.photophase.preferences;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -28,6 +30,7 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.Colors;
@@ -47,6 +50,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private static final boolean DEBUG = false;
 
+    private SwitchPreference mAppShortcut;
     private ListPreference mTouchActions;
     private MultiSelectListPreference mTransitionsTypes;
     private DiscreteSeekBarProgressPreference mTransitionsInterval;
@@ -79,6 +83,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 updateEffectTypeSummary((Set<String>) newValue);
             } else if (key.compareTo("ui_touch_action") == 0) {
                 updateTouchActionSummary((String) newValue);
+            } else if (key.compareTo("app_shortcut") == 0) {
+                setAppShortcutState((Boolean) newValue);
             }
 
             return true;
@@ -129,6 +135,10 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         // Add the preferences
         addPreferencesFromResource(R.xml.preferences_general);
+
+        mAppShortcut = (SwitchPreference) findPreference("app_shortcut");
+        mAppShortcut.setChecked(isAppShortcutEnabled());
+        mAppShortcut.setOnPreferenceChangeListener(mOnChangeListener);
 
         DiscreteSeekBarProgressPreference wallpaperDim =
                 (DiscreteSeekBarProgressPreference) findPreference("ui_wallpaper_dim");
@@ -218,6 +228,29 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 selected.size(),
                 mEffectsTypes.getEntries().length);
         mEffectsTypes.setSummary(summary);
+    }
+
+    private boolean isAppShortcutEnabled() {
+        final Context ctx = getActivity();
+        PackageManager pm = ctx.getPackageManager();
+        ComponentName name = new ComponentName(
+                ctx.getPackageName(), ctx.getPackageName() + ".PhotoPhasePreferences");
+        int state = pm.getComponentEnabledSetting(name);
+        return state != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                && state != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER;
+    }
+
+    private void setAppShortcutState(boolean enabled) {
+        final Context ctx = getActivity();
+        PackageManager pm = ctx.getPackageManager();
+        ComponentName name = new ComponentName(
+                ctx.getPackageName(), ctx.getPackageName() + ".PhotoPhasePreferences");
+        pm.setComponentEnabledSetting(
+                name,
+                enabled
+                        ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
     }
 }
 

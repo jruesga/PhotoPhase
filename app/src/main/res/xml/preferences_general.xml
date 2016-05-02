@@ -17,6 +17,13 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Enable/disable icon -->
+    <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+        android:key="app_shortcut"
+        android:title="@string/pref_general_app_shortcut_title"
+        android:summary="@string/pref_general_app_shortcut_summary"
+        android:persistent="false" />
+
     <!-- Settings -->
     <PreferenceCategory
         android:key="category_settings"
