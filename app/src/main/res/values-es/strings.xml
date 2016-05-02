@@ -31,6 +31,7 @@
   <string name="mnu_invert">Invertir</string>
   <string name="mnu_select_album">Seleccionar álbum</string>
   <string name="mnu_deselect_album">Deseleccionar álbum</string>
+  <string name="mnu_details">Detalles</string>
   <string name="format_disabled">Deshabilitado</string>
   <string name="format_rotate_only">Durante la rotación</string>
   <string name="format_seconds">%s s</string>
@@ -141,4 +142,26 @@
   <string name="color_picker_new_text">Nuevo:</string>
   <string name="color_picker_color">Color:</string>
   <string name="changelog_title">Registro de cambios</string>
+
+  <string name="photoviewer_details_not_available">No disponible</string>
+  <string name="photoviewer_details_date">Fecha</string>
+  <string name="photoviewer_details_format"><xliff:g id="full_date_format" example="Oct, 11 June 2016">%1$s</xliff:g>, <xliff:g id="short_time_format" example="12:23">%2$s</xliff:g></string>
+  <string name="photoviewer_details_location">Ubicación</string>
+  <string name="photoviewer_details_latitude_longitude">Lat. <xliff:g id="latitude" example="44.567">%1$f</xliff:g>; Lon. <xliff:g id="longitude" example="-4.567">%2$f</xliff:g></string>
+  <string name="photoviewer_details_no_map_available">Mapa no disponible</string>
+  <string name="photoviewer_details_camera">Cámara</string>
+  <string name="photoviewer_details_manufacturer">Fabricante: <xliff:g id="manufacturer" example="Sony">%1$s</xliff:g></string>
+  <string name="photoviewer_details_model">Modelo: <xliff:g id="model" example="DSC-RX10 III">%1$s</xliff:g></string>
+  <string name="photoviewer_details_exposure">Exposición: 1/<xliff:g id="exposure" example="6704">%1$s</xliff:g></string>
+  <string name="photoviewer_details_aperture">Apertura: f/<xliff:g id="aperture" example="1.7">%1$s</xliff:g></string>
+  <string name="photoviewer_details_iso">ISO: <xliff:g id="iso" example="50">%1$s</xliff:g></string>
+  <string name="photoviewer_details_flash">Flash: <xliff:g id="flash" example="used">%1$s</xliff:g></string>
+  <string name="photoviewer_details_flash_used">Usado</string>
+  <string name="photoviewer_details_flash_not_used">No usado</string>
+  <string name="photoviewer_details_info">Información</string>
+  <string name="photoviewer_details_name">Nombre: <xliff:g id="name" example="myphoto.jpg">%1$s</xliff:g></string>
+  <string name="photoviewer_details_size">Tamaño: <xliff:g id="size" example="234">%1$d</xliff:g> KB</string>
+  <string name="photoviewer_details_resolution">Resolución: <xliff:g id="w" example="1024">%1$d</xliff:g>x<xliff:g id="h" example="678">%2$d</xliff:g></string>
+  <string name="photoviewer_details_orientation">Orientación: <xliff:g id="orientation" example="0">%1$s</xliff:g>\u00B0</string>
+  <string name="photoviewer_details_path">Ruta: <xliff:g id="path" example="/storage/emulated/0/photos">%1$s</xliff:g></string>
 </resources>

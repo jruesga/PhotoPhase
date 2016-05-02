@@ -179,7 +179,6 @@
     <string name="changelog_title">Changelog</string>
 
     <!-- Photo Viewer Details -->
-    <string name="photoviewer_details">Details</string>
     <string name="photoviewer_details_not_available">Not available</string>
     <string name="photoviewer_details_date">Date</string>
     <string name="photoviewer_details_format"><xliff:g id="full_date_format" example="Oct, 11 June 2016">%1$s</xliff:g>, <xliff:g id="short_time_format" example="12:23">%2$s</xliff:g></string>
