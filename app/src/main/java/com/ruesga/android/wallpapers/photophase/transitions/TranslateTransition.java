@@ -22,12 +22,12 @@ import android.opengl.GLException;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -115,26 +115,8 @@ public class TranslateTransition extends Transition {
     public void select(PhotoFrame target) {
         super.select(target);
 
-        // Discard all non-supported modes
-        List<TRANSLATE_MODES> modes = new ArrayList<>(Arrays.asList(TRANSLATE_MODES.values()));
-        float[] vertex = target.getFrameVertex();
-        if (vertex[4] != -1.0f) {
-            modes.remove(TRANSLATE_MODES.RIGHT_TO_LEFT);
-        }
-        if (vertex[6] != 1.0f) {
-            modes.remove(TRANSLATE_MODES.LEFT_TO_RIGHT);
-        }
-        if (vertex[5] != 1.0f) {
-            modes.remove(TRANSLATE_MODES.DOWN_TO_UP);
-        }
-        if (vertex[1] != -1.0f) {
-            modes.remove(TRANSLATE_MODES.UP_TO_DOWN);
-        }
-
-        // Random mode
-        int low = 0;
-        int high = modes.size() - 1;
-        mMode = modes.get(Utils.getNextRandom(low, high));
+        // choose a random mode
+        chooseMode();
     }
 
     /**
@@ -154,6 +136,30 @@ public class TranslateTransition extends Transition {
     public void reset() {
         mTime = -1;
         mRunning = true;
+    }
+
+    @Override
+    public void chooseMode() {
+        // Discard all non-supported modes
+        List<TRANSLATE_MODES> modes = new ArrayList<>(Arrays.asList(TRANSLATE_MODES.values()));
+        float[] vertex = mTarget.getFrameVertex();
+        if (vertex[4] != -1.0f) {
+            modes.remove(TRANSLATE_MODES.RIGHT_TO_LEFT);
+        }
+        if (vertex[6] != 1.0f) {
+            modes.remove(TRANSLATE_MODES.LEFT_TO_RIGHT);
+        }
+        if (vertex[5] != 1.0f) {
+            modes.remove(TRANSLATE_MODES.DOWN_TO_UP);
+        }
+        if (vertex[1] != -1.0f) {
+            modes.remove(TRANSLATE_MODES.UP_TO_DOWN);
+        }
+
+        // Random mode
+        int low = 0;
+        int high = modes.size() - 1;
+        mMode = modes.get(Utils.getNextRandom(low, high));
     }
 
     /**

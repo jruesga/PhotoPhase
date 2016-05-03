@@ -22,12 +22,12 @@ import android.opengl.GLException;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -130,13 +130,8 @@ public class CubeTransition extends Transition {
             mVertex = new float[vertex.length];
         }
 
-        // Random mode
-        List<WINDOW_MODES> modes =
-                new ArrayList<CubeTransition.WINDOW_MODES>(
-                        Arrays.asList(WINDOW_MODES.values()));
-        int low = 0;
-        int high = modes.size() - 1;
-        mMode = modes.get(Utils.getNextRandom(low, high));
+        // choose a random mode
+        chooseMode();
     }
 
     /**
@@ -154,6 +149,14 @@ public class CubeTransition extends Transition {
     public void reset() {
         mTime = -1;
         mRunning = true;
+    }
+
+    @Override
+    public void chooseMode() {
+        List<WINDOW_MODES> modes = new ArrayList<>(Arrays.asList(WINDOW_MODES.values()));
+        int low = 0;
+        int high = modes.size() - 1;
+        mMode = modes.get(Utils.getNextRandom(low, high));
     }
 
     /**

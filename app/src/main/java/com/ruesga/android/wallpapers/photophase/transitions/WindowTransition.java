@@ -23,12 +23,12 @@ import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.view.animation.AccelerateInterpolator;
 
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -120,20 +120,8 @@ public class WindowTransition extends Transition {
         mInterpolation = new AccelerateInterpolator();
         mAmount = getAmount();
 
-        // Discard all non-supported modes
-        List<WINDOW_MODES> modes = new ArrayList<>(Arrays.asList(WINDOW_MODES.values()));
-        float[] vertex = target.getFrameVertex();
-        if (vertex[4] != -1.0f) {
-            modes.remove(WINDOW_MODES.RIGHT_TO_LEFT);
-        }
-        if (vertex[6] != 1.0f) {
-            modes.remove(WINDOW_MODES.LEFT_TO_RIGHT);
-        }
-
-        // Random mode
-        int low = 0;
-        int high = modes.size() - 1;
-        mMode = modes.get(Utils.getNextRandom(low, high));
+        // choose a random mode
+        chooseMode();
     }
 
     /**
@@ -152,6 +140,24 @@ public class WindowTransition extends Transition {
     public void reset() {
         mTime = -1;
         mRunning = true;
+    }
+
+    @Override
+    public void chooseMode() {
+        // Discard all non-supported modes
+        List<WINDOW_MODES> modes = new ArrayList<>(Arrays.asList(WINDOW_MODES.values()));
+        float[] vertex = mTarget.getFrameVertex();
+        if (vertex[4] != -1.0f) {
+            modes.remove(WINDOW_MODES.RIGHT_TO_LEFT);
+        }
+        if (vertex[6] != 1.0f) {
+            modes.remove(WINDOW_MODES.LEFT_TO_RIGHT);
+        }
+
+        // Random mode
+        int low = 0;
+        int high = modes.size() - 1;
+        mMode = modes.get(Utils.getNextRandom(low, high));
     }
 
     /**

@@ -20,9 +20,9 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 
 /**
@@ -114,6 +114,12 @@ public abstract class Transition {
         return mTransitionTarget;
     }
 
+    public void swapTargets() {
+        PhotoFrame target = mTransitionTarget;
+        mTransitionTarget = mTarget;
+        mTarget = target;
+    }
+
     /**
      * Method that returns if the transition is selectable for the passed frame.
      *
@@ -126,6 +132,12 @@ public abstract class Transition {
      * Method that resets the current status of the transition.
      */
     public abstract void reset();
+
+    /**
+     * Method that request a new mode
+     */
+    public void chooseMode() {
+    }
 
     /**
      * Method that returns the type of transition.

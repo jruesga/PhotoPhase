@@ -87,10 +87,16 @@
         <MultiSelectListPreference
             android:key="ui_transition_types"
             android:title="@string/pref_general_transitions_types"
-            android:persistent="true"
+            android:persistent="false"
             android:entries="@array/transitions_labels"
             android:entryValues="@array/transitions_values"
             android:defaultValue="@array/transitions_default" />
+
+        <Preference
+            android:key="ui_transition_live_preview"
+            android:title="@string/pref_general_live_preview"
+            android:fragment="com.ruesga.android.wallpapers.photophase.preferences.LiveTransitionsPreviewFragment"
+            android:persistent="false" />
 
         <!-- Transitions Interval -->
         <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
@@ -106,14 +112,20 @@
         android:key="category_effects"
         android:title="@string/pref_general_effects">
 
-        <!-- Transitions -->
+        <!-- Types -->
         <MultiSelectListPreference
             android:key="ui_effect_types"
             android:title="@string/pref_general_effects_types"
-            android:persistent="true"
+            android:persistent="false"
             android:entries="@array/effects_labels"
             android:entryValues="@array/effects_values"
             android:defaultValue="@array/effects_default" />
+
+        <Preference
+            android:key="ui_effect_live_preview"
+            android:title="@string/pref_general_live_preview"
+            android:fragment="com.ruesga.android.wallpapers.photophase.preferences.LiveEffectsPreviewFragment"
+            android:persistent="false" />
 
     </PreferenceCategory>
 

@@ -22,8 +22,8 @@ import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.Colors;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
 import com.ruesga.android.wallpapers.photophase.shapes.ColorShape;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 
 /**

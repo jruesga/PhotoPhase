@@ -72,13 +72,19 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
+                PreferencesProvider.Preferences.General.Transitions.setSelectedTransitions(
+                        getActivity(), (Set<String>) newValue);
                 updateTransitionTypeSummary((Set<String>) newValue);
+                PreferencesProvider.reload(getActivity());
             } else if (key.compareTo("ui_transition_interval") == 0) {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_effect_types") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
+                PreferencesProvider.Preferences.General.Effects.setSelectedEffects(
+                        getActivity(), (Set<String>) newValue);
                 updateEffectTypeSummary((Set<String>) newValue);
+                PreferencesProvider.reload(getActivity());
             } else if (key.compareTo("ui_touch_action") == 0) {
                 updateTouchActionSummary((String) newValue);
             } else if (key.compareTo("app_shortcut") == 0) {
@@ -108,6 +114,21 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Set<String> transitions =
+                PreferencesProvider.Preferences.General.Transitions.getSelectedTransitions();
+        Set<String> effects =
+                PreferencesProvider.Preferences.General.Effects.getSelectedEffects();
+
+        mTransitionsTypes.setValues(transitions);
+        updateTransitionTypeSummary(transitions);
+        mEffectsTypes.setValues(effects);
+        updateEffectTypeSummary(effects);
     }
 
     /**
@@ -160,7 +181,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
-        updateTransitionTypeSummary(mTransitionsTypes.getValues());
+        updateTransitionTypeSummary(
+                PreferencesProvider.Preferences.General.Transitions.getSelectedTransitions());
 
         final int[] transitionsIntervals = res.getIntArray(R.array.transitions_intervals_values);
         mTransitionsInterval =
@@ -204,7 +226,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
         mEffectsTypes = (MultiSelectListPreference)findPreference("ui_effect_types");
         mEffectsTypes.setOnPreferenceChangeListener(mOnChangeListener);
-        updateEffectTypeSummary(mEffectsTypes.getValues());
+        updateEffectTypeSummary(
+                PreferencesProvider.Preferences.General.Effects.getSelectedEffects());
     }
 
     private void updateTouchActionSummary(String value) {

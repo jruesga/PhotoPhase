@@ -22,12 +22,12 @@ import android.opengl.GLException;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.nio.FloatBuffer;
 
@@ -108,10 +108,7 @@ public class FlipTransition extends Transition {
         super.select(target);
 
         // Random mode
-        FLIP_MODES[] modes = FLIP_MODES.values();
-        int low = 0;
-        int high = modes.length - 1;
-        mMode = modes[Utils.getNextRandom(low, high)];
+        chooseMode();
     }
 
     /**
@@ -129,6 +126,14 @@ public class FlipTransition extends Transition {
     public void reset() {
         mTime = -1;
         mRunning = true;
+    }
+
+    @Override
+    public void chooseMode() {
+        FLIP_MODES[] modes = FLIP_MODES.values();
+        int low = 0;
+        int high = modes.length - 1;
+        mMode = modes[Utils.getNextRandom(low, high)];
     }
 
     /**

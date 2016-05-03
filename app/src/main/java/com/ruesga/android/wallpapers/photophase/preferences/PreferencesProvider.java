@@ -252,25 +252,29 @@ public final class PreferencesProvider {
                  */
                 public static final int DEFAULT_TRANSITION_INTERVAL_INDEX = 2;
 
-                /**
-                 * Return the current user preference about the transition to apply to
-                 * the pictures of the wallpaper.
-                 *
-                 * @return TRANSITIONS[] The transition to apply to the wallpaper's pictures
-                 */
-                public static TRANSITIONS[] getTransitionTypes() {
-                    Set<String> set = getStringSet("ui_transition_types", new HashSet<String>());
-                    if (set.isEmpty()) {
-                        // Return all the transitions if no one is selected
-                        return TRANSITIONS.getValidTranstions();
-                    }
+                public static Set<String> getSelectedTransitions() {
+                    Set<String> defaults = new HashSet<>();
+                    return getStringSet("ui_transition_types", defaults);
+                }
+
+                public static void setSelectedTransitions(Context context, Set<String> values) {
+                    SharedPreferences preferences =
+                            context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                    Editor editor = preferences.edit();
+                    editor.putStringSet("ui_transition_types", values);
+                    editor.putLong("ui_transition_timestamp", System.currentTimeMillis());
+                    editor.apply();
+                    reload(context);
+                }
+
+                public static TRANSITIONS[] toTransitions(Set<String> set) {
                     String[] values = set.toArray(new String[set.size()]);
                     int count = values.length;
-                    TRANSITIONS[] transitions = new TRANSITIONS[count];
+                    TRANSITIONS[] effects = new TRANSITIONS[count];
                     for (int i = 0; i < count; i++) {
-                        transitions[i] = TRANSITIONS.fromOrdinal(Integer.valueOf(values[i]));
+                        effects[i] = TRANSITIONS.fromId(Integer.valueOf(values[i]));
                     }
-                    return transitions;
+                    return effects;
                 }
 
                 /**
@@ -289,21 +293,29 @@ public final class PreferencesProvider {
              * Effects preferences
              */
             public static class Effects {
-                /**
-                 * Return the current user preference about the effect to apply to
-                 * the pictures of the wallpaper.
-                 *
-                 * @return EFFECTS[] The effects to apply to the wallpaper's pictures
-                 */
-                public static EFFECTS[] getEffectTypes() {
+                public static Set<String> getSelectedEffects() {
                     Set<String> defaults = new HashSet<>();
-                    defaults.add(String.valueOf(EFFECTS.NO_EFFECT.ordinal()));
-                    Set<String> set = getStringSet("ui_effect_types", defaults);
+System.out.println("jrc: effects get: " + getStringSet("ui_effect_types", defaults));
+                    return getStringSet("ui_effect_types", defaults);
+                }
+
+                public static void setSelectedEffects(Context context, Set<String> values) {
+System.out.println("jrc: effects set: " + values);
+                    SharedPreferences preferences =
+                            context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                    Editor editor = preferences.edit();
+                    editor.putStringSet("ui_effect_types", values);
+                    editor.putLong("ui_effect_timestamp", System.currentTimeMillis());
+                    editor.apply();
+                    reload(context);
+                }
+
+                public static EFFECTS[] toEFFECTS(Set<String> set) {
                     String[] values = set.toArray(new String[set.size()]);
                     int count = values.length;
                     EFFECTS[] effects = new EFFECTS[count];
                     for (int i = 0; i < count; i++) {
-                        effects[i] = EFFECTS.fromOrdinal(Integer.valueOf(values[i]));
+                        effects[i] = EFFECTS.fromId(Integer.valueOf(values[i]));
                     }
                     return effects;
                 }

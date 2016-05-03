@@ -20,10 +20,10 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLException;
 
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 
 import java.nio.FloatBuffer;

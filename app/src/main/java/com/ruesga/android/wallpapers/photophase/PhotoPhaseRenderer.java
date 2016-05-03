@@ -36,6 +36,7 @@ import android.opengl.Matrix;
 import android.os.Handler;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.textures.PhotoPhaseTextureManager;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
@@ -70,7 +71,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     EffectContext mEffectContext;
     private final Handler mHandler;
     final GLESSurfaceDispatcher mDispatcher;
-    TextureManager mTextureManager;
+    PhotoPhaseTextureManager mTextureManager;
 
     final AlarmManager mAlarmManager;
     PendingIntent mRecreateDispositionPendingIntent;
@@ -618,7 +619,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
         // Create the texture manager and recycle the old one
         if (mTextureManager == null) {
-            // Precalculate the window size for the TextureManager. In onSurfaceChanged
+            // Precalculate the window size for the PhotoPhaseTextureManager. In onSurfaceChanged
             // the best fixed size will be set. The disposition size is simple for a better
             // performance of the internal arrays
             final Configuration conf = mContext.getResources().getConfiguration();
@@ -632,7 +633,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
             // Recycle the current texture manager and create a new one
             recycle();
-            mTextureManager = new TextureManager(
+            mTextureManager = new PhotoPhaseTextureManager(
                     mContext, mHandler, mEffectContext, mDispatcher, cc, dimensions);
         } else {
             mTextureManager.updateEffectContext(mEffectContext);

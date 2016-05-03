@@ -21,6 +21,8 @@ import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
+import com.ruesga.android.wallpapers.photophase.textures.TextureRequestor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
@@ -35,9 +37,6 @@ import java.nio.FloatBuffer;
  */
 public class PhotoFrame implements TextureRequestor {
 
-    /**
-     * @hide
-     */
     public static final int COORDS_PER_VERTER = 3;
 
     // The default texture coordinates (fit to frame)
@@ -290,6 +289,10 @@ public class PhotoFrame implements TextureRequestor {
             }
             GLES20.glDeleteTextures(1, textures, 0);
             GLESUtil.glesCheckError("glDeleteTextures");
+        }
+        if (mTextureInfo != null && mTextureInfo.bitmap != null
+                && !mTextureInfo.bitmap.isRecycled()) {
+            mTextureInfo.bitmap.recycle();
         }
         mTextureInfo = null;
 

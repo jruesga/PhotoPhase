@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ruesga.android.wallpapers.photophase;
+package com.ruesga.android.wallpapers.photophase.textures;
 
 import android.graphics.RectF;
 

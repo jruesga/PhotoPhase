@@ -20,7 +20,7 @@ import android.content.Context;
 import android.opengl.GLException;
 import android.os.SystemClock;
 
-import com.ruesga.android.wallpapers.photophase.TextureManager;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 
 /**

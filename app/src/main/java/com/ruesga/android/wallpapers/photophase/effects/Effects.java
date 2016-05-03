@@ -24,9 +24,7 @@ import android.media.effect.EffectFactory;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,113 +39,112 @@ public class Effects {
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_NULL
          */
-        NO_EFFECT,
+        NO_EFFECT(0),
         /**
          * @see EffectFactory#EFFECT_AUTOFIX
          */
-        AUTOFIX,
+        AUTOFIX(1),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_BLUR
          */
-        BLUR,
+        BLUR(2),
         /**
          * @see EffectFactory#EFFECT_CROSSPROCESS
          */
-        CROSSPROCESS,
+        CROSSPROCESS(3),
         /**
          * @see EffectFactory#EFFECT_DOCUMENTARY
          */
-        DOCUMENTARY,
+        DOCUMENTARY(4),
         /**
          * @see EffectFactory#EFFECT_DUOTONE
          */
-        DUOTONE,
+        DUOTONE(5),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_EMBOSS
          */
-        EMBOSS,
+        EMBOSS(6),
         /**
          * @see EffectFactory#EFFECT_FISHEYE
          */
-        FISHEYE,
+        FISHEYE(7),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_GLOW
          */
-        GLOW,
+        GLOW(8),
         /**
          * @see EffectFactory#EFFECT_GRAIN
          */
-        GRAIN,
+        GRAIN(9),
         /**
          * @see EffectFactory#EFFECT_GRAYSCALE
          */
-        GRAYSCALE,
+        GRAYSCALE(10),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_HALFTONE
          */
-        HALFTONE,
+        HALFTONE(11),
         /**
          * @see EffectFactory#EFFECT_LOMOISH
          */
-        LOMOISH,
+        LOMOISH(12),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_MIRROR
          */
-        MIRROR,
+        MIRROR(13),
         /**
          * @see EffectFactory#EFFECT_NEGATIVE
          */
-        NEGATIVE,
+        NEGATIVE(14),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_OUTLINE
          */
-        OUTLINE,
+        OUTLINE(15),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_PIXELATE
          */
-        PIXELATE,
+        PIXELATE(16),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_POPART
          */
-        POPART,
+        POPART(17),
         /**
          * @see EffectFactory#EFFECT_POSTERIZE
          */
-        POSTERIZE,
+        POSTERIZE(18),
         /**
          * @see EffectFactory#EFFECT_SATURATE
          */
-        SATURATE,
+        SATURATE(19),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_SCANLINES
          */
-        SCANLINES,
+        SCANLINES(20),
         /**
          * @see EffectFactory#EFFECT_SEPIA
          */
-        SEPIA,
+        SEPIA(21),
         /**
          * @see EffectFactory#EFFECT_TEMPERATURE
          */
-        TEMPERATURE,
+        TEMPERATURE(22),
         /**
          * @see EffectFactory#EFFECT_TINT
          */
-        TINT,
+        TINT(23),
         /**
          * @see EffectFactory#EFFECT_VIGNETTE
          */
-        VIGNETTE;
+        VIGNETTE(24);
 
-        /**
-         * Method that returns the effect from its ordinal position
-         *
-         * @param ordinal The ordinal position
-         * @return EFFECTS The effect or null if wasn't found
-         */
-        public static EFFECTS fromOrdinal(int ordinal) {
+        public final int mId;
+        EFFECTS(int id) {
+            mId = id;
+        }
+
+        public static EFFECTS fromId(int id) {
             for (EFFECTS effect : EFFECTS.values()) {
-                if (effect.ordinal() == ordinal) {
+                if (effect.mId == id) {
                     return effect;
                 }
             }
@@ -165,7 +162,7 @@ public class Effects {
      */
     public Effects(EffectContext effectContext) {
         super();
-        mCachedEffects = new HashMap<Effects.EFFECTS, Effect>();
+        mCachedEffects = new HashMap<>();
         mEffectContext = effectContext;
     }
 
@@ -188,34 +185,39 @@ public class Effects {
      */
     @SuppressWarnings("boxing")
     public Effect getNextEffect() {
-        // Get a new instance of a effect factory
+        // Get an effect based on the user preference
+        EFFECTS[] effects = Preferences.General.Effects.toEFFECTS(
+                Preferences.General.Effects.getSelectedEffects());
+        EFFECTS nextEffect = null;
+        if (effects.length > 0) {
+            int low = 0;
+            int high = effects.length - 1;
+            int pos = Utils.getNextRandom(low, high);
+            nextEffect = effects[pos];
+        }
+        return getEffect(nextEffect);
+    }
+
+    public Effect getEffect(EFFECTS nextEffect) {
         EffectFactory effectFactory = mEffectContext.getFactory();
         Effect effect = null;
 
-        // Get an effect based on the user preference
-        List<EFFECTS> effects = Arrays.asList(Preferences.General.Effects.getEffectTypes());
-        EFFECTS nextEffect = null;
-        if (effects.size() > 0) {
-            int low = 0;
-            int high = effects.size() - 1;
-            int pos = Utils.getNextRandom(low, high);
-            nextEffect = effects.get(pos);
-        }
+        // Ensure we apply at least an effect (a null one)
         if (nextEffect == null) {
-            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NULL)) {
-                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NULL);
-                mCachedEffects.put(nextEffect, effect);
-            }
-            return effect;
+            nextEffect = EFFECTS.NO_EFFECT;
         }
 
-        // Has a cached effect?
+        // The effect was cached previously?
         if (mCachedEffects.containsKey(nextEffect)) {
             return mCachedEffects.get(nextEffect);
         }
 
         // Select the effect if is available
-        if (nextEffect.compareTo(EFFECTS.AUTOFIX) == 0) {
+        if (nextEffect.compareTo(EFFECTS.NO_EFFECT) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NULL)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NULL);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.AUTOFIX) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_AUTOFIX)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_AUTOFIX);
                 effect.setParameter("scale", 0.5f);

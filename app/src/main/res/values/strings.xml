@@ -80,6 +80,7 @@
     <string name="pref_general_effects">Effects</string>
     <string name="pref_general_effects_types">Types</string>
     <string name="pref_general_effects_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> of <xliff:g id="total">%2$d</xliff:g> image effects selected</string>
+    <string name="pref_general_live_preview">Live preview</string>
 
     <string name="pref_media">Media</string>
     <string name="pref_media_summary">Albums to be displayed, refresh interval, and other media settings</string>

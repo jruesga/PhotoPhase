@@ -66,10 +66,6 @@ public class PhotoPhaseWallpaper
         // Load the configuration
         mPreserveEGLContext = getResources().getBoolean(R.bool.config_preserve_egl_context);
         mRenderers = new ArrayList<>();
-
-        // Instance the application
-        PreferencesProvider.reload(this);
-        Colors.register(this);
     }
 
     /**

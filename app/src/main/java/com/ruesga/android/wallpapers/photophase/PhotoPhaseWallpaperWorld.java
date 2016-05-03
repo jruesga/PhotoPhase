@@ -25,6 +25,7 @@ import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.textures.PhotoPhaseTextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
@@ -47,7 +48,7 @@ public class PhotoPhaseWallpaperWorld {
     private static final int PHOTO_FRAME_PADDING = 2;
 
     private final Context mContext;
-    private final TextureManager mTextureManager;
+    private final PhotoPhaseTextureManager mTextureManager;
 
     private List<PhotoFrame> mPhotoFrames;
     private List<Transition> mTransitions;
@@ -72,7 +73,7 @@ public class PhotoPhaseWallpaperWorld {
      * @param textureManager The texture manager
      */
     public PhotoPhaseWallpaperWorld(
-            Context ctx, TextureManager textureManager) {
+            Context ctx, PhotoPhaseTextureManager textureManager) {
         super();
         mContext = ctx;
         mTextureManager = textureManager;
@@ -111,7 +112,7 @@ public class PhotoPhaseWallpaperWorld {
     private Transition getOrCreateTransition(TRANSITIONS type, PhotoFrame frame) {
         Transition transition = getUnusedTransition(type);
         if (transition == null) {
-            transition = Transitions.createTransition(mContext, mTextureManager, type, frame);
+            transition = Transitions.createTransition(mContext, mTextureManager, type);
         }
         transition.reset();
         return transition;
@@ -176,8 +177,8 @@ public class PhotoPhaseWallpaperWorld {
         Transition transition = null;
         boolean isSelectable = false;
         while (transition == null || !isSelectable) {
-            boolean isRandom = Preferences.General.Transitions.getTransitionTypes().length > 1;
-            TRANSITIONS type = Transitions.getNextTypeOfTransition(frame);
+            boolean isRandom = Preferences.General.Transitions.getSelectedTransitions().isEmpty();
+            TRANSITIONS type = Transitions.getNextTypeOfTransition();
             transition = getOrCreateTransition(type, frame);
             isSelectable = transition.isSelectable(frame);
             if (!isSelectable) {

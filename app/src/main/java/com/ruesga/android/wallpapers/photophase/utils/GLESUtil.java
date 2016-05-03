@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.effect.Effect;
 import android.opengl.GLES20;
+import android.opengl.GLException;
 import android.opengl.GLUtils;
 import android.util.Log;
 
@@ -519,6 +520,15 @@ public final class GLESUtil {
      * @return boolean If there was an error
      */
     public static boolean glesCheckError(String func) {
+        // Log when a call happens without a current context
+        if (!Thread.currentThread().getName().startsWith("GLThread")) {
+            try {
+                throw new GLException(-1, "call to OpenGL ES API with no current context");
+            } catch (GLException ex) {
+                Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to OpenGL ES API with no current context", ex);
+            }
+        }
+
         int error = GLES20.glGetError();
         if (error != 0) {
             Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
