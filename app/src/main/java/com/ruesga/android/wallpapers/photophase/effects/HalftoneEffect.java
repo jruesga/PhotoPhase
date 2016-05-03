@@ -42,7 +42,7 @@ public class HalftoneEffect extends PhotoPhaseEffect {
 
     private static final String TAG = "HalftoneEffect";
 
-    private static final String STRENGTH_PARAMETER = "strength";
+    public static final String STRENGTH_PARAMETER = "strength";
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
@@ -92,7 +92,7 @@ public class HalftoneEffect extends PhotoPhaseEffect {
         super.init(vertexShader, fragmentShader);
 
         // Parameters
-        mStepsHandle = GLES20.glGetUniformLocation(mProgram, "strength");
+        mStepsHandle = GLES20.glGetUniformLocation(mProgram[0], "strength");
         GLESUtil.glesCheckError("glGetUniformLocation");
     }
 

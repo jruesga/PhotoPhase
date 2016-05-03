@@ -23,7 +23,6 @@ import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.shapes.ColorShape;
 import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;

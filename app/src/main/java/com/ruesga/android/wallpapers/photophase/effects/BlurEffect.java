@@ -22,29 +22,107 @@
 package com.ruesga.android.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
+import android.opengl.GLES20;
+import android.util.Log;
+
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
  * A blur effect<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+ * <tr>
+ *   <td><code>strength</code></td>
+ *   <td>The blur strength.</td>
+ *   <td>Positive float (>0). Higher numbers produce more blur.</td>
+ * </tr>
  * </table>
  */
 public class BlurEffect extends PhotoPhaseEffect {
 
+    private static final String TAG = "BlurEffect";
+
+    public static final String STRENGTH_PARAMETER = "strength";
+
+    private static final String H_VERTEX_SHADER =
+            "attribute vec4 a_position;\n" +
+            "attribute vec2 a_texcoord;\n" +
+            "varying vec2 v_texcoord;\n" +
+            "varying vec2 v_blurTexCoords[14];\n" +
+            "uniform float strength;\n" +
+            "void main()\n" +
+            "{\n" +
+            "    gl_Position = a_position;\n" +
+            "    v_texcoord = a_texcoord;\n" +
+            "    v_blurTexCoords[ 0] = v_texcoord + vec2(-0.028 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 1] = v_texcoord + vec2(-0.024 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 2] = v_texcoord + vec2(-0.020 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 3] = v_texcoord + vec2(-0.016 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 4] = v_texcoord + vec2(-0.012 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 5] = v_texcoord + vec2(-0.008 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 6] = v_texcoord + vec2(-0.004 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 7] = v_texcoord + vec2( 0.004 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 8] = v_texcoord + vec2( 0.008 * strength, 0.0);\n" +
+            "    v_blurTexCoords[ 9] = v_texcoord + vec2( 0.012 * strength, 0.0);\n" +
+            "    v_blurTexCoords[10] = v_texcoord + vec2( 0.016 * strength, 0.0);\n" +
+            "    v_blurTexCoords[11] = v_texcoord + vec2( 0.020 * strength, 0.0);\n" +
+            "    v_blurTexCoords[12] = v_texcoord + vec2( 0.024 * strength, 0.0);\n" +
+            "    v_blurTexCoords[13] = v_texcoord + vec2( 0.028 * strength, 0.0);\n" +
+            "}\n";
+
+    private static final String V_VERTEX_SHADER =
+            "attribute vec4 a_position;\n" +
+            "attribute vec2 a_texcoord;\n" +
+            "varying vec2 v_texcoord;\n" +
+            "varying vec2 v_blurTexCoords[14];\n" +
+            "uniform float strength;\n" +
+            "void main()\n" +
+            "{\n" +
+            "    gl_Position = a_position;\n" +
+            "    v_texcoord = a_texcoord;\n" +
+            "    v_blurTexCoords[ 0] = v_texcoord + vec2(0.0, -0.028 * strength);\n" +
+            "    v_blurTexCoords[ 1] = v_texcoord + vec2(0.0, -0.024 * strength);\n" +
+            "    v_blurTexCoords[ 2] = v_texcoord + vec2(0.0, -0.020 * strength);\n" +
+            "    v_blurTexCoords[ 3] = v_texcoord + vec2(0.0, -0.016 * strength);\n" +
+            "    v_blurTexCoords[ 4] = v_texcoord + vec2(0.0, -0.012 * strength);\n" +
+            "    v_blurTexCoords[ 5] = v_texcoord + vec2(0.0, -0.008 * strength);\n" +
+            "    v_blurTexCoords[ 6] = v_texcoord + vec2(0.0, -0.004 * strength);\n" +
+            "    v_blurTexCoords[ 7] = v_texcoord + vec2(0.0,  0.004 * strength);\n" +
+            "    v_blurTexCoords[ 8] = v_texcoord + vec2(0.0,  0.008 * strength);\n" +
+            "    v_blurTexCoords[ 9] = v_texcoord + vec2(0.0,  0.012 * strength);\n" +
+            "    v_blurTexCoords[10] = v_texcoord + vec2(0.0,  0.016 * strength);\n" +
+            "    v_blurTexCoords[11] = v_texcoord + vec2(0.0,  0.020 * strength);\n" +
+            "    v_blurTexCoords[12] = v_texcoord + vec2(0.0,  0.024 * strength);\n" +
+            "    v_blurTexCoords[13] = v_texcoord + vec2(0.0,  0.028 * strength);\n" +
+            "}\n";
+
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
-            "uniform sampler2D tex_sampler;\n" +
+            "uniform sampler2D s_texture;\n" +
             "varying vec2 v_texcoord;\n" +
-            "void main(void)\n" +
+            "varying vec2 v_blurTexCoords[14];\n" +
+            "void main()\n" +
             "{\n" +
-            "    float step = 0.02;\n" +
-            "    vec3 c1 = texture2D(tex_sampler, vec2(v_texcoord.s - step, v_texcoord.t - step)).bgr;\n" +
-            "    vec3 c2 = texture2D(tex_sampler, vec2(v_texcoord.s + step, v_texcoord.t + step)).bgr;\n" +
-            "    vec3 c3 = texture2D(tex_sampler, vec2(v_texcoord.s - step, v_texcoord.t + step)).bgr;\n" +
-            "    vec3 c4 = texture2D(tex_sampler, vec2(v_texcoord.s + step, v_texcoord.t - step)).bgr;\n" +
-            "    gl_FragColor.a = 1.0;\n" +
-            "    gl_FragColor.rgb = (c1 + c2 + c3 + c4) / 4.0;\n" +
-            "}";
+            "    gl_FragColor = vec4(0.0);\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 0]) * 0.0044299121055113265;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 1]) * 0.00895781211794;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 2]) * 0.0215963866053;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 3]) * 0.0443683338718;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 4]) * 0.0776744219933;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 5]) * 0.115876621105;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 6]) * 0.147308056121;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_texcoord         ) * 0.159576912161;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 7]) * 0.147308056121;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 8]) * 0.115876621105;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[ 9]) * 0.0776744219933;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[10]) * 0.0443683338718;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[11]) * 0.0215963866053;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[12]) * 0.00895781211794;\n" +
+            "    gl_FragColor += texture2D(s_texture, v_blurTexCoords[13]) * 0.0044299121055113265;\n" +
+            "}\n";
+
+    private float mStrength = 2.0f;
+    private int mStrengthHandle;
 
     /**
      * Constructor of <code>BlurEffect</code>.
@@ -54,7 +132,40 @@ public class BlurEffect extends PhotoPhaseEffect {
      */
     public BlurEffect(EffectContext ctx, String name) {
         super(ctx, BlurEffect.class.getName());
-        init(VERTEX_SHADER, FRAGMENT_SHADER);
+        init(new String[]{H_VERTEX_SHADER, V_VERTEX_SHADER},
+                new String[]{FRAGMENT_SHADER, FRAGMENT_SHADER});
+
+        // Parameters
+        mStrengthHandle = GLES20.glGetUniformLocation(mProgram[0], "strength");
+        GLESUtil.glesCheckError("glGetUniformLocation");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void applyParameters() {
+        // Set parameters
+        GLES20.glUniform1f(mStrengthHandle, mStrength);
+        GLESUtil.glesCheckError("glUniform1f");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setParameter(String parameterKey, Object value) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+            try {
+                float strength = Float.parseFloat(value.toString());
+                if (strength < 0) {
+                    Log.w(TAG, "strength parameter must be > 0");
+                    return;
+                }
+                mStrength = strength;
+            } catch (NumberFormatException ex) {
+                // Ignore
+            }
+        }
+    }
 }

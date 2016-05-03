@@ -225,6 +225,7 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.BLUR) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_BLUR)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_BLUR);
+                effect.setParameter(BlurEffect.STRENGTH_PARAMETER, 2.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.CROSSPROCESS) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_CROSSPROCESS)) {
@@ -265,7 +266,7 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.HALFTONE) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_HALFTONE)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_HALFTONE);
-                effect.setParameter("strength", 8.0f);
+                effect.setParameter(HalftoneEffect.STRENGTH_PARAMETER, 2.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.MIRROR) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_MIRROR)) {
@@ -286,7 +287,7 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.PIXELATE) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_PIXELATE)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_PIXELATE);
-                effect.setParameter("strength", 8.0f);
+                effect.setParameter(PixelateEffect.STRENGTH_PARAMETER, 4.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.POPART) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_POPART)) {

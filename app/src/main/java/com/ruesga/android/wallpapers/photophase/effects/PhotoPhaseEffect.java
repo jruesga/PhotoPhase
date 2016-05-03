@@ -63,13 +63,13 @@ public abstract class PhotoPhaseEffect extends Effect {
 
     private Effect mIdentityEffect;
 
-    int mProgram;
-    int mTexSamplerHandle;
-    int mTexCoordHandle;
-    int mPosCoordHandle;
+    int[] mProgram;
+    int[] mTexSamplerHandle;
+    int[] mTexCoordHandle;
+    int[] mPosCoordHandle;
 
-    FloatBuffer mTexVertices;
-    FloatBuffer mPosVertices;
+    FloatBuffer[] mTexVertices;
+    FloatBuffer[] mPosVertices;
 
     /**
      * An abstract constructor of <code>Effect</code> to follow the rules
@@ -88,30 +88,44 @@ public abstract class PhotoPhaseEffect extends Effect {
         mIdentityEffect = effectFactory.createEffect(MCA_IDENTITY_EFFECT);
     }
 
+    void init(String vertexShader, String fragmentShader) {
+        init(new String[]{vertexShader}, new String[]{fragmentShader});
+    }
+
     /**
      * Method that initializes the effect
      */
-    void init(String vertexShader, String fragmentShader) {
+    void init(String[] vertexShaders, String fragmentShaders[]) {
         // Create program
-        mProgram = GLESUtil.createProgram(vertexShader, fragmentShader);
+        int count  = vertexShaders.length;
+        mProgram = new int[count];
+        mTexSamplerHandle = new int[count];
+        mTexCoordHandle = new int[count];
+        mPosCoordHandle = new int[count];
+        mTexVertices = new FloatBuffer[count];
+        mPosVertices = new FloatBuffer[count];
 
-        // Bind attributes and uniforms
-        mTexSamplerHandle = GLES20.glGetUniformLocation(mProgram, "tex_sampler");
-        GLESUtil.glesCheckError("glGetUniformLocation");
-        mTexCoordHandle = GLES20.glGetAttribLocation(mProgram, "a_texcoord");
-        GLESUtil.glesCheckError("glGetAttribLocation");
-        mPosCoordHandle = GLES20.glGetAttribLocation(mProgram, "a_position");
-        GLESUtil.glesCheckError("glGetAttribLocation");
+        for (int i = 0; i < count; i++) {
+            mProgram[i] = GLESUtil.createProgram(vertexShaders[i], fragmentShaders[i]);
 
-        // Setup coordinate buffers
-        mTexVertices = ByteBuffer.allocateDirect(
-                TEX_VERTICES.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTexVertices.put(TEX_VERTICES).position(0);
-        mPosVertices = ByteBuffer.allocateDirect(
-                POS_VERTICES.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mPosVertices.put(POS_VERTICES).position(0);
+            // Bind attributes and uniforms
+            mTexSamplerHandle[i] = GLES20.glGetUniformLocation(mProgram[i], "tex_sampler");
+            GLESUtil.glesCheckError("glGetUniformLocation");
+            mTexCoordHandle[i] = GLES20.glGetAttribLocation(mProgram[i], "a_texcoord");
+            GLESUtil.glesCheckError("glGetAttribLocation");
+            mPosCoordHandle[i] = GLES20.glGetAttribLocation(mProgram[i], "a_position");
+            GLESUtil.glesCheckError("glGetAttribLocation");
+
+            // Setup coordinate buffers
+            mTexVertices[i] = ByteBuffer.allocateDirect(
+                    TEX_VERTICES.length * FLOAT_SIZE_BYTES)
+                    .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            mTexVertices[i].put(TEX_VERTICES).position(0);
+            mPosVertices[i] = ByteBuffer.allocateDirect(
+                    POS_VERTICES.length * FLOAT_SIZE_BYTES)
+                    .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            mPosVertices[i].put(POS_VERTICES).position(0);
+        }
     }
 
     /**
@@ -172,7 +186,10 @@ public abstract class PhotoPhaseEffect extends Effect {
             }
 
             // Apply the effect
-            apply(inputTexId);
+            int count = mProgram.length;
+            for (int i = 0; i < count; i++) {
+                apply(i, inputTexId);
+            }
 
         } finally {
             // Restore the GLES state
@@ -201,12 +218,14 @@ public abstract class PhotoPhaseEffect extends Effect {
      */
     @Override
     public void release() {
-        if (GLES20.glIsProgram(mProgram)) {
-            if (GLESUtil.DEBUG_GL_MEMOBJS) {
-                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteProgram: " + mProgram);
+        for (int program : mProgram) {
+            if (GLES20.glIsProgram(program)) {
+                if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                    Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteProgram: " + program);
+                }
+                GLES20.glDeleteProgram(program);
+                GLESUtil.glesCheckError("glDeleteProgram");
             }
-            GLES20.glDeleteProgram(mProgram);
-            GLESUtil.glesCheckError("glDeleteProgram");
         }
         mTexVertices = null;
         mPosVertices = null;
@@ -215,11 +234,12 @@ public abstract class PhotoPhaseEffect extends Effect {
     /**
      * Method that applies the effect.
      *
-     *  @param inputTexId The input texture
+     * @param index The index of the program to apply
+     * @param inputTexId The input texture
      */
-    void apply(int inputTexId) {
+    void apply(int index, int inputTexId) {
         // Use our shader program
-        GLES20.glUseProgram(mProgram);
+        GLES20.glUseProgram(mProgram[index]);
         GLESUtil.glesCheckError("glUseProgram");
 
         // Disable blending
@@ -227,13 +247,13 @@ public abstract class PhotoPhaseEffect extends Effect {
         GLESUtil.glesCheckError("glDisable");
 
         // Set the vertex attributes
-        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexVertices);
+        GLES20.glVertexAttribPointer(mTexCoordHandle[index], 2, GLES20.GL_FLOAT, false, 0, mTexVertices[index]);
         GLESUtil.glesCheckError("glVertexAttribPointer");
-        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
+        GLES20.glEnableVertexAttribArray(mTexCoordHandle[index]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
-        GLES20.glVertexAttribPointer(mPosCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mPosVertices);
+        GLES20.glVertexAttribPointer(mPosCoordHandle[index], 2, GLES20.GL_FLOAT, false, 0, mPosVertices[index]);
         GLESUtil.glesCheckError("glVertexAttribPointer");
-        GLES20.glEnableVertexAttribArray(mPosCoordHandle);
+        GLES20.glEnableVertexAttribArray(mPosCoordHandle[index]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Set parameters
@@ -244,7 +264,7 @@ public abstract class PhotoPhaseEffect extends Effect {
         GLESUtil.glesCheckError("glActiveTexture");
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, inputTexId);
         GLESUtil.glesCheckError("glBindTexture");
-        GLES20.glUniform1i(mTexSamplerHandle, 0);
+        GLES20.glUniform1i(mTexSamplerHandle[index], 0);
         GLESUtil.glesCheckError("glUniform1i");
 
         // Draw
@@ -256,9 +276,9 @@ public abstract class PhotoPhaseEffect extends Effect {
         GLESUtil.glesCheckError("glDrawArrays");
 
         // Disable attributes
-        GLES20.glDisableVertexAttribArray(mTexCoordHandle);
+        GLES20.glDisableVertexAttribArray(mTexCoordHandle[index]);
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
-        GLES20.glDisableVertexAttribArray(mPosCoordHandle);
+        GLES20.glDisableVertexAttribArray(mPosCoordHandle[index]);
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
     }
 
