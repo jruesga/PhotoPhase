@@ -36,7 +36,6 @@ import java.io.Reader;
 
 import javax.microedition.khronos.egl.EGL;
 import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLContext;
 
 
@@ -509,7 +508,9 @@ public final class GLESUtil {
     private static Bitmap ensurePowerOfTwoTexture(Bitmap src) {
         if (!BitmapUtils.isPowerOfTwo(src)) {
             int w = BitmapUtils.calculateUpperPowerOfTwo(src.getWidth());
-            int h = BitmapUtils.calculateUpperPowerOfTwo(src.getWidth());
+            int h = BitmapUtils.calculateUpperPowerOfTwo(
+                    Math.abs(1 - (src.getWidth() / src.getHeight())) > 0.15
+                        ? src.getHeight() : src.getWidth());
 
             // Create a power of two bitmap
             Bitmap out = Bitmap.createScaledBitmap(src, w, h, false);
