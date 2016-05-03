@@ -128,18 +128,6 @@ public final class PreferencesProvider {
     }
 
     /**
-     * Method that returns a long property value.
-     *
-     * @param key The preference key
-     * @param def The default value
-     * @return long The long property value
-     */
-    private static long getLong(String key, long def) {
-        return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Long ?
-                (Long) mPreferences.get(key) : def;
-    }
-
-    /**
      * Method that returns a boolean property value.
      *
      * @param key The preference key
@@ -381,12 +369,6 @@ public final class PreferencesProvider {
             * @return Set<String> The list of albums and pictures to be displayed
             */
            public static Set<String> getLastDiscorevedAlbums() {
-               // FIXME Typo. Remove when version 1005 is obsolete and unused
-               Set<String> oldKey = getStringSet("media_last_disvored_albums",
-                       new HashSet<String>());
-               if (oldKey.size() > 0) {
-                   return oldKey;
-               }
                return getStringSet("media_last_discovered_albums", new HashSet<String>());
            }
 
@@ -402,8 +384,6 @@ public final class PreferencesProvider {
                SharedPreferences preferences =
                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                Editor editor = preferences.edit();
-               // FIXME Typo. Remove when version 1005 is obsolete and unused
-               editor.remove("media_last_disvored_albums");
                editor.putStringSet("media_last_discovered_albums", albums);
                editor.apply();
                reload(context);
