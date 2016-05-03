@@ -295,12 +295,10 @@ public final class PreferencesProvider {
             public static class Effects {
                 public static Set<String> getSelectedEffects() {
                     Set<String> defaults = new HashSet<>();
-System.out.println("jrc: effects get: " + getStringSet("ui_effect_types", defaults));
                     return getStringSet("ui_effect_types", defaults);
                 }
 
                 public static void setSelectedEffects(Context context, Set<String> values) {
-System.out.println("jrc: effects set: " + values);
                     SharedPreferences preferences =
                             context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                     Editor editor = preferences.edit();
