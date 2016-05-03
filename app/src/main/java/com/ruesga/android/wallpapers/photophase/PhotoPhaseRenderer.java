@@ -573,21 +573,17 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
 
         // Delete the world
-        mDispatcher.dispatch(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mDrawing) {
-                    if (mWorld != null) mWorld.recycle();
-                    if (mTextureManager != null) mTextureManager.recycle();
-                    if (mOverlay != null) mOverlay.recycle();
-                    if (mOopsShape != null) mOopsShape.recycle();
-                    mWorld = null;
-                    mTextureManager = null;
-                    mOverlay = null;
-                    mOopsShape = null;
-                }
-            }
-        });
+        synchronized (mDrawing) {
+            mRecycle = true;
+            if (mWorld != null) mWorld.recycle();
+            if (mTextureManager != null) mTextureManager.recycle();
+            if (mOverlay != null) mOverlay.recycle();
+            if (mOopsShape != null) mOopsShape.recycle();
+            mWorld = null;
+            mTextureManager = null;
+            mOverlay = null;
+            mOopsShape = null;
+        }
     }
 
     /**
@@ -710,6 +706,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
         // Force an immediate redraw of the screen (draw thread could be in dirty mode only)
         deselectCurrentTransition();
+        mRecycle = false;
         mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
@@ -718,6 +715,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     @Override
     public void onDrawFrame(GL10 glUnused) {
+        if (mRecycle) {
+            return;
+        }
+
         // Remove the EGL context watchdog
         if (!mIsPreview) {
             mHandler.removeCallbacks(mEGLContextWatchDog);
