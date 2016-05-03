@@ -128,14 +128,16 @@ public class LivePreviewView extends GLSurfaceView {
 
                 // Draw the image
                 mTransition.apply(mMVPMatrix);
-                if (!mTransition.isRunning()) {
-                    if (getRenderMode() != RENDERMODE_WHEN_DIRTY) {
-                        setRenderMode(RENDERMODE_WHEN_DIRTY);
-                    }
-                    postDelayed(mTransitionRequestRenderer, TRANSITION_TIMEOUT);
-                } else {
-                    if (getRenderMode() != RENDERMODE_CONTINUOUSLY) {
-                        setRenderMode(RENDERMODE_CONTINUOUSLY);
+                if (!mTransitionType.equals(Transitions.TRANSITIONS.NO_TRANSITION)) {
+                    if (!mTransition.isRunning()) {
+                        if (getRenderMode() != RENDERMODE_WHEN_DIRTY) {
+                            setRenderMode(RENDERMODE_WHEN_DIRTY);
+                        }
+                        postDelayed(mTransitionRequestRenderer, TRANSITION_TIMEOUT);
+                    } else {
+                        if (getRenderMode() != RENDERMODE_CONTINUOUSLY) {
+                            setRenderMode(RENDERMODE_CONTINUOUSLY);
+                        }
                     }
                 }
 
