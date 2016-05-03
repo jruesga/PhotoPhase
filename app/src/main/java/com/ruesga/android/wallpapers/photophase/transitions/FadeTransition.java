@@ -17,26 +17,35 @@
 package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
+import android.opengl.GLES20;
 import android.opengl.GLException;
 import android.os.SystemClock;
 
-import com.ruesga.android.wallpapers.photophase.Colors;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
+import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.shapes.ColorShape;
 import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+
+import java.nio.FloatBuffer;
 
 /**
  * A transition that applies a fade transition to the picture.
  */
-public class FadeTransition extends NullTransition {
+public class FadeTransition extends Transition {
 
-    private static final float TRANSITION_TIME = 600.0f;
+    private static final float TRANSITION_TIME = 800.0f;
+
+    private static final int[] VERTEX_SHADER = {R.raw.fade_vertex_shader};
+    private static final int[] FRAGMENT_SHADER = {R.raw.fade_fragment_shader};
 
     private boolean mRunning;
     private long mTime;
 
-    private ColorShape mOverlay;
+    private GLESUtil.GLColor mColor;
+
+    private int mColorHandler;
 
     /**
      * Constructor of <code>FadeTransition</code>
@@ -45,7 +54,11 @@ public class FadeTransition extends NullTransition {
      * @param tm The texture manager
      */
     public FadeTransition(Context ctx, TextureManager tm) {
-        super(ctx, tm);
+        super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
+
+
+        mColorHandler = GLES20.glGetAttribLocation(mProgramHandlers[0], "aColor");
+        GLESUtil.glesCheckError("glGetAttribLocation");
     }
 
     /**
@@ -76,8 +89,15 @@ public class FadeTransition extends NullTransition {
      * {@inheritDoc}
      */
     @Override
+    public boolean isSelectable(PhotoFrame frame) {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void reset() {
-        super.reset();
         mTime = -1;
         mRunning = true;
     }
@@ -88,8 +108,7 @@ public class FadeTransition extends NullTransition {
     @Override
     public void select(PhotoFrame target) {
         super.select(target);
-        mOverlay = new ColorShape(mContext, target.getFrameVertex(), Colors.getBackground());
-        mOverlay.setAlpha(0);
+        mColor = new GLESUtil.GLColor(target.getBackgroundColor());
     }
 
     /**
@@ -117,14 +136,13 @@ public class FadeTransition extends NullTransition {
         final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
         if (delta <= 0.5) {
             // Draw the src target
+            mColor.a = delta * 2.0f;
             draw(mTarget, matrix);
-            mOverlay.setAlpha(delta * 2.0f);
         } else {
             // Draw the dst target
+            mColor.a = (1 - delta) * 2.0f;
             draw(mTransitionTarget, matrix);
-            mOverlay.setAlpha((1 - delta) * 2.0f);
         }
-        mOverlay.draw(matrix);
 
         // Transition ended
         if (delta == 1) {
@@ -132,4 +150,71 @@ public class FadeTransition extends NullTransition {
         }
     }
 
+    /**
+     * Method that draws the picture texture
+     *
+     * @param target The target to draw
+     * @param matrix The model-view-projection matrix
+     */
+    protected void draw(PhotoFrame target, float[] matrix) {
+        // Bind default FBO
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLESUtil.glesCheckError("glBindFramebuffer");
+
+        // Use our shader program
+        useProgram(0);
+
+        // Disable blending
+        GLES20.glDisable(GLES20.GL_BLEND);
+        GLESUtil.glesCheckError("glDisable");
+
+        // Apply the projection and view transformation
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, matrix, 0);
+        GLESUtil.glesCheckError("glUniformMatrix4fv");
+
+        // Color
+        GLES20.glVertexAttrib4f(mColorHandler, mColor.r, mColor.g, mColor.b, mColor.a);
+        GLESUtil.glesCheckError("glVertexAttrib4f");
+
+        // Texture
+        FloatBuffer textureBuffer = target.getTextureBuffer();
+        textureBuffer.position(0);
+        GLES20.glVertexAttribPointer(mTextureCoordHandlers[0], 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
+        GLESUtil.glesCheckError("glVertexAttribPointer");
+        GLES20.glEnableVertexAttribArray(mTextureCoordHandlers[0]);
+        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+
+        // Position
+        FloatBuffer positionBuffer = target.getPositionBuffer();
+        positionBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandlers[0], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
+        GLESUtil.glesCheckError("glVertexAttribPointer");
+        GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
+        GLESUtil.glesCheckError("glEnableVertexAttribArray");
+
+        // Set the input texture
+        int textureHandle = target.getTextureHandle();
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLESUtil.glesCheckError("glActiveTexture");
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
+        GLESUtil.glesCheckError("glBindTexture");
+        GLES20.glUniform1i(mTextureHandlers[0], 0);
+        GLESUtil.glesCheckError("glUniform1i");
+
+        // Draw
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLESUtil.glesCheckError("glDrawElements");
+
+        // Disable attributes
+        GLES20.glDisableVertexAttribArray(mPositionHandlers[0]);
+        GLESUtil.glesCheckError("glDisableVertexAttribArray");
+        GLES20.glDisableVertexAttribArray(mTextureCoordHandlers[0]);
+        GLESUtil.glesCheckError("glDisableVertexAttribArray");
+    }
+
+    @Override
+    public void recycle() {
+        super.recycle();
+        mColorHandler = -1;
+    }
 }

@@ -20,10 +20,10 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
  * The base class of all transitions that can be applied to the {@link PhotoFrame} classes.

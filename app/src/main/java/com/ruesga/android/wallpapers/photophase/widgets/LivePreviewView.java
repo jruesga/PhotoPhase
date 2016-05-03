@@ -26,7 +26,7 @@ public class LivePreviewView extends GLSurfaceView {
 
     private class Renderer implements GLSurfaceView.Renderer {
 
-        private static final long TRANSITION_TIMEOUT = 1500L;
+        private static final long TRANSITION_TIMEOUT = 2500L;
 
         private int mWidth = -1;
         private int mHeight = -1;
@@ -107,8 +107,6 @@ public class LivePreviewView extends GLSurfaceView {
                 }
                 mFrame = new PhotoFrame(mContext, mTextureManager,
                         frameVertices, frameVertices, mBackgroundColor);
-
-                // select the transition
                 mTransition.select(mFrame);
             }
 

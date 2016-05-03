@@ -106,6 +106,13 @@ public final class GLESUtil {
             this.b = Color.blue(color) / MAX_COLOR;
         }
 
+        public GLColor(GLColor color) {
+            this.a = color.a;
+            this.r = color.r;
+            this.g = color.g;
+            this.b = color.b;
+        }
+
         /**
          * Constructor of <code>GLColor</code> from ARGB.
          *

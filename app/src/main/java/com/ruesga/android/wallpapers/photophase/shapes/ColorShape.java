@@ -80,13 +80,15 @@ public class ColorShape implements DrawableShape {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
 
-        // Enable properties
-        if (mColor.a != 1.0f) {
-            GLES20.glEnable(GLES20.GL_BLEND);
-            GLESUtil.glesCheckError("glEnable");
-            GLES20.glBlendFunc(GLES20.GL_SRC_COLOR, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-            GLESUtil.glesCheckError("glBlendFunc");
+        if (mColor.a == 0f) {
+            return;
         }
+
+        // Enable properties
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLESUtil.glesCheckError("glEnable");
+        GLES20.glBlendFunc(GLES20.GL_SRC_COLOR, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        GLESUtil.glesCheckError("glBlendFunc");
 
         // Set the program and its attributes
         GLES20.glUseProgram(mProgramHandler);
@@ -118,10 +120,8 @@ public class ColorShape implements DrawableShape {
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
 
         // Disable properties
-        if (mColor.a != 1.0f) {
-            GLES20.glDisable(GLES20.GL_BLEND);
-            GLESUtil.glesCheckError("glDisable");
-        }
+        GLES20.glDisable(GLES20.GL_BLEND);
+        GLESUtil.glesCheckError("glDisable");
     }
 
     /**
