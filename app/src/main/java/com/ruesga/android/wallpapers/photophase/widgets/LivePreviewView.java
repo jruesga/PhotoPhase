@@ -38,7 +38,7 @@ public class LivePreviewView extends GLSurfaceView {
         private GLColor mBackgroundColor;
 
         private EffectContext mEffectContext;
-        private Effects mEffects;
+        private Effects mEffectsFactory;
 
         private SimpleTextureManager mTextureManager;
         private Effect mEffect;
@@ -85,8 +85,8 @@ public class LivePreviewView extends GLSurfaceView {
             recycle();
             synchronized (mLock) {
                 mEffectContext = EffectContext.createWithCurrentGlContext();
-                mEffects = new Effects(mEffectContext);
-                mEffect = mEffects.getEffect(mEffectType);
+                mEffectsFactory = new Effects(mEffectContext);
+                mEffect = mEffectsFactory.getEffect(mEffectType);
                 mTextureManager = new SimpleTextureManager(mContext, mEffect);
                 mTransition = Transitions.createTransition(mContext, mTextureManager, mTransitionType);
             }
@@ -141,19 +141,6 @@ public class LivePreviewView extends GLSurfaceView {
                     }
                 }
 
-            } else {
-                if (mEffectContext != null) {
-                    mEffectContext.release();
-                }
-                if (mEffects != null) {
-                    mEffects.release();
-                }
-                if (mTransition != null) {
-                    mTransition.recycle();
-                }
-                if (mFrame != null) {
-                    mFrame.recycle();
-                }
             }
         }
 
@@ -181,16 +168,36 @@ public class LivePreviewView extends GLSurfaceView {
         }
 
         public void requestTransition() {
-            if (mTransition.hasTransitionTarget()) {
-                mTransition.swapTargets();
+            synchronized (mLock) {
+                if (!mRecycled) {
+                    if (mTransition.hasTransitionTarget()) {
+                        mTransition.swapTargets();
+                    }
+                    mTransition.chooseMode();
+                    mTransition.reset();
+                }
             }
-            mTransition.chooseMode();
-            mTransition.reset();
         }
 
         public void recycle() {
             synchronized (mLock) {
                 mRecycled = true;
+                if (mEffectContext != null) {
+                    mEffectContext.release();
+                    mEffectContext = null;
+                }
+                if (mEffectsFactory != null) {
+                    mEffectsFactory.release();
+                    mEffectsFactory = null;
+                }
+                if (mTransition != null) {
+                    mTransition.recycle();
+                    mTransition = null;
+                }
+                if (mFrame != null) {
+                    mFrame.recycle();
+                    mFrame = null;
+                }
             }
         }
     }
@@ -246,9 +253,11 @@ public class LivePreviewView extends GLSurfaceView {
 
     public void recycle() {
         mRecycled = true;
-        mRenderer.recycle();
-
-        // Destroy thing inside a GL context
-        requestRender();
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                mRenderer.recycle();
+            }
+        });
     }
 }

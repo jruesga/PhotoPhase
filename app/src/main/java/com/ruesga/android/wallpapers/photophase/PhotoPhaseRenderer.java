@@ -96,6 +96,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final float[] mVMatrix = new float[16];
 
     final Object mDrawing = new Object();
+    private boolean mRecycle;
 
     final Object mMediaSync = new Object();
     private PendingIntent mMediaScanIntent;
@@ -566,22 +567,27 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     private void recycle() {
         if (DEBUG) Log.d(TAG, "recycle [" + mInstance + "]");
-        synchronized (mDrawing) {
-            // Remove any pending handle
-            if (mHandler != null && mTransitionThread != null) {
-                mHandler.removeCallbacks(mTransitionThread);
-            }
-
-            // Delete the world
-            if (mWorld != null) mWorld.recycle();
-            if (mTextureManager != null) mTextureManager.recycle();
-            if (mOverlay != null) mOverlay.recycle();
-            if (mOopsShape != null) mOopsShape.recycle();
-            mWorld = null;
-            mTextureManager = null;
-            mOverlay = null;
-            mOopsShape = null;
+        // Remove any pending handle
+        if (mHandler != null && mTransitionThread != null) {
+            mHandler.removeCallbacks(mTransitionThread);
         }
+
+        // Delete the world
+        mDispatcher.dispatch(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mDrawing) {
+                    if (mWorld != null) mWorld.recycle();
+                    if (mTextureManager != null) mTextureManager.recycle();
+                    if (mOverlay != null) mOverlay.recycle();
+                    if (mOopsShape != null) mOopsShape.recycle();
+                    mWorld = null;
+                    mTextureManager = null;
+                    mOverlay = null;
+                    mOopsShape = null;
+                }
+            }
+        });
     }
 
     /**

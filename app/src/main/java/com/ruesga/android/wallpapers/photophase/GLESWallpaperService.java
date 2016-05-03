@@ -139,10 +139,15 @@ public abstract class GLESWallpaperService extends EGLWallpaperService {
         @Override
         public void onDestroy() {
             // Notify initialization
-            if (mListener != null) {
-                mListener.onDestroyEGLView(getGlSurfaceView(), mRenderer);
-            }
-            mRenderer = null;
+            getGlSurfaceView().queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    if (mListener != null) {
+                        mListener.onDestroyEGLView(getGlSurfaceView(), mRenderer);
+                    }
+                    mRenderer = null;
+                }
+            });
 
             super.onDestroy();
         }
