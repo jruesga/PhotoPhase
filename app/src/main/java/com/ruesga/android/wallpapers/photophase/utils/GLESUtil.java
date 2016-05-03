@@ -33,6 +33,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import javax.microedition.khronos.egl.EGL;
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGL11;
+import javax.microedition.khronos.egl.EGLContext;
+
 
 /**
  * A helper class with some useful methods for deal with GLES.
@@ -520,12 +525,23 @@ public final class GLESUtil {
      * @return boolean If there was an error
      */
     public static boolean glesCheckError(String func) {
-        // Log when a call happens without a current context
-        if (!Thread.currentThread().getName().startsWith("GLThread")) {
+        // Log when a call happens without a current context or outside the GLThread
+        EGL elg = EGLContext.getEGL();
+        if (elg != null && elg instanceof EGL10 &&
+                (((EGL10) EGLContext.getEGL()).eglGetCurrentContext() == null ||
+                ((EGL10) EGLContext.getEGL()).eglGetCurrentContext().equals(EGL10.EGL_NO_CONTEXT))) {
             try {
                 throw new GLException(-1, "call to OpenGL ES API with no current context");
             } catch (GLException ex) {
-                Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to OpenGL ES API with no current context", ex);
+                Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to " +
+                        "OpenGL ES API with no current context", ex);
+            }
+        } else if (!Thread.currentThread().getName().startsWith("GLThread")) {
+            try {
+                throw new GLException(-1, "call to OpenGL ES API outside GLThread");
+            } catch (GLException ex) {
+                Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to " +
+                        "OpenGL ES API outside GLThread", ex);
             }
         }
 
