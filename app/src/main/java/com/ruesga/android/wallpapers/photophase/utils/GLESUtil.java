@@ -25,6 +25,7 @@ import android.media.effect.Effect;
 import android.opengl.GLES20;
 import android.opengl.GLException;
 import android.opengl.GLUtils;
+import android.support.design.BuildConfig;
 import android.util.Log;
 
 import java.io.File;
@@ -526,22 +527,24 @@ public final class GLESUtil {
      */
     public static boolean glesCheckError(String func) {
         // Log when a call happens without a current context or outside the GLThread
-        EGL elg = EGLContext.getEGL();
-        if (elg != null && elg instanceof EGL10 &&
-                (((EGL10) EGLContext.getEGL()).eglGetCurrentContext() == null ||
-                ((EGL10) EGLContext.getEGL()).eglGetCurrentContext().equals(EGL10.EGL_NO_CONTEXT))) {
-            try {
-                throw new GLException(-1, "call to OpenGL ES API with no current context");
-            } catch (GLException ex) {
-                Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to " +
-                        "OpenGL ES API with no current context", ex);
-            }
-        } else if (!Thread.currentThread().getName().startsWith("GLThread")) {
-            try {
-                throw new GLException(-1, "call to OpenGL ES API outside GLThread");
-            } catch (GLException ex) {
-                Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to " +
-                        "OpenGL ES API outside GLThread", ex);
+        if (BuildConfig.DEBUG) {
+            EGL elg = EGLContext.getEGL();
+            if (elg != null && elg instanceof EGL10 &&
+                    (((EGL10) EGLContext.getEGL()).eglGetCurrentContext() == null ||
+                    ((EGL10) EGLContext.getEGL()).eglGetCurrentContext().equals(EGL10.EGL_NO_CONTEXT))) {
+                try {
+                    throw new GLException(-1, "call to OpenGL ES API with no current context");
+                } catch (GLException ex) {
+                    Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to " +
+                            "OpenGL ES API with no current context", ex);
+                }
+            } else if (!Thread.currentThread().getName().startsWith("GLThread")) {
+                try {
+                    throw new GLException(-1, "call to OpenGL ES API outside GLThread");
+                } catch (GLException ex) {
+                    Log.w(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): call to " +
+                            "OpenGL ES API outside GLThread", ex);
+                }
             }
         }
 
