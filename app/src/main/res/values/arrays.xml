@@ -57,6 +57,7 @@
     </string-array>
 
     <string-array name="transitions_labels" translatable="false">
+        <item>@string/transitions_blur</item>
         <item>@string/transitions_cube</item>
         <item>@string/transitions_fade</item>
         <item>@string/transitions_flip</item>
@@ -66,6 +67,7 @@
     </string-array>
 
     <string-array name="transitions_values" translatable="false">
+        <item>7</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>

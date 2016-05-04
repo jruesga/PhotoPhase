@@ -140,6 +140,7 @@
     <string name="touch_actions_share_summary">Share the image</string>
 
     <!-- Transitions -->
+    <string name="transitions_blur">Blur</string>
     <string name="transitions_cube">Cube</string>
     <string name="transitions_fade">Fade</string>
     <string name="transitions_flip">Flip</string>

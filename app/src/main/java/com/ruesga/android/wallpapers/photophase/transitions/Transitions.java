@@ -58,7 +58,11 @@ public class Transitions {
         /**
          * @see WindowTransition
          */
-        WINDOW(6);
+        WINDOW(6),
+        /**
+         * @see BlurTransition
+         */
+        BLUR(7);
 
         public final int mId;
         TRANSITIONS(int id) {
@@ -108,6 +112,8 @@ public class Transitions {
             return TRANSITIONS.WINDOW;
         } else if (nextTransition.compareTo(TRANSITIONS.CUBE) == 0) {
             return TRANSITIONS.CUBE;
+        } else if (nextTransition.compareTo(TRANSITIONS.BLUR) == 0) {
+            return TRANSITIONS.BLUR;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -133,6 +139,8 @@ public class Transitions {
             return new WindowTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.CUBE) == 0) {
             return new CubeTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.BLUR) == 0) {
+            return new BlurTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }
