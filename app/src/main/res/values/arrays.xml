@@ -122,6 +122,7 @@
         <item>@string/effects_temperature</item>
         <item>@string/effects_tint</item>
         <item>@string/effects_vignette</item>
+        <item>@string/effects_noise</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -150,6 +151,7 @@
         <item>22</item>
         <item>23</item>
         <item>24</item>
+        <item>25</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">

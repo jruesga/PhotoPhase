@@ -170,6 +170,7 @@
     <string name="effects_temperature">Temperature</string>
     <string name="effects_tint">Tint</string>
     <string name="effects_vignette">Vignette</string>
+    <string name="effects_noise">Noise</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

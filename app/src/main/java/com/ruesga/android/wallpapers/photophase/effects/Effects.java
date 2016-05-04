@@ -135,7 +135,11 @@ public class Effects {
         /**
          * @see EffectFactory#EFFECT_VIGNETTE
          */
-        VIGNETTE(24);
+        VIGNETTE(24),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_NOISE
+         */
+        NOISE(25);
 
         public final int mId;
         EFFECTS(int id) {
@@ -323,6 +327,10 @@ public class Effects {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_VIGNETTE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_VIGNETTE);
                 effect.setParameter("scale", .1f);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.NOISE) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NOISE)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NOISE);
             }
         }
 
