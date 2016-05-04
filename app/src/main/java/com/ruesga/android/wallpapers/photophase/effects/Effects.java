@@ -220,7 +220,7 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.AUTOFIX) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_AUTOFIX)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_AUTOFIX);
-                effect.setParameter("scale", 0.5f);
+                effect.setParameter("scale", 0.1f);
             }
         } else if (nextEffect.compareTo(EFFECTS.BLUR) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_BLUR)) {
@@ -322,7 +322,7 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.VIGNETTE) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_VIGNETTE)) {
                 effect = effectFactory.createEffect(EffectFactory.EFFECT_VIGNETTE);
-                effect.setParameter("scale", .5f);
+                effect.setParameter("scale", .1f);
             }
         }
 
