@@ -229,6 +229,15 @@ public final class PreferencesProvider {
                 public static TouchAction getTouchAction() {
                     return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0")));
                 }
+
+                /**
+                 * Return the open the photo with an internal or the external photo viewer
+                 *
+                 * @return boolean true: internal; false: external
+                 */
+                public static boolean getTouchOpenWith() {
+                    return getBoolean("ui_touch_open_with", true);
+                }
             }
 
             /**

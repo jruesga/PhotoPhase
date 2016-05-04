@@ -72,6 +72,9 @@
     <string name="pref_general_touch_mode_off">Fired in single tap</string>
     <string name="pref_general_touch_action">Touch action</string>
     <string name="pref_general_touch_action_summary_format"><xliff:g id="action_summary">%1$s</xliff:g> when touching a frame</string>
+    <string name="pref_general_touch_open_with">Open with</string>
+    <string name="pref_general_touch_open_with_summary_on">Internal photo viewer</string>
+    <string name="pref_general_touch_open_with_summary_off">External photo viewer</string>
 
     <string name="pref_general_transitions">Transitions</string>
     <string name="pref_general_transitions_types">Types</string>

@@ -76,6 +76,14 @@
             android:entryValues="@array/touch_actions_values"
             android:defaultValue="0" />
 
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_touch_open_with"
+            android:title="@string/pref_general_touch_open_with"
+            android:summaryOn="@string/pref_general_touch_open_with_summary_on"
+            android:summaryOff="@string/pref_general_touch_open_with_summary_off"
+            android:persistent="true"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
     <!-- Transitions -->

@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources.NotFoundException;
+import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.effect.EffectContext;
@@ -36,17 +37,19 @@ import android.opengl.Matrix;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ruesga.android.wallpapers.photophase.textures.PhotoPhaseTextureManager;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.preferences.TouchAction;
 import com.ruesga.android.wallpapers.photophase.shapes.ColorShape;
 import com.ruesga.android.wallpapers.photophase.shapes.OopsShape;
+import com.ruesga.android.wallpapers.photophase.textures.PhotoPhaseTextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
+import com.ruesga.android.wallpapers.photophase.utils.Utils;
+
+import java.io.File;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -372,19 +375,33 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
                 } else if (touchAction.compareTo(TouchAction.OPEN) == 0) {
                     // Open the image
-                    try {
-                        Uri uri = getUriFromFrame(frame);
-                        if (uri != null) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.setDataAndType(uri, "image/*");
+                    if (PreferencesProvider.Preferences.General.Touch.getTouchOpenWith()) {
+                        // Internal
+                        File file = getFileFromFrame(frame);
+                        if (file != null) {
+                            Bitmap bitmap = getBitmapFromFrame(frame);
+                            Intent intent = new Intent(mContext, PhotoViewerActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra(PhotoViewerActivity.EXTRA_PHOTO, file.getAbsolutePath());
+                            PhotoViewerActivity.sThumbnail = bitmap;
                             mContext.startActivity(intent);
                         }
-                    } catch (ActivityNotFoundException ex) {
-                        Log.e(TAG, "Open action not found for " + frame.getTextureInfo().path, ex);
+                    } else {
+                        // External
+                        Uri uri = getUriFromFrame(frame);
+                        if (uri != null) {
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.setDataAndType(uri, "image/*");
+                                mContext.startActivity(intent);
+                            } catch (ActivityNotFoundException ex) {
+                                Log.e(TAG, "Open action not found for " + frame.getTextureInfo().path, ex);
+                            }
+                        }
                     }
-
                 } else if (touchAction.compareTo(TouchAction.SHARE) == 0) {
                     // Send the image
                     try {
@@ -412,6 +429,14 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      * @return Uri The image uri
      */
     private static Uri getUriFromFrame(final PhotoFrame frame) {
+        File file = getFileFromFrame(frame);
+        if (file == null) {
+            return null;
+        }
+        return Uri.fromFile(file);
+    }
+
+    private static File getFileFromFrame(final PhotoFrame frame) {
         // Sanity checks
         GLESTextureInfo info = frame.getTextureInfo();
         if (info == null) {
@@ -425,7 +450,20 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
 
         // Return the uri from the path
-        return Uri.fromFile(frame.getTextureInfo().path);
+        return frame.getTextureInfo().path;
+    }
+
+    private static Bitmap getBitmapFromFrame(final PhotoFrame frame) {
+        // Sanity checks
+        GLESTextureInfo info = frame.getTextureInfo();
+        if (info == null) {
+            return null;
+        }
+        if (info.bitmap == null || info.bitmap.isRecycled()) {
+            return null;
+        }
+
+        return info.bitmap;
     }
 
     /**
