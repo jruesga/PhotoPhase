@@ -90,7 +90,7 @@ public class PixelateEffect extends PhotoPhaseEffect {
      * {@inheritDoc}
      */
     @Override
-    void applyParameters() {
+    void applyParameters(int width, int height) {
         // Set parameters
         GLES20.glUniform1f(mStepsHandle, mStrength);
         GLESUtil.glesCheckError("glUniform1f");

@@ -55,7 +55,7 @@ public class NullEffect extends PhotoPhaseEffect {
      * {@inheritDoc}
      */
     @Override
-    void apply(int index, int inputTexId) {
+    void applyProgram(int index, int inputTexId, int width, int height) {
         // Nothing to draw
     }
 }

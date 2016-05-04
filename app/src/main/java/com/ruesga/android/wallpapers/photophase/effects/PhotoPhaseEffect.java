@@ -188,7 +188,7 @@ public abstract class PhotoPhaseEffect extends Effect {
             // Apply the effect
             int count = mProgram.length;
             for (int i = 0; i < count; i++) {
-                apply(i, inputTexId);
+                applyProgram(i, inputTexId, width, height);
             }
 
         } finally {
@@ -237,7 +237,7 @@ public abstract class PhotoPhaseEffect extends Effect {
      * @param index The index of the program to apply
      * @param inputTexId The input texture
      */
-    void apply(int index, int inputTexId) {
+    void applyProgram(int index, int inputTexId, int width, int height) {
         // Use our shader program
         GLES20.glUseProgram(mProgram[index]);
         GLESUtil.glesCheckError("glUseProgram");
@@ -257,7 +257,7 @@ public abstract class PhotoPhaseEffect extends Effect {
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Set parameters
-        applyParameters();
+        applyParameters(width, height);
 
         // Set the input texture
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -285,7 +285,7 @@ public abstract class PhotoPhaseEffect extends Effect {
     /**
      * Method that applies the parameters of the effect.
      */
-    void applyParameters() {
+    void applyParameters(int width, int height) {
         // Do nothing
     }
 

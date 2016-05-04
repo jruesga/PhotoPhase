@@ -22,6 +22,9 @@
 package com.ruesga.android.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
+import android.opengl.GLES20;
+
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
  * A TV scanline effect<br/>
@@ -35,7 +38,7 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
             "precision mediump float;\n" +
             "uniform sampler2D tex_sampler;\n" +
             "uniform float offset;\n" +
-            "float frequency = 83.0;\n" +
+            "uniform float frequency;\n" +
             "varying vec2 v_texcoord;\n" +
             "void main(void)\n" +
             "{\n" +
@@ -44,6 +47,9 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
             "    vec4 pel = texture2D(tex_sampler, v_texcoord);\n" +
             "    gl_FragColor = mix(vec4(0,0,0,0), pel, wave_pos);\n" +
             "}";
+
+    private int mFrequencyHandle;
+    private int mOffsetHandle;
 
     /**
      * Constructor of <code>ScanlinesEffect</code>.
@@ -54,6 +60,27 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
     public ScanlinesEffect(EffectContext ctx, String name) {
         super(ctx, ScanlinesEffect.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
+
+        // Parameters
+        mFrequencyHandle = GLES20.glGetUniformLocation(mProgram[0], "frequency");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+        mOffsetHandle = GLES20.glGetUniformLocation(mProgram[0], "offset");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void applyParameters(int width, int height) {
+        float mFrequency = height / 6f;
+        float mOffset = 0f;
+
+        // Set parameters
+        GLES20.glUniform1f(mFrequencyHandle, mFrequency);
+        GLESUtil.glesCheckError("glUniform1f");
+        GLES20.glUniform1f(mOffsetHandle, mOffset);
+        GLESUtil.glesCheckError("glUniform1f");
     }
 
 }
