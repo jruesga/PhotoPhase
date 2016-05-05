@@ -175,6 +175,8 @@
     <string name="effects_tint">Tint</string>
     <string name="effects_vignette">Vignette</string>
     <string name="effects_noise">Noise</string>
+    <string name="effects_frosted">Frosted</string>
+    <string name="effects_crosshatching">Crosshatching</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

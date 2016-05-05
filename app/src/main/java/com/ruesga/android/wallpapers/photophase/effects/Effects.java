@@ -139,7 +139,15 @@ public class Effects {
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_NOISE
          */
-        NOISE(25);
+        NOISE(25),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_FROSTED
+         */
+        FROSTED(26),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_CROSSHATCHING
+         */
+        CROSSHATCHING(27);
 
         public final int mId;
         EFFECTS(int id) {
@@ -252,7 +260,6 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.FISHEYE) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_FISHEYE)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_FISHEYE);
-//                effect.setParameter("scale", 1.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.GLOW) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_GLOW)) {
@@ -331,6 +338,14 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.NOISE) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_NOISE)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_NOISE);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.FROSTED) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_FROSTED)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_FROSTED);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.CROSSHATCHING) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_CROSSHATCHING)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_CROSSHATCHING);
             }
         }
 
