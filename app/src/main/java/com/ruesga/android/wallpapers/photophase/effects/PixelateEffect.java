@@ -32,8 +32,13 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * <tr>
- *   <td><code>strength</code></td>
- *   <td>The pixelate strength.</td>
+ *   <td><code>pixel_w</code></td>
+ *   <td>The pixel width strength.</td>
+ *   <td>Positive float (>0). Higher numbers produce more pixelation.</td>
+ * </tr>
+ * <tr>
+ *   <td><code>pixel_h</code></td>
+ *   <td>The pixel height strength.</td>
  *   <td>Positive float (>0). Higher numbers produce more pixelation.</td>
  * </tr>
  * </table>
