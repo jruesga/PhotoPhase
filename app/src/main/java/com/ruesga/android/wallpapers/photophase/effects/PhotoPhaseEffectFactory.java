@@ -157,4 +157,13 @@ public class PhotoPhaseEffectFactory {
      * </table>
      */
     public static final String EFFECT_CROSSHATCHING = "com.ruesga.android.wallpapers.photophase.effects.CrosshatchingEffect";
+
+    /**
+     * <p>Applies a thermal vision effect to the image.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_THERMALVISION = "com.ruesga.android.wallpapers.photophase.effects.ThermalVisionEffect";
 }

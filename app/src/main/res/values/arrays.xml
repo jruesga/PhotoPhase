@@ -127,6 +127,7 @@
         <item>@string/effects_noise</item>
         <item>@string/effects_frosted</item>
         <item>@string/effects_crosshatching</item>
+        <item>@string/effects_thermalvision</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -158,6 +159,7 @@
         <item>25</item>
         <item>26</item>
         <item>27</item>
+        <item>28</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">

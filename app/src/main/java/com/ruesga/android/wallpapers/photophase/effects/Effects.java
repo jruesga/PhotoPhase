@@ -147,7 +147,11 @@ public class Effects {
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_CROSSHATCHING
          */
-        CROSSHATCHING(27);
+        CROSSHATCHING(27),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_THERMALVISION
+         */
+        THERMALVISION(28);
 
         public final int mId;
         EFFECTS(int id) {
@@ -346,6 +350,10 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.CROSSHATCHING) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_CROSSHATCHING)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_CROSSHATCHING);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.THERMALVISION) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_THERMALVISION)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_THERMALVISION);
             }
         }
 

@@ -177,6 +177,7 @@
     <string name="effects_noise">Noise</string>
     <string name="effects_frosted">Frosted</string>
     <string name="effects_crosshatching">Crosshatching</string>
+    <string name="effects_thermalvision">Thermal Vision</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>
