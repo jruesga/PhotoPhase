@@ -178,6 +178,7 @@
     <string name="effects_frosted">Frosted</string>
     <string name="effects_crosshatching">Crosshatching</string>
     <string name="effects_thermalvision">Thermal Vision</string>
+    <string name="effects_swirl">Swirl</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

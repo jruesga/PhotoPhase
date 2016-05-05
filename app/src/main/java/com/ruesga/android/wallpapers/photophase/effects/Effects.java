@@ -151,7 +151,11 @@ public class Effects {
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_THERMALVISION
          */
-        THERMALVISION(28);
+        THERMALVISION(28),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_SWIRL
+         */
+        SWIRL(29);
 
         public final int mId;
         EFFECTS(int id) {
@@ -353,6 +357,10 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.THERMALVISION) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_THERMALVISION)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_THERMALVISION);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.SWIRL) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_SWIRL)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_SWIRL);
             }
         }
 

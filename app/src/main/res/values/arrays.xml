@@ -128,6 +128,7 @@
         <item>@string/effects_frosted</item>
         <item>@string/effects_crosshatching</item>
         <item>@string/effects_thermalvision</item>
+        <item>@string/effects_swirl</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -160,6 +161,7 @@
         <item>26</item>
         <item>27</item>
         <item>28</item>
+        <item>29</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">

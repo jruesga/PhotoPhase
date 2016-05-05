@@ -166,4 +166,13 @@ public class PhotoPhaseEffectFactory {
      * </table>
      */
     public static final String EFFECT_THERMALVISION = "com.ruesga.android.wallpapers.photophase.effects.ThermalVisionEffect";
+
+    /**
+     * <p>Applies a swirl effect to the image.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_SWIRL = "com.ruesga.android.wallpapers.photophase.effects.SwirlEffect";
 }
