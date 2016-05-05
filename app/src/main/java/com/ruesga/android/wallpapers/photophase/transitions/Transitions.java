@@ -62,7 +62,11 @@ public class Transitions {
         /**
          * @see BlurTransition
          */
-        BLUR(7);
+        BLUR(7),
+        /**
+         * @see VertigoTransition
+         */
+        VERTIGO(8);
 
         public final int mId;
         TRANSITIONS(int id) {
@@ -114,6 +118,8 @@ public class Transitions {
             return TRANSITIONS.CUBE;
         } else if (nextTransition.compareTo(TRANSITIONS.BLUR) == 0) {
             return TRANSITIONS.BLUR;
+        } else if (nextTransition.compareTo(TRANSITIONS.VERTIGO) == 0) {
+            return TRANSITIONS.VERTIGO;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -141,6 +147,8 @@ public class Transitions {
             return new CubeTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.BLUR) == 0) {
             return new BlurTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.VERTIGO) == 0) {
+            return new VertigoTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }

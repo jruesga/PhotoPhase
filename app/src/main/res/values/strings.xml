@@ -147,6 +147,7 @@
     <string name="transitions_swap">Swap</string>
     <string name="transitions_translation">Translation</string>
     <string name="transitions_window">Window</string>
+    <string name="transitions_vertigo">Vertigo</string>
 
     <!-- Effects -->
     <string name="effects_noeffect">Normal</string>
