@@ -24,7 +24,7 @@ package com.ruesga.android.wallpapers.photophase.effects;
 import android.media.effect.EffectContext;
 
 /**
- * A blur effect<br/>
+ * A noise effect<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * </table>
