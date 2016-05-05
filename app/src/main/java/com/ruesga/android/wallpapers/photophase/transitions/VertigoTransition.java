@@ -34,7 +34,7 @@ import java.nio.FloatBuffer;
  */
 public class VertigoTransition extends Transition {
 
-    private static final float TRANSITION_TIME = 2000.0f;
+    private static final float TRANSITION_TIME = 1500.0f;
 
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.vertigo_fragment_shader};

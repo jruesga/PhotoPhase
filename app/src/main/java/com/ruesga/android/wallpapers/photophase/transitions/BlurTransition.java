@@ -34,7 +34,7 @@ import java.nio.FloatBuffer;
  */
 public class BlurTransition extends Transition {
 
-    private static final float TRANSITION_TIME = 2000.0f;
+    private static final float TRANSITION_TIME = 1500.0f;
 
     private static final int[] VERTEX_SHADER = {R.raw.blur_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.blur_fragment_shader};
