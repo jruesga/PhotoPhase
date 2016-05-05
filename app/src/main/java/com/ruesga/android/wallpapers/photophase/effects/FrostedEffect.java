@@ -33,7 +33,7 @@ public class FrostedEffect extends PhotoPhaseEffect {
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
-            "uniform sampler2D sceneTex;\n" +
+            "uniform sampler2D tex_sampler;\n" +
             "varying vec2 v_texcoord;\n" +
             "const float rnd_factor = 0.05;\n" +
             "const float rnd_scale = 5.1;\n" +
@@ -47,7 +47,7 @@ public class FrostedEffect extends PhotoPhaseEffect {
             "{\n" +
             "  vec2 uv = v_texcoord;\n" +
             "  vec2 rnd = vec2(rand(uv.xy),rand(uv.yx));  \n" +
-            "  vec3 tc = texture2D(sceneTex, uv+rnd*rnd_factor).rgb;  \n" +
+            "  vec3 tc = texture2D(tex_sampler, uv+rnd*rnd_factor).rgb;  \n" +
             "  gl_FragColor = vec4(tc, 1.0);\n" +
             "}";
 
