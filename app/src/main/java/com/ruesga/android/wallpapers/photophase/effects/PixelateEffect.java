@@ -42,26 +42,35 @@ public class PixelateEffect extends PhotoPhaseEffect {
 
     private static final String TAG = "PixelateEffect";
 
-    public static final String STRENGTH_PARAMETER = "strength";
+    public static final String PIXEL_W_PARAMETER = "pixel_w";
+    public static final String PIXEL_H_PARAMETER = "pixel_h";
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
             "uniform sampler2D tex_sampler;\n" +
             "varying vec2 v_texcoord;\n" +
-            "const float step_w = 0.0015625;\n" +
-            "const float step_h = 0.0027778;\n" +
-            "uniform float strength;\n" +
-            "void main(void)\n" +
+            "uniform float w;\n" +
+            "uniform float h;\n" +
+            "uniform float pixel_w; //15.0;\n" +
+            "uniform float pixel_h; //10.0;\n" +
+            "void main() \n" +
             "{\n" +
-            "    float offx = floor(v_texcoord.s  / (strength * step_w));\n" +
-            "    float offy = floor(v_texcoord.t  / (strength * step_h));\n" +
-            "    vec3 res = texture2D(tex_sampler, vec2(offx * strength * step_w , offy * strength * step_h)).bgr;\n" +
-            "    gl_FragColor.a = 1.0;\n" +
-            "    gl_FragColor.rgb = res;\n" +
+            "    vec2 uv = v_texcoord;\n" +
+            "    float dx = pixel_w*(1./w);\n" +
+            "    float dy = pixel_h*(1./h);\n" +
+            "    vec2 coord = vec2(dx*floor(uv.x/dx),\n" +
+            "                      dy*floor(uv.y/dy));\n" +
+            "    vec3 tc = texture2D(tex_sampler, coord).rgb;\n" +
+            "    gl_FragColor = vec4(tc, 1.0);\n" +
             "}";
 
-    private float mStrength = 8.0f;
-    private int mStepsHandle;
+    private float mPixelWidth = 15.0f;
+    private float mPixelHeight = 10.0f;
+
+    private int mWidthHandle;
+    private int mHeightHandle;
+    private int mPixelWidthHandle;
+    private int mPixelHeightHandle;
 
     /**
      * Constructor of <code>PixelateEffect</code>.
@@ -82,7 +91,13 @@ public class PixelateEffect extends PhotoPhaseEffect {
         super.init(vertexShader, fragmentShader);
 
         // Parameters
-        mStepsHandle = GLES20.glGetUniformLocation(mProgram[0], "strength");
+        mWidthHandle = GLES20.glGetUniformLocation(mProgram[0], "w");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+        mHeightHandle = GLES20.glGetUniformLocation(mProgram[0], "h");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+        mPixelWidthHandle = GLES20.glGetUniformLocation(mProgram[0], "pixel_w");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+        mPixelHeightHandle = GLES20.glGetUniformLocation(mProgram[0], "pixel_h");
         GLESUtil.glesCheckError("glGetUniformLocation");
     }
 
@@ -92,27 +107,44 @@ public class PixelateEffect extends PhotoPhaseEffect {
     @Override
     void applyParameters(int width, int height) {
         // Set parameters
-        GLES20.glUniform1f(mStepsHandle, mStrength);
+        GLES20.glUniform1f(mWidthHandle, (float) width);
+        GLESUtil.glesCheckError("glUniform1f");
+        GLES20.glUniform1f(mHeightHandle, (float) height);
+        GLESUtil.glesCheckError("glUniform1f");
+        GLES20.glUniform1f(mPixelWidthHandle, mPixelWidth);
+        GLESUtil.glesCheckError("glUniform1f");
+        GLES20.glUniform1f(mPixelHeightHandle, mPixelHeight);
         GLESUtil.glesCheckError("glUniform1f");
     }
+
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void setParameter(String parameterKey, Object value) {
-        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+        if (parameterKey.compareTo(PIXEL_W_PARAMETER) == 0) {
             try {
-                float strength = Float.parseFloat(value.toString());
-                if (strength <= 0) {
-                    Log.w(TAG, "strength parameter must be >= 0");
+                float p = Float.parseFloat(value.toString());
+                if (p <= 0) {
+                    Log.w(TAG, "pixel width parameter must be >= 0");
                     return;
                 }
-                mStrength = strength;
+                mPixelWidth = p;
+            } catch (NumberFormatException ex) {
+                // Ignore
+            }
+        } else if (parameterKey.compareTo(PIXEL_H_PARAMETER) == 0) {
+            try {
+                float p = Float.parseFloat(value.toString());
+                if (p <= 0) {
+                    Log.w(TAG, "pixel height parameter must be >= 0");
+                    return;
+                }
+                mPixelHeight = p;
             } catch (NumberFormatException ex) {
                 // Ignore
             }
         }
     }
-
 }

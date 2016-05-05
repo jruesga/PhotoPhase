@@ -302,7 +302,6 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.PIXELATE) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_PIXELATE)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_PIXELATE);
-                effect.setParameter(PixelateEffect.STRENGTH_PARAMETER, 4.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.POPART) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_POPART)) {
