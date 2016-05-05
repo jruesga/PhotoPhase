@@ -65,7 +65,7 @@ public class Effects {
          */
         EMBOSS(6),
         /**
-         * @see EffectFactory#EFFECT_FISHEYE
+         * @see PhotoPhaseEffectFactory#EFFECT_FISHEYE
          */
         FISHEYE(7),
         /**
@@ -250,9 +250,9 @@ public class Effects {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_EMBOSS);
             }
         } else if (nextEffect.compareTo(EFFECTS.FISHEYE) == 0) {
-            if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_FISHEYE)) {
-                effect = effectFactory.createEffect(EffectFactory.EFFECT_FISHEYE);
-                effect.setParameter("scale", 1.0f);
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_FISHEYE)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_FISHEYE);
+//                effect.setParameter("scale", 1.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.GLOW) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_GLOW)) {

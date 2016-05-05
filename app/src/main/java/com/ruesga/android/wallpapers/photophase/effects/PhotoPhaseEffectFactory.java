@@ -41,6 +41,15 @@ public class PhotoPhaseEffectFactory {
     public static final String EFFECT_EMBOSS = "com.ruesga.android.wallpapers.photophase.effects.EmbossEffect";
 
     /**
+     * <p>Applies a fixeye effect to the image.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_FISHEYE = "com.ruesga.android.wallpapers.photophase.effects.FisheyeEffect";
+
+    /**
      * <p>Applies a glow effect to the image.</p>
      * <p>Available parameters:</p>
      * <table>
