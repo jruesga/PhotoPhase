@@ -96,8 +96,6 @@
             android:key="ui_transition_types"
             android:title="@string/pref_general_transitions_types"
             android:persistent="false"
-            android:entries="@array/transitions_labels"
-            android:entryValues="@array/transitions_values"
             android:defaultValue="@array/transitions_default" />
 
         <Preference
@@ -125,8 +123,6 @@
             android:key="ui_effect_types"
             android:title="@string/pref_general_effects_types"
             android:persistent="false"
-            android:entries="@array/effects_labels"
-            android:entryValues="@array/effects_values"
             android:defaultValue="@array/effects_default" />
 
         <Preference

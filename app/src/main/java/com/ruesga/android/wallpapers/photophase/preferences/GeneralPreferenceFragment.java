@@ -30,8 +30,10 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
+import android.support.v4.util.Pair;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.Colors;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference.OnDisplayProgress;
@@ -179,7 +181,11 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 (CheckBoxPreference) findPreference("ui_fix_aspect_ratio");
         fixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
 
-        mTransitionsTypes = (MultiSelectListPreference)findPreference("ui_transition_types");
+        mTransitionsTypes = (MultiSelectListPreference) findPreference("ui_transition_types");
+        Pair<String[], String[]> entries = AndroidHelper.sortEntries(
+                getActivity(), R.array.transitions_labels, R.array.transitions_values);
+        mTransitionsTypes.setEntries(entries.first);
+        mTransitionsTypes.setEntryValues(entries.second);
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
         updateTransitionTypeSummary(
                 PreferencesProvider.Preferences.General.Transitions.getSelectedTransitions());
@@ -225,6 +231,10 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTransitionsInterval.setOnPreferenceChangeListener(mOnChangeListener);
 
         mEffectsTypes = (MultiSelectListPreference)findPreference("ui_effect_types");
+        entries = AndroidHelper.sortEntries(
+                getActivity(), R.array.effects_labels, R.array.effects_values);
+        mEffectsTypes.setEntries(entries.first);
+        mEffectsTypes.setEntryValues(entries.second);
         mEffectsTypes.setOnPreferenceChangeListener(mOnChangeListener);
         updateEffectTypeSummary(
                 PreferencesProvider.Preferences.General.Effects.getSelectedEffects());

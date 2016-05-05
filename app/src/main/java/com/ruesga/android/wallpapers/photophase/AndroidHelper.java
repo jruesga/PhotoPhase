@@ -27,8 +27,16 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Process;
 import android.provider.Settings;
+import android.support.annotation.ArrayRes;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
+
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * A helper class with useful methods for deal with android.
@@ -131,4 +139,28 @@ public final class AndroidHelper {
         return !(info == null || !info.isConnectedOrConnecting() || !info.isAvailable());
     }
 
+    public static Pair<String[], String[]> sortEntries(
+            Context context, @ArrayRes int labelsResId, @ArrayRes int valuesResId) {
+        String[] labels = context.getResources().getStringArray(labelsResId);
+        String[] values = context.getResources().getStringArray(valuesResId);
+        int count = labels.length;
+        List<Pair<String, String>> entries = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            entries.add(new Pair<String, String>(labels[i], values[i]));
+        }
+        final Collator collator = Collator.getInstance(
+                context.getResources().getConfiguration().locale);
+        Collections.sort(entries, new Comparator<Pair<String, String>>() {
+            @Override
+            public int compare(Pair<String, String> lhs, Pair<String, String> rhs) {
+                return collator.compare(lhs.first, rhs.first);
+            }
+        });
+
+        for (int i = 0; i < count; i++) {
+            labels[i] = entries.get(i).first;
+            values[i] = entries.get(i).second;
+        }
+        return new Pair<>(labels, values);
+    }
 }

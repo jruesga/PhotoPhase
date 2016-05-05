@@ -19,6 +19,7 @@ package com.ruesga.android.wallpapers.photophase.adapters;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.ArrayRes;
+import android.support.v4.util.Pair;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
@@ -46,17 +48,18 @@ public class LivePreviewAdapter extends PagerAdapter {
 
     private final Context mContext;
     private final String[] mLabels;
-    private final String[] mEntries;
+    private final String[] mValues;
 
     private final LivePreviewCallback mCallback;
     private final Set<String> mSelectedEntries;
 
     public LivePreviewAdapter(Context context, @ArrayRes int labels,
-            @ArrayRes int entries, LivePreviewCallback cb) {
+            @ArrayRes int values, LivePreviewCallback cb) {
         super();
         mContext = context;
-        mLabels = context.getResources().getStringArray(labels);
-        mEntries = context.getResources().getStringArray(entries);
+        Pair<String[], String[]> entries = AndroidHelper.sortEntries(context, labels, values);
+        mLabels = entries.first;
+        mValues = entries.second;
         mCallback = cb;
         mSelectedEntries = cb.getSelectedEntries();
     }
@@ -66,14 +69,14 @@ public class LivePreviewAdapter extends PagerAdapter {
         LayoutInflater li = LayoutInflater.from(mContext);
         final View view = li.inflate(R.layout.live_preview_view, container, false);
         SwitchCompat check = (SwitchCompat) view.findViewById(R.id.check);
-        check.setChecked(mSelectedEntries.contains(mEntries[position]));
+        check.setChecked(mSelectedEntries.contains(mValues[position]));
         check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    mSelectedEntries.add(mEntries[position]);
+                    mSelectedEntries.add(mValues[position]);
                 } else {
-                    mSelectedEntries.remove(mEntries[position]);
+                    mSelectedEntries.remove(mValues[position]);
                 }
                 mCallback.setSelectedEntries(mSelectedEntries);
             }
@@ -98,7 +101,7 @@ public class LivePreviewAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mEntries.length;
+        return mValues.length;
     }
 
     @Override
