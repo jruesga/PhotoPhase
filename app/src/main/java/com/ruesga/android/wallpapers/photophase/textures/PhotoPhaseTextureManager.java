@@ -453,8 +453,8 @@ public class PhotoPhaseTextureManager extends TextureManager
             // Create a thumbnail of the image
             Bitmap thumb = ThumbnailUtils.extractThumbnail(
                                     ti.bitmap,
-                                    BitmapUtils.calculateUpperPowerOfTwo(pixels.width()),
-                                    BitmapUtils.calculateUpperPowerOfTwo(pixels.height()),
+                                    pixels.width(),
+                                    pixels.height(),
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
             GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, pixels);
 

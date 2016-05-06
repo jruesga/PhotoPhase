@@ -476,7 +476,7 @@ public final class GLESUtil {
             return new GLESTextureInfo();
         }
 
-        // Has a effect?
+        // Has an effect?
         int handle = textureHandles[0];
         if (effect != null) {
             // Apply the effect (we need a thread-safe call here)
