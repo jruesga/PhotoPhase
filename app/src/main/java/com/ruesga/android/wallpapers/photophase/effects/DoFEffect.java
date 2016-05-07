@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 //
-// Based on the shaders of kodemongki:
-//   http://kodemongki.blogspot.com.es/2011/06/kameraku-custom-shader-effects-example.html
+// Based on the shaders library of Geeks3d:
+//   http://www.geeks3d.com/shader-library
 //
 
 package com.ruesga.android.wallpapers.photophase.effects;

@@ -38,6 +38,10 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
  * </tr>
  * </table>
  */
+//
+// Based on the shaders library of Geeks3d:
+//   http://www.geeks3d.com/shader-library
+//
 public class BlurEffect extends PhotoPhaseEffect {
 
     private static final String TAG = "BlurEffect";
