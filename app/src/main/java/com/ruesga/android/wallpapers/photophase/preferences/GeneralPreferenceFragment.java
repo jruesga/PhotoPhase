@@ -75,26 +75,27 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
-                PreferencesProvider.Preferences.General.Transitions.setSelectedTransitions(
+                Preferences.General.Transitions.setSelectedTransitions(
                         getActivity(), (Set<String>) newValue);
                 updateTransitionTypeSummary((Set<String>) newValue);
-                PreferencesProvider.reload(getActivity());
             } else if (key.compareTo("ui_transition_interval") == 0) {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_effect_types") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
-                PreferencesProvider.Preferences.General.Effects.setSelectedEffects(
+                Preferences.General.Effects.setSelectedEffects(
                         getActivity(), (Set<String>) newValue);
                 updateEffectTypeSummary((Set<String>) newValue);
-                PreferencesProvider.reload(getActivity());
             } else if (key.compareTo("ui_border_types") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
-                PreferencesProvider.Preferences.General.Borders.setSelectedBorders(
+                Preferences.General.Borders.setSelectedBorders(
                         getActivity(), (Set<String>) newValue);
                 updateBorderTypeSummary((Set<String>) newValue);
-                PreferencesProvider.reload(getActivity());
+            } else if (key.compareTo("ui_border_color") == 0) {
+                mRedrawFlag = true;
+                mEmptyTextureQueueFlag = true;
+                Colors.setBorder(new GLColor((Integer) newValue));
             } else if (key.compareTo("ui_touch_action") == 0) {
                 updateTouchActionSummary((String) newValue);
             } else if (key.compareTo("app_shortcut") == 0) {
@@ -112,9 +113,6 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        // Reload the settings
-        PreferencesProvider.reload(getActivity());
-
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         if (mRedrawFlag) {
@@ -130,12 +128,9 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     public void onResume() {
         super.onResume();
 
-        Set<String> transitions =
-                PreferencesProvider.Preferences.General.Transitions.getSelectedTransitions();
-        Set<String> effects =
-                PreferencesProvider.Preferences.General.Effects.getSelectedEffects();
-        Set<String> borders =
-                PreferencesProvider.Preferences.General.Borders.getSelectedBorders();
+        Set<String> transitions = Preferences.General.Transitions.getSelectedTransitions(getActivity());
+        Set<String> effects = Preferences.General.Effects.getSelectedEffects(getActivity());
+        Set<String> borders = Preferences.General.Borders.getSelectedBorders(getActivity());
 
         mTransitionsTypes.setValues(transitions);
         updateTransitionTypeSummary(transitions);
@@ -200,7 +195,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTransitionsTypes.setEntryValues(entries.second);
         mTransitionsTypes.setOnPreferenceChangeListener(mOnChangeListener);
         updateTransitionTypeSummary(
-                PreferencesProvider.Preferences.General.Transitions.getSelectedTransitions());
+                Preferences.General.Transitions.getSelectedTransitions(getActivity()));
 
         final int[] transitionsIntervals = res.getIntArray(R.array.transitions_intervals_values);
         mTransitionsInterval =
@@ -249,7 +244,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mEffectsTypes.setEntryValues(entries.second);
         mEffectsTypes.setOnPreferenceChangeListener(mOnChangeListener);
         updateEffectTypeSummary(
-                PreferencesProvider.Preferences.General.Effects.getSelectedEffects());
+                Preferences.General.Effects.getSelectedEffects(getActivity()));
 
         mBordersTypes = (MultiSelectListPreference)findPreference("ui_border_types");
         entries = AndroidHelper.sortEntries(
@@ -258,7 +253,11 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mBordersTypes.setEntryValues(entries.second);
         mBordersTypes.setOnPreferenceChangeListener(mOnChangeListener);
         updateBorderTypeSummary(
-                PreferencesProvider.Preferences.General.Borders.getSelectedBorders());
+                Preferences.General.Borders.getSelectedBorders(getActivity()));
+
+        ColorPickerPreference borderColor =
+                (ColorPickerPreference) findPreference("ui_border_color");
+        borderColor.setOnPreferenceChangeListener(mOnChangeListener);
     }
 
     private void updateTouchActionSummary(String value) {

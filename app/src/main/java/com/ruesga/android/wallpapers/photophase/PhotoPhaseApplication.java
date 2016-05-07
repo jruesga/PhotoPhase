@@ -10,7 +10,6 @@ public class PhotoPhaseApplication extends Application {
         super.onCreate();
 
         // Initialize the application
-        PreferencesProvider.reload(this);
         Colors.register(this);
     }
 }

@@ -61,7 +61,6 @@ public class SimpleBorder extends Border {
             "  }\n" +
             "}";
 
-    private float[] mColor = new float[]{1.0f, 0.0f, 0.0f, 0.0f};
     private float mStrength = 25;
 
     private int mColorHandle;
@@ -102,7 +101,7 @@ public class SimpleBorder extends Border {
         GLESUtil.glesCheckError("glUniform1f");
         GLES20.glUniform1f(mStrengthHandle, mStrength);
         GLESUtil.glesCheckError("glUniform1f");
-        GLES20.glUniform4fv(mColorHandle, 1, mColor, 0);
+        GLES20.glUniform4fv(mColorHandle, 1, mColor.asVec4(), 0);
         GLESUtil.glesCheckError("glUniform4fv");
     }
 
@@ -111,9 +110,7 @@ public class SimpleBorder extends Border {
      */
     @Override
     public void setParameter(String parameterKey, Object value) {
-        if (parameterKey.compareTo(COLOR_PARAMETER) == 0) {
-            mColor = (float[]) value;
-        } else if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
             try {
                 float strength = Float.parseFloat(value.toString());
                 if (strength < 0) {

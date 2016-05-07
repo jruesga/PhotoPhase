@@ -32,16 +32,15 @@ import com.ruesga.android.wallpapers.photophase.FixedQueue;
 import com.ruesga.android.wallpapers.photophase.FixedQueue.EmptyQueueException;
 import com.ruesga.android.wallpapers.photophase.GLESSurfaceDispatcher;
 import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer;
+import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.borders.Borders;
-import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
-import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
-import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
+import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class PhotoPhaseTextureManager extends TextureManager
 
                 // Load and bind to the GLES context. The effect is applied when the image
                 // is associated to the destination target (only if aspect ratio will be applied)
-                if (!Preferences.General.isFixAspectRatio()) {
+                if (!Preferences.General.isFixAspectRatio(mContext)) {
                     ti = GLESUtil.loadTexture(mImage, mDimensions, effect, border, mDimensions, false);
                 } else {
                     ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, null, false);
@@ -166,8 +165,8 @@ public class PhotoPhaseTextureManager extends TextureManager
         super();
         mContext = ctx;
         mHandler = handler;
-        mEffects = new Effects(effectCtx);
-        mBorders = new Borders(effectCtx);
+        mEffects = new Effects(ctx, effectCtx);
+        mBorders = new Borders(ctx, effectCtx);
         mDispatcher = dispatcher;
         mScreenDimensions = screenDimensions;
         mDimensions = screenDimensions; // For now, use the screen dimensions as the preferred dimensions for bitmaps
@@ -192,12 +191,12 @@ public class PhotoPhaseTextureManager extends TextureManager
                 mEffects.release();
                 mEffects = null;
             }
-            mEffects = new Effects(effectCtx);
+            mEffects = new Effects(mContext, effectCtx);
             if (mBorders != null) {
                 mBorders.release();
                 mBorders = null;
             }
-            mBorders = new Borders(effectCtx);
+            mBorders = new Borders(mContext, effectCtx);
         }
         emptyTextureQueue(true);
     }
@@ -460,7 +459,7 @@ public class PhotoPhaseTextureManager extends TextureManager
      */
     void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
         // Check if we have to apply any correction to the image
-        if (Preferences.General.isFixAspectRatio()) {
+        if (Preferences.General.isFixAspectRatio(mContext)) {
             // Transform requestor dimensions to screen dimensions
             RectF dimens = requestor.getRequestorDimensions();
             Rect pixels = new Rect(

@@ -16,7 +16,6 @@
 
 package com.ruesga.android.wallpapers.photophase;
 
-import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,7 +23,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
@@ -96,9 +94,9 @@ public class MediaPictureDiscoverer {
             super();
             mFinalContentResolver = cr;
             mFinalCallback = cb;
-            mFilter = Preferences.Media.getSelectedMedia();
-            mLastAlbums = Preferences.Media.getLastDiscorevedAlbums();
-            mIsAutoSelectNewAlbums = Preferences.Media.isAutoSelectNewAlbums();
+            mFilter = Preferences.Media.getSelectedMedia(mContext);
+            mLastAlbums = Preferences.Media.getLastDiscorevedAlbums(mContext);
+            mIsAutoSelectNewAlbums = Preferences.Media.isAutoSelectNewAlbums(mContext);
             mNewAlbums = new HashSet<>();
             mUserRequest = userRequest;
         }

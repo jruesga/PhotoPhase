@@ -90,9 +90,9 @@ public class LivePreviewView extends GLSurfaceView {
             recycle();
             synchronized (mLock) {
                 mEffectContext = EffectContext.createWithCurrentGlContext();
-                mEffectsFactory = new Effects(mEffectContext);
+                mEffectsFactory = new Effects(mContext, mEffectContext);
                 mEffect = mEffectsFactory.getEffect(mEffectType);
-                mBordersFactory = new Borders(mEffectContext);
+                mBordersFactory = new Borders(mContext, mEffectContext);
                 mBorder = mBordersFactory.getBorder(mBorderType);
                 mTextureManager = new SimpleTextureManager(mContext, mEffect, mBorder);
                 mTransition = Transitions.createTransition(mContext, mTextureManager, mTransitionType);

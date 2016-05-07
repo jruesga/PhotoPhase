@@ -259,7 +259,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mContext.registerReceiver(mSettingsChangedReceiver, filter);
 
         // Check whether the media scan is active
-        int interval = Preferences.Media.getRefreshFrecuency();
+        int interval = Preferences.Media.getRefreshFrequency(mContext);
         if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             // Schedule a media scan
             scheduleMediaScan(interval);
@@ -334,7 +334,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     public void onTouch(float x , float y) {
         if (mWorld != null) {
             // Do user action
-            TouchAction touchAction = Preferences.General.Touch.getTouchAction();
+            TouchAction touchAction = Preferences.General.Touch.getTouchAction(mContext);
             if (touchAction.compareTo(TouchAction.NONE) != 0) {
                 // Avoid to handle multiple touchs
                 long touchTime = System.currentTimeMillis();
@@ -375,7 +375,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
                 } else if (touchAction.compareTo(TouchAction.OPEN) == 0) {
                     // Open the image
-                    if (PreferencesProvider.Preferences.General.Touch.getTouchOpenWith()) {
+                    if (PreferencesProvider.Preferences.General.Touch.getTouchOpenWith(mContext)) {
                         // Internal
                         File file = getFileFromFrame(frame);
                         if (file != null) {
@@ -481,7 +481,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             return;
         }
 
-        int interval = Preferences.Media.getRefreshFrecuency();
+        int interval = Preferences.Media.getRefreshFrequency(mContext);
         if (interval != Preferences.Media.MEDIA_RELOAD_DISABLED) {
             scheduleMediaScan(interval);
         } else {
@@ -533,12 +533,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         cancelDispositionRecreation();
 
         // Is random disposition enabled?
-        if (!Preferences.Layout.isRandomDispositions()) {
+        if (!Preferences.Layout.isRandomDispositions(mContext)) {
             return;
         }
 
         // Schedule the next recreation if interval has been configured
-        int interval = Preferences.Layout.getRandomDispositionsInterval();
+        int interval = Preferences.Layout.getRandomDispositionsInterval(mContext);
         if (interval > 0) {
             // Created the intent
             Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
@@ -668,8 +668,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             int h = (int) AndroidHelper.convertDpToPixel(mContext, conf.screenHeightDp);
             Rect dimensions = new Rect(0, 0, w, h);
             int cc = (orientation == Configuration.ORIENTATION_PORTRAIT)
-                        ? Preferences.Layout.getPortraitDisposition().size()
-                        : Preferences.Layout.getLandscapeDisposition().size();
+                        ? Preferences.Layout.getPortraitDisposition(mContext).size()
+                        : Preferences.Layout.getLandscapeDisposition(mContext).size();
 
             // Recycle the current texture manager and create a new one
             recycle();
@@ -784,7 +784,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     // Check if we have some pending transition or transition has
                     // exceed its timeout
                     synchronized (mDrawing) {
-                        final int interval = Preferences.General.Transitions.getTransitionInterval();
+                        final int interval = Preferences.General.Transitions.getTransitionInterval(mContext);
                         if (interval > 0) {
                             if (!mWorld.hasRunningTransition() || isTransitionTimeoutFired()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -843,7 +843,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     private void drawOverlay() {
         if (mOverlay != null) {
-            mOverlay.setAlpha(Preferences.General.getWallpaperDim() / 100.0f);
+            mOverlay.setAlpha(Preferences.General.getWallpaperDim(mContext) / 100.0f);
             mOverlay.draw(mMVPMatrix);
         }
     }

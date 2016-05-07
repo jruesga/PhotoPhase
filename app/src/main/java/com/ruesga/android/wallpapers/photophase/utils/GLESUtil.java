@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.media.effect.Effect;
 import android.opengl.GLES20;
 import android.opengl.GLException;
@@ -169,7 +168,12 @@ public final class GLESUtil {
          */
         @Override
         public String toString() {
-            return "#"+Integer.toHexString(Color.argb((int)a, (int)r, (int)g, (int)b));
+            return "#"+Integer.toHexString(Color.argb(
+                    (int)a * 255, (int)r * 255, (int)g * 255, (int)b * 255));
+        }
+
+        public float[] asVec4() {
+            return new float[]{r, g, b, a};
         }
     }
 

@@ -70,6 +70,8 @@ public abstract class Border extends Effect {
     FloatBuffer[] mTexVertices;
     FloatBuffer[] mPosVertices;
 
+    GLESUtil.GLColor mColor;
+
     /**
      * An abstract constructor of <code>Border</code> to follow the rules
      * defined by {@link EffectFactory}.
@@ -81,6 +83,7 @@ public abstract class Border extends Effect {
         super();
         mEffectContext = ctx;
         mName = name;
+        mColor = new GLESUtil.GLColor(1, 0, 0, 0);
 
         // Stand on MCA identity effect for the initialization work
         EffectFactory effectFactory = mEffectContext.getFactory();

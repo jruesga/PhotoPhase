@@ -143,11 +143,12 @@ public class PhotoPhaseWallpaper
         public Bundle onCommand(final String action, final int x, final int y, final int z,
                 final Bundle extras, final boolean resultRequested) {
             // Ignore commands in preview mode
+            final Context ctx = PhotoPhaseWallpaper.this;
             if (!isPreview() && action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
-                if (isDoubleTap(x, y)) {
+                if (isDoubleTap(ctx, x, y)) {
                     // Pass the x and y position to the renderer
                     ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y);
-                } else if (!PreferencesProvider.Preferences.General.Touch.getTouchMode()) {
+                } else if (!PreferencesProvider.Preferences.General.Touch.getTouchMode(ctx)) {
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         @SuppressWarnings("deprecation")
@@ -179,8 +180,8 @@ public class PhotoPhaseWallpaper
             return super.onCommand(action, x, y, z, extras, resultRequested);
         }
 
-        private boolean isDoubleTap(final int x, final int y) {
-            if (PreferencesProvider.Preferences.General.Touch.getTouchMode()) {
+        private boolean isDoubleTap(Context ctx, final int x, final int y) {
+            if (PreferencesProvider.Preferences.General.Touch.getTouchMode(ctx)) {
                 // User preference is double tap
                 long diff = System.currentTimeMillis() - mLastTouch;
                 if (diff > 0 && diff >= DOUBLE_TAP_MIN_TIME

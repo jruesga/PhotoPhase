@@ -16,6 +16,7 @@
 
 package com.ruesga.android.wallpapers.photophase.effects;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
@@ -178,16 +179,18 @@ public class Effects {
 
     private final Map<EFFECTS, Effect> mCachedEffects;
     private final EffectContext mEffectContext;
+    private final Context mContext;
 
     /**
      * Constructor of <code>Effects</code>
      *
      * @param effectContext The current effect context
      */
-    public Effects(EffectContext effectContext) {
+    public Effects(Context context, EffectContext effectContext) {
         super();
         mCachedEffects = new HashMap<>();
         mEffectContext = effectContext;
+        mContext = context;
     }
 
     /**
@@ -211,7 +214,7 @@ public class Effects {
     public Effect getNextEffect() {
         // Get an effect based on the user preference
         EFFECTS[] effects = Preferences.General.Effects.toEFFECTS(
-                Preferences.General.Effects.getSelectedEffects());
+                Preferences.General.Effects.getSelectedEffects(mContext));
         EFFECTS nextEffect = null;
         if (effects.length > 0) {
             int low = 0;
@@ -380,8 +383,10 @@ public class Effects {
             nextEffect = EFFECTS.NO_EFFECT;
         }
 
-        // Cache the effects
-        mCachedEffects.put(nextEffect, effect);
+        if (effect != null) {
+            // Cache the effects
+            mCachedEffects.put(nextEffect, effect);
+        }
         return effect;
     }
 }

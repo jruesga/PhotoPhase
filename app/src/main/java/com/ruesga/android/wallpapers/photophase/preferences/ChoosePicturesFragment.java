@@ -321,7 +321,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
         // Load the albums user selection
-        mOriginalSelectedAlbums = removeObsoleteAlbumsData(Preferences.Media.getSelectedMedia());
+        mOriginalSelectedAlbums = removeObsoleteAlbumsData(
+                Preferences.Media.getSelectedMedia(getActivity()));
         mSelectedAlbums = new HashSet<>(mOriginalSelectedAlbums);
         mSelectionChanged = false;
 

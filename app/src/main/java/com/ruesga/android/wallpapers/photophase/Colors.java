@@ -29,6 +29,7 @@ import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.
 public class Colors {
 
     private static GLColor sBackground = new GLColor(0);
+    private static GLColor sBorder = new GLColor(0);
     private static GLColor sOverlay = new GLColor(0);
 
     /**
@@ -36,7 +37,8 @@ public class Colors {
      */
     public static void register(Context ctx) {
         Resources res = ctx.getResources();
-        sBackground = Preferences.General.getBackgroundColor();
+        sBackground = Preferences.General.getBackgroundColor(ctx);
+        sBorder = Preferences.General.Borders.getBorderColor(ctx);
         sOverlay = new GLColor(ContextCompat.getColor(ctx, R.color.wallpaper_overlay_color));
     }
 
@@ -48,12 +50,15 @@ public class Colors {
         Colors.sBackground = background;
     }
 
+    public static GLColor getBorder() {
+        return sBorder;
+    }
+
+    public static void setBorder(GLColor border) {
+        Colors.sBorder = border;
+    }
+
     public static GLColor getOverlay() {
         return sOverlay;
     }
-
-    public static void setOverlay(GLColor overlay) {
-        Colors.sOverlay = overlay;
-    }
-
 }

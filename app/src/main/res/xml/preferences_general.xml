@@ -138,6 +138,14 @@
         android:key="category_borders"
         android:title="@string/pref_general_borders">
 
+        <!-- Background color -->
+        <com.ruesga.android.wallpapers.photophase.preferences.ColorPickerPreference
+            android:key="ui_border_color"
+            android:title="@string/pref_general_settings_background_color"
+            android:summary="@string/pref_general_settings_background_color_summary"
+            android:persistent="true"
+            android:defaultValue="@color/wallpaper_background_color" />
+
         <!-- Types -->
         <MultiSelectListPreference
             android:key="ui_border_types"

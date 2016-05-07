@@ -19,21 +19,18 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Resources;
+import android.graphics.Color;
 
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.borders.Borders.BORDERS;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.effects.Effects.EFFECTS;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
 import com.ruesga.android.wallpapers.photophase.utils.DispositionUtil;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -96,74 +93,8 @@ public final class PreferencesProvider {
      */
     public static final String PREFERENCES_FILE = "com.ruesga.android.wallpapers.photophase";
 
-    private static Map<String, ?> mPreferences = new HashMap<String, Object>();
-
-    private static int[] TRANSITIONS_INTERVALS;
-    private static int[] RANDOM_DISPOSITIONS_INTERVALS;
-
-    /**
-     * Method that loads the all the preferences of the application
-     *
-     * @param context The current context
-     */
-    public static void reload(Context context) {
-        SharedPreferences preferences =
-                context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-        mPreferences = preferences.getAll();
-
-        final Resources res = context.getResources();
-        TRANSITIONS_INTERVALS = res.getIntArray(R.array.transitions_intervals_values);
-        RANDOM_DISPOSITIONS_INTERVALS = res.getIntArray(
-                R.array.random_dispositions_intervals_values);
-    }
-
-    /**
-     * Method that returns a integer property value.
-     *
-     * @param key The preference key
-     * @param def The default value
-     * @return int The integer property value
-     */
-    private static int getInt(String key, int def) {
-        return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Integer ?
-                (Integer) mPreferences.get(key) : def;
-    }
-
-    /**
-     * Method that returns a boolean property value.
-     *
-     * @param key The preference key
-     * @param def The default value
-     * @return boolean The boolean property value
-     */
-    private static boolean getBoolean(String key, boolean def) {
-        return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Boolean ?
-                (Boolean) mPreferences.get(key) : def;
-    }
-
-    /**
-     * Method that returns a string property value.
-     *
-     * @param key The preference key
-     * @param def The default value
-     * @return String The string property value
-     */
-    private static String getString(String key, String def) {
-        return mPreferences.containsKey(key) && mPreferences.get(key) instanceof String ?
-                (String) mPreferences.get(key) : def;
-    }
-
-    /**
-     * Method that returns a string set property value.
-     *
-     * @param key The preference key
-     * @param def The default value
-     * @return Set<String> The string property value
-     */
-    @SuppressWarnings("unchecked")
-    private static Set<String> getStringSet(String key, Set<String> def) {
-        return mPreferences.containsKey(key) && mPreferences.get(key) instanceof Set<?> ?
-                (Set<String>) mPreferences.get(key) : def;
+    private static SharedPreferences getSharedPreferences(Context context) {
+        return context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
     /**
@@ -181,8 +112,8 @@ public final class PreferencesProvider {
              *
              * @return float If the wallpaper dimmed value (0-black, 100-black)
              */
-            public static float getWallpaperDim() {
-                return getInt("ui_wallpaper_dim", 0);
+            public static float getWallpaperDim(Context context) {
+                return getSharedPreferences(context).getInt("ui_wallpaper_dim", 0);
             }
 
             /**
@@ -190,9 +121,9 @@ public final class PreferencesProvider {
              *
              * @return GLColor The background color
              */
-            public static GLColor getBackgroundColor() {
-                int color = getInt("ui_background_color", 0);
-                if (color == 0) {
+            public static GLColor getBackgroundColor(Context context) {
+                int color = getSharedPreferences(context).getInt("ui_wallpaper_dim", -1);
+                if (color == -1) {
                     return DEFAULT_BACKGROUND_COLOR;
                 }
                 return new GLColor(color);
@@ -204,8 +135,8 @@ public final class PreferencesProvider {
              *
              * @return boolean Indicates if the image should be cropped
              */
-            public static boolean isFixAspectRatio() {
-                return getBoolean("ui_fix_aspect_ratio", true);
+            public static boolean isFixAspectRatio(Context context) {
+                return getSharedPreferences(context).getBoolean("ui_wallpaper_dim", true);
             }
 
             /**
@@ -218,8 +149,8 @@ public final class PreferencesProvider {
                  *
                  * @return boolean true: double tap; false: single tap
                  */
-                public static boolean getTouchMode() {
-                    return getBoolean("ui_touch_mode", true);
+                public static boolean getTouchMode(Context context) {
+                    return getSharedPreferences(context).getBoolean("ui_touch_mode", true);
                 }
 
 
@@ -228,8 +159,9 @@ public final class PreferencesProvider {
                  *
                  * @return TouchAction The action (default NONE)
                  */
-                public static TouchAction getTouchAction() {
-                    return TouchAction.fromValue(Integer.valueOf(getString("ui_touch_action", "0")));
+                public static TouchAction getTouchAction(Context context) {
+                    return TouchAction.fromValue(Integer.valueOf(
+                            getSharedPreferences(context).getString("ui_touch_action", "0")));
                 }
 
                 /**
@@ -237,8 +169,8 @@ public final class PreferencesProvider {
                  *
                  * @return boolean true: internal; false: external
                  */
-                public static boolean getTouchOpenWith() {
-                    return getBoolean("ui_touch_open_with", true);
+                public static boolean getTouchOpenWith(Context context) {
+                    return getSharedPreferences(context).getBoolean("ui_touch_open_with", true);
                 }
             }
 
@@ -251,9 +183,9 @@ public final class PreferencesProvider {
                  */
                 public static final int DEFAULT_TRANSITION_INTERVAL_INDEX = 2;
 
-                public static Set<String> getSelectedTransitions() {
+                public static Set<String> getSelectedTransitions(Context context) {
                     Set<String> defaults = new HashSet<>();
-                    return getStringSet("ui_transition_types", defaults);
+                    return getSharedPreferences(context).getStringSet("ui_transition_types", defaults);
                 }
 
                 public static void setSelectedTransitions(Context context, Set<String> values) {
@@ -263,7 +195,6 @@ public final class PreferencesProvider {
                     editor.putStringSet("ui_transition_types", values);
                     editor.putLong("ui_transition_timestamp", System.currentTimeMillis());
                     editor.apply();
-                    reload(context);
                 }
 
                 public static TRANSITIONS[] toTransitions(Set<String> set) {
@@ -281,10 +212,11 @@ public final class PreferencesProvider {
                  *
                  * @return int The milliseconds in which the next transition will be triggered
                  */
-                public static int getTransitionInterval() {
-                    int interval = getInt("ui_transition_interval",
-                            DEFAULT_TRANSITION_INTERVAL_INDEX);
-                    return TRANSITIONS_INTERVALS[interval];
+                public static int getTransitionInterval(Context context) {
+                    int[] intervals = context.getResources().getIntArray(
+                            R.array.transitions_intervals_values);
+                    return intervals[getSharedPreferences(context).getInt(
+                            "ui_transition_interval", DEFAULT_TRANSITION_INTERVAL_INDEX)];
                 }
             }
 
@@ -292,9 +224,9 @@ public final class PreferencesProvider {
              * Effects preferences
              */
             public static class Effects {
-                public static Set<String> getSelectedEffects() {
+                public static Set<String> getSelectedEffects(Context context) {
                     Set<String> defaults = new HashSet<>();
-                    return getStringSet("ui_effect_types", defaults);
+                    return getSharedPreferences(context).getStringSet("ui_effect_types", defaults);
                 }
 
                 public static void setSelectedEffects(Context context, Set<String> values) {
@@ -304,7 +236,6 @@ public final class PreferencesProvider {
                     editor.putStringSet("ui_effect_types", values);
                     editor.putLong("ui_effect_timestamp", System.currentTimeMillis());
                     editor.apply();
-                    reload(context);
                 }
 
                 public static EFFECTS[] toEFFECTS(Set<String> set) {
@@ -322,9 +253,19 @@ public final class PreferencesProvider {
              * Border preferences
              */
             public static class Borders {
-                public static Set<String> getSelectedBorders() {
+                /**
+                 * Method that returns the border color
+                 *
+                 * @return GLColor The border color
+                 */
+                public static GLColor getBorderColor(Context context) {
+                    return new GLColor(getSharedPreferences(context).getInt(
+                            "ui_border_color", Color.WHITE));
+                }
+
+                public static Set<String> getSelectedBorders(Context context) {
                     Set<String> defaults = new HashSet<>();
-                    return getStringSet("ui_border_types", defaults);
+                    return getSharedPreferences(context).getStringSet("ui_border_types", defaults);
                 }
 
                 public static void setSelectedBorders(Context context, Set<String> values) {
@@ -334,7 +275,6 @@ public final class PreferencesProvider {
                     editor.putStringSet("ui_border_types", values);
                     editor.putLong("ui_border_timestamp", System.currentTimeMillis());
                     editor.apply();
-                    reload(context);
                 }
 
                 public static BORDERS[] toBORDERS(Set<String> set) {
@@ -363,9 +303,9 @@ public final class PreferencesProvider {
              *
              * @return int The interval in seconds between updates. 0 means that updates are disabled
              */
-            public static int getRefreshFrecuency() {
-                return Integer.valueOf(getString("ui_media_refresh_interval",
-                        String.valueOf(MEDIA_RELOAD_DISABLED)));
+            public static int getRefreshFrequency(Context context) {
+                return Integer.valueOf(getSharedPreferences(context).getString(
+                        "ui_media_refresh_interval", String.valueOf(MEDIA_RELOAD_DISABLED)));
             }
 
             /**
@@ -373,8 +313,8 @@ public final class PreferencesProvider {
              *
              * @return boolean If the app must be select new albums when they are discovered.
              */
-            public static boolean isAutoSelectNewAlbums() {
-                return getBoolean("ui_media_auto_select_new", Boolean.TRUE);
+            public static boolean isAutoSelectNewAlbums(Context context) {
+                return getSharedPreferences(context).getBoolean("ui_media_auto_select_new", true);
             }
 
             // Internal settings (non-UI)
@@ -383,8 +323,9 @@ public final class PreferencesProvider {
              *
              * @return Set<String> The list of albums and pictures to be displayed
              */
-            public static Set<String> getSelectedMedia() {
-                return getStringSet("media_selected_media", new HashSet<String>());
+            public static Set<String> getSelectedMedia(Context context) {
+                Set<String> defaults = new HashSet<>();
+                return getSharedPreferences(context).getStringSet("media_selected_media", defaults);
             }
 
             /**
@@ -400,7 +341,6 @@ public final class PreferencesProvider {
                Editor editor = preferences.edit();
                editor.putStringSet("media_selected_media", selection);
                editor.apply();
-               reload(context);
            }
 
            /**
@@ -409,8 +349,9 @@ public final class PreferencesProvider {
             *
             * @return Set<String> The list of albums and pictures to be displayed
             */
-           public static Set<String> getLastDiscorevedAlbums() {
-               return getStringSet("media_last_discovered_albums", new HashSet<String>());
+           public static Set<String> getLastDiscorevedAlbums(Context context) {
+               Set<String> defaults = new HashSet<>();
+               return getSharedPreferences(context).getStringSet("media_last_discovered_albums", defaults);
            }
 
            /**
@@ -427,7 +368,6 @@ public final class PreferencesProvider {
                Editor editor = preferences.edit();
                editor.putStringSet("media_last_discovered_albums", albums);
                editor.apply();
-               reload(context);
            }
         }
 
@@ -461,8 +401,8 @@ public final class PreferencesProvider {
              *
              * @return int The rows of the wallpaper
              */
-            public static int getRows() {
-                return getInt("ui_layout_rows", DEFAULT_ROWS);
+            public static int getRows(Context context) {
+                return getSharedPreferences(context).getInt("ui_layout_rows", DEFAULT_ROWS);
             }
 
             /**
@@ -470,8 +410,8 @@ public final class PreferencesProvider {
              *
              * @return int The columns of the wallpaper
              */
-            public static int getCols() {
-                return getInt("ui_layout_cols", DEFAULT_COLS);
+            public static int getCols(Context context) {
+                return getSharedPreferences(context).getInt("ui_layout_cols", DEFAULT_COLS);
             }
 
             /**
@@ -479,8 +419,9 @@ public final class PreferencesProvider {
              *
              * @return boolean If the system should generate random dispositions
              */
-            public static boolean isRandomDispositions() {
-                return getBoolean("ui_disposition_random", DEFAULT_RANDOM_DISPOSITION);
+            public static boolean isRandomDispositions(Context context) {
+                return getSharedPreferences(context).getBoolean(
+                        "ui_disposition_random", DEFAULT_RANDOM_DISPOSITION);
             }
 
             /**
@@ -488,10 +429,11 @@ public final class PreferencesProvider {
              *
              * @return int The milliseconds in which the next transition will be triggered
              */
-            public static int getRandomDispositionsInterval() {
-                int interval = getInt("ui_disposition_random_interval",
-                        DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX);
-                return RANDOM_DISPOSITIONS_INTERVALS[interval];
+            public static int getRandomDispositionsInterval(Context context) {
+            int[] intervals = context.getResources().getIntArray(
+                    R.array.random_dispositions_intervals_values);
+                return intervals[getSharedPreferences(context).getInt(
+                        "ui_disposition_random_interval", DEFAULT_RANDOM_DISPOSITIONS_INTERVAL_INDEX)];
             }
 
             /**
@@ -501,9 +443,10 @@ public final class PreferencesProvider {
              *
              * @return List<Disposition> The photo frames dispositions
              */
-            public static List<Disposition> getPortraitDisposition() {
-                return DispositionUtil.toDispositions(
-                        getString("ui_layout_portrait_disposition", DEFAULT_PORTRAIT_DISPOSITION));
+            public static List<Disposition> getPortraitDisposition(Context context) {
+                String dispositions = getSharedPreferences(context).getString(
+                        "ui_layout_portrait_disposition", DEFAULT_PORTRAIT_DISPOSITION);
+                return DispositionUtil.toDispositions(dispositions);
             }
 
             /**
@@ -520,7 +463,6 @@ public final class PreferencesProvider {
                 editor.putString("ui_layout_portrait_disposition",
                                     DispositionUtil.fromDispositions(dispositions));
                 editor.apply();
-                reload(context);
             }
 
             /**
@@ -530,9 +472,10 @@ public final class PreferencesProvider {
              *
              * @return List<Disposition> The photo frames dispositions
              */
-            public static List<Disposition> getLandscapeDisposition() {
-                return DispositionUtil.toDispositions(getString("ui_layout_landscape_disposition",
-                        DEFAULT_LANDSCAPE_DISPOSITION));
+            public static List<Disposition> getLandscapeDisposition(Context context) {
+                String dispositions = getSharedPreferences(context).getString(
+                        "ui_layout_landscape_disposition", DEFAULT_LANDSCAPE_DISPOSITION);
+                return DispositionUtil.toDispositions(dispositions);
             }
 
             /**
@@ -549,7 +492,6 @@ public final class PreferencesProvider {
                 editor.putString("ui_layout_landscape_disposition",
                             DispositionUtil.fromDispositions(dispositions));
                 editor.apply();
-                reload(context);
             }
         }
 

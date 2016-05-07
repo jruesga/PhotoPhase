@@ -106,10 +106,9 @@ public class PhotoPhaseWallpaperWorld {
      * Method that returns or creates a transition for the type of transition
      *
      * @param type The type of transition
-     * @param frame The frame which the effect will be applied to
      * @return Transition The unused transition
      */
-    private Transition getOrCreateTransition(TRANSITIONS type, PhotoFrame frame) {
+    private Transition getOrCreateTransition(TRANSITIONS type) {
         Transition transition = getUnusedTransition(type);
         if (transition == null) {
             transition = Transitions.createTransition(mContext, mTextureManager, type);
@@ -177,16 +176,16 @@ public class PhotoPhaseWallpaperWorld {
         Transition transition = null;
         boolean isSelectable = false;
         while (transition == null || !isSelectable) {
-            boolean isRandom = Preferences.General.Transitions.getSelectedTransitions().isEmpty();
-            TRANSITIONS type = Transitions.getNextTypeOfTransition();
-            transition = getOrCreateTransition(type, frame);
+            boolean isRandom = Preferences.General.Transitions.getSelectedTransitions(mContext).isEmpty();
+            TRANSITIONS type = Transitions.getNextTypeOfTransition(mContext);
+            transition = getOrCreateTransition(type);
             isSelectable = transition.isSelectable(frame);
             if (!isSelectable) {
                 mUnusedTransitions.add(transition);
                 if (!isRandom) {
                     // If is not possible to select a valid transition then select a swap
                     // transition (this one doesn't relies on any selection)
-                    transition = getOrCreateTransition(TRANSITIONS.SWAP, frame);
+                    transition = getOrCreateTransition(TRANSITIONS.SWAP);
                     isSelectable = true;
                 }
             }
@@ -210,8 +209,7 @@ public class PhotoPhaseWallpaperWorld {
             mUnusedTransitions.add(currentTransition);
 
             if (finalTarget != null) {
-                Transition transition = getOrCreateTransition(
-                        TRANSITIONS.NO_TRANSITION, finalTarget);
+                Transition transition = getOrCreateTransition(TRANSITIONS.NO_TRANSITION);
                 mTransitions.set(mCurrent, transition);
 
                 currentTarget.recycle();
@@ -294,8 +292,10 @@ public class PhotoPhaseWallpaperWorld {
         // Calculate the new world
         int orientation = mContext.getResources().getConfiguration().orientation;
         boolean portrait = orientation == Configuration.ORIENTATION_PORTRAIT;
-        int cols = portrait ? Preferences.Layout.getCols() : Preferences.Layout.getRows();
-        int rows = portrait ? Preferences.Layout.getRows() : Preferences.Layout.getCols();
+        int cols = portrait ? Preferences.Layout.getCols(mContext)
+                : Preferences.Layout.getRows(mContext);
+        int rows = portrait ? Preferences.Layout.getRows(mContext)
+                : Preferences.Layout.getCols(mContext);
         float cellw = 2.0f / cols;
         float cellh = 2.0f / rows;
         List<Disposition> dispositions = getWorldDispositions(portrait);
@@ -323,7 +323,7 @@ public class PhotoPhaseWallpaperWorld {
             mPhotoFrames.add(frame);
 
             // Assign a null transition to the photo frame
-            Transition transition = getOrCreateTransition(TRANSITIONS.NO_TRANSITION, frame);
+            Transition transition = getOrCreateTransition(TRANSITIONS.NO_TRANSITION);
             transition.select(frame);
             mTransitions.add(transition);
 
@@ -437,7 +437,7 @@ public class PhotoPhaseWallpaperWorld {
      */
     private List<Disposition> getWorldDispositions(boolean portrait) {
         // If user selected a random disposition, then use one of the predefined layouts
-        if (Preferences.Layout.isRandomDispositions()) {
+        if (Preferences.Layout.isRandomDispositions(mContext)) {
             // Random
             if (portrait) {
                 // Portrait
@@ -450,7 +450,7 @@ public class PhotoPhaseWallpaperWorld {
         }
         // User-defined
         return portrait
-                ? Preferences.Layout.getPortraitDisposition()
-                : Preferences.Layout.getLandscapeDisposition();
+                ? Preferences.Layout.getPortraitDisposition(mContext)
+                : Preferences.Layout.getLandscapeDisposition(mContext);
     }
 }

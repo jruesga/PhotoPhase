@@ -72,16 +72,13 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        // Reload the settings
-        PreferencesProvider.reload(getActivity());
-
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         if (mRedrawFlag) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
         }
         if (mDispositionIntervalFlag) {
-            int interval = Preferences.Layout.getRandomDispositionsInterval();
+            int interval = Preferences.Layout.getRandomDispositionsInterval(getActivity());
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, interval);
         }
         getActivity().sendBroadcast(intent);
@@ -158,11 +155,11 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
 
         // -- Portrait
         mPortraitDisposition = findPreference("ui_disposition_portrait");
-        mPortraitDisposition.setEnabled(!Preferences.Layout.isRandomDispositions());
+        mPortraitDisposition.setEnabled(!Preferences.Layout.isRandomDispositions(getActivity()));
 
         // -- Landscape
         mLandscapeDisposition = findPreference("ui_disposition_landscape");
-        mLandscapeDisposition.setEnabled(!Preferences.Layout.isRandomDispositions());
+        mLandscapeDisposition.setEnabled(!Preferences.Layout.isRandomDispositions(getActivity()));
     }
 
     @Override
@@ -170,10 +167,10 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
         super.onResume();
 
         updateArrangementSummary(mPortraitDisposition,
-                PreferencesProvider.Preferences.Layout.getPortraitDisposition().size(),
+                PreferencesProvider.Preferences.Layout.getPortraitDisposition(getActivity()).size(),
                 R.string.disposition_orientation_portrait);
         updateArrangementSummary(mLandscapeDisposition,
-                PreferencesProvider.Preferences.Layout.getLandscapeDisposition().size(),
+                PreferencesProvider.Preferences.Layout.getLandscapeDisposition(getActivity()).size(),
                 R.string.disposition_orientation_landscape);
     }
 

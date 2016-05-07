@@ -84,6 +84,8 @@
     <string name="pref_general_effects_types">Types</string>
     <string name="pref_general_effects_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> of <xliff:g id="total">%2$d</xliff:g> image effects selected</string>
     <string name="pref_general_borders">Borders</string>
+    <string name="pref_general_border_color">Color</string>
+    <string name="pref_general_border_color_summary">Set the border color</string>
     <string name="pref_general_borders_types">Types</string>
     <string name="pref_general_borders_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> of <xliff:g id="total">%2$d</xliff:g> image borders selected</string>
     <string name="pref_general_live_preview">Live preview</string>

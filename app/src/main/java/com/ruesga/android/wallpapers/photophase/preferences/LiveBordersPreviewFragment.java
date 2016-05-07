@@ -33,7 +33,7 @@ public class LiveBordersPreviewFragment extends LivePreviewFragment {
         @Override
         public Set<String> getSelectedEntries() {
             Borders.BORDERS[] borders = General.Borders.toBORDERS(
-                    General.Borders.getSelectedBorders());
+                    General.Borders.getSelectedBorders(getActivity()));
             Set<String> set = new HashSet<>(borders.length);
             for (Borders.BORDERS border : borders) {
                 set.add(String.valueOf(border.mId));

@@ -33,7 +33,7 @@ public class LiveTransitionsPreviewFragment extends LivePreviewFragment {
         @Override
         public Set<String> getSelectedEntries() {
             Transitions.TRANSITIONS[] transitions = General.Transitions.toTransitions(
-                    General.Transitions.getSelectedTransitions());
+                    General.Transitions.getSelectedTransitions(getActivity()));
             Set<String> set = new HashSet<>(transitions.length);
             for (Transitions.TRANSITIONS transition : transitions) {
                 set.add(String.valueOf(transition.mId));

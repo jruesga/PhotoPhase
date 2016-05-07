@@ -39,7 +39,6 @@ public class MediaPreferenceFragment extends PreferenceFragment {
     private static final boolean DEBUG = false;
 
     private ListPreference mRefreshInterval;
-    private Preference mRefreshNow;
 
     private boolean mMediaIntevalChangedFlag;
 
@@ -62,9 +61,6 @@ public class MediaPreferenceFragment extends PreferenceFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        // Reload the settings
-        PreferencesProvider.reload(getActivity());
 
         // Notify that the settings was changed
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
@@ -89,11 +85,11 @@ public class MediaPreferenceFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences_media);
 
         mRefreshInterval = (ListPreference)findPreference("ui_media_refresh_interval");
-        setRefreshIntervalSummary(Preferences.Media.getRefreshFrecuency());
+        setRefreshIntervalSummary(Preferences.Media.getRefreshFrequency(getActivity()));
         mRefreshInterval.setOnPreferenceChangeListener(mOnChangeListener);
 
-        mRefreshNow = findPreference("ui_media_refresh_now");
-        mRefreshNow.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        Preference refreshNow = findPreference("ui_media_refresh_now");
+        refreshNow.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 // Request a refresh of the media data

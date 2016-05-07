@@ -33,7 +33,7 @@ public class LiveEffectsPreviewFragment extends LivePreviewFragment {
         @Override
         public Set<String> getSelectedEntries() {
             Effects.EFFECTS[] effects = General.Effects.toEFFECTS(
-                    General.Effects.getSelectedEffects());
+                    General.Effects.getSelectedEffects(getActivity()));
             Set<String> set = new HashSet<>(effects.length);
             for (Effects.EFFECTS effect : effects) {
                 set.add(String.valueOf(effect.mId));

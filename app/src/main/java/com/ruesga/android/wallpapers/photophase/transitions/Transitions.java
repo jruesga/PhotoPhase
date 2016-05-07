@@ -88,10 +88,10 @@ public class Transitions {
      *
      * @return TRANSITIONS The next type of  transition to apply
      */
-    public static TRANSITIONS getNextTypeOfTransition() {
+    public static TRANSITIONS getNextTypeOfTransition(Context context) {
         // Get a transition based on the user preference
         TRANSITIONS[] transitions = Preferences.General.Transitions.toTransitions(
-                        Preferences.General.Transitions.getSelectedTransitions());
+                        Preferences.General.Transitions.getSelectedTransitions(context));
         TRANSITIONS nextTransition = null;
         if (transitions.length > 0) {
             int low = 0;

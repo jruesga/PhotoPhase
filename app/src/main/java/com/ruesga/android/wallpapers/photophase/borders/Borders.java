@@ -16,9 +16,11 @@
 
 package com.ruesga.android.wallpapers.photophase.borders;
 
+import android.content.Context;
 import android.media.effect.EffectContext;
 import android.media.effect.EffectFactory;
 
+import com.ruesga.android.wallpapers.photophase.Colors;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
@@ -60,16 +62,18 @@ public class Borders {
 
     private final Map<BORDERS, Border> mCachedBorders;
     private final EffectContext mEffectContext;
+    private final Context mContext;
 
     /**
      * Constructor of <code>Borders</code>
      *
      * @param effectContext The current effect context
      */
-    public Borders(EffectContext effectContext) {
+    public Borders(Context context, EffectContext effectContext) {
         super();
         mCachedBorders = new HashMap<>();
         mEffectContext = effectContext;
+        mContext = context;
     }
 
     /**
@@ -93,7 +97,7 @@ public class Borders {
     public Border getNextBorder() {
         // Get an effect based on the user preference
         BORDERS[] borders = Preferences.General.Borders.toBORDERS(
-                Preferences.General.Borders.getSelectedBorders());
+                Preferences.General.Borders.getSelectedBorders(mContext));
         BORDERS nextBorder = null;
         if (borders.length > 0) {
             int low = 0;
@@ -115,7 +119,9 @@ public class Borders {
 
         // The border was cached previously?
         if (mCachedBorders.containsKey(nextBorder)) {
-            return mCachedBorders.get(nextBorder);
+            border = mCachedBorders.get(nextBorder);
+            border.mColor = Colors.getBorder();
+            return border;
         }
 
         // Select the effect if is available
@@ -137,8 +143,13 @@ public class Borders {
             nextBorder = BORDERS.NO_BORDER;
         }
 
-        // Cache the effects
-        mCachedBorders.put(nextBorder, border);
+        // Set the color
+        if (border != null) {
+            border.mColor = Preferences.General.Borders.getBorderColor(mContext);
+
+            // Cache the effects
+            mCachedBorders.put(nextBorder, border);
+        }
         return border;
     }
 }

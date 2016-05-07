@@ -53,7 +53,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public List<Disposition> getUserDispositions() {
-        return Preferences.Layout.getPortraitDisposition();
+        return Preferences.Layout.getPortraitDisposition(getActivity());
     }
 
     /**
@@ -86,7 +86,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public int getRows() {
-        return Preferences.Layout.getRows();
+        return Preferences.Layout.getRows(getActivity());
     }
 
     /**
@@ -94,6 +94,6 @@ public class PortraitDispositionFragment extends DispositionFragment {
      */
     @Override
     public int getCols() {
-        return Preferences.Layout.getCols();
+        return Preferences.Layout.getCols(getActivity());
     }
 }

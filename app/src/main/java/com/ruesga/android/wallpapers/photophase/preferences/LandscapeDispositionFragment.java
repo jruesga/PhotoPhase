@@ -53,7 +53,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
      */
     @Override
     public List<Disposition> getUserDispositions() {
-        return Preferences.Layout.getLandscapeDisposition();
+        return Preferences.Layout.getLandscapeDisposition(getActivity());
     }
 
     /**
@@ -87,7 +87,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public int getRows() {
         // inverted
-        return Preferences.Layout.getCols();
+        return Preferences.Layout.getCols(getActivity());
     }
 
     /**
@@ -96,6 +96,6 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public int getCols() {
         // inverted
-        return Preferences.Layout.getRows();
+        return Preferences.Layout.getRows(getActivity());
     }
 }
