@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <string-array name="refresh_intervals_labels" translatable="false">
         <item>@string/refresh_intervals_disabled</item>
@@ -131,6 +131,7 @@
         <item>@string/effects_crosshatching</item>
         <item>@string/effects_thermalvision</item>
         <item>@string/effects_swirl</item>
+        <item>@string/effects_dof</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -164,6 +165,7 @@
         <item>27</item>
         <item>28</item>
         <item>29</item>
+        <item>30</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">

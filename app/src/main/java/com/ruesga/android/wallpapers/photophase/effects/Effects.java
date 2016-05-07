@@ -155,7 +155,11 @@ public class Effects {
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_SWIRL
          */
-        SWIRL(29);
+        SWIRL(29),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_DOF
+         */
+        DOF(30);
 
         public final int mId;
         EFFECTS(int id) {
@@ -361,6 +365,10 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.SWIRL) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_SWIRL)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_SWIRL);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.DOF) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_DOF)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_DOF);
             }
         }
 

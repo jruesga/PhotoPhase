@@ -175,4 +175,13 @@ public class PhotoPhaseEffectFactory {
      * </table>
      */
     public static final String EFFECT_SWIRL = "com.ruesga.android.wallpapers.photophase.effects.SwirlEffect";
+
+    /**
+     * <p>Applies a deep of field effect to the image.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_DOF = "com.ruesga.android.wallpapers.photophase.effects.DoFEffect";
 }
