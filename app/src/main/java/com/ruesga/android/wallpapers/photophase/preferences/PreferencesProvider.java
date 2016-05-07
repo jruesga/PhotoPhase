@@ -122,7 +122,7 @@ public final class PreferencesProvider {
              * @return GLColor The background color
              */
             public static GLColor getBackgroundColor(Context context) {
-                int color = getSharedPreferences(context).getInt("ui_wallpaper_dim", -1);
+                int color = getSharedPreferences(context).getInt("ui_background_color", -1);
                 if (color == -1) {
                     return DEFAULT_BACKGROUND_COLOR;
                 }
@@ -136,7 +136,7 @@ public final class PreferencesProvider {
              * @return boolean Indicates if the image should be cropped
              */
             public static boolean isFixAspectRatio(Context context) {
-                return getSharedPreferences(context).getBoolean("ui_wallpaper_dim", true);
+                return getSharedPreferences(context).getBoolean("ui_fix_aspect_ratio", true);
             }
 
             /**
