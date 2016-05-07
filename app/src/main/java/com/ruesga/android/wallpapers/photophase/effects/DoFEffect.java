@@ -137,7 +137,7 @@ public class DoFEffect extends PhotoPhaseEffect {
             "  }\n" +
             "}";
 
-    private float mStrength = 0.5f;
+    private float mStrength = 1.0f;
     private int mStrengthHandle;
 
     /**
