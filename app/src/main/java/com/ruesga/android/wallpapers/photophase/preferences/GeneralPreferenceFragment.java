@@ -58,6 +58,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private MultiSelectListPreference mBordersTypes;
 
     private boolean mRedrawFlag;
+    private boolean mRecreateWorld;
     private boolean mEmptyTextureQueueFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
@@ -74,7 +75,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
             } else if (key.compareTo("ui_fix_aspect_ratio") == 0) {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_frame_spacer") == 0) {
-                mRedrawFlag = true;
+                mRecreateWorld = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
                 Preferences.General.Transitions.setSelectedTransitions(
@@ -122,6 +123,9 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         }
         if (mEmptyTextureQueueFlag) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, Boolean.TRUE);
+        }
+        if (mRecreateWorld) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);
     }
