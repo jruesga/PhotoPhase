@@ -153,6 +153,16 @@ public final class AndroidHelper {
         Collections.sort(entries, new Comparator<Pair<String, String>>() {
             @Override
             public int compare(Pair<String, String> lhs, Pair<String, String> rhs) {
+                // Default value is position at the top most, the rest are sorted by name
+                if (lhs.second.equals("0") && rhs.second.equals("0")) {
+                    return 0;
+                }
+                if (lhs.second.equals("0")) {
+                    return -1;
+                }
+                if (rhs.second.equals("0")) {
+                    return 1;
+                }
                 return collator.compare(lhs.first, rhs.first);
             }
         });
