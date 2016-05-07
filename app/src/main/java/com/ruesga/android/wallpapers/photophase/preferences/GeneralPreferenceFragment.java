@@ -73,6 +73,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 Colors.setBackground(new GLColor((Integer) newValue));
             } else if (key.compareTo("ui_fix_aspect_ratio") == 0) {
                 mRedrawFlag = true;
+            } else if (key.compareTo("ui_frame_spacer") == 0) {
+                mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
                 Preferences.General.Transitions.setSelectedTransitions(
@@ -187,6 +189,10 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         CheckBoxPreference fixAspectRatio =
                 (CheckBoxPreference) findPreference("ui_fix_aspect_ratio");
         fixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
+
+        CheckBoxPreference frameSpacer =
+                (CheckBoxPreference) findPreference("ui_frame_spacer");
+        frameSpacer.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTransitionsTypes = (MultiSelectListPreference) findPreference("ui_transition_types");
         Pair<String[], String[]> entries = AndroidHelper.sortEntries(

@@ -140,6 +140,13 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Return the current user preference about adding a bit of separation between frames.
+             */
+            public static boolean isFrameSpacer(Context context) {
+                return getSharedPreferences(context).getBoolean("ui_frame_spacer", true);
+            }
+
+            /**
              * Touch behaviour preferences
              */
             public static class Touch {

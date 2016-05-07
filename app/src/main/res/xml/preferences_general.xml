@@ -52,6 +52,14 @@
             android:persistent="true"
             android:defaultValue="true" />
 
+        <!-- Frame separator -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_frame_spacer"
+            android:title="@string/pref_general_frame_spacer"
+            android:summary="@string/pref_general_frame_spacer_summary"
+            android:persistent="true"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
     <!-- Touch behaviour -->

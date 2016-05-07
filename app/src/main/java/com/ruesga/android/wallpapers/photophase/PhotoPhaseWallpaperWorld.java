@@ -413,19 +413,21 @@ public class PhotoPhaseWallpaperWorld {
      * @param screenHeight The screen height
      * @return float[] The new coordinates
      */
-    private static float[] getFramePadding(float[] coords, int screenWidth, int screenHeight) {
+    private float[] getFramePadding(float[] coords, int screenWidth, int screenHeight) {
         float[] paddingCoords = new float[coords.length];
         System.arraycopy(coords, 0, paddingCoords, 0, coords.length);
-        final float pxw = (1 / (float)screenWidth) * PHOTO_FRAME_PADDING;
-        final float pxh = (1 / (float)screenHeight) * PHOTO_FRAME_PADDING;
-        paddingCoords[0] += pxw;
-        paddingCoords[1] += pxh;
-        paddingCoords[2] -= pxw;
-        paddingCoords[3] += pxh;
-        paddingCoords[4] += pxw;
-        paddingCoords[5] -= pxh;
-        paddingCoords[6] -= pxw;
-        paddingCoords[7] -= pxh;
+        if (Preferences.General.isFrameSpacer(mContext)) {
+            final float pxw = (1 / (float) screenWidth) * PHOTO_FRAME_PADDING;
+            final float pxh = (1 / (float) screenHeight) * PHOTO_FRAME_PADDING;
+            paddingCoords[0] += pxw;
+            paddingCoords[1] += pxh;
+            paddingCoords[2] -= pxw;
+            paddingCoords[3] += pxh;
+            paddingCoords[4] += pxw;
+            paddingCoords[5] -= pxh;
+            paddingCoords[6] -= pxw;
+            paddingCoords[7] -= pxh;
+        }
         return paddingCoords;
     }
 
