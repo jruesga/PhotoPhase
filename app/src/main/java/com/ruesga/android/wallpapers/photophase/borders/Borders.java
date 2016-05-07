@@ -47,7 +47,11 @@ public class Borders {
         /**
          * @see BordersFactory#BORDER_ROUNDED
          */
-        ROUNDED(2);
+        ROUNDED(2),
+        /**
+         * @see BordersFactory#BORDER_ROUNDED_SQUARES
+         */
+        ROUNDED_SQUARES(3);
 
         public final int mId;
         BORDERS(int id) {
@@ -140,6 +144,10 @@ public class Borders {
         } else if (nextBorder.compareTo(BORDERS.ROUNDED) == 0) {
             if (EffectFactory.isEffectSupported(BordersFactory.BORDER_ROUNDED)) {
                 border = (Border) effectFactory.createEffect(BordersFactory.BORDER_ROUNDED);
+            }
+        } else if (nextBorder.compareTo(BORDERS.ROUNDED_SQUARES) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_ROUNDED_SQUARES)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_ROUNDED_SQUARES);
             }
         }
 

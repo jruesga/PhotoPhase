@@ -24,12 +24,12 @@ import android.util.Log;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
- * This simple border around the texture.<br/>
+ * This rounded squares without border.<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * </table>
  */
-public class SimpleBorder extends Border {
+public class RoundedSquaresBorder extends Border {
 
     private static final String TAG = "SimpleBorder";
 
@@ -44,17 +44,30 @@ public class SimpleBorder extends Border {
             "uniform vec4 color;\n" +
             "uniform float strength;\n" +
             "varying vec2 v_texcoord;\n" +
-            "bool is_border(vec2 p) {\n" +
-            "  float bw = strength / w;\n" +
-            "  float bh = strength / h;\n" +
-            "  return p.x < (0.0 + bw)\n" +
-            "      || p.x > (1.0 - bw)\n" +
-            "      || p.y < (0.0 + bh)\n" +
-            "      || p.y > (1.0 - bh);\n" +
+            "bool is_rounded_border(vec2 p, vec2 c, float r) {\n" +
+            "  float dx = (c.x - p.x);\n" +
+            "  float dy = (c.y - p.y);\n" +
+            "  dx *= dx;\n" +
+            "  dy *= dy;\n" +
+            "  return (dx + dy) > (r * r) &&\n" +
+            "      (\n" +
+            "        (c.x < 0.5 && c.y > 0.5 && c.x > p.x && c.y < p.y) ||\n" +
+            "        (c.x > 0.5 && c.y > 0.5 && c.x < p.x && c.y < p.y) ||\n" +
+            "        (c.x < 0.5 && c.y < 0.5 && c.x > p.x && c.y > p.y) ||\n" +
+            "        (c.x > 0.5 && c.y < 0.5 && c.x < p.x && c.y > p.y)\n" +
+            "      );\n" +
             "}\n" +
             "void main(void)\n" +
             "{\n" +
-            "  if (is_border(v_texcoord)) {\n" +
+            "  float r = min(strength / w, strength / h);\n" +
+            "  vec2 clt = vec2(0.0 + r, 1.0 - r);\n" +
+            "  vec2 crt = vec2(1.0 - r, 1.0 - r);\n" +
+            "  vec2 clb = vec2(0.0 + r, 0.0 + r);\n" +
+            "  vec2 crb = vec2(1.0 - r, 0.0 + r);\n" +
+            "  if (is_rounded_border(v_texcoord, clt, r)\n" +
+            "    || is_rounded_border(v_texcoord, crt, r)\n" +
+            "    || is_rounded_border(v_texcoord, clb, r)\n" +
+            "    || is_rounded_border(v_texcoord, crb, r)) {\n" +
             "    vec4 tex = texture2D (tex_sampler, v_texcoord);\n" +
             "    float r = tex.r + (color.r - tex.r) * color.a;\n" +
             "    float g = tex.g + (color.g - tex.g) * color.a;\n" +
@@ -73,13 +86,13 @@ public class SimpleBorder extends Border {
     private int mStrengthHandle;
 
     /**
-     * Constructor of <code>SimpleBorder</code>.
+     * Constructor of <code>RoundedSquaresBorder</code>.
      *
      * @param ctx The effect context
      * @param name The effect name
      */
-    public SimpleBorder(EffectContext ctx, String name) {
-        super(ctx, SimpleBorder.class.getName());
+    public RoundedSquaresBorder(EffectContext ctx, String name) {
+        super(ctx, RoundedSquaresBorder.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
 
         // Parameters

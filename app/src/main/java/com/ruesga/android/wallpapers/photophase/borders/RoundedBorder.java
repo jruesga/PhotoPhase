@@ -24,7 +24,7 @@ import android.util.Log;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
- * This simple border around the texture.<br/>
+ * This rounded border around the texture.<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * </table>
@@ -94,7 +94,7 @@ public class RoundedBorder extends Border {
     private int mStrengthHandle;
 
     /**
-     * Constructor of <code>NullBorder</code>.
+     * Constructor of <code>RoundedBorder</code>.
      *
      * @param ctx The effect context
      * @param name The effect name
