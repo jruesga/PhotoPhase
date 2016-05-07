@@ -175,11 +175,13 @@
     <string-array name="borders_labels" translatable="false">
         <item>@string/borders_noborder</item>
         <item>@string/borders_simple</item>
+        <item>@string/borders_rounded</item>
     </string-array>
 
     <string-array name="borders_values" translatable="false">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="borders_default" translatable="false">

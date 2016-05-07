@@ -37,4 +37,12 @@ public class BordersFactory {
      * </table>
      */
     public static final String BORDER_SIMPLE = "com.ruesga.android.wallpapers.photophase.borders.SimpleBorder";
+    /**
+     * <p>A rounded border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_ROUNDED = "com.ruesga.android.wallpapers.photophase.borders.RoundedBorder";
 }
