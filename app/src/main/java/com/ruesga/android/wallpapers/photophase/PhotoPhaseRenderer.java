@@ -595,9 +595,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      * Force a redraw of the screen
      */
     void forceRedraw() {
-        if (!mIsPaused) {
-            mDispatcher.requestRender();
-        }
+        mDispatcher.requestRender();
     }
 
     /**
