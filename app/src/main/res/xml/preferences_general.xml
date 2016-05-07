@@ -133,4 +133,24 @@
 
     </PreferenceCategory>
 
+    <!-- Borders -->
+    <PreferenceCategory
+        android:key="category_borders"
+        android:title="@string/pref_general_effects">
+
+        <!-- Types -->
+        <MultiSelectListPreference
+            android:key="ui_border_types"
+            android:title="@string/pref_general_borders_types"
+            android:persistent="false"
+            android:defaultValue="@array/borders_default" />
+
+        <Preference
+            android:key="ui_border_live_preview"
+            android:title="@string/pref_general_live_preview"
+            android:fragment="com.ruesga.android.wallpapers.photophase.preferences.LiveBordersPreviewFragment"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ruesga.android.wallpapers.photophase.effects;
+package com.ruesga.android.wallpapers.photophase.borders;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
@@ -30,9 +30,9 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 /**
- * An abstract class definition for all the PhotoPhase custom effects
+ * An abstract class definition for all the PhotoPhase custom borders
  */
-public abstract class PhotoPhaseEffect extends Effect {
+public abstract class Border extends Effect {
 
     private static final int FLOAT_SIZE_BYTES = 4;
 
@@ -64,7 +64,6 @@ public abstract class PhotoPhaseEffect extends Effect {
     private Effect mIdentityEffect;
 
     int[] mProgram;
-    int[] mTexSamplerHandle;
     int[] mTexCoordHandle;
     int[] mPosCoordHandle;
 
@@ -72,13 +71,13 @@ public abstract class PhotoPhaseEffect extends Effect {
     FloatBuffer[] mPosVertices;
 
     /**
-     * An abstract constructor of <code>Effect</code> to follow the rules
+     * An abstract constructor of <code>Border</code> to follow the rules
      * defined by {@link EffectFactory}.
      *
      * @param ctx The effect context
      * @param name The effect name
      */
-    public PhotoPhaseEffect(EffectContext ctx, String name) {
+    public Border(EffectContext ctx, String name) {
         super();
         mEffectContext = ctx;
         mName = name;
@@ -93,13 +92,12 @@ public abstract class PhotoPhaseEffect extends Effect {
     }
 
     /**
-     * Method that initializes the effect
+     * Method that initializes the border
      */
     void init(String[] vertexShaders, String fragmentShaders[]) {
         // Create program
         int count  = vertexShaders.length;
         mProgram = new int[count];
-        mTexSamplerHandle = new int[count];
         mTexCoordHandle = new int[count];
         mPosCoordHandle = new int[count];
         mTexVertices = new FloatBuffer[count];
@@ -109,8 +107,6 @@ public abstract class PhotoPhaseEffect extends Effect {
             mProgram[i] = GLESUtil.createProgram(vertexShaders[i], fragmentShaders[i]);
 
             // Bind attributes and uniforms
-            mTexSamplerHandle[i] = GLES20.glGetUniformLocation(mProgram[i], "tex_sampler");
-            GLESUtil.glesCheckError("glGetUniformLocation");
             mTexCoordHandle[i] = GLES20.glGetAttribLocation(mProgram[i], "a_texcoord");
             GLESUtil.glesCheckError("glGetAttribLocation");
             mPosCoordHandle[i] = GLES20.glGetAttribLocation(mProgram[i], "a_position");
@@ -249,14 +245,6 @@ public abstract class PhotoPhaseEffect extends Effect {
 
         // Set parameters
         applyParameters(width, height);
-
-        // Set the input texture
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLESUtil.glesCheckError("glActiveTexture");
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, inputTexId);
-        GLESUtil.glesCheckError("glBindTexture");
-        GLES20.glUniform1i(mTexSamplerHandle[index], 0);
-        GLESUtil.glesCheckError("glUniform1i");
 
         // Draw
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
+import com.ruesga.android.wallpapers.photophase.borders.Border;
+import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.textures.SimpleTextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
@@ -39,14 +41,17 @@ public class LivePreviewView extends GLSurfaceView {
 
         private EffectContext mEffectContext;
         private Effects mEffectsFactory;
+        private Borders mBordersFactory;
 
         private SimpleTextureManager mTextureManager;
         private Effect mEffect;
+        private Border mBorder;
         private PhotoFrame mFrame;
         private Transition mTransition;
 
         private Transitions.TRANSITIONS mTransitionType = Transitions.TRANSITIONS.NO_TRANSITION;
         private Effects.EFFECTS mEffectType = Effects.EFFECTS.NO_EFFECT;
+        private Borders.BORDERS mBorderType = Borders.BORDERS.NO_BORDER;
 
         private boolean mRecycled;
 
@@ -87,7 +92,9 @@ public class LivePreviewView extends GLSurfaceView {
                 mEffectContext = EffectContext.createWithCurrentGlContext();
                 mEffectsFactory = new Effects(mEffectContext);
                 mEffect = mEffectsFactory.getEffect(mEffectType);
-                mTextureManager = new SimpleTextureManager(mContext, mEffect);
+                mBordersFactory = new Borders(mEffectContext);
+                mBorder = mBordersFactory.getBorder(mBorderType);
+                mTextureManager = new SimpleTextureManager(mContext, mEffect, mBorder);
                 mTransition = Transitions.createTransition(mContext, mTextureManager, mTransitionType);
             }
 
@@ -159,6 +166,12 @@ public class LivePreviewView extends GLSurfaceView {
             }
         }
 
+        public void setBorder(Borders.BORDERS border) {
+            synchronized (mLock) {
+                mBorderType = border;
+            }
+        }
+
         public void setTransition(Transitions.TRANSITIONS transition) {
             synchronized (mLock) {
                 mTransitionType = transition;
@@ -187,6 +200,10 @@ public class LivePreviewView extends GLSurfaceView {
                 if (mEffectsFactory != null) {
                     mEffectsFactory.release();
                     mEffectsFactory = null;
+                }
+                if (mBordersFactory != null) {
+                    mBordersFactory.release();
+                    mBordersFactory = null;
                 }
                 if (mTransition != null) {
                     mTransition.recycle();
@@ -233,6 +250,11 @@ public class LivePreviewView extends GLSurfaceView {
 
     public void setEffect(Effects.EFFECTS effect) {
         mRenderer.setEffect(effect);
+        requestRender();
+    }
+
+    public void setBorder(Borders.BORDERS border) {
+        mRenderer.setBorder(border);
         requestRender();
     }
 

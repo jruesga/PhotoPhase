@@ -19,6 +19,7 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.adapters.LivePreviewAdapter.LivePreviewCallback;
+import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences.General;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
@@ -53,6 +54,11 @@ public class LiveEffectsPreviewFragment extends LivePreviewFragment {
         @Override
         public Effects.EFFECTS getEffectForId(int id) {
             return Effects.EFFECTS.fromId(id);
+        }
+
+        @Override
+        public Borders.BORDERS getBorderForId(int id) {
+            return Borders.BORDERS.NO_BORDER;
         }
     };
 

@@ -27,28 +27,28 @@ import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LiveTransitionsPreviewFragment extends LivePreviewFragment {
+public class LiveBordersPreviewFragment extends LivePreviewFragment {
 
     private final LivePreviewCallback mCallback = new LivePreviewCallback() {
         @Override
         public Set<String> getSelectedEntries() {
-            Transitions.TRANSITIONS[] transitions = General.Transitions.toTransitions(
-                    General.Transitions.getSelectedTransitions());
-            Set<String> set = new HashSet<>(transitions.length);
-            for (Transitions.TRANSITIONS transition : transitions) {
-                set.add(String.valueOf(transition.mId));
+            Borders.BORDERS[] borders = General.Borders.toBORDERS(
+                    General.Borders.getSelectedBorders());
+            Set<String> set = new HashSet<>(borders.length);
+            for (Borders.BORDERS border : borders) {
+                set.add(String.valueOf(border.mId));
             }
             return set;
         }
 
         @Override
         public void setSelectedEntries(Set<String> entries) {
-            General.Transitions.setSelectedTransitions(getActivity(), entries);
+            General.Effects.setSelectedEffects(getActivity(), entries);
         }
 
         @Override
         public Transitions.TRANSITIONS getTransitionForId(int id) {
-            return Transitions.TRANSITIONS.fromId(id);
+            return Transitions.TRANSITIONS.NO_TRANSITION;
         }
 
         @Override
@@ -58,18 +58,18 @@ public class LiveTransitionsPreviewFragment extends LivePreviewFragment {
 
         @Override
         public Borders.BORDERS getBorderForId(int id) {
-            return Borders.BORDERS.NO_BORDER;
+            return Borders.BORDERS.fromId(id);
         }
     };
 
     @Override
     public int getLabels() {
-        return R.array.transitions_labels;
+        return R.array.borders_labels;
     }
 
     @Override
     public int getEntries() {
-        return R.array.transitions_values;
+        return R.array.borders_values;
     }
 
     @Override

@@ -33,6 +33,8 @@ import com.ruesga.android.wallpapers.photophase.FixedQueue.EmptyQueueException;
 import com.ruesga.android.wallpapers.photophase.GLESSurfaceDispatcher;
 import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer;
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.borders.Border;
+import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
@@ -60,6 +62,7 @@ public class PhotoPhaseTextureManager extends TextureManager
     final Handler mHandler;
     private final Object mEffectsSync = new Object();
     Effects mEffects;
+    Borders mBorders;
     final Object mSync;
     final List<TextureRequestor> mPendingRequests;
     final FixedQueue<GLESTextureInfo> mQueue = new FixedQueue<>(QUEUE_SIZE);
@@ -92,8 +95,10 @@ public class PhotoPhaseTextureManager extends TextureManager
         public void run() {
             try {
                 Effect effect;
+                Border border;
                 synchronized (mEffectsSync) {
                     effect = mEffects.getNextEffect();
+                    border = mBorders.getNextBorder();
                 }
 
                 boolean enqueue;
@@ -104,10 +109,11 @@ public class PhotoPhaseTextureManager extends TextureManager
                 // Load and bind to the GLES context. The effect is applied when the image
                 // is associated to the destination target (only if aspect ratio will be applied)
                 if (!Preferences.General.isFixAspectRatio()) {
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, effect, mDimensions, false);
+                    ti = GLESUtil.loadTexture(mImage, mDimensions, effect, border, mDimensions, false);
                 } else {
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, false);
+                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, null, false);
                     ti.effect = effect;
+                    ti.border = border;
                 }
 
                 synchronized (mSync) {
@@ -161,6 +167,7 @@ public class PhotoPhaseTextureManager extends TextureManager
         mContext = ctx;
         mHandler = handler;
         mEffects = new Effects(effectCtx);
+        mBorders = new Borders(effectCtx);
         mDispatcher = dispatcher;
         mScreenDimensions = screenDimensions;
         mDimensions = screenDimensions; // For now, use the screen dimensions as the preferred dimensions for bitmaps
@@ -186,6 +193,11 @@ public class PhotoPhaseTextureManager extends TextureManager
                 mEffects = null;
             }
             mEffects = new Effects(effectCtx);
+            if (mBorders != null) {
+                mBorders.release();
+                mBorders = null;
+            }
+            mBorders = new Borders(effectCtx);
         }
         emptyTextureQueue(true);
     }
@@ -398,7 +410,14 @@ public class PhotoPhaseTextureManager extends TextureManager
     public void recycle() {
         // Destroy the media discovery task
         mPictureDiscoverer.recycle();
-        mEffects.release();
+        synchronized (mEffectsSync) {
+            if (mEffects != null) {
+                mEffects.release();
+            }
+            if (mBorders != null) {
+                mBorders.release();
+            }
+        }
 
         // Destroy the background task
         if (mBackgroundTask != null) {
@@ -456,7 +475,7 @@ public class PhotoPhaseTextureManager extends TextureManager
                                     pixels.width(),
                                     pixels.height(),
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, pixels);
+            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, ti.border, pixels);
 
             // Destroy references
             int[] textures = new int[]{ti.handle};
@@ -471,6 +490,7 @@ public class PhotoPhaseTextureManager extends TextureManager
             ti.bitmap = dst.bitmap;
             ti.handle = dst.handle;
             ti.effect = null;
+            ti.border = null;
         }
     }
 

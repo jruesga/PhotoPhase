@@ -22,6 +22,8 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.borders.Borders;
+import com.ruesga.android.wallpapers.photophase.borders.Borders.BORDERS;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.effects.Effects.EFFECTS;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
@@ -313,6 +315,36 @@ public final class PreferencesProvider {
                         effects[i] = EFFECTS.fromId(Integer.valueOf(values[i]));
                     }
                     return effects;
+                }
+            }
+
+            /**
+             * Border preferences
+             */
+            public static class Borders {
+                public static Set<String> getSelectedBorders() {
+                    Set<String> defaults = new HashSet<>();
+                    return getStringSet("ui_border_types", defaults);
+                }
+
+                public static void setSelectedBorders(Context context, Set<String> values) {
+                    SharedPreferences preferences =
+                            context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                    Editor editor = preferences.edit();
+                    editor.putStringSet("ui_border_types", values);
+                    editor.putLong("ui_border_timestamp", System.currentTimeMillis());
+                    editor.apply();
+                    reload(context);
+                }
+
+                public static BORDERS[] toBORDERS(Set<String> set) {
+                    String[] values = set.toArray(new String[set.size()]);
+                    int count = values.length;
+                    BORDERS[] borders = new BORDERS[count];
+                    for (int i = 0; i < count; i++) {
+                        borders[i] = BORDERS.fromId(Integer.valueOf(values[i]));
+                    }
+                    return borders;
                 }
             }
         }

@@ -55,6 +55,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
     private MultiSelectListPreference mTransitionsTypes;
     private DiscreteSeekBarProgressPreference mTransitionsInterval;
     private MultiSelectListPreference mEffectsTypes;
+    private MultiSelectListPreference mBordersTypes;
 
     private boolean mRedrawFlag;
     private boolean mEmptyTextureQueueFlag;
@@ -86,6 +87,13 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 PreferencesProvider.Preferences.General.Effects.setSelectedEffects(
                         getActivity(), (Set<String>) newValue);
                 updateEffectTypeSummary((Set<String>) newValue);
+                PreferencesProvider.reload(getActivity());
+            } else if (key.compareTo("ui_border_types") == 0) {
+                mRedrawFlag = true;
+                mEmptyTextureQueueFlag = true;
+                PreferencesProvider.Preferences.General.Borders.setSelectedBorders(
+                        getActivity(), (Set<String>) newValue);
+                updateBorderTypeSummary((Set<String>) newValue);
                 PreferencesProvider.reload(getActivity());
             } else if (key.compareTo("ui_touch_action") == 0) {
                 updateTouchActionSummary((String) newValue);
@@ -126,11 +134,15 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 PreferencesProvider.Preferences.General.Transitions.getSelectedTransitions();
         Set<String> effects =
                 PreferencesProvider.Preferences.General.Effects.getSelectedEffects();
+        Set<String> borders =
+                PreferencesProvider.Preferences.General.Borders.getSelectedBorders();
 
         mTransitionsTypes.setValues(transitions);
         updateTransitionTypeSummary(transitions);
         mEffectsTypes.setValues(effects);
         updateEffectTypeSummary(effects);
+        mBordersTypes.setValues(borders);
+        updateBorderTypeSummary(borders);
     }
 
     /**
@@ -238,6 +250,15 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mEffectsTypes.setOnPreferenceChangeListener(mOnChangeListener);
         updateEffectTypeSummary(
                 PreferencesProvider.Preferences.General.Effects.getSelectedEffects());
+
+        mBordersTypes = (MultiSelectListPreference)findPreference("ui_border_types");
+        entries = AndroidHelper.sortEntries(
+                getActivity(), R.array.borders_labels, R.array.borders_values);
+        mBordersTypes.setEntries(entries.first);
+        mBordersTypes.setEntryValues(entries.second);
+        mBordersTypes.setOnPreferenceChangeListener(mOnChangeListener);
+        updateBorderTypeSummary(
+                PreferencesProvider.Preferences.General.Borders.getSelectedBorders());
     }
 
     private void updateTouchActionSummary(String value) {
@@ -259,6 +280,13 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 selected.size(),
                 mEffectsTypes.getEntries().length);
         mEffectsTypes.setSummary(summary);
+    }
+
+    private void updateBorderTypeSummary(Set<String> selected) {
+        CharSequence summary = getString(R.string.pref_general_borders_types_summary_format,
+                selected.size(),
+                mBordersTypes.getEntries().length);
+        mBordersTypes.setSummary(summary);
     }
 
     private boolean isAppShortcutEnabled() {

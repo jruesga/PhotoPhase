@@ -21,12 +21,15 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.effect.Effect;
 import android.opengl.GLES20;
 import android.opengl.GLException;
 import android.opengl.GLUtils;
 import android.support.design.BuildConfig;
 import android.util.Log;
+
+import com.ruesga.android.wallpapers.photophase.borders.Border;
 
 import java.io.File;
 import java.io.IOException;
@@ -190,6 +193,10 @@ public final class GLESUtil {
          * The effect to apply
          */
         public Effect effect;
+        /**
+         * The border to apply
+         */
+        public Border border;
     }
 
     /**
@@ -340,12 +347,13 @@ public final class GLESUtil {
      * @param file The image file
      * @param dimensions The desired dimensions
      * @param effect The effect to apply to the image or null if no effect is needed
+     * @param border The border to apply to the image or null if no border was defined
      * @param dimen The new dimensions
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(File file, Rect dimensions, Effect effect,
-            Rect dimen, boolean recycle) {
+            Border border, Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)
@@ -356,7 +364,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            GLESTextureInfo ti = loadTexture(bitmap, effect, dimen);
+            GLESTextureInfo ti = loadTexture(bitmap, effect, border, dimen);
             ti.path = file;
             return ti;
 
@@ -382,12 +390,13 @@ public final class GLESUtil {
      * @param ctx The current context
      * @param resourceId The resource identifier
      * @param effect The effect to apply to the image or null if no effect is needed
+     * @param border The border to apply to the image or null if no border was defined
      * @param dimen The new dimensions
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
     public static GLESTextureInfo loadTexture(Context ctx, int resourceId, Effect effect,
-            Rect dimen, boolean recycle) {
+            Border border, Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         InputStream raw = null;
         try {
@@ -401,7 +410,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            return loadTexture(bitmap, effect, dimen);
+            return loadTexture(bitmap, effect, border, dimen);
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from resource: " + resourceId;
@@ -429,10 +438,11 @@ public final class GLESUtil {
      *
      * @param bitmap The bitmap reference
      * @param effect The effect to apply to the image or null if no effect is needed
+     * @param border The border to apply to the image or null if no border was defined
      * @param dimen The new dimensions
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Rect dimen) {
+    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Border border, Rect dimen) {
         // Check that we have a valid image name reference
         if (bitmap == null) {
             return new GLESTextureInfo();
@@ -440,7 +450,13 @@ public final class GLESUtil {
 
         Bitmap texture = ensurePowerOfTwoTexture(bitmap);
 
-        int num = effect == null ? 1 : 2;
+        int num = 1;
+        if (effect != null) {
+            num++;
+        }
+        if (border != null) {
+            num++;
+        }
 
         int[] textureHandles = new int[num];
         GLES20.glGenTextures(num, textureHandles, 0);
@@ -476,26 +492,15 @@ public final class GLESUtil {
             return new GLESTextureInfo();
         }
 
-        // Has an effect?
+        // Apply effects and borders
+        int n = 0;
         int handle = textureHandles[0];
         if (effect != null) {
-            // Apply the effect (we need a thread-safe call here)
-            synchronized (SYNC) {
-                // No more than 1024 (the minimum supported by all the gles20 devices)
-                int w = Math.min(dimen.width(), 1024);
-                int h = Math.min(dimen.height(), 1024);
-                effect.apply(textureHandles[0], w, h, textureHandles[1]);
-            }
-            handle = textureHandles[1];
-
-            // Delete the unused texture
-            int[] textures = {textureHandles[0]};
-            if (GLESUtil.DEBUG_GL_MEMOBJS) {
-                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
-                        + textureHandles[0] + "]");
-            }
-            GLES20.glDeleteTextures(1, textures, 0);
-            GLESUtil.glesCheckError("glDeleteTextures");
+            handle = applyEffect(textureHandles, n, effect, dimen);
+            n++;
+        }
+        if (border != null) {
+            handle = applyEffect(textureHandles, n, border, dimen);
         }
 
         // Return the texture handle identifier and the associated info
@@ -504,6 +509,25 @@ public final class GLESUtil {
         ti.bitmap = texture;
         ti.path = null;
         return ti;
+    }
+
+    private static int applyEffect(int[] textureHandles, int n, Effect effect, Rect dimen) {
+        // Apply the border (we need a thread-safe call here)
+        synchronized (SYNC) {
+            // No more than 1024 (the minimum supported by all the gles20 devices)
+            int w = Math.min(dimen.width(), 1024);
+            int h = Math.min(dimen.height(), 1024);
+            effect.apply(textureHandles[n], w, h, textureHandles[n + 1]);
+        }
+
+        // Delete the unused texture
+        if (GLESUtil.DEBUG_GL_MEMOBJS) {
+            Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                    + textureHandles[n] + "]");
+        }
+        GLES20.glDeleteTextures(1, textureHandles, n);
+        GLESUtil.glesCheckError("glDeleteTextures");
+        return textureHandles[n + 1];
     }
 
     /**

@@ -24,6 +24,7 @@ import android.media.effect.Effect;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
+import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
@@ -39,12 +40,13 @@ public class SimpleTextureManager extends TextureManager {
 
     private final Context mContext;
     private final Effect mEffect;
+    private final Border mBorder;
 
     private Rect mDimensions;
 
     private int last = 0;
 
-    public SimpleTextureManager(Context context, Effect effect) {
+    public SimpleTextureManager(Context context, Effect effect, Border border) {
         // Pre-calculate the window size for the PhotoPhaseTextureManager. In onSurfaceChanged
         // the best fixed size will be set. The disposition size is simple for a better
         // performance of the internal arrays
@@ -53,6 +55,7 @@ public class SimpleTextureManager extends TextureManager {
         int h = (int) AndroidHelper.convertDpToPixel(context, conf.screenHeightDp);
         mDimensions = new Rect(0, 0, w, h);
         mEffect = effect;
+        mBorder = border;
         mContext = context;
     }
 
@@ -82,7 +85,7 @@ public class SimpleTextureManager extends TextureManager {
         }
 
         if (bitmap != null) {
-            requestor.setTextureHandle(GLESUtil.loadTexture(bitmap, mEffect, mDimensions));
+            requestor.setTextureHandle(GLESUtil.loadTexture(bitmap, mEffect, mBorder, mDimensions));
         }
     }
 }

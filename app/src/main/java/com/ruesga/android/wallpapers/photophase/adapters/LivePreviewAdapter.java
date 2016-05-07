@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import com.ruesga.android.wallpapers.photophase.widgets.LivePreviewView;
@@ -44,6 +45,7 @@ public class LivePreviewAdapter extends PagerAdapter {
 
         Transitions.TRANSITIONS getTransitionForId(int id);
         Effects.EFFECTS getEffectForId(int id);
+        Borders.BORDERS getBorderForId(int id);
     }
 
     private final Context mContext;
@@ -87,6 +89,7 @@ public class LivePreviewAdapter extends PagerAdapter {
         LivePreviewView preview = (LivePreviewView) view.findViewById(R.id.preview);
         int id = Integer.valueOf(mValues[position]);
         preview.setEffect(mCallback.getEffectForId(id));
+        preview.setBorder(mCallback.getBorderForId(id));
         preview.setTransition(mCallback.getTransitionForId(id));
 
         container.addView(view);
