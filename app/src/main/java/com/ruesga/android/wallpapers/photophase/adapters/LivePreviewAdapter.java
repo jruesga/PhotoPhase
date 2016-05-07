@@ -42,8 +42,8 @@ public class LivePreviewAdapter extends PagerAdapter {
         Set<String> getSelectedEntries();
         void setSelectedEntries(Set<String> entries);
 
-        Transitions.TRANSITIONS getTransitionForPosition(int position);
-        Effects.EFFECTS getEffectForPosition(int position);
+        Transitions.TRANSITIONS getTransitionForId(int id);
+        Effects.EFFECTS getEffectForId(int id);
     }
 
     private final Context mContext;
@@ -85,8 +85,9 @@ public class LivePreviewAdapter extends PagerAdapter {
         TextView label = (TextView) view.findViewById(R.id.label);
         label.setText(mLabels[position]);
         LivePreviewView preview = (LivePreviewView) view.findViewById(R.id.preview);
-        preview.setEffect(mCallback.getEffectForPosition(position));
-        preview.setTransition(mCallback.getTransitionForPosition(position));
+        int id = Integer.valueOf(mValues[position]);
+        preview.setEffect(mCallback.getEffectForId(id));
+        preview.setTransition(mCallback.getTransitionForId(id));
 
         container.addView(view);
         return view;

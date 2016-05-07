@@ -46,13 +46,12 @@ public class LiveTransitionsPreviewFragment extends LivePreviewFragment {
         }
 
         @Override
-        public Transitions.TRANSITIONS getTransitionForPosition(int position) {
-            String[] entries = getActivity().getResources().getStringArray(getEntries());
-            return Transitions.TRANSITIONS.fromId(Integer.valueOf(entries[position]));
+        public Transitions.TRANSITIONS getTransitionForId(int id) {
+            return Transitions.TRANSITIONS.fromId(id);
         }
 
         @Override
-        public Effects.EFFECTS getEffectForPosition(int position) {
+        public Effects.EFFECTS getEffectForId(int id) {
             return Effects.EFFECTS.NO_EFFECT;
         }
     };

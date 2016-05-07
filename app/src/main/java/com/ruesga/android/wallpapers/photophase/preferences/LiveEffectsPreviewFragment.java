@@ -20,12 +20,11 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.adapters.LivePreviewAdapter.LivePreviewCallback;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences.General;
+import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences.General;
-import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 
 public class LiveEffectsPreviewFragment extends LivePreviewFragment {
 
@@ -47,14 +46,13 @@ public class LiveEffectsPreviewFragment extends LivePreviewFragment {
         }
 
         @Override
-        public Transitions.TRANSITIONS getTransitionForPosition(int position) {
+        public Transitions.TRANSITIONS getTransitionForId(int id) {
             return Transitions.TRANSITIONS.NO_TRANSITION;
         }
 
         @Override
-        public Effects.EFFECTS getEffectForPosition(int position) {
-            String[] entries = getActivity().getResources().getStringArray(getEntries());
-            return Effects.EFFECTS.fromId(Integer.valueOf(entries[position]));
+        public Effects.EFFECTS getEffectForId(int id) {
+            return Effects.EFFECTS.fromId(id);
         }
     };
 
