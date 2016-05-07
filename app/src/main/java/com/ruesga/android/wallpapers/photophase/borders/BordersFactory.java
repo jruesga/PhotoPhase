@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Jorge Ruesga
+ * Copyright (C) 2016 Jorge Ruesga
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,4 +29,12 @@ public class BordersFactory {
      * </table>
      */
     public static final String BORDER_NULL = "com.ruesga.android.wallpapers.photophase.borders.NullBorder";
+    /**
+     * <p>A simple border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_SIMPLE = "com.ruesga.android.wallpapers.photophase.borders.SimpleBorder";
 }

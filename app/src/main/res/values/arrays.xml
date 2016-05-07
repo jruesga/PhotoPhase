@@ -174,10 +174,12 @@
 
     <string-array name="borders_labels" translatable="false">
         <item>@string/borders_noborder</item>
+        <item>@string/borders_simple</item>
     </string-array>
 
     <string-array name="borders_values" translatable="false">
         <item>0</item>
+        <item>1</item>
     </string-array>
 
     <string-array name="borders_default" translatable="false">

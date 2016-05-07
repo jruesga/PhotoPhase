@@ -264,6 +264,7 @@ public abstract class Border extends Effect {
     /**
      * Method that applies the parameters of the effect.
      */
+    @SuppressWarnings("UnusedParameters")
     void applyParameters(int width, int height) {
         // Do nothing
     }

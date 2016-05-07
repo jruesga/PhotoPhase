@@ -43,7 +43,7 @@ public class LiveBordersPreviewFragment extends LivePreviewFragment {
 
         @Override
         public void setSelectedEntries(Set<String> entries) {
-            General.Effects.setSelectedEffects(getActivity(), entries);
+            General.Borders.setSelectedBorders(getActivity(), entries);
         }
 
         @Override

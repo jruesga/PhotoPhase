@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Jorge Ruesga
+ * Copyright (C) 2016 Jorge Ruesga
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//
-// Based on the shaders of kodemongki:
-//   http://kodemongki.blogspot.com.es/2011/06/kameraku-custom-shader-effects-example.html
-//
 
 package com.ruesga.android.wallpapers.photophase.borders;
 

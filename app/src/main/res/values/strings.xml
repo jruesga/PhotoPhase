@@ -187,6 +187,7 @@
 
     <!-- Borders -->
     <string name="borders_noborder">No border</string>
+    <string name="borders_simple">Simple</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

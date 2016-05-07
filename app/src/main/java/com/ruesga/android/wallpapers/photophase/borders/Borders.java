@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Jorge Ruesga
+ * Copyright (C) 2016 Jorge Ruesga
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,9 @@
 
 package com.ruesga.android.wallpapers.photophase.borders;
 
-import android.media.effect.Effect;
 import android.media.effect.EffectContext;
 import android.media.effect.EffectFactory;
 
-import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
@@ -39,7 +37,11 @@ public class Borders {
         /**
          * @see BordersFactory#BORDER_NULL
          */
-        NO_BORDER(0);
+        NO_BORDER(0),
+        /**
+         * @see BordersFactory#BORDER_SIMPLE
+         */
+        SIMPLE(1);
 
         public final int mId;
         BORDERS(int id) {
@@ -120,6 +122,10 @@ public class Borders {
         if (nextBorder.compareTo(BORDERS.NO_BORDER) == 0) {
             if (EffectFactory.isEffectSupported(BordersFactory.BORDER_NULL)) {
                 border = (Border) effectFactory.createEffect(BordersFactory.BORDER_NULL);
+            }
+        } else if (nextBorder.compareTo(BORDERS.SIMPLE) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_SIMPLE)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_SIMPLE);
             }
         }
 

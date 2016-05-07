@@ -136,7 +136,7 @@
     <!-- Borders -->
     <PreferenceCategory
         android:key="category_borders"
-        android:title="@string/pref_general_effects">
+        android:title="@string/pref_general_borders">
 
         <!-- Types -->
         <MultiSelectListPreference
