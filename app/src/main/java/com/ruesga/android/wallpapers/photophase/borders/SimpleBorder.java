@@ -55,7 +55,11 @@ public class SimpleBorder extends Border {
             "void main(void)\n" +
             "{\n" +
             "  if (is_border(v_texcoord)) {\n" +
-            "    gl_FragColor = color;\n" +
+            "    vec4 tex = texture2D (tex_sampler, v_texcoord);\n" +
+            "    float r = tex.r + (color.r - tex.r) * color.a;\n" +
+            "    float g = tex.g + (color.g - tex.g) * color.a;\n" +
+            "    float b = tex.b + (color.b - tex.b) * color.a;\n" +
+            "    gl_FragColor = vec4(r, g, b, tex.a);\n" +
             "  } else {\n" +
             "    gl_FragColor = texture2D(tex_sampler, v_texcoord);\n" +
             "  }\n" +

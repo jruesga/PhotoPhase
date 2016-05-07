@@ -154,6 +154,12 @@ public abstract class Border extends Effect {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fb[0]);
             GLESUtil.glesCheckError("glBindFramebuffer");
 
+            // Enable properties
+            GLES20.glEnable(GLES20.GL_BLEND);
+            GLESUtil.glesCheckError("glEnable");
+            GLES20.glBlendFunc(GLES20.GL_SRC_COLOR, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+            GLESUtil.glesCheckError("glBlendFunc");
+
             // Render on the whole framebuffer
             GLES20.glViewport(0, 0, width, height);
             GLESUtil.glesCheckError("glViewport");
@@ -182,6 +188,10 @@ public abstract class Border extends Effect {
             }
 
         } finally {
+            // Disable properties
+            GLES20.glDisable(GLES20.GL_BLEND);
+            GLESUtil.glesCheckError("glDisable");
+
             // Restore the GLES state
             restoreGLState();
 
