@@ -185,15 +185,17 @@
     <string name="effects_noise">Noise</string>
     <string name="effects_frosted">Frosted</string>
     <string name="effects_crosshatching">Crosshatching</string>
-    <string name="effects_thermalvision">Thermal Vision</string>
+    <string name="effects_thermalvision">Thermal vision</string>
     <string name="effects_swirl">Swirl</string>
-    <string name="effects_dof">Deep of Field</string>
+    <string name="effects_dof">Deep of field</string>
 
     <!-- Borders -->
     <string name="borders_noborder">No border</string>
     <string name="borders_simple">Simple</string>
     <string name="borders_rounded">Rounded</string>
-    <string name="borders_rounded_squares">Rounded Squares</string>
+    <string name="borders_rounded_squares">Rounded squares</string>
+    <string name="borders_horizontal_film">Horizontal film</string>
+    <string name="borders_vertical_film">Vertical film</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

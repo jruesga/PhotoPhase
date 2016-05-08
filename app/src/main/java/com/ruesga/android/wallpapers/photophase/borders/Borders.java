@@ -51,7 +51,15 @@ public class Borders {
         /**
          * @see BordersFactory#BORDER_ROUNDED_SQUARES
          */
-        ROUNDED_SQUARES(3);
+        ROUNDED_SQUARES(3),
+        /**
+         * @see BordersFactory#BORDER_HORIZONTAL_FILM
+         */
+        HORIZONTAL_FILM(4),
+        /**
+         * @see BordersFactory#BORDER_VERTICAL_FILM
+         */
+        VERTICAL_FILM(5);
 
         public final int mId;
         BORDERS(int id) {
@@ -148,6 +156,14 @@ public class Borders {
         } else if (nextBorder.compareTo(BORDERS.ROUNDED_SQUARES) == 0) {
             if (EffectFactory.isEffectSupported(BordersFactory.BORDER_ROUNDED_SQUARES)) {
                 border = (Border) effectFactory.createEffect(BordersFactory.BORDER_ROUNDED_SQUARES);
+            }
+        } else if (nextBorder.compareTo(BORDERS.HORIZONTAL_FILM) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_HORIZONTAL_FILM)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_HORIZONTAL_FILM);
+            }
+        } else if (nextBorder.compareTo(BORDERS.VERTICAL_FILM) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_VERTICAL_FILM)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_VERTICAL_FILM);
             }
         }
 

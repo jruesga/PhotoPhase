@@ -53,4 +53,20 @@ public class BordersFactory {
      * </table>
      */
     public static final String BORDER_ROUNDED_SQUARES = "com.ruesga.android.wallpapers.photophase.borders.RoundedSquaresBorder";
+    /**
+     * <p>A horizontal film tape border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_HORIZONTAL_FILM = "com.ruesga.android.wallpapers.photophase.borders.HorizontalFilmBorder";
+    /**
+     * <p>A vertical film tape border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_VERTICAL_FILM = "com.ruesga.android.wallpapers.photophase.borders.VerticalFilmBorder";
 }

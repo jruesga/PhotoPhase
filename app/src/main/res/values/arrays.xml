@@ -177,6 +177,8 @@
         <item>@string/borders_simple</item>
         <item>@string/borders_rounded</item>
         <item>@string/borders_rounded_squares</item>
+        <item>@string/borders_horizontal_film</item>
+        <item>@string/borders_vertical_film</item>
     </string-array>
 
     <string-array name="borders_values" translatable="false">
@@ -184,6 +186,8 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string-array name="borders_default" translatable="false">
