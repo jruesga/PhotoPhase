@@ -30,36 +30,33 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import java.nio.FloatBuffer;
 
 /**
- * A transition that applies a fade transition to the picture.
+ * A transition that applies a mix transition to the pictures.
  */
-public class VertigoTransition extends Transition {
+public class MixTransition extends Transition {
 
-    private static final float TRANSITION_TIME = 1500.0f;
+    private static final float TRANSITION_TIME = 1800.0f;
 
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
-    private static final int[] FRAGMENT_SHADER = {R.raw.vertigo_fragment_shader};
+    private static final int[] FRAGMENT_SHADER = {R.raw.mix_fragment_shader};
 
     private boolean mRunning;
     private long mTime;
 
-    private int mWidthHandle;
-    private int mHeightHandle;
-    private int mRadiusHandle;
+    protected int mTargetTextureHandler;
+    private int mDeltaHandler;
 
     /**
-     * Constructor of <code>FadeTransition</code>
+     * Constructor of <code>MixTransition</code>
      *
      * @param ctx The current context
      * @param tm The texture manager
      */
-    public VertigoTransition(Context ctx, TextureManager tm) {
+    public MixTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
-        mWidthHandle = GLES20.glGetUniformLocation(mProgramHandlers[0], "w");
+        mTargetTextureHandler = GLES20.glGetUniformLocation(mProgramHandlers[0], "sTexture2");
         GLESUtil.glesCheckError("glGetUniformLocation");
-        mHeightHandle = GLES20.glGetUniformLocation(mProgramHandlers[0], "h");
-        GLESUtil.glesCheckError("glGetUniformLocation");
-        mRadiusHandle = GLES20.glGetUniformLocation(mProgramHandlers[0], "radius");
+        mDeltaHandler = GLES20.glGetUniformLocation(mProgramHandlers[0], "delta");
         GLESUtil.glesCheckError("glGetUniformLocation");
     }
 
@@ -68,7 +65,7 @@ public class VertigoTransition extends Transition {
      */
     @Override
     public TRANSITIONS getType() {
-        return TRANSITIONS.VERTIGO;
+        return TRANSITIONS.MIX;
     }
 
     /**
@@ -108,6 +105,14 @@ public class VertigoTransition extends Transition {
      * {@inheritDoc}
      */
     @Override
+    public void select(PhotoFrame target) {
+        super.select(target);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void apply(float[] matrix) throws GLException {
         // Check internal vars
         if (mTarget == null ||
@@ -127,15 +132,7 @@ public class VertigoTransition extends Transition {
         }
 
         final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
-        if (delta <= 0.5) {
-            // Draw the src target
-            float strength = delta * 2.0f;
-            draw(mTarget, matrix, strength);
-        } else {
-            // Draw the dst target
-            float strength = (1 - delta) * 2.0f;
-            draw(mTransitionTarget, matrix, strength);
-        }
+        draw(matrix, delta);
 
         // Transition ended
         if (delta == 1) {
@@ -146,10 +143,9 @@ public class VertigoTransition extends Transition {
     /**
      * Method that draws the picture texture
      *
-     * @param target The target to draw
      * @param matrix The model-view-projection matrix
      */
-    protected void draw(PhotoFrame target, float[] matrix, float strength) {
+    protected void draw(float[] matrix, float delta) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
@@ -165,17 +161,12 @@ public class VertigoTransition extends Transition {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, matrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
-        // Strength
-        GLES20.glUniform1f(mWidthHandle, target.getFrameWidth());
-        GLESUtil.glesCheckError("glUniform1f");
-        GLES20.glUniform1f(mHeightHandle, target.getFrameHeight());
-        GLESUtil.glesCheckError("glUniform1f");
-        final float max = Math.max(mTarget.getFrameWidth(), mTarget.getFrameHeight()) * 2;
-        GLES20.glUniform1f(mRadiusHandle, max * strength);
+        // Delta
+        GLES20.glUniform1f(mDeltaHandler, delta);
         GLESUtil.glesCheckError("glUniform1f");
 
-        // Texture
-        FloatBuffer textureBuffer = target.getTextureBuffer();
+        // Textures
+        FloatBuffer textureBuffer = mTarget.getTextureBuffer();
         textureBuffer.position(0);
         GLES20.glVertexAttribPointer(mTextureCoordHandlers[0], 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
@@ -183,20 +174,32 @@ public class VertigoTransition extends Transition {
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
         // Position
-        FloatBuffer positionBuffer = target.getPositionBuffer();
+        FloatBuffer positionBuffer = mTarget.getPositionBuffer();
         positionBuffer.position(0);
         GLES20.glVertexAttribPointer(mPositionHandlers[0], 2, GLES20.GL_FLOAT, false, 0, positionBuffer);
         GLESUtil.glesCheckError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mPositionHandlers[0]);
         GLESUtil.glesCheckError("glEnableVertexAttribArray");
 
-        // Set the input texture
-        int textureHandle = target.getTextureHandle();
+        // Set the input textures
+        // Texture 1
+        int texture = mTarget.getTextureHandle();
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLESUtil.glesCheckError("glActiveTexture");
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
         GLESUtil.glesCheckError("glBindTexture");
         GLES20.glUniform1i(mTextureHandlers[0], 0);
+        GLESUtil.glesCheckError("glUniform1i");
+//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+//        GLESUtil.glesCheckError("glDrawElements");
+
+        // Texture 2
+        int targetTexture = mTransitionTarget.getTextureHandle();
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLESUtil.glesCheckError("glActiveTexture");
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, targetTexture);
+        GLESUtil.glesCheckError("glBindTexture");
+        GLES20.glUniform1i(mTargetTextureHandler, 1);
         GLESUtil.glesCheckError("glUniform1i");
 
         // Draw
@@ -213,8 +216,7 @@ public class VertigoTransition extends Transition {
     @Override
     public void recycle() {
         super.recycle();
-        mWidthHandle = -1;
-        mHeightHandle = -1;
-        mRadiusHandle = -1;
+        mTargetTextureHandler = -1;
+        mDeltaHandler = -1;
     }
 }

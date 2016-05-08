@@ -54,7 +54,7 @@ public class Transitions {
         /**
          * @see TranslateTransition
          */
-        TRANSLATION(5),
+        TRANSLATE(5),
         /**
          * @see WindowTransition
          */
@@ -66,7 +66,11 @@ public class Transitions {
         /**
          * @see VertigoTransition
          */
-        VERTIGO(8);
+        VERTIGO(8),
+        /**
+         * @see MixTransition
+         */
+        MIX(9);
 
         public final int mId;
         TRANSITIONS(int id) {
@@ -108,8 +112,8 @@ public class Transitions {
             return TRANSITIONS.SWAP;
         } else if (nextTransition.compareTo(TRANSITIONS.FADE) == 0) {
             return TRANSITIONS.FADE;
-        } else if (nextTransition.compareTo(TRANSITIONS.TRANSLATION) == 0) {
-            return TRANSITIONS.TRANSLATION;
+        } else if (nextTransition.compareTo(TRANSITIONS.TRANSLATE) == 0) {
+            return TRANSITIONS.TRANSLATE;
         } else if (nextTransition.compareTo(TRANSITIONS.FLIP) == 0) {
             return TRANSITIONS.FLIP;
         } else if (nextTransition.compareTo(TRANSITIONS.WINDOW) == 0) {
@@ -120,6 +124,8 @@ public class Transitions {
             return TRANSITIONS.BLUR;
         } else if (nextTransition.compareTo(TRANSITIONS.VERTIGO) == 0) {
             return TRANSITIONS.VERTIGO;
+        } else if (nextTransition.compareTo(TRANSITIONS.MIX) == 0) {
+            return TRANSITIONS.MIX;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -137,7 +143,7 @@ public class Transitions {
             return new SwapTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.FADE) == 0) {
             return new FadeTransition(ctx, tm);
-        } else if (type.compareTo(TRANSITIONS.TRANSLATION) == 0) {
+        } else if (type.compareTo(TRANSITIONS.TRANSLATE) == 0) {
             return new TranslateTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.FLIP) == 0) {
             return new FlipTransition(ctx, tm);
@@ -149,6 +155,8 @@ public class Transitions {
             return new BlurTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.VERTIGO) == 0) {
             return new VertigoTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.MIX) == 0) {
+            return new MixTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }

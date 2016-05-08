@@ -36,7 +36,7 @@ public class FadeTransition extends Transition {
 
     private static final float TRANSITION_TIME = 800.0f;
 
-    private static final int[] VERTEX_SHADER = {R.raw.fade_vertex_shader};
+    private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.fade_fragment_shader};
 
     private boolean mRunning;
@@ -55,8 +55,7 @@ public class FadeTransition extends Transition {
     public FadeTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
-
-        mColorHandler = GLES20.glGetAttribLocation(mProgramHandlers[0], "aColor");
+        mColorHandler = GLES20.glGetUniformLocation(mProgramHandlers[0], "vColor");
         GLESUtil.glesCheckError("glGetAttribLocation");
     }
 
@@ -172,8 +171,8 @@ public class FadeTransition extends Transition {
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Color
-        GLES20.glVertexAttrib4f(mColorHandler, mColor.r, mColor.g, mColor.b, mColor.a);
-        GLESUtil.glesCheckError("glVertexAttrib4f");
+        GLES20.glUniform4fv(mColorHandler, 1, mColor.asVec4(), 0);
+        GLESUtil.glesCheckError("glUniform4fv");
 
         // Texture
         FloatBuffer textureBuffer = target.getTextureBuffer();

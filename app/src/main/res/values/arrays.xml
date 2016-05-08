@@ -65,6 +65,7 @@
         <item>@string/transitions_window</item>
         <item>@string/transitions_blur</item>
         <item>@string/transitions_vertigo</item>
+        <item>@string/transitions_mix</item>
     </string-array>
 
     <string-array name="transitions_values" translatable="false">
@@ -76,6 +77,7 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
     </string-array>
 
     <string-array name="transitions_default" translatable="false"/>

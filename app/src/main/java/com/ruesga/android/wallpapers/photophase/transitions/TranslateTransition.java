@@ -89,7 +89,7 @@ public class TranslateTransition extends Transition {
      */
     @Override
     public TRANSITIONS getType() {
-        return TRANSITIONS.TRANSLATION;
+        return TRANSITIONS.TRANSLATE;
     }
 
     /**
@@ -188,7 +188,7 @@ public class TranslateTransition extends Transition {
         final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
 
         // Apply the transition
-        applyTransitionToDst(delta, matrix);
+        applyTransitionToDst(matrix);
         if (delta < 1) {
             applyTransitionToSrc(delta, matrix);
         }
@@ -277,10 +277,9 @@ public class TranslateTransition extends Transition {
     /**
      * Apply the transition to the destination frame
      *
-     * @param delta The delta time
      * @param matrix The model-view-projection matrix
      */
-    private void applyTransitionToDst(float delta, float[] matrix) {
+    private void applyTransitionToDst(float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");

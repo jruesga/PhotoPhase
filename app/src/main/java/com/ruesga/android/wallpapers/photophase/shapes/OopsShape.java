@@ -125,7 +125,7 @@ public class OopsShape implements DrawableShape {
                     GLESUtil.createProgram(
                             ctx.getResources(), VERTEX_SHADER, FRAGMENT_SHADER);
             mTextureHandlers[i] =
-                    GLES20.glGetAttribLocation(mProgramHandlers[i], "sTexture");
+                    GLES20.glGetUniformLocation(mProgramHandlers[i], "sTexture");
             mPositionHandlers[i] =
                     GLES20.glGetAttribLocation(mProgramHandlers[i], "aPosition");
             GLESUtil.glesCheckError("glGetAttribLocation");

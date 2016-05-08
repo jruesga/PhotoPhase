@@ -92,7 +92,7 @@ public class CubeTransition extends Transition {
      */
     @Override
     public TRANSITIONS getType() {
-        return TRANSITIONS.WINDOW;
+        return TRANSITIONS.CUBE;
     }
 
     /**

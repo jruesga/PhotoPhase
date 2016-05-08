@@ -64,7 +64,7 @@ public class BlurTransition extends Transition {
      */
     @Override
     public TRANSITIONS getType() {
-        return TRANSITIONS.FADE;
+        return TRANSITIONS.BLUR;
     }
 
     /**

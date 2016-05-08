@@ -18,7 +18,7 @@ precision mediump float;
 
 varying vec2 vTextureCoord;
 uniform sampler2D sTexture;
-varying vec4 vColor;
+uniform vec4 vColor;
 
 void main() {
     vec4 tex = texture2D (sTexture, vTextureCoord);

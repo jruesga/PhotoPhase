@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-uniform mat4 uMVPMatrix;
-
-attribute vec4 aPosition;
-attribute vec2 aTextureCoord;
-attribute vec4 aColor;
+precision mediump float;
 
 varying vec2 vTextureCoord;
-varying vec4 vColor;
+uniform sampler2D sTexture;
+uniform sampler2D sTexture2;
+uniform float delta;
 
 void main() {
-    gl_Position = uMVPMatrix * aPosition;
-    vTextureCoord = aTextureCoord;
-    vColor = aColor;
+    vec4 tex1 = texture2D(sTexture, vTextureCoord);
+    vec4 tex2 = texture2D(sTexture2, vTextureCoord);
+    gl_FragColor = mix(tex1, tex2, delta);
 }
