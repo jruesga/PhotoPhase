@@ -254,6 +254,19 @@ public final class PreferencesProvider {
                     }
                     return effects;
                 }
+
+                public static int getEffectSettings(Context context, int effectId, int def) {
+                    return getSharedPreferences(context).getInt(
+                            "ui_effect_settings_" + effectId, def);
+                }
+
+                public static void setEffectSettings(Context context, int effectId, int val) {
+                    SharedPreferences preferences =
+                            context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                    Editor editor = preferences.edit();
+                    editor.putInt("ui_effect_settings_" + effectId, val);
+                    editor.apply();
+                }
             }
 
             /**

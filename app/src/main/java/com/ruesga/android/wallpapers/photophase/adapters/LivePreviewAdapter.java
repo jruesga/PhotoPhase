@@ -16,9 +16,12 @@
 
 package com.ruesga.android.wallpapers.photophase.adapters;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
 import android.support.annotation.ArrayRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.SwitchCompat;
@@ -26,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
@@ -34,6 +38,8 @@ import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import com.ruesga.android.wallpapers.photophase.widgets.LivePreviewView;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.util.Set;
 
@@ -46,6 +52,60 @@ public class LivePreviewAdapter extends PagerAdapter {
         Transitions.TRANSITIONS getTransitionForId(int id);
         Effects.EFFECTS getEffectForId(int id);
         Borders.BORDERS getBorderForId(int id);
+
+        boolean hasSettings(int id);
+        void configureSettings(int id, DiscreteSeekBar seekBar);
+        void saveSettings(int id, int newVal);
+    }
+
+    private static class ShowAnimatorListener implements Animator.AnimatorListener {
+        private final View mTarget;
+
+        public ShowAnimatorListener(View v) {
+            mTarget = v;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            mTarget.setAlpha(0.0f);
+            mTarget.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
+    }
+    private static class HideAnimatorListener implements Animator.AnimatorListener {
+        private final View mTarget;
+
+        public HideAnimatorListener(View v) {
+            mTarget = v;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            mTarget.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
     }
 
     private final Context mContext;
@@ -84,13 +144,15 @@ public class LivePreviewAdapter extends PagerAdapter {
             }
         });
 
+        int id = Integer.valueOf(mValues[position]);
         TextView label = (TextView) view.findViewById(R.id.label);
         label.setText(mLabels[position]);
         LivePreviewView preview = (LivePreviewView) view.findViewById(R.id.preview);
-        int id = Integer.valueOf(mValues[position]);
         preview.setEffect(mCallback.getEffectForId(id));
         preview.setBorder(mCallback.getBorderForId(id));
         preview.setTransition(mCallback.getTransitionForId(id));
+
+        configureSettings(view, id, preview);
 
         container.addView(view);
         return view;
@@ -119,4 +181,52 @@ public class LivePreviewAdapter extends PagerAdapter {
         return orientation == Configuration.ORIENTATION_PORTRAIT ? 1.0f : 0.5f;
     }
 
+    private void configureSettings(View view, final int id, final LivePreviewView preview) {
+        final ImageView settings = (ImageView) view.findViewById(R.id.settings);
+        final View settingsBlock = view.findViewById(R.id.settings_block);
+        if (mCallback.hasSettings(id)) {
+            settings.setColorFilter(ContextCompat.getColor(mContext, R.color.color_accent),
+                    PorterDuff.Mode.SRC_ATOP);
+            settings.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    settingsBlock.animate().alpha(1.0f).setDuration(600L).setListener(
+                            new ShowAnimatorListener(settingsBlock)).start();
+                    settings.animate().alpha(0.0f).setDuration(600L).setListener(
+                            new HideAnimatorListener(settings)).start();
+                }
+            });
+
+            final View done = view.findViewById(R.id.done);
+            done.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    settings.animate().alpha(1.f).setDuration(600L).setListener(
+                            new ShowAnimatorListener(settings)).start();
+                    settingsBlock.animate().alpha(0.0f).setDuration(600L).setListener(
+                            new HideAnimatorListener(settingsBlock)).start();
+                }
+            });
+
+            final DiscreteSeekBar seekBar = (DiscreteSeekBar) view.findViewById(R.id.strength);
+            mCallback.configureSettings(id, seekBar);
+            seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+                @Override
+                public void onProgressChanged(DiscreteSeekBar discreteSeekBar, int i, boolean b) {
+                    mCallback.saveSettings(id, i);
+                    preview.recreate();
+                }
+
+                @Override
+                public void onStartTrackingTouch(DiscreteSeekBar discreteSeekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(DiscreteSeekBar discreteSeekBar) {
+                }
+            });
+        } else {
+            settings.setVisibility(View.GONE);
+        }
+    }
 }

@@ -586,8 +586,17 @@ public final class GLESUtil {
 
         int error = GLES20.glGetError();
         if (error != 0) {
-            Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
-                    GLUtils.getEGLErrorString(error));
+            if (BuildConfig.DEBUG) {
+                try {
+                    throw new GLException(error);
+                } catch (GLException ex) {
+                    Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
+                            GLUtils.getEGLErrorString(error), ex);
+                }
+            } else {
+                Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
+                        GLUtils.getEGLErrorString(error));
+            }
             return true;
         }
         return false;

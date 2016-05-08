@@ -41,12 +41,13 @@ public class SimpleTextureManager extends TextureManager {
     private final Context mContext;
     private final Effect mEffect;
     private final Border mBorder;
+    private boolean mSingleTexture;
 
     private Rect mDimensions;
 
     private int last = 0;
 
-    public SimpleTextureManager(Context context, Effect effect, Border border) {
+    public SimpleTextureManager(Context context, Effect effect, Border border, boolean singleTexture) {
         // Pre-calculate the window size for the PhotoPhaseTextureManager. In onSurfaceChanged
         // the best fixed size will be set. The disposition size is simple for a better
         // performance of the internal arrays
@@ -57,6 +58,7 @@ public class SimpleTextureManager extends TextureManager {
         mEffect = effect;
         mBorder = border;
         mContext = context;
+        mSingleTexture = singleTexture;
     }
 
     public void setTargetDimensions(Rect dimensions) {
@@ -69,7 +71,7 @@ public class SimpleTextureManager extends TextureManager {
         Bitmap bitmap = null;
         InputStream is = null;
         try {
-            is = mContext.getAssets().open(last % 2 == 0 ? ASSET_NAME1 : ASSET_NAME2);
+            is = mContext.getAssets().open(mSingleTexture || last % 2 == 0 ? ASSET_NAME1 : ASSET_NAME2);
             last++;
             bitmap = BitmapUtils.decodeBitmap(is);
         } catch (IOException ex) {

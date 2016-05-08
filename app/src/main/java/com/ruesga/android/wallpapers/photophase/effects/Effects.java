@@ -33,6 +33,17 @@ import java.util.Map;
  */
 public class Effects {
 
+    public static class Settings {
+        public final int mMin;
+        public final int mMax;
+        public final int mDef;
+        public Settings(int min, int max, int def) {
+            mMin = min;
+            mMax = max;
+            mDef = def;
+        }
+    }
+
     /**
      * Enumeration of the supported effects
      */
@@ -40,131 +51,133 @@ public class Effects {
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_NULL
          */
-        NO_EFFECT(0),
+        NO_EFFECT(0, null),
         /**
          * @see EffectFactory#EFFECT_AUTOFIX
          */
-        AUTOFIX(1),
+        AUTOFIX(1, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_BLUR
          */
-        BLUR(2),
+        BLUR(2, new Settings(0, 20, 5)),
         /**
          * @see EffectFactory#EFFECT_CROSSPROCESS
          */
-        CROSSPROCESS(3),
+        CROSSPROCESS(3, null),
         /**
          * @see EffectFactory#EFFECT_DOCUMENTARY
          */
-        DOCUMENTARY(4),
+        DOCUMENTARY(4, null),
         /**
          * @see EffectFactory#EFFECT_DUOTONE
          */
-        DUOTONE(5),
+        DUOTONE(5, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_EMBOSS
          */
-        EMBOSS(6),
+        EMBOSS(6, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_FISHEYE
          */
-        FISHEYE(7),
+        FISHEYE(7, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_GLOW
          */
-        GLOW(8),
+        GLOW(8, null),
         /**
          * @see EffectFactory#EFFECT_GRAIN
          */
-        GRAIN(9),
+        GRAIN(9, null),
         /**
          * @see EffectFactory#EFFECT_GRAYSCALE
          */
-        GRAYSCALE(10),
+        GRAYSCALE(10, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_HALFTONE
          */
-        HALFTONE(11),
+        HALFTONE(11, null),
         /**
          * @see EffectFactory#EFFECT_LOMOISH
          */
-        LOMOISH(12),
+        LOMOISH(12, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_MIRROR
          */
-        MIRROR(13),
+        MIRROR(13, null),
         /**
          * @see EffectFactory#EFFECT_NEGATIVE
          */
-        NEGATIVE(14),
+        NEGATIVE(14, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_OUTLINE
          */
-        OUTLINE(15),
+        OUTLINE(15, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_PIXELATE
          */
-        PIXELATE(16),
+        PIXELATE(16, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_POPART
          */
-        POPART(17),
+        POPART(17, null),
         /**
          * @see EffectFactory#EFFECT_POSTERIZE
          */
-        POSTERIZE(18),
+        POSTERIZE(18, null),
         /**
          * @see EffectFactory#EFFECT_SATURATE
          */
-        SATURATE(19),
+        SATURATE(19, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_SCANLINES
          */
-        SCANLINES(20),
+        SCANLINES(20, null),
         /**
          * @see EffectFactory#EFFECT_SEPIA
          */
-        SEPIA(21),
+        SEPIA(21, null),
         /**
          * @see EffectFactory#EFFECT_TEMPERATURE
          */
-        TEMPERATURE(22),
+        TEMPERATURE(22, null),
         /**
          * @see EffectFactory#EFFECT_TINT
          */
-        TINT(23),
+        TINT(23, null),
         /**
          * @see EffectFactory#EFFECT_VIGNETTE
          */
-        VIGNETTE(24),
+        VIGNETTE(24, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_NOISE
          */
-        NOISE(25),
+        NOISE(25, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_FROSTED
          */
-        FROSTED(26),
+        FROSTED(26, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_CROSSHATCHING
          */
-        CROSSHATCHING(27),
+        CROSSHATCHING(27, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_THERMALVISION
          */
-        THERMALVISION(28),
+        THERMALVISION(28, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_SWIRL
          */
-        SWIRL(29),
+        SWIRL(29, null),
         /**
          * @see PhotoPhaseEffectFactory#EFFECT_DOF
          */
-        DOF(30);
+        DOF(30, new Settings(0, 20, 0));
 
         public final int mId;
-        EFFECTS(int id) {
+        public final Settings mSettings;
+        EFFECTS(int id, Settings settings) {
             mId = id;
+            mSettings = settings;
         }
 
         public static EFFECTS fromId(int id) {
@@ -236,7 +249,9 @@ public class Effects {
 
         // The effect was cached previously?
         if (mCachedEffects.containsKey(nextEffect)) {
-            return mCachedEffects.get(nextEffect);
+            effect = mCachedEffects.get(nextEffect);
+            updateParameters(nextEffect, effect);
+            return effect;
         }
 
         // Select the effect if is available
@@ -252,7 +267,6 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.BLUR) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_BLUR)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_BLUR);
-                effect.setParameter(BlurEffect.STRENGTH_PARAMETER, 2.0f);
             }
         } else if (nextEffect.compareTo(EFFECTS.CROSSPROCESS) == 0) {
             if (EffectFactory.isEffectSupported(EffectFactory.EFFECT_CROSSPROCESS)) {
@@ -387,6 +401,23 @@ public class Effects {
             // Cache the effects
             mCachedEffects.put(nextEffect, effect);
         }
+
+        updateParameters(nextEffect, effect);
         return effect;
+    }
+
+    private void updateParameters(EFFECTS type, Effect effect) {
+        Settings settings = type.mSettings;
+        if (settings == null) {
+            return;
+        }
+        int val = Preferences.General.Effects.getEffectSettings(mContext, type.mId, settings.mDef);
+
+        // Update the parameters
+        if (type.compareTo(EFFECTS.BLUR) == 0) {
+            effect.setParameter(BlurEffect.STRENGTH_PARAMETER, (val * 0.2f) + 1.0f);
+        } else if (type.compareTo(EFFECTS.DOF) == 0) {
+            effect.setParameter(DoFEffect.STRENGTH_PARAMETER, (val * 0.2f) + 1.0f);
+        }
     }
 }

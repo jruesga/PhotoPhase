@@ -24,6 +24,8 @@ import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences.General;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,6 +61,19 @@ public class LiveBordersPreviewFragment extends LivePreviewFragment {
         @Override
         public Borders.BORDERS getBorderForId(int id) {
             return Borders.BORDERS.fromId(id);
+        }
+
+        @Override
+        public boolean hasSettings(int id) {
+            return false;
+        }
+
+        @Override
+        public void configureSettings(int id, DiscreteSeekBar seekBar) {
+        }
+
+        @Override
+        public void saveSettings(int id, int newVal) {
         }
     };
 

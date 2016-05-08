@@ -20,13 +20,14 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLException;
 
-import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
+import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 import java.nio.FloatBuffer;
+
 /**
  * A special transition that does nothing other than draw the {@link PhotoFrame}
  * on the screen continually. No transition is done.
@@ -44,14 +45,6 @@ public class NullTransition extends Transition {
      */
     public NullTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void select(PhotoFrame target) {
-        super.select(target);
     }
 
     /**

@@ -315,7 +315,6 @@ public class PhotoPhaseWallpaperWorld {
                     portrait ? w : h, portrait ? h : w);
             PhotoFrame frame =
                     new PhotoFrame(
-                            mContext,
                             mTextureManager,
                             frameVertices,
                             photoVertices,

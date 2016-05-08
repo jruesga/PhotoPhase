@@ -16,7 +16,6 @@
 
 package com.ruesga.android.wallpapers.photophase;
 
-import android.content.Context;
 import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.util.Log;
@@ -36,8 +35,6 @@ import java.nio.FloatBuffer;
  * A GLES square geometry that represents one photo frame for show in the wallpaper.
  */
 public class PhotoFrame implements TextureRequestor {
-
-    public static final int COORDS_PER_VERTER = 3;
 
     // The default texture coordinates (fit to frame)
     private static final float[] DEFAULT_TEXTURE_COORDS = {
@@ -69,14 +66,13 @@ public class PhotoFrame implements TextureRequestor {
     /**
      * Constructor of <code>PhotoFrame</code>.
      *
-     * @param ctx The current context
      * @param textureManager The texture manager
      * @param frameVertex A 4 dimension array with the coordinates per vertex plus padding
      * @param photoVertex A 4 dimension array with the coordinates per vertex without padding
      * @param color Background color
      */
-    public PhotoFrame(Context ctx, TextureManager textureManager,
-                float[] frameVertex, float[] photoVertex, GLColor color) {
+    public PhotoFrame(TextureManager textureManager, float[] frameVertex,
+            float[] photoVertex, GLColor color) {
         super();
         mLoaded = false;
         mBackgroundColor = color;
@@ -101,7 +97,7 @@ public class PhotoFrame implements TextureRequestor {
         mTextureInfo = null;
 
         // Request a new image for this frame
-        textureManager.request(this);
+        requestTexture();
     }
 
     /**
@@ -119,13 +115,17 @@ public class PhotoFrame implements TextureRequestor {
     public void setTextureHandle(GLESTextureInfo ti) {
         // If the picture is invalid request a new texture
         if (ti == null || ti.handle <= 0) {
-            mTextureManager.request(this);
+            requestTexture();
             return;
         }
 
         // Full frame picture
         setTextureHandle(ti, DEFAULT_TEXTURE_COORDS);
         mLoaded = true;
+    }
+
+    public void requestTexture() {
+        mTextureManager.request(this);
     }
 
     /**

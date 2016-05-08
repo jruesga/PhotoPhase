@@ -16,6 +16,7 @@ import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.textures.SimpleTextureManager;
+import com.ruesga.android.wallpapers.photophase.transitions.NullTransition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
@@ -91,11 +92,11 @@ public class LivePreviewView extends GLSurfaceView {
             synchronized (mLock) {
                 mEffectContext = EffectContext.createWithCurrentGlContext();
                 mEffectsFactory = new Effects(mContext, mEffectContext);
-                mEffect = mEffectsFactory.getEffect(mEffectType);
                 mBordersFactory = new Borders(mContext, mEffectContext);
-                mBorder = mBordersFactory.getBorder(mBorderType);
-                mBorder.mBgColor = mBackgroundColor;
-                mTextureManager = new SimpleTextureManager(mContext, mEffect, mBorder);
+
+                recreateContext();
+                boolean singleTexture = mTransitionType.equals(Transitions.TRANSITIONS.NO_TRANSITION);
+                mTextureManager = new SimpleTextureManager(mContext, mEffect, mBorder, singleTexture);
                 mTransition = Transitions.createTransition(mContext, mTextureManager, mTransitionType);
             }
 
@@ -107,20 +108,28 @@ public class LivePreviewView extends GLSurfaceView {
             mWidth = width;
             mHeight = height;
             mTextureManager.setTargetDimensions(new Rect(0, 0, mWidth, mHeight));
+            createNewFrame();
 
+            GLES20.glViewport(0, 0, mWidth, mHeight);
+            GLESUtil.glesCheckError("glViewport");
+            Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
+        }
+
+        private void recreateContext() {
+            mEffect = mEffectsFactory.getEffect(mEffectType);
+            mBorder = mBordersFactory.getBorder(mBorderType);
+            mBorder.mBgColor = mBackgroundColor;
+        }
+
+        private void createNewFrame() {
             float[] frameVertices =  new float[]{-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
             synchronized (mLock) {
                 if (mFrame != null) {
                     mFrame.recycle();
                 }
-                mFrame = new PhotoFrame(mContext, mTextureManager,
-                        frameVertices, frameVertices, mBackgroundColor);
+                mFrame = new PhotoFrame(mTextureManager, frameVertices, frameVertices, mBackgroundColor);
                 mTransition.select(mFrame);
             }
-
-            GLES20.glViewport(0, 0, mWidth, mHeight);
-            GLESUtil.glesCheckError("glViewport");
-            Matrix.frustumM(mProjMatrix, 0, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 2.0f);
         }
 
         @Override
@@ -179,10 +188,18 @@ public class LivePreviewView extends GLSurfaceView {
             }
         }
 
+        public void recreate() {
+            synchronized (mLock) {
+                recreateContext();
+                onSurfaceChanged(null, mWidth, mHeight);
+            }
+        }
+
         public void requestTransition() {
             synchronized (mLock) {
                 if (!mRecycled) {
-                    if (mTransition.hasTransitionTarget()) {
+                    if (!(mTransition instanceof NullTransition)
+                            && mTransition.hasTransitionTarget()) {
                         mTransition.swapTargets();
                     }
                     mTransition.chooseMode();
@@ -262,6 +279,16 @@ public class LivePreviewView extends GLSurfaceView {
     public void setTransition(Transitions.TRANSITIONS transition) {
         mRenderer.setTransition(transition);
         requestRender();
+    }
+
+    public void recreate() {
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                mRenderer.recreate();
+                requestRender();
+            }
+        });
     }
 
     @Override

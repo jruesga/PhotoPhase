@@ -88,7 +88,6 @@ public abstract class Transition {
             // Load the transition frame and request a picture for it
             mTransitionTarget =
                     new PhotoFrame(
-                            mContext,
                             mTextureManager,
                             mTarget.getFrameVertex(),
                             mTarget.getPhotoVertex(),
