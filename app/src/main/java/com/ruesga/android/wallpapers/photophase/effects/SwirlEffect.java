@@ -45,10 +45,15 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
  */
 public class SwirlEffect extends PhotoPhaseEffect {
 
+    private static final String TAG = "SwirlEffect";
+
+    public static final String STRENGTH_PARAMETER = "strength";
+
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
             "uniform sampler2D tex_sampler;\n" +
             "varying vec2 v_texcoord;\n" +
+            "uniform float strength;\n" +
             "uniform float w;\n" +
             "uniform float h;\n" +
             "const float angle = 0.8;\n" +
@@ -57,7 +62,7 @@ public class SwirlEffect extends PhotoPhaseEffect {
             "  vec2 uv = v_texcoord;\n" +
             "  vec2 texSize = vec2(w, h);\n" +
             "  vec2 center = vec2(w/2.0, h/2.0);\n" +
-            "  float radius = min(w,h) / 2.0;\n" +
+            "  float radius = (min(w,h) / 2.0) / strength;\n" +
             "  vec2 tc = uv * texSize;\n" +
             "  tc -= center;\n" +
             "  float dist = length(tc);\n" +
@@ -74,6 +79,9 @@ public class SwirlEffect extends PhotoPhaseEffect {
             "  gl_FragColor = vec4(color, 1.0);\n" +
             "}";
 
+    private float mStrength = 1.5f;
+
+    private int mStrengthHandle;
     private int mWidthHandle;
     private int mHeightHandle;
 
@@ -86,16 +94,10 @@ public class SwirlEffect extends PhotoPhaseEffect {
     public SwirlEffect(EffectContext ctx, String name) {
         super(ctx, SwirlEffect.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    void init(String vertexShader, String fragmentShader) {
-        super.init(vertexShader, fragmentShader);
 
         // Parameters
+        mStrengthHandle = GLES20.glGetUniformLocation(mProgram[0], "strength");
+        GLESUtil.glesCheckError("glGetUniformLocation");
         mWidthHandle = GLES20.glGetUniformLocation(mProgram[0], "w");
         GLESUtil.glesCheckError("glGetUniformLocation");
         mHeightHandle = GLES20.glGetUniformLocation(mProgram[0], "h");
@@ -112,6 +114,27 @@ public class SwirlEffect extends PhotoPhaseEffect {
         GLESUtil.glesCheckError("glUniform1f");
         GLES20.glUniform1f(mHeightHandle, (float) height);
         GLESUtil.glesCheckError("glUniform1f");
+        GLES20.glUniform1f(mStrengthHandle, mStrength);
+        GLESUtil.glesCheckError("glUniform1f");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setParameter(String parameterKey, Object value) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+            try {
+                float strength = Float.parseFloat(value.toString());
+                if (strength < 0) {
+                    Log.w(TAG, "strength parameter must be > 0");
+                    return;
+                }
+                mStrength = strength;
+            } catch (NumberFormatException ex) {
+                // Ignore
+            }
+        }
     }
 
 }

@@ -22,6 +22,10 @@
 package com.ruesga.android.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
+import android.opengl.GLES20;
+import android.util.Log;
+
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
  * A noise effect<br/>
@@ -31,20 +35,28 @@ import android.media.effect.EffectContext;
  */
 public class NoiseEffect extends PhotoPhaseEffect {
 
+    private static final String TAG = "NoiseEffect";
+
+    public static final String STRENGTH_PARAMETER = "strength";
+
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
             "uniform sampler2D tex_sampler;\n" +
             "varying vec2 v_texcoord;\n" +
+            "uniform float strength;\n" +
             "void main(void)\n" +
             "{\n" +
-            "    float step = 0.02;\n" +
-            "    vec3 c1 = texture2D(tex_sampler, vec2(v_texcoord.s - step, v_texcoord.t - step)).bgr;\n" +
-            "    vec3 c2 = texture2D(tex_sampler, vec2(v_texcoord.s + step, v_texcoord.t + step)).bgr;\n" +
-            "    vec3 c3 = texture2D(tex_sampler, vec2(v_texcoord.s - step, v_texcoord.t + step)).bgr;\n" +
-            "    vec3 c4 = texture2D(tex_sampler, vec2(v_texcoord.s + step, v_texcoord.t - step)).bgr;\n" +
-            "    gl_FragColor.a = 1.0;\n" +
-            "    gl_FragColor.rgb = (c1 + c2 + c3 + c4) / 4.0;\n" +
+            "  vec2 uv = v_texcoord;\n" +
+            "  vec3 c1 = texture2D(tex_sampler, vec2(uv.s - strength, uv.t - strength)).bgr;\n" +
+            "  vec3 c2 = texture2D(tex_sampler, vec2(uv.s + strength, uv.t + strength)).bgr;\n" +
+            "  vec3 c3 = texture2D(tex_sampler, vec2(uv.s - strength, uv.t + strength)).bgr;\n" +
+            "  vec3 c4 = texture2D(tex_sampler, vec2(uv.s + strength, uv.t - strength)).bgr;\n" +
+            "  gl_FragColor.a = 1.0;\n" +
+            "  gl_FragColor.rgb = (c1 + c2 + c3 + c4) / 4.0;\n" +
             "}";
+
+    private float mStrength = 0.02f;
+    private int mStrengthHandle;
 
     /**
      * Constructor of <code>NoiseEffect</code>.
@@ -55,6 +67,39 @@ public class NoiseEffect extends PhotoPhaseEffect {
     public NoiseEffect(EffectContext ctx, String name) {
         super(ctx, NoiseEffect.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
+
+        // Parameters
+        mStrengthHandle = GLES20.glGetUniformLocation(mProgram[0], "strength");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void applyParameters(int width, int height) {
+        // Set parameters
+        GLES20.glUniform1f(mStrengthHandle, mStrength);
+        GLESUtil.glesCheckError("glUniform1f");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setParameter(String parameterKey, Object value) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+            try {
+                float strength = Float.parseFloat(value.toString());
+                if (strength < 0) {
+                    Log.w(TAG, "strength parameter must be > 0");
+                    return;
+                }
+                mStrength = strength;
+            } catch (NumberFormatException ex) {
+                // Ignore
+            }
+        }
     }
 
 }

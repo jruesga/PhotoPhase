@@ -47,8 +47,7 @@ public class PixelateEffect extends PhotoPhaseEffect {
 
     private static final String TAG = "PixelateEffect";
 
-    public static final String PIXEL_W_PARAMETER = "pixel_w";
-    public static final String PIXEL_H_PARAMETER = "pixel_h";
+    public static final String STRENGTH_PARAMETER = "strength";
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
@@ -56,8 +55,8 @@ public class PixelateEffect extends PhotoPhaseEffect {
             "varying vec2 v_texcoord;\n" +
             "uniform float w;\n" +
             "uniform float h;\n" +
-            "uniform float pixel_w; //15.0;\n" +
-            "uniform float pixel_h; //10.0;\n" +
+            "uniform float pixel_w;\n" +
+            "uniform float pixel_h;\n" +
             "void main() \n" +
             "{\n" +
             "    vec2 uv = v_texcoord;\n" +
@@ -122,31 +121,20 @@ public class PixelateEffect extends PhotoPhaseEffect {
         GLESUtil.glesCheckError("glUniform1f");
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void setParameter(String parameterKey, Object value) {
-        if (parameterKey.compareTo(PIXEL_W_PARAMETER) == 0) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
             try {
-                float p = Float.parseFloat(value.toString());
-                if (p <= 0) {
-                    Log.w(TAG, "pixel width parameter must be >= 0");
+                float strength = Float.parseFloat(value.toString());
+                if (strength < 0) {
+                    Log.w(TAG, "strength parameter must be > 0");
                     return;
                 }
-                mPixelWidth = p;
-            } catch (NumberFormatException ex) {
-                // Ignore
-            }
-        } else if (parameterKey.compareTo(PIXEL_H_PARAMETER) == 0) {
-            try {
-                float p = Float.parseFloat(value.toString());
-                if (p <= 0) {
-                    Log.w(TAG, "pixel height parameter must be >= 0");
-                    return;
-                }
-                mPixelHeight = p;
+                mPixelWidth = 15.0f * strength;
+                mPixelHeight = 10.0f * strength;
             } catch (NumberFormatException ex) {
                 // Ignore
             }

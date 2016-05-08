@@ -45,7 +45,7 @@ public class ThermalVisionEffect extends PhotoPhaseEffect {
             "    colors[2] = vec3(1.,0.,0.);\n" +
             "    float lum = (pixcol.r+pixcol.g+pixcol.b)/3.;\n" +
             "    int ix = (lum < 0.5)? 0:1;\n" +
-            "    vec3 tc = mix(colors[ix],colors[ix+1],(lum-float(ix)*0.5)/0.5);\n" +
+            "    vec3 tc = mix(colors[ix],colors[ix+1],(lum-float(ix)*0.3)/0.3);\n" +
             "    gl_FragColor = vec4(tc, 1.0);\n" +
             "}";
 

@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 //
-// Based on the shaders of kodemongki:
-//   http://kodemongki.blogspot.com.es/2011/06/kameraku-custom-shader-effects-example.html
+// Based on:
+//   http://www.derivative.ca/forum/viewtopic.php?f=27&t=4245
 //
 
 package com.ruesga.android.wallpapers.photophase.effects;
@@ -45,32 +45,33 @@ public class HalftoneEffect extends PhotoPhaseEffect {
     public static final String STRENGTH_PARAMETER = "strength";
 
     private static final String FRAGMENT_SHADER =
-            "precision mediump float;\n" +
+            "#ifdef GL_OES_standard_derivatives\n" +
+            "#extension GL_OES_standard_derivatives : enable\n" +
+            "#endif\n" +
+            "precision highp float;\n" +
+            "uniform float strength;\n" +
+            "const float uScale = 1.0;\n" +
+            "const float uYrot = 0.0;\n" +
             "uniform sampler2D tex_sampler;\n" +
             "varying vec2 v_texcoord;\n" +
-            "const float step_w = 0.0015625;\n" +
-            "const float step_h = 0.0027778;\n" +
-            "uniform float strength;\n" +
-            "void main(void)\n" +
-            "{\n" +
-            "    float offx = floor(v_texcoord.s  / (strength * step_w));\n" +
-            "    float offy = floor(v_texcoord.t  / (strength * step_h));\n" +
-            "    vec3 res = texture2D(tex_sampler, vec2(offx * strength * step_w , offy * strength * step_h)).bgr;\n" +
-            "    vec2 prc = fract(v_texcoord.st / vec2(strength * step_w, strength * step_h));\n" +
-            "    vec2 pw = pow(abs(prc - 0.5), vec2(2.0));\n" +
-            "    float  rs = pow(0.45, 2.0);\n" +
-            "    float gr = smoothstep(rs - 0.1, rs + 0.1, pw.x + pw.y);\n" +
-            "    float y = (res.r + res.g + res.b) / 3.0; \n" +
-            "    vec3 ra = res / y;\n" +
-            "    float ls = 0.3;\n" +
-            "    float lb = ceil(y / ls);\n" +
-            "    float lf = ls * lb + 0.3;\n" +
-            "    res = lf * res;\n" +
-            "    gl_FragColor.a = 1.0;\n" +
-            "    gl_FragColor.rgb = mix(res, vec3(0.1, 0.1, 0.1), gr);\n" +
+            "float aastep(float threshold, float value) {\n" +
+            "  float afwidth = strength * (1.0/200.0) / uScale / cos(uYrot);\n" +
+            "  return smoothstep(threshold-afwidth, threshold+afwidth, value);\n" +
+            "}\n" +
+            "void main() {\n" +
+            "    vec2 st2 = mat2(0.707, -0.707, 0.707, 0.707) * v_texcoord;\n" +
+            "    vec2 nearest = 2.0*fract(strength * st2) - 1.0;\n" +
+            "    float dist = length(nearest);\n" +
+            "    // Use a texture to modulate the size of the dots\n" +
+            "    vec3 texcolor = texture2D(tex_sampler, v_texcoord).rgb;\n" +
+            "    float radius = sqrt(1.0-texcolor.g);\n" +
+            "    vec3 white = vec3(1.0, 1.0, 1.0);\n" +
+            "    vec3 black = vec3(0.0, 0.0, 0.0);\n" +
+            "    vec3 fragcolor = mix(black, white, aastep(radius, dist));\n" +
+            "    gl_FragColor = vec4(fragcolor, 1.0);\n" +
             "}";
 
-    private float mStrength = 16.0f;
+    private float mStrength = 80.0f;
     private int mStepsHandle;
 
     /**

@@ -23,6 +23,7 @@ package com.ruesga.android.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
@@ -33,6 +34,10 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
  * </table>
  */
 public class ScanlinesEffect extends PhotoPhaseEffect {
+
+    private static final String TAG = "ScanlinesEffect";
+
+    public static final String STRENGTH_PARAMETER = "strength";
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
@@ -50,6 +55,8 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
 
     private int mFrequencyHandle;
     private int mOffsetHandle;
+
+    private float mStrength = 6f;
 
     /**
      * Constructor of <code>ScanlinesEffect</code>.
@@ -73,7 +80,7 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
      */
     @Override
     void applyParameters(int width, int height) {
-        float mFrequency = height / 6f;
+        float mFrequency = height / mStrength;
         float mOffset = 0f;
 
         // Set parameters
@@ -83,4 +90,22 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
         GLESUtil.glesCheckError("glUniform1f");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setParameter(String parameterKey, Object value) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+            try {
+                float strength = Float.parseFloat(value.toString());
+                if (strength < 0) {
+                    Log.w(TAG, "strength parameter must be > 0");
+                    return;
+                }
+                mStrength = strength;
+            } catch (NumberFormatException ex) {
+                // Ignore
+            }
+        }
+    }
 }

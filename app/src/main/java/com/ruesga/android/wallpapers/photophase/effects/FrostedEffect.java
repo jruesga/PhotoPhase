@@ -22,6 +22,10 @@
 package com.ruesga.android.wallpapers.photophase.effects;
 
 import android.media.effect.EffectContext;
+import android.opengl.GLES20;
+import android.util.Log;
+
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
  * A crosshatching effect<br/>
@@ -31,11 +35,15 @@ import android.media.effect.EffectContext;
  */
 public class FrostedEffect extends PhotoPhaseEffect {
 
+    private static final String TAG = "FrostedEffect";
+
+    public static final String STRENGTH_PARAMETER = "strength";
+
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
             "uniform sampler2D tex_sampler;\n" +
+            "uniform float strength;\n" +
             "varying vec2 v_texcoord;\n" +
-            "const float rnd_factor = 0.05;\n" +
             "const float rnd_scale = 5.1;\n" +
             "const vec2 v1 = vec2(92.,80.);\n" +
             "const vec2 v2 = vec2(41.,62.);\n" +
@@ -47,9 +55,12 @@ public class FrostedEffect extends PhotoPhaseEffect {
             "{\n" +
             "  vec2 uv = v_texcoord;\n" +
             "  vec2 rnd = vec2(rand(uv.xy),rand(uv.yx));  \n" +
-            "  vec3 tc = texture2D(tex_sampler, uv+rnd*rnd_factor).rgb;  \n" +
+            "  vec3 tc = texture2D(tex_sampler, uv+rnd*strength).rgb;  \n" +
             "  gl_FragColor = vec4(tc, 1.0);\n" +
             "}";
+
+    private float mStrength = 0.10f;
+    private int mStrengthHandle;
 
     /**
      * Constructor of <code>CrossHatchingEffect</code>.
@@ -60,6 +71,39 @@ public class FrostedEffect extends PhotoPhaseEffect {
     public FrostedEffect(EffectContext ctx, String name) {
         super(ctx, FrostedEffect.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
+
+        // Parameters
+        mStrengthHandle = GLES20.glGetUniformLocation(mProgram[0], "strength");
+        GLESUtil.glesCheckError("glGetUniformLocation");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void applyParameters(int width, int height) {
+        // Set parameters
+        GLES20.glUniform1f(mStrengthHandle, mStrength);
+        GLESUtil.glesCheckError("glUniform1f");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setParameter(String parameterKey, Object value) {
+        if (parameterKey.compareTo(STRENGTH_PARAMETER) == 0) {
+            try {
+                float strength = Float.parseFloat(value.toString());
+                if (strength < 0) {
+                    Log.w(TAG, "strength parameter must be > 0");
+                    return;
+                }
+                mStrength = strength;
+            } catch (NumberFormatException ex) {
+                // Ignore
+            }
+        }
     }
 
 }
