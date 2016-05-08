@@ -69,4 +69,12 @@ public class BordersFactory {
      * </table>
      */
     public static final String BORDER_VERTICAL_FILM = "com.ruesga.android.wallpapers.photophase.borders.VerticalFilmBorder";
+    /**
+     * <p>An elegant border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_ELEGANT = "com.ruesga.android.wallpapers.photophase.borders.ElegantBorder";
 }

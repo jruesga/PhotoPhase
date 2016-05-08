@@ -196,6 +196,7 @@
     <string name="borders_rounded_squares">Rounded squares</string>
     <string name="borders_horizontal_film">Horizontal film</string>
     <string name="borders_vertical_film">Vertical film</string>
+    <string name="borders_elegant">Elegant</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>

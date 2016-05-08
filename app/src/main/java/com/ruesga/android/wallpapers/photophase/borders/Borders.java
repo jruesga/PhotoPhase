@@ -59,7 +59,11 @@ public class Borders {
         /**
          * @see BordersFactory#BORDER_VERTICAL_FILM
          */
-        VERTICAL_FILM(5);
+        VERTICAL_FILM(5),
+        /**
+         * @see BordersFactory#BORDER_ELEGANT
+         */
+        ELEGANT(6);
 
         public final int mId;
         BORDERS(int id) {
@@ -137,6 +141,7 @@ public class Borders {
         if (mCachedBorders.containsKey(nextBorder)) {
             border = mCachedBorders.get(nextBorder);
             border.mColor = Colors.getBorder();
+            border.mBgColor = Colors.getBackground();
             return border;
         }
 
@@ -165,6 +170,10 @@ public class Borders {
             if (EffectFactory.isEffectSupported(BordersFactory.BORDER_VERTICAL_FILM)) {
                 border = (Border) effectFactory.createEffect(BordersFactory.BORDER_VERTICAL_FILM);
             }
+        } else if (nextBorder.compareTo(BORDERS.ELEGANT) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_ELEGANT)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_ELEGANT);
+            }
         }
 
         // Instead of not to apply any border, just use one null border to follow the same
@@ -177,7 +186,8 @@ public class Borders {
 
         // Set the color
         if (border != null) {
-            border.mColor = Preferences.General.Borders.getBorderColor(mContext);
+            border.mColor = Colors.getBorder();
+            border.mBgColor = Colors.getBackground();
 
             // Cache the effects
             mCachedBorders.put(nextBorder, border);

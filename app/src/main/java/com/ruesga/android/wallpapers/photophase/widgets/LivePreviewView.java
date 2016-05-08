@@ -94,6 +94,7 @@ public class LivePreviewView extends GLSurfaceView {
                 mEffect = mEffectsFactory.getEffect(mEffectType);
                 mBordersFactory = new Borders(mContext, mEffectContext);
                 mBorder = mBordersFactory.getBorder(mBorderType);
+                mBorder.mBgColor = mBackgroundColor;
                 mTextureManager = new SimpleTextureManager(mContext, mEffect, mBorder);
                 mTransition = Transitions.createTransition(mContext, mTextureManager, mTransitionType);
             }

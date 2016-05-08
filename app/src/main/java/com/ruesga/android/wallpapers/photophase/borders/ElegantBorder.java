@@ -24,17 +24,18 @@ import android.util.Log;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 
 /**
- * This horizontal film border around the texture.<br/>
+ * This elegant border around the texture.<br/>
  * <table>
  * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
  * </table>
  */
-public class HorizontalFilmBorder extends Border {
+public class ElegantBorder extends Border {
 
-    private static final String TAG = "HorizontalFilmBorder";
+    private static final String TAG = "ElegantBorder";
 
     public static final String STRENGTH_PARAMETER = "strength";
     public static final String COLOR_PARAMETER = "color";
+    public static final String BGCOLOR_PARAMETER = "bgcolor";
 
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n" +
@@ -42,28 +43,42 @@ public class HorizontalFilmBorder extends Border {
             "uniform float w;\n" +
             "uniform float h;\n" +
             "uniform vec4 color;\n" +
+            "uniform vec4 bgcolor;\n" +
             "uniform float strength;\n" +
             "varying vec2 v_texcoord;\n" +
-            "const float m1 = 0.175;\n" +
-            "const float m2 = 0.06;\n" +
-            "bool is_film_border(vec2 p, float b) {\n" +
-            "  return p.y < (0.0 + b)\n" +
+            "bool is_border(vec2 p, float b) {\n" +
+            "  return p.x < (0.0 + b)\n" +
+            "      || p.x > (1.0 - b)\n" +
+            "      || p.y < (0.0 + b)\n" +
             "      || p.y > (1.0 - b);\n" +
             "}\n" +
-            "bool is_film_track(vec2 p, float b, float t) {\n" +
-            "  if (!((p.y < (0.0 + b/2.0 + t/2.0)\n" +
-            "        && p.y > (0.0 + b/2.0 - t/2.0))\n" +
-            "        || (p.y < (1.0 - b/2.0 + t/2.0)\n" +
-            "        && p.y > (1.0 - b/2.0 - t/2.0)))) {\n" +
-            "    return false;\n" +
-            "  }\n" +
-            "  return (mod(p.x, m1) < m2);\n" +
-            "}" +
+            "bool is_rounded_border(vec2 p, vec2 c, float r) {\n" +
+            "  float dx = (c.x - p.x);\n" +
+            "  float dy = (c.y - p.y);\n" +
+            "  dx *= dx;\n" +
+            "  dy *= dy;\n" +
+            "  return (dx + dy) <= (r * r);\n" +
+            "}\n" +
+            "bool is_square_border(vec2 p, float b) {\n" +
+            "  return (p.x < (0.0 + b*2.0) && p.y > (1.0 - b*2.0))\n" +
+            "      || (p.x > (1.0 - b*2.0) && p.y > (1.0 - b*2.0))\n" +
+            "      || (p.x < (0.0 + b*2.0) && p.y < (0.0 + b*2.0))\n" +
+            "      || (p.x > (1.0 - b*2.0) && p.y < (0.0 + b*2.0));\n" +
+            "}\n" +
             "void main(void)\n" +
             "{\n" +
-            "  float b = strength / w;\n" +
-            "  float t = b / 5.0;\n" +
-            "  if (is_film_border(v_texcoord, b) && !is_film_track(v_texcoord, b, t)) {\n" +
+            "  float b = min(strength / w, strength / h);\n" +
+            "  vec2 clt = vec2(0.0, 1.0);\n" +
+            "  vec2 crt = vec2(1.0, 1.0);\n" +
+            "  vec2 clb = vec2(0.0, 0.0);\n" +
+            "  vec2 crb = vec2(1.0, 0.0);\n" +
+            "  if (is_rounded_border(v_texcoord, clt, b)\n" +
+            "    || is_rounded_border(v_texcoord, crt, b)\n" +
+            "    || is_rounded_border(v_texcoord, crb, b)\n" +
+            "    || is_rounded_border(v_texcoord, clb, b)) {\n" +
+            "    gl_FragColor = bgcolor;\n" +
+            "  }\n" +
+            "  else if (is_border(v_texcoord, b) || is_square_border(v_texcoord, b)) {\n" +
             "    vec4 tex = texture2D (tex_sampler, v_texcoord);\n" +
             "    float r = tex.r + (color.r - tex.r) * color.a;\n" +
             "    float g = tex.g + (color.g - tex.g) * color.a;\n" +
@@ -74,21 +89,22 @@ public class HorizontalFilmBorder extends Border {
             "  }\n" +
             "}";
 
-    private float mStrength = 75;
+    private float mStrength = 25;
 
     private int mColorHandle;
+    private int mBgColorHandle;
     private int mWidthHandle;
     private int mHeightHandle;
     private int mStrengthHandle;
 
     /**
-     * Constructor of <code>HorizontalFilmBorder</code>.
+     * Constructor of <code>RoundedBorder</code>.
      *
      * @param ctx The effect context
      * @param name The effect name
      */
-    public HorizontalFilmBorder(EffectContext ctx, String name) {
-        super(ctx, HorizontalFilmBorder.class.getName());
+    public ElegantBorder(EffectContext ctx, String name) {
+        super(ctx, ElegantBorder.class.getName());
         init(VERTEX_SHADER, FRAGMENT_SHADER);
 
         // Parameters
@@ -99,6 +115,8 @@ public class HorizontalFilmBorder extends Border {
         mStrengthHandle = GLES20.glGetUniformLocation(mProgram[0], STRENGTH_PARAMETER);
         GLESUtil.glesCheckError("glGetUniformLocation");
         mColorHandle = GLES20.glGetUniformLocation(mProgram[0], COLOR_PARAMETER);
+        GLESUtil.glesCheckError("glGetUniformLocation");
+        mBgColorHandle = GLES20.glGetUniformLocation(mProgram[0], BGCOLOR_PARAMETER);
         GLESUtil.glesCheckError("glGetUniformLocation");
     }
 
@@ -115,6 +133,8 @@ public class HorizontalFilmBorder extends Border {
         GLES20.glUniform1f(mStrengthHandle, mStrength);
         GLESUtil.glesCheckError("glUniform1f");
         GLES20.glUniform4fv(mColorHandle, 1, mColor.asVec4(), 0);
+        GLESUtil.glesCheckError("glUniform4fv");
+        GLES20.glUniform4fv(mBgColorHandle, 1, mBgColor.asVec4(), 0);
         GLESUtil.glesCheckError("glUniform4fv");
     }
 

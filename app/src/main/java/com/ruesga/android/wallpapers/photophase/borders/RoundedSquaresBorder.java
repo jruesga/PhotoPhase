@@ -31,7 +31,7 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
  */
 public class RoundedSquaresBorder extends Border {
 
-    private static final String TAG = "SimpleBorder";
+    private static final String TAG = "RoundedSquaresBorder";
 
     public static final String STRENGTH_PARAMETER = "strength";
     public static final String COLOR_PARAMETER = "color";
