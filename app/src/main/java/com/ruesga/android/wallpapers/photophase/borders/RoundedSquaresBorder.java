@@ -78,7 +78,7 @@ public class RoundedSquaresBorder extends Border {
             "  }\n" +
             "}";
 
-    private float mStrength = 25;
+    private float mStrength = 50;
 
     private int mColorHandle;
     private int mWidthHandle;
