@@ -70,7 +70,11 @@ public class Transitions {
         /**
          * @see MixTransition
          */
-        MIX(9);
+        MIX(9),
+        /**
+         * @see ApertureTransition
+         */
+        APERTURE(10);
 
         public final int mId;
         TRANSITIONS(int id) {
@@ -126,6 +130,8 @@ public class Transitions {
             return TRANSITIONS.VERTIGO;
         } else if (nextTransition.compareTo(TRANSITIONS.MIX) == 0) {
             return TRANSITIONS.MIX;
+        } else if (nextTransition.compareTo(TRANSITIONS.APERTURE) == 0) {
+            return TRANSITIONS.APERTURE;
         }
         return TRANSITIONS.NO_TRANSITION;
     }
@@ -157,6 +163,8 @@ public class Transitions {
             return new VertigoTransition(ctx, tm);
         } else if (type.compareTo(TRANSITIONS.MIX) == 0) {
             return new MixTransition(ctx, tm);
+        } else if (type.compareTo(TRANSITIONS.APERTURE) == 0) {
+            return new ApertureTransition(ctx, tm);
         }
         return new NullTransition(ctx, tm);
     }

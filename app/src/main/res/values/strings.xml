@@ -156,6 +156,7 @@
     <string name="transitions_window">Window</string>
     <string name="transitions_vertigo">Vertigo</string>
     <string name="transitions_mix">Mix</string>
+    <string name="transitions_aperture">Aperture</string>
 
     <!-- Effects -->
     <string name="effects_noeffect">Normal</string>
