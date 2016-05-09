@@ -198,8 +198,7 @@ public class LivePreviewView extends GLSurfaceView {
         public void requestTransition() {
             synchronized (mLock) {
                 if (!mRecycled) {
-                    if (!(mTransition instanceof NullTransition)
-                            && mTransition.hasTransitionTarget()) {
+                    if (mTransition.hasTransitionTarget()) {
                         mTransition.swapTargets();
                     }
                     mTransition.chooseMode();
