@@ -18,9 +18,7 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLException;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
@@ -68,15 +66,6 @@ public class TranslateTransition extends Transition {
 
     private TRANSLATE_MODES mMode;
 
-    private boolean mRunning;
-    private long mTime;
-
-    /**
-     * Constructor of <code>TranslateTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public TranslateTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -84,58 +73,32 @@ public class TranslateTransition extends Transition {
         reset();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TRANSITIONS getType() {
         return TRANSITIONS.TRANSLATE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public float getTransitionTime() {
+        return TRANSITION_TIME;
+    }
+
     @Override
     public boolean hasTransitionTarget() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void select(PhotoFrame target) {
         super.select(target);
-
-        // choose a random mode
         chooseMode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isSelectable(PhotoFrame frame) {
         float[] vertex = frame.getFrameVertex();
         return vertex[4] == -1.0f || vertex[6] == 1.0f ||
                 vertex[5] == 1.0f || vertex[1] == -1.0f;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        mTime = -1;
-        mRunning = true;
     }
 
     @Override
@@ -162,49 +125,15 @@ public class TranslateTransition extends Transition {
         mMode = modes.get(Utils.getNextRandom(low, high));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-        if (mTransitionTarget == null ||
-            mTransitionTarget.getPositionBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Set the time the first time
-        if (mTime == -1) {
-            mTime = SystemClock.uptimeMillis();
-        }
-
-        // Calculate the delta time
-        final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
-
+    public void applyTransition(float delta, float[] matrix) {
         // Apply the transition
         applyTransitionToDst(matrix);
         if (delta < 1) {
             applyTransitionToSrc(delta, matrix);
         }
-
-        // Transition ending
-        if (delta == 1) {
-            mRunning = false;
-        }
     }
 
-    /**
-     * Apply the transition to the source frame
-     *
-     * @param delta The delta time
-     * @param matrix The model-view-projection matrix
-     */
     private void applyTransitionToSrc(float delta, float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -274,11 +203,6 @@ public class TranslateTransition extends Transition {
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
     }
 
-    /**
-     * Apply the transition to the destination frame
-     *
-     * @param matrix The model-view-projection matrix
-     */
     private void applyTransitionToDst(float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);

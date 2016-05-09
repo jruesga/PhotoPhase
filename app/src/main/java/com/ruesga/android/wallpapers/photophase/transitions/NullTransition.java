@@ -18,7 +18,6 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLException;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
@@ -37,78 +36,30 @@ public class NullTransition extends Transition {
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.default_fragment_shader};
 
-    /**
-     * Constructor of <code>NullTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public NullTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TRANSITIONS getType() {
         return TRANSITIONS.NO_TRANSITION;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean hasTransitionTarget() {
-        return false;
+    public float getTransitionTime() {
+        return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isRunning() {
         return mTarget == null || !mTarget.isLoaded();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean isSelectable(PhotoFrame frame) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        // Nothing to do
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Draw the current target
+    public void applyTransition(float delta, float[] matrix) {
         draw(mTarget, matrix);
     }
 
-    /**
-     * Method that draws the picture texture
-     *
-     * @param target The target to draw
-     * @param matrix The model-view-projection matrix
-     */
     protected void draw(PhotoFrame target, float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);

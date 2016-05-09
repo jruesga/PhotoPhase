@@ -17,8 +17,6 @@
 package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
-import android.opengl.GLException;
-import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
@@ -30,82 +28,33 @@ public class SwapTransition extends NullTransition {
 
     private static final float TRANSITION_TIME = 250.0f;
 
-    private boolean mRunning;
-    private long mTime;
-
-    /**
-     * Constructor of <code>SwapTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public SwapTransition(Context ctx, TextureManager tm) {
         super(ctx, tm);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TRANSITIONS getType() {
         return TRANSITIONS.SWAP;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public float getTransitionTime() {
+        return TRANSITION_TIME;
+    }
+
     @Override
     public boolean hasTransitionTarget() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isRunning() {
         return mRunning;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void reset() {
-        super.reset();
-        mTime = -1;
-        mRunning = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-        if (mTransitionTarget == null ||
-            mTransitionTarget.getPositionBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Set the time the first time
-        if (mTime == -1) {
-            mTime = SystemClock.uptimeMillis();
-        }
-
-        // Calculate the delta time
-        final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
-
-        // Apply the transition
-        boolean ended = delta == 1;
-        draw(ended ? mTransitionTarget : mTarget, matrix);
-        mRunning = !ended;
+    public void applyTransition(float delta, float[] matrix) {
+        draw(delta < 0.5f ? mTransitionTarget : mTarget, matrix);
     }
 
 }

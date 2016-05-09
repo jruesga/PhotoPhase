@@ -18,10 +18,7 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLException;
-import android.os.SystemClock;
 
-import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
@@ -39,18 +36,9 @@ public class ApertureTransition extends Transition {
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.aperture_fragment_shader};
 
-    private boolean mRunning;
-    private long mTime;
-
     protected int mTargetTextureHandler;
     private int mRadiusHandler;
 
-    /**
-     * Constructor of <code>ApertureTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public ApertureTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -60,91 +48,26 @@ public class ApertureTransition extends Transition {
         GLESUtil.glesCheckError("glGetUniformLocation");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TRANSITIONS getType() {
         return TRANSITIONS.APERTURE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public float getTransitionTime() {
+        return TRANSITION_TIME;
+    }
+
     @Override
     public boolean hasTransitionTarget() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSelectable(PhotoFrame frame) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        mTime = -1;
-        mRunning = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void select(PhotoFrame target) {
-        super.select(target);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-        if (mTransitionTarget == null ||
-            mTransitionTarget.getPositionBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Set the time the first time
-        if (mTime == -1) {
-            mTime = SystemClock.uptimeMillis();
-        }
-
-        final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
+    public void applyTransition(float delta, float[] matrix) {
         draw(matrix, delta);
-
-        // Transition ended
-        if (delta == 1) {
-            mRunning = false;
-        }
     }
 
-    /**
-     * Method that draws the picture texture
-     *
-     * @param matrix The model-view-projection matrix
-     */
     protected void draw(float[] matrix, float radius) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -190,8 +113,6 @@ public class ApertureTransition extends Transition {
         GLESUtil.glesCheckError("glBindTexture");
         GLES20.glUniform1i(mTextureHandlers[0], 0);
         GLESUtil.glesCheckError("glUniform1i");
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-//        GLESUtil.glesCheckError("glDrawElements");
 
         // Texture 2
         int targetTexture = mTransitionTarget.getTextureHandle();

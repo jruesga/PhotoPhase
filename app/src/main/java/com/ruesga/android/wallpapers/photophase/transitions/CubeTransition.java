@@ -18,9 +18,7 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLException;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
@@ -64,21 +62,12 @@ public class CubeTransition extends Transition {
 
     private WINDOW_MODES mMode;
 
-    private boolean mRunning;
-    private long mTime;
-
     private FloatBuffer mPositionBuffer;
     private float[] mTranslationMatrix;
     private float[] mVertex;
 
     private float mAmount;
 
-    /**
-     * Constructor of <code>CubeTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public CubeTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -87,33 +76,21 @@ public class CubeTransition extends Transition {
         reset();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TRANSITIONS getType() {
         return TRANSITIONS.CUBE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public float getTransitionTime() {
+        return TRANSITION_TIME;
+    }
+
     @Override
     public boolean hasTransitionTarget() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void select(PhotoFrame target) {
         super.select(target);
@@ -122,7 +99,8 @@ public class CubeTransition extends Transition {
         // Create the interal buffer
         float[] vertex = target.getFrameVertex();
         if (mPositionBuffer == null) {
-            ByteBuffer bb = ByteBuffer.allocateDirect(vertex.length * 4); // (# of coordinate values * 4 bytes per float)
+            // (# of coordinate values * 4 bytes per float)
+            ByteBuffer bb = ByteBuffer.allocateDirect(vertex.length * 4);
             bb.order(ByteOrder.nativeOrder());
             mPositionBuffer = bb.asFloatBuffer();
         }
@@ -134,23 +112,6 @@ public class CubeTransition extends Transition {
         chooseMode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSelectable(PhotoFrame frame) {
-            return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        mTime = -1;
-        mRunning = true;
-    }
-
     @Override
     public void chooseMode() {
         List<WINDOW_MODES> modes = new ArrayList<>(Arrays.asList(WINDOW_MODES.values()));
@@ -159,51 +120,16 @@ public class CubeTransition extends Transition {
         mMode = modes.get(Utils.getNextRandom(low, high));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-        if (mTransitionTarget == null ||
-            mTransitionTarget.getPositionBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Set the time the first time
-        if (mTime == -1) {
-            mTime = SystemClock.uptimeMillis();
-        }
-
-        // Calculate the delta time
-        final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
-
-        // Apply the transition
+    public void applyTransition(float delta, float[] matrix) {
         if (delta < 1) {
             applyDstTransition(delta, matrix);
             applySrcTransition(delta, matrix);
         } else {
             applyFinalTransition(matrix);
         }
-
-        // Transition ending
-        if (delta == 1) {
-            mRunning = false;
-        }
     }
 
-    /**
-     * Apply the source transition
-     *
-     * @param delta The delta time
-     * @param matrix The model-view-projection matrix
-     */
     private void applySrcTransition(float delta, float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -302,14 +228,8 @@ public class CubeTransition extends Transition {
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
     }
 
-    /**
-     * Apply the destination transition
-     *
-     * @param delta The delta time
-     * @param matrix The model-view-projection matrix
-     */
     private void applyDstTransition(float delta, float[] matrix) {
-     // Bind default FBO
+        // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
 
@@ -406,11 +326,6 @@ public class CubeTransition extends Transition {
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
     }
 
-    /**
-     * Apply the destination transition (just draw the image)
-     *
-     * @param matrix The model-view-projection matrix
-     */
     private void applyFinalTransition(float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -463,19 +378,11 @@ public class CubeTransition extends Transition {
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
     }
 
-    /**
-     * Method that prepares the internal vertex array
-     */
     private void setInternalVertex() {
         float[] originalVertex = mTarget.getFrameVertex();
         System.arraycopy(originalVertex, 0, mVertex, 0, originalVertex.length);
     }
 
-    /**
-     * Return the scale amount to apply to the transition
-     *
-     * @return float The scale amount
-     */
     private float getAmount() {
         return ((mTarget.getFrameWidth() * SCALE_AMOUNT) / 2);
     }

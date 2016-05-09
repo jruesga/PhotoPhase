@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
@@ -46,6 +47,9 @@ public abstract class Transition {
 
     private final int[] mVertexShader;
     private final int[] mFragmentShader;
+
+    protected long mTime;
+    protected boolean mRunning;
 
     /**
      * Constructor of <code>Transition</code>
@@ -113,24 +117,29 @@ public abstract class Transition {
         return mTransitionTarget;
     }
 
-    public void swapTargets() {
-        PhotoFrame target = mTransitionTarget;
-        mTransitionTarget = mTarget;
-        mTarget = target;
-    }
-
     /**
      * Method that returns if the transition is selectable for the passed frame.
      *
      * @param frame The frame which the transition should be applied to
      * @return boolean If the transition is selectable for the passed frame
      */
-    public abstract boolean isSelectable(PhotoFrame frame);
+    public boolean isSelectable(PhotoFrame frame) {
+        return true;
+    }
 
     /**
      * Method that resets the current status of the transition.
      */
-    public abstract void reset();
+    public void reset() {
+        mTime = -1;
+        mRunning = true;
+    }
+
+    public void swapTargets() {
+        PhotoFrame target = mTransitionTarget;
+        mTransitionTarget = mTarget;
+        mTarget = target;
+    }
 
     /**
      * Method that request a new mode
@@ -146,25 +155,59 @@ public abstract class Transition {
     public abstract TRANSITIONS getType();
 
     /**
+     * Returns the transition time
+     */
+    public abstract float getTransitionTime();
+
+    /**
      * Method that requests to apply this transition.
      *
      * @param matrix The model-view-projection matrix
      */
-    public abstract void apply(float[] matrix);
+    public final void apply(float[] matrix) {
+        // Check internal vars
+        if (mTarget == null ||
+                mTarget.getPositionBuffer() == null ||
+                mTarget.getTextureBuffer() == null) {
+            return;
+        }
+        if (hasTransitionTarget() &&
+                (mTransitionTarget == null ||
+                mTransitionTarget.getPositionBuffer() == null ||
+                mTransitionTarget.getTextureBuffer() == null)) {
+            return;
+        }
+
+        // Set the time the first time
+        if (mTime == -1) {
+            mTime = SystemClock.uptimeMillis();
+        }
+
+        float delta = getDelta();
+        applyTransition(delta, matrix);
+
+        mRunning = delta < 1;
+    }
+
+    protected abstract void applyTransition(float delta, float[] matrix);
 
     /**
      * Method that returns if the transition is being transition.
      *
      * @return boolean If the transition is being transition.
      */
-    public abstract boolean isRunning();
+    public boolean isRunning() {
+        return mRunning;
+    }
 
     /**
      * Method that return if the transition has a secondary target
      *
      * @return boolean If the transition has a secondary target
      */
-    public abstract boolean hasTransitionTarget();
+    public boolean hasTransitionTarget() {
+        return false;
+    }
 
     /**
      * Method that creates the program
@@ -221,5 +264,9 @@ public abstract class Transition {
         }
         mTransitionTarget = null;
         mTarget = null;
+    }
+
+    protected float getDelta() {
+        return Math.min(SystemClock.uptimeMillis() - mTime, getTransitionTime()) / getTransitionTime();
     }
 }

@@ -18,8 +18,6 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLException;
-import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
@@ -39,19 +37,10 @@ public class VertigoTransition extends Transition {
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.vertigo_fragment_shader};
 
-    private boolean mRunning;
-    private long mTime;
-
     private int mWidthHandle;
     private int mHeightHandle;
     private int mRadiusHandle;
 
-    /**
-     * Constructor of <code>FadeTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public VertigoTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -63,70 +52,23 @@ public class VertigoTransition extends Transition {
         GLESUtil.glesCheckError("glGetUniformLocation");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TRANSITIONS getType() {
         return TRANSITIONS.VERTIGO;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public float getTransitionTime() {
+        return TRANSITION_TIME;
+    }
+
     @Override
     public boolean hasTransitionTarget() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSelectable(PhotoFrame frame) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        mTime = -1;
-        mRunning = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-        if (mTransitionTarget == null ||
-            mTransitionTarget.getPositionBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Set the time the first time
-        if (mTime == -1) {
-            mTime = SystemClock.uptimeMillis();
-        }
-
-        final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
+    public void applyTransition(float delta, float[] matrix) {
         if (delta <= 0.5) {
             // Draw the src target
             float strength = delta * 2.0f;
@@ -136,19 +78,8 @@ public class VertigoTransition extends Transition {
             float strength = (1 - delta) * 2.0f;
             draw(mTransitionTarget, matrix, strength);
         }
-
-        // Transition ended
-        if (delta == 1) {
-            mRunning = false;
-        }
     }
 
-    /**
-     * Method that draws the picture texture
-     *
-     * @param target The target to draw
-     * @param matrix The model-view-projection matrix
-     */
     protected void draw(PhotoFrame target, float[] matrix, float strength) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);

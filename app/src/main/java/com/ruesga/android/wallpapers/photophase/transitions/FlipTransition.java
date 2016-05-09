@@ -18,9 +18,7 @@ package com.ruesga.android.wallpapers.photophase.transitions;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLException;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.R;
@@ -59,15 +57,6 @@ public class FlipTransition extends Transition {
 
     private float[] mTranslationMatrix;
 
-    private boolean mRunning;
-    private long mTime;
-
-    /**
-     * Constructor of <code>FlipTransition</code>
-     *
-     * @param ctx The current context
-     * @param tm The texture manager
-     */
     public FlipTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -84,48 +73,21 @@ public class FlipTransition extends Transition {
         return TRANSITIONS.FLIP;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public float getTransitionTime() {
+        return TRANSITION_TIME;
+    }
+
     @Override
     public boolean hasTransitionTarget() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void select(PhotoFrame target) {
         super.select(target);
-
-        // Random mode
         chooseMode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSelectable(PhotoFrame frame) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        mTime = -1;
-        mRunning = true;
     }
 
     @Override
@@ -136,47 +98,11 @@ public class FlipTransition extends Transition {
         mMode = modes[Utils.getNextRandom(low, high)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void apply(float[] matrix) throws GLException {
-        // Check internal vars
-        if (mTarget == null ||
-            mTarget.getPositionBuffer() == null ||
-            mTarget.getTextureBuffer() == null) {
-            return;
-        }
-        if (mTransitionTarget == null ||
-            mTransitionTarget.getPositionBuffer() == null ||
-            mTransitionTarget.getTextureBuffer() == null) {
-            return;
-        }
-
-        // Set the time the first time
-        if (mTime == -1) {
-            mTime = SystemClock.uptimeMillis();
-        }
-
-        // Calculate the delta time
-        final float delta = Math.min(SystemClock.uptimeMillis() - mTime, TRANSITION_TIME) / TRANSITION_TIME;
-
-        // Apply the transition
+    public void applyTransition(float delta, float[] matrix) {
         applyTransition(delta, matrix, delta <= 0.5 ? mTarget : mTransitionTarget);
-
-        // Transition ending
-        if (delta == 1) {
-            mRunning = false;
-        }
     }
 
-    /**
-     * Apply the transition
-     *
-     * @param delta The delta time
-     * @param matrix The model-view-projection matrix
-     * @param target The photo frame target
-     */
     private void applyTransition(float delta, float[] matrix, PhotoFrame target) {
         // Retrieve the index of the structures
         int index = delta <= 0.5f ? 0 : 1;
