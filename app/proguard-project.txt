@@ -1,1 +1,22 @@
+#don't warn
 -dontwarn okio.**
+
+
+#keep preference's classes
+-keep public class * extends android.preference.PreferenceFragment {
+    public <init>(...);
+}
+-keep public class * extends android.preference.Preference {
+    public <init>(...);
+}
+
+#keep effects, transitions and borders classes public
+-keep public class com.ruesga.android.wallpapers.photophase.effects.* {
+    public <init>(...);
+}
+-keep public class com.ruesga.android.wallpapers.photophase.borders.* {
+    public <init>(...);
+}
+-keep public class com.ruesga.android.wallpapers.photophase.transitions.* {
+    public <init>(...);
+}
