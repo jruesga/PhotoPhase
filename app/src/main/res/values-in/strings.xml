@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Live Wallpaper</string>
   <string name="no_pictures_oops_msg">Tidak ada gambar yang ditemukan</string>
   <string name="mnu_restore">Kembalikan</string>
   <string name="mnu_delete">Hapus</string>
-  <string name="mnu_settings">Pengaturan</string>
   <string name="mnu_select_all">Pilih semua</string>
   <string name="mnu_deselect_all">Batalkan pilih semua</string>
   <string name="mnu_invert">Balikkan</string>
@@ -130,5 +129,4 @@
   <string name="color_picker_current_text">Saat ini:</string>
   <string name="color_picker_new_text">Baru:</string>
   <string name="color_picker_color">Warna:</string>
-  <string name="changelog_title">Daftar perubahan</string>
 </resources>

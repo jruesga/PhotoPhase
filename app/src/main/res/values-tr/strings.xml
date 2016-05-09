@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Canlı Duvar Kağıdı</string>
   <string name="no_pictures_oops_msg">Resim bulunamadı</string>
   <string name="mnu_restore">Geri yükle</string>
   <string name="mnu_delete">Sil</string>
-  <string name="mnu_settings">Ayarlar</string>
   <string name="mnu_select_all">Tümünü seç</string>
   <string name="mnu_deselect_all">Tüm seçilenleri kaldır</string>
   <string name="mnu_invert">Ters çevir</string>
@@ -130,5 +129,4 @@
   <string name="color_picker_current_text">Şimdiki:</string>
   <string name="color_picker_new_text">Yeni:</string>
   <string name="color_picker_color">Renk:</string>
-  <string name="changelog_title">Değişiklik kaydı</string>
 </resources>

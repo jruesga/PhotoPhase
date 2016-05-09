@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Animirana Pozadina</string>
   <string name="no_pictures_oops_msg">Nema pronađenih slika</string>
   <string name="mnu_restore">Vraćanje</string>
   <string name="mnu_delete">Obriši</string>
-  <string name="mnu_settings">Postavke</string>
   <string name="mnu_select_all">Odaberi sve</string>
   <string name="mnu_deselect_all">Poništi sve odabire</string>
   <string name="mnu_invert">Invertni</string>
@@ -132,5 +131,4 @@
   <string name="color_picker_current_text">Aktualno:</string>
   <string name="color_picker_new_text">Novo:</string>
   <string name="color_picker_color">Boja:</string>
-  <string name="changelog_title">Noviteti</string>
 </resources>

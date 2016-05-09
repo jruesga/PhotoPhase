@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase dzīvā tapete</string>
   <string name="no_pictures_oops_msg">Attēli netika atrasti</string>
   <string name="mnu_restore">Atjaunot</string>
   <string name="mnu_delete">Izdzēst</string>
-  <string name="mnu_settings">Iestatījumi</string>
   <string name="mnu_select_all">Atlasīt visu</string>
   <string name="mnu_deselect_all">Atlasīt nevienu</string>
   <string name="mnu_invert">Invertēt</string>
@@ -132,5 +131,4 @@
   <string name="color_picker_current_text">Tekošais:</string>
   <string name="color_picker_new_text">Jaunais:</string>
   <string name="color_picker_color">Krāsa:</string>
-  <string name="changelog_title">Izmaiņu žurnāls</string>
 </resources>

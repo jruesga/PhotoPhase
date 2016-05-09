@@ -259,6 +259,7 @@ public abstract class DispositionFragment extends PreferenceFragment
         allDispositions.addAll(getSystemDefinedDispositions(rows, cols));
         return allDispositions;
     }
+
     /**
      * Method that returns the system-defined dispositions templates
      *

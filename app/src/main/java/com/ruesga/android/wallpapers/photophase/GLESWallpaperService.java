@@ -95,7 +95,6 @@ public abstract class GLESWallpaperService extends EGLWallpaperService {
          */
         public void setGLESEngineListener(GLESEngineListener listener) {
             mListener = listener;
-            setEGLEngineListener(listener);
         }
 
         /**
@@ -197,7 +196,7 @@ public abstract class GLESWallpaperService extends EGLWallpaperService {
                     // if they open up a settings dialog that appears over the preview, we don’t
                     // want to pause rendering
                     boolean preview = isPreview();
-                    if (!preview || (preview && mPauseOnPreview)) {
+                    if (!preview || mPauseOnPreview) {
                         getGlSurfaceView().setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                         getGlSurfaceView().onPause();
                         mListener.onPause(mRenderer);

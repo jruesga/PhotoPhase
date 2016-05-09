@@ -48,7 +48,7 @@ public class Dispositions {
      * @return List<Disposition> All the dispositions
      */
     public List<Disposition> getDispositions() {
-        return new ArrayList<Disposition>(mDispositions);
+        return new ArrayList<>(mDispositions);
     }
 
     /**

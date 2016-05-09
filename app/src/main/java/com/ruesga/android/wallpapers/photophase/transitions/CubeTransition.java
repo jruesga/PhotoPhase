@@ -63,7 +63,7 @@ public class CubeTransition extends Transition {
     private WINDOW_MODES mMode;
 
     private FloatBuffer mPositionBuffer;
-    private float[] mTranslationMatrix;
+    private final float[] mTranslationMatrix;
     private float[] mVertex;
 
     private float mAmount;

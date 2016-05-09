@@ -37,6 +37,7 @@
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
+        android:supportsRtl="true"
         tools:ignore="GoogleAppIndexingWarning">
 
         <service

@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase hormairudi bizia</string>
   <string name="no_pictures_oops_msg">Ez da irudirik aurkitu</string>
   <string name="mnu_restore">Berrezarri</string>
   <string name="mnu_delete">Ezabatu</string>
-  <string name="mnu_settings">Ezarpenak</string>
   <string name="mnu_select_all">Dena aukeratu</string>
   <string name="mnu_deselect_all">Ezer ez aukeratu</string>
   <string name="mnu_invert">Alderantzikatu</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Unekoa:</string>
   <string name="color_picker_new_text">Berria:</string>
   <string name="color_picker_color">Kolorea:</string>
-  <string name="changelog_title">Aldaketen erregistroa</string>
 </resources>

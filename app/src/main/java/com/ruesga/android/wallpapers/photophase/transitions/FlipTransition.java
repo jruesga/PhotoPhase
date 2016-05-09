@@ -55,7 +55,7 @@ public class FlipTransition extends Transition {
 
     private FLIP_MODES mMode;
 
-    private float[] mTranslationMatrix;
+    private final float[] mTranslationMatrix;
 
     public FlipTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);

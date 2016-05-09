@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Live Wallpaper</string>
   <string name="no_pictures_oops_msg">هیچ وێنەیەک نەدۆزرایەوە</string>
   <string name="mnu_restore">گێڕانەوە</string>
   <string name="mnu_delete">سڕینەوە</string>
-  <string name="mnu_settings">ڕێکخستنه‌کان</string>
   <string name="mnu_select_all">دیاریکردنی هەمووی</string>
   <string name="mnu_deselect_all">دیارینەکردنی هەمووی</string>
   <string name="mnu_invert">پێچەوانەی دیاریکراو</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">ئێستا:</string>
   <string name="color_picker_new_text">نوێ:</string>
   <string name="color_picker_color">ڕەنگ:</string>
-  <string name="changelog_title">تۆماری گۆرانکاری</string>
 </resources>

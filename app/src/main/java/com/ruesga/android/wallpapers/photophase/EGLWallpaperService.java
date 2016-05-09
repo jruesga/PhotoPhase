@@ -69,15 +69,6 @@ public abstract class EGLWallpaperService extends WallpaperService {
         private WallpaperGLSurfaceView mGlSurfaceView;
 
         /**
-         * Method that sets the EGL engine listener
-         *
-         * @param listener The EGL engine listener
-         */
-        public void setEGLEngineListener(EGLEngineListener listener) {
-            // No methods
-        }
-
-        /**
          * {@inheritDoc}
          */
         @Override

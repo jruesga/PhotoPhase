@@ -29,7 +29,7 @@ import java.util.Random;
  */
 public class Utils {
 
-    private static Random sRandom = new Random();
+    private static final Random sRandom = new Random();
 
     /**
      * This method converts dp unit to equivalent device specific value in pixels.

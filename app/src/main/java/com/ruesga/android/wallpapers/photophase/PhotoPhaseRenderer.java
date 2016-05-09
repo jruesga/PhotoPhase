@@ -67,41 +67,41 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private static long sInstances;
 
     private final boolean mIsPreview;
-    boolean mIsPaused;
-    boolean mRecreateWorld;
+    private boolean mIsPaused;
+    private boolean mRecreateWorld;
 
-    final Context mContext;
-    EffectContext mEffectContext;
+    private final Context mContext;
+    private EffectContext mEffectContext;
     private final Handler mHandler;
-    final GLESSurfaceDispatcher mDispatcher;
-    PhotoPhaseTextureManager mTextureManager;
+    private final GLESSurfaceDispatcher mDispatcher;
+    private PhotoPhaseTextureManager mTextureManager;
 
-    final AlarmManager mAlarmManager;
-    PendingIntent mRecreateDispositionPendingIntent;
+    private final AlarmManager mAlarmManager;
+    private PendingIntent mRecreateDispositionPendingIntent;
 
-    PhotoPhaseWallpaperWorld mWorld;
-    ColorShape mOverlay;
-    OopsShape mOopsShape;
+    private PhotoPhaseWallpaperWorld mWorld;
+    private ColorShape mOverlay;
+    private OopsShape mOopsShape;
 
-    long mLastRunningTransition;
-    long mLastTransition;
+    private long mLastRunningTransition;
+    private long mLastTransition;
 
     private long mLastTouchTime;
     private static final long TOUCH_BARRIER_TIME = 1000L;
 
-    int mWidth = -1;
-    int mHeight = -1;
+    private int mWidth = -1;
+    private int mHeight = -1;
     private int mStatusBarHeight = 0;
-    int mMeasuredHeight  = -1;
+    private int mMeasuredHeight  = -1;
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjMatrix = new float[16];
     private final float[] mVMatrix = new float[16];
 
-    final Object mDrawing = new Object();
+    private final Object mDrawing = new Object();
     private boolean mRecycle;
 
-    final Object mMediaSync = new Object();
+    private final Object mMediaSync = new Object();
     private PendingIntent mMediaScanIntent;
 
     private final BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
@@ -469,13 +469,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /**
      * Method that deselect the current transition
      */
-    synchronized void deselectCurrentTransition() {
+    private synchronized void deselectCurrentTransition() {
         mHandler.removeCallbacks(mTransitionThread);
         mWorld.deselectTransition(mMVPMatrix);
         mLastRunningTransition = 0;
     }
 
-    void scheduleOrCancelMediaScan() {
+    private void scheduleOrCancelMediaScan() {
         // Ignored in preview mode
         if (mIsPreview) {
             return;
@@ -523,7 +523,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /**
      * Method that schedule a new recreation of the current disposition
      */
-    void scheduleDispositionRecreation() {
+    private void scheduleDispositionRecreation() {
         // Ignored in preview mode
         if (mIsPreview) {
             return;
@@ -565,7 +565,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /**
      * Recreate the world
      */
-    void recreateWorld() {
+    private void recreateWorld() {
         if (mIsPaused) {
             mRecreateWorld = true;
             return;
@@ -594,7 +594,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /**
      * Force a redraw of the screen
      */
-    void forceRedraw() {
+    private void forceRedraw() {
         mDispatcher.requestRender();
     }
 
@@ -725,7 +725,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mOverlay = new ColorShape(mContext, vertex, Colors.getOverlay());
 
         // Create the Oops shape
-        mOopsShape = new OopsShape(mContext, R.string.no_pictures_oops_msg);
+        mOopsShape = new OopsShape(mContext);
 
         // Set the viewport and the fustrum
         GLES20.glViewport(0, AndroidHelper.isKitKatOrGreater() ? 0 : -mStatusBarHeight, mWidth,

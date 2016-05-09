@@ -75,7 +75,7 @@ public final class MERAlgorithm {
      */
     @SuppressWarnings("boxing")
     private static Rect maximalRectangle(int[] histogram, int row) {
-        Stack<Integer> stack = new Stack<Integer>();
+        Stack<Integer> stack = new Stack<>();
         int length = histogram.length;
         Rect maxRect = new Rect();
         int i = 0;

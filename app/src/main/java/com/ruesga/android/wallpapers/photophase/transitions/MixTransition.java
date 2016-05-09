@@ -68,7 +68,7 @@ public class MixTransition extends Transition {
         draw(matrix, delta);
     }
 
-    protected void draw(float[] matrix, float delta) {
+    private void draw(float[] matrix, float delta) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");

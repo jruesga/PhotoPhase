@@ -30,7 +30,7 @@ public class Evaluators {
      * A width evaluator
      */
     public static class WidthEvaluator extends IntEvaluator {
-        private View mView;
+        private final View mView;
 
         /**
          * Constructor of <code>WidthEvaluator</code>
@@ -57,7 +57,7 @@ public class Evaluators {
      * A height evaluator
      */
     public static class HeightEvaluator extends IntEvaluator {
-        private View mView;
+        private final View mView;
 
         /**
          * Constructor of <code>HeightEvaluator</code>

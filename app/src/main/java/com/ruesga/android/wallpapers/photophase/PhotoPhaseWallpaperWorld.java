@@ -63,8 +63,8 @@ public class PhotoPhaseWallpaperWorld {
 
     private boolean mRecycled;
 
-    private String[] mPortraitDispositions;
-    private String[] mLandscapeDispositions;
+    private final String[] mPortraitDispositions;
+    private final String[] mLandscapeDispositions;
 
     /**
      * Constructor <code>PhotoPhaseWallpaperWorld</code>

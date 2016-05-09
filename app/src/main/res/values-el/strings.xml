@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Ζωντανή ταπετσαρία PhotoPhase</string>
   <string name="no_pictures_oops_msg">Δεν βρέθηκαν εικόνες</string>
   <string name="mnu_restore">Επαναφορά</string>
   <string name="mnu_delete">Διαγραφή</string>
-  <string name="mnu_settings">Ρυθμίσεις</string>
   <string name="mnu_select_all">Επιλογή όλων</string>
   <string name="mnu_deselect_all">Αποεπιλογή όλων</string>
   <string name="mnu_invert">Αντιστροφή</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Τρέχον:</string>
   <string name="color_picker_new_text">Νέο:</string>
   <string name="color_picker_color">Χρώμα:</string>
-  <string name="changelog_title">Αρχείο αλλαγών</string>
 </resources>

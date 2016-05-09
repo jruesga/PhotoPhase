@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase élő háttérkép</string>
   <string name="no_pictures_oops_msg">Nem találhatóak képek</string>
   <string name="mnu_restore">Visszaállítás</string>
   <string name="mnu_delete">Törlés</string>
-  <string name="mnu_settings">Beállítások</string>
   <string name="mnu_select_all">Összes kijelölése</string>
   <string name="mnu_deselect_all">Kiválasztás törlése</string>
   <string name="mnu_invert">Megfordítás</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Jelenlegi:</string>
   <string name="color_picker_new_text">Új:</string>
   <string name="color_picker_color">Szín:</string>
-  <string name="changelog_title">Újdonságok</string>
 </resources>

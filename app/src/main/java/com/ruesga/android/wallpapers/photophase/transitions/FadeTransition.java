@@ -82,7 +82,7 @@ public class FadeTransition extends Transition {
         }
     }
 
-    protected void draw(PhotoFrame target, float[] matrix) {
+    private void draw(PhotoFrame target, float[] matrix) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");

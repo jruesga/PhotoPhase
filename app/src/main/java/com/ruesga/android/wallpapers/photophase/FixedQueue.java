@@ -97,7 +97,7 @@ public class FixedQueue<T> {
     public List<T> removeAll() throws EmptyQueueException {
         synchronized (this.mQueue) {
             if (isEmpty()) throw new EmptyQueueException();
-            List<T> l = new ArrayList<T>();
+            List<T> l = new ArrayList<>();
             while (!isEmpty()) {
                 l.add(noSynchronizedRemove());
             }
@@ -131,7 +131,7 @@ public class FixedQueue<T> {
     public List<T> peekAll() throws EmptyQueueException {
         synchronized (this.mQueue) {
             if (isEmpty()) throw new EmptyQueueException();
-            List<T> l = new ArrayList<T>();
+            List<T> l = new ArrayList<>();
             int head = this.mHead;
             int tail = this.mTail;
             do {

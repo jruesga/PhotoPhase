@@ -16,10 +16,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
   <string name="app_description">PhotoPhase 動態桌布</string>
   <string name="mnu_delete">刪除</string>
-  <string name="mnu_settings">設定</string>
   <string name="mnu_select_all">全選</string>
   <string name="mnu_deselect_all">取消全選</string>
   <string name="mnu_select_album">選擇相簿</string>
@@ -54,5 +53,4 @@
   <string name="color_picker_current_text">目前：</string>
   <string name="color_picker_new_text">新的：</string>
   <string name="color_picker_color">色碼：</string>
-  <string name="changelog_title">更新日誌</string>
 </resources>

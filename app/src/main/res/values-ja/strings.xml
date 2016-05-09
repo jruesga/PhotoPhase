@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhaseライブ壁紙</string>
   <string name="no_pictures_oops_msg">写真がありません</string>
   <string name="mnu_restore">復元</string>
   <string name="mnu_delete">削除</string>
-  <string name="mnu_settings">設定</string>
   <string name="mnu_select_all">すべて選択</string>
   <string name="mnu_deselect_all">すべて選択解除</string>
   <string name="mnu_invert">逆転</string>
@@ -130,5 +129,4 @@
   <string name="color_picker_current_text">現在:</string>
   <string name="color_picker_new_text">新規:</string>
   <string name="color_picker_color">色:</string>
-  <string name="changelog_title">更新履歴</string>
 </resources>

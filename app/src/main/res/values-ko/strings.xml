@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase 라이브 배경화면</string>
   <string name="no_pictures_oops_msg">사진이 없습니다.</string>
   <string name="mnu_restore">복원</string>
   <string name="mnu_delete">삭제</string>
-  <string name="mnu_settings">설정</string>
   <string name="mnu_select_all">모두 선택</string>
   <string name="mnu_deselect_all">모두 선택 해제</string>
   <string name="mnu_invert">반전</string>
@@ -130,5 +129,4 @@
   <string name="color_picker_current_text">현재:</string>
   <string name="color_picker_new_text">신규:</string>
   <string name="color_picker_color">색상:</string>
-  <string name="changelog_title">변경내역</string>
 </resources>

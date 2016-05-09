@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Živá tapeta PhotoPhase</string>
   <string name="no_pictures_oops_msg">Nenašli sa žiadne obrázky</string>
   <string name="mnu_restore">Obnoviť</string>
   <string name="mnu_delete">Vymazať</string>
-  <string name="mnu_settings">Nastavenia</string>
   <string name="mnu_select_all">Vybrať všetko</string>
   <string name="mnu_deselect_all">Zrušiť výber všetkých</string>
   <string name="mnu_invert">Invertovať</string>
@@ -132,5 +131,4 @@
   <string name="color_picker_current_text">Súčasná:</string>
   <string name="color_picker_new_text">Nová:</string>
   <string name="color_picker_color">Farba:</string>
-  <string name="changelog_title">Zoznam zmien</string>
 </resources>

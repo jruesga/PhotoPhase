@@ -18,7 +18,6 @@ package com.ruesga.android.wallpapers.photophase.adapters;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +42,7 @@ public class DispositionAdapter extends PagerAdapter {
 
     private final SparseArray<DispositionView> mCurrentViews;
 
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
 
     private boolean mFirstAnimation;
 
@@ -80,7 +79,7 @@ public class DispositionAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         final DispositionView view = (DispositionView)mInflater.inflate(
-                R.layout.disposition_view, null, false);
+                R.layout.disposition_view, container, false);
         if (position == 0) {
             view.setResizeFrame(mResizeFrame);
             view.setOnFrameSelectedListener(mCallback);

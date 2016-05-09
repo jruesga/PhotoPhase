@@ -60,7 +60,7 @@ public class FrostedEffect extends PhotoPhaseEffect {
             "}";
 
     private float mStrength = 0.10f;
-    private int mStrengthHandle;
+    private final int mStrengthHandle;
 
     /**
      * Constructor of <code>CrossHatchingEffect</code>.

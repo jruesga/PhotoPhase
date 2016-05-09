@@ -68,8 +68,8 @@ public class PixelateEffect extends PhotoPhaseEffect {
             "    gl_FragColor = vec4(tc, 1.0);\n" +
             "}";
 
-    private float mPixelWidth = 15.0f;
-    private float mPixelHeight = 10.0f;
+    private float mPixelW = 15.0f;
+    private float mPixelH = 10.0f;
 
     private int mWidthHandle;
     private int mHeightHandle;
@@ -115,9 +115,9 @@ public class PixelateEffect extends PhotoPhaseEffect {
         GLESUtil.glesCheckError("glUniform1f");
         GLES20.glUniform1f(mHeightHandle, (float) height);
         GLESUtil.glesCheckError("glUniform1f");
-        GLES20.glUniform1f(mPixelWidthHandle, mPixelWidth);
+        GLES20.glUniform1f(mPixelWidthHandle, mPixelW);
         GLESUtil.glesCheckError("glUniform1f");
-        GLES20.glUniform1f(mPixelHeightHandle, mPixelHeight);
+        GLES20.glUniform1f(mPixelHeightHandle, mPixelH);
         GLESUtil.glesCheckError("glUniform1f");
     }
 
@@ -133,8 +133,8 @@ public class PixelateEffect extends PhotoPhaseEffect {
                     Log.w(TAG, "strength parameter must be > 0");
                     return;
                 }
-                mPixelWidth = 15.0f * strength;
-                mPixelHeight = 10.0f * strength;
+                mPixelW = 15.0f * strength;
+                mPixelH = 10.0f * strength;
             } catch (NumberFormatException ex) {
                 // Ignore
             }

@@ -56,7 +56,7 @@ public class NoiseEffect extends PhotoPhaseEffect {
             "}";
 
     private float mStrength = 0.02f;
-    private int mStrengthHandle;
+    private final int mStrengthHandle;
 
     /**
      * Constructor of <code>NoiseEffect</code>.

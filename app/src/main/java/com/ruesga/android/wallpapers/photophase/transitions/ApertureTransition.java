@@ -36,7 +36,7 @@ public class ApertureTransition extends Transition {
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.aperture_fragment_shader};
 
-    protected int mTargetTextureHandler;
+    private int mTargetTextureHandler;
     private int mRadiusHandler;
 
     public ApertureTransition(Context ctx, TextureManager tm) {
@@ -68,7 +68,7 @@ public class ApertureTransition extends Transition {
         draw(matrix, delta);
     }
 
-    protected void draw(float[] matrix, float radius) {
+    private void draw(float[] matrix, float radius) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");

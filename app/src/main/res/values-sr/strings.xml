@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Жива позадина</string>
   <string name="no_pictures_oops_msg">Нема пронађених слика</string>
   <string name="mnu_restore">Врати</string>
   <string name="mnu_delete">Избриши</string>
-  <string name="mnu_settings">Подешавања</string>
   <string name="mnu_select_all">Изабери све</string>
   <string name="mnu_deselect_all">Поништи избор свега</string>
   <string name="mnu_invert">Обрнуто</string>
@@ -133,5 +132,4 @@
   <string name="color_picker_current_text">Тренутно:</string>
   <string name="color_picker_new_text">Ново:</string>
   <string name="color_picker_color">Боја:</string>
-  <string name="changelog_title">Евиденција измена</string>
 </resources>

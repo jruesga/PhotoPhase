@@ -126,7 +126,7 @@ public class BlurEffect extends PhotoPhaseEffect {
             "}\n";
 
     private float mStrength = 2.0f;
-    private int mStrengthHandle;
+    private final int mStrengthHandle;
 
     /**
      * Constructor of <code>BlurEffect</code>.

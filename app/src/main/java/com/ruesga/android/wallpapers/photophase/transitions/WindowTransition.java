@@ -63,7 +63,7 @@ public class WindowTransition extends Transition {
 
     private WINDOW_MODES mMode;
 
-    private float[] mTranslationMatrix;
+    private final float[] mTranslationMatrix;
 
     private AccelerateInterpolator mInterpolation;
     private float mAmount;

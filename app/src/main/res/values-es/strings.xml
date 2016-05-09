@@ -16,7 +16,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Fondo de pantalla animado PhotoPhase</string>
   <string name="app_legal">Copyright \u00A9 <xliff:g id="year">%1$s</xliff:g> Jorge Ruesga</string>
   <string name="no_pictures_oops_msg">No se han encontrado imágenes</string>
@@ -26,7 +26,6 @@
   <string name="no_pictures_albums_tap_to_request_permission_msg">Toca para solicitar permisos</string>
   <string name="mnu_restore">Restaurar</string>
   <string name="mnu_delete">Eliminar</string>
-  <string name="mnu_settings">Ajustes</string>
   <string name="mnu_select_all">Seleccionar todo</string>
   <string name="mnu_deselect_all">Deseleccionar todo</string>
   <string name="mnu_invert">Invertir</string>
@@ -171,7 +170,6 @@
   <string name="color_picker_current_text">Actual:</string>
   <string name="color_picker_new_text">Nuevo:</string>
   <string name="color_picker_color">Color:</string>
-  <string name="changelog_title">Registro de cambios</string>
   <string name="photoviewer_details_not_available">No disponible</string>
   <string name="photoviewer_details_date">Fecha</string>
   <string name="photoviewer_details_format"><xliff:g id="full_date_format" example="Oct, 11 June 2016">%1$s</xliff:g>, <xliff:g id="short_time_format" example="12:23">%2$s</xliff:g></string>

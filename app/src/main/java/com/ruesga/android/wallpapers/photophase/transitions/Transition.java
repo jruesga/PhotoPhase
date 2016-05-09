@@ -33,7 +33,7 @@ public abstract class Transition {
 
     public static final long MAX_TRANSTION_TIME = 1500L;
 
-    protected final Context mContext;
+    private final Context mContext;
     private final TextureManager mTextureManager;
 
     protected int[] mProgramHandlers;
@@ -48,7 +48,7 @@ public abstract class Transition {
     private final int[] mVertexShader;
     private final int[] mFragmentShader;
 
-    protected long mTime;
+    private long mTime;
     protected boolean mRunning;
 
     /**
@@ -212,7 +212,7 @@ public abstract class Transition {
     /**
      * Method that creates the program
      */
-    protected void createProgram(int index) {
+    private void createProgram(int index) {
         mProgramHandlers[index] =
                 GLESUtil.createProgram(
                         mContext.getResources(), mVertexShader[index], mFragmentShader[index]);
@@ -266,7 +266,7 @@ public abstract class Transition {
         mTarget = null;
     }
 
-    protected float getDelta() {
+    private float getDelta() {
         return Math.min(SystemClock.uptimeMillis() - mTime, getTransitionTime()) / getTransitionTime();
     }
 }

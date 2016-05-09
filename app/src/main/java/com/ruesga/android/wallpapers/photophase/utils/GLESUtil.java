@@ -66,15 +66,15 @@ public final class GLESUtil {
         /**
          * Red
          */
-        public float r;
+        public final float r;
         /**
          * Green
          */
-        public float g;
+        public final float g;
         /**
          * Blue
          */
-        public float b;
+        public final float b;
         /**
          * Alpha
          */
@@ -559,9 +559,8 @@ public final class GLESUtil {
      * Method that checks if an GLES error is present
      *
      * @param func The GLES function to check
-     * @return boolean If there was an error
      */
-    public static boolean glesCheckError(String func) {
+    public static void glesCheckError(String func) {
         // Log when a call happens without a current context or outside the GLThread
         if (BuildConfig.DEBUG) {
             EGL elg = EGLContext.getEGL();
@@ -597,9 +596,7 @@ public final class GLESUtil {
                 Log.e(TAG, "GLES20 Error (" + glesGetErrorModule() + ") (" + func + "): " +
                         GLUtils.getEGLErrorString(error));
             }
-            return true;
         }
-        return false;
     }
 
     /**

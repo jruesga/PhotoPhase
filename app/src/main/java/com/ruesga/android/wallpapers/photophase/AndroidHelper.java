@@ -146,7 +146,7 @@ public final class AndroidHelper {
         int count = labels.length;
         List<Pair<String, String>> entries = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            entries.add(new Pair<String, String>(labels[i], values[i]));
+            entries.add(new Pair<>(labels[i], values[i]));
         }
         final Collator collator = Collator.getInstance(
                 context.getResources().getConfiguration().locale);

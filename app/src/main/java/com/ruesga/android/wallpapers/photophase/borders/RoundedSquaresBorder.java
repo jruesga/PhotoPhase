@@ -80,10 +80,10 @@ public class RoundedSquaresBorder extends Border {
 
     private float mStrength = 50;
 
-    private int mColorHandle;
-    private int mWidthHandle;
-    private int mHeightHandle;
-    private int mStrengthHandle;
+    private final int mColorHandle;
+    private final int mWidthHandle;
+    private final int mHeightHandle;
+    private final int mStrengthHandle;
 
     /**
      * Constructor of <code>RoundedSquaresBorder</code>.

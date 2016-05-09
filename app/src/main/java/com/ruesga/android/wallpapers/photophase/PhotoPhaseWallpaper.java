@@ -53,7 +53,7 @@ public class PhotoPhaseWallpaper
 
     // List of the current top activities. Tap should be ignored when this acitivities are
     // in the foreground
-    static final String[] TOP_ACTIVITIES = {"com.android.internal.app.ChooserActivity"};
+    private static final String[] TOP_ACTIVITIES = {"com.android.internal.app.ChooserActivity"};
 
     /**
      * {@inheritDoc}
@@ -98,7 +98,7 @@ public class PhotoPhaseWallpaper
         final ActivityManager mActivityManager;
 
         private long mLastTouch = -1;
-        private Point mLastPoint = new Point();
+        private final Point mLastPoint = new Point();
 
         private static final int DOUBLE_TAP_MIN_TIME = 40;
         private final int mDoubleTapSlop;

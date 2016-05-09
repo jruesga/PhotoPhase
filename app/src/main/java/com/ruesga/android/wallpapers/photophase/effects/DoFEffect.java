@@ -138,7 +138,7 @@ public class DoFEffect extends PhotoPhaseEffect {
             "}";
 
     private float mStrength = 1.0f;
-    private int mStrengthHandle;
+    private final int mStrengthHandle;
 
     /**
      * Constructor of <code>BlurEffect</code>.

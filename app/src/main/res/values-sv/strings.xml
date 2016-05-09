@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Levande bakgrundsbild</string>
   <string name="no_pictures_oops_msg">Inga bilder hittades</string>
   <string name="mnu_restore">Återställ</string>
   <string name="mnu_delete">Ta bort</string>
-  <string name="mnu_settings">Inställningar</string>
   <string name="mnu_select_all">Markera alla</string>
   <string name="mnu_deselect_all">Avmarkera alla</string>
   <string name="mnu_invert">Invertera</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Nuvarande:</string>
   <string name="color_picker_new_text">Ny:</string>
   <string name="color_picker_color">Färg:</string>
-  <string name="changelog_title">Ändringslogg</string>
 </resources>

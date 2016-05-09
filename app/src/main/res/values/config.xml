@@ -14,8 +14,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Wether preserve EGL context on pause. Disable it when the devices doesn't support
+<resources>
+    <!-- Whether preserve EGL context on pause. Disable it when the devices doesn't support
          multiples EGL contexts -->
     <bool name="config_preserve_egl_context">true</bool>
 </resources>

@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Animowana tapeta PhotoPhase</string>
   <string name="no_pictures_oops_msg">Nie znaleziono zdjęć</string>
   <string name="mnu_restore">Przywróć</string>
   <string name="mnu_delete">Usuń</string>
-  <string name="mnu_settings">Ustawienia</string>
   <string name="mnu_select_all">Zaznacz wszystko</string>
   <string name="mnu_deselect_all">Odznacz wszystko</string>
   <string name="mnu_invert">Odwróć</string>
@@ -132,5 +131,4 @@
   <string name="color_picker_current_text">Bieżący:</string>
   <string name="color_picker_new_text">Nowy:</string>
   <string name="color_picker_color">Kolor:</string>
-  <string name="changelog_title">Dziennik zmian</string>
 </resources>

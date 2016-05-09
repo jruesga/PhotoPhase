@@ -39,7 +39,7 @@ public final class StorageHelper {
      * @return List<String> All the external mounts
      */
     public static List<String> getExternalMounts() {
-        final List<String> out = new ArrayList<String>();
+        final List<String> out = new ArrayList<>();
 
         // Execute the mount command to list mounts
         final StringBuilder sb = new StringBuilder();
@@ -50,15 +50,13 @@ public final class StorageHelper {
             process.waitFor();
             final InputStream is = process.getInputStream();
             byte[] buffer = new byte[1024];
-            int read = 0;
+            int read;
             while ((read = is.read(buffer, 0, 1024)) != -1) {
                 sb.append(new String(buffer, 0, read));
             }
             is.close();
-        } catch (IOException ioex) {
-            Log.e(TAG, "Failed to list external mounts", ioex);
-        } catch (InterruptedException iex) {
-            Log.e(TAG, "Failed to list external mounts", iex);
+        } catch (IOException | InterruptedException ex) {
+            Log.e(TAG, "Failed to list external mounts", ex);
         }
 
         // Parse the output

@@ -82,7 +82,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     // To avoid passing a bitmap in an extra
     public static Bitmap sThumbnail;
 
-    private AsyncTask<Float, Void, Bitmap> mMapLoaderTask = new AsyncTask<Float, Void, Bitmap>() {
+    private final AsyncTask<Float, Void, Bitmap> mMapLoaderTask = new AsyncTask<Float, Void, Bitmap>() {
         private static final String OPEN_STREETMAP_URL =
                 "http://staticmap.openstreetmap.de/staticmap.php/";
         private static final String IMAGE_URL = OPEN_STREETMAP_URL +

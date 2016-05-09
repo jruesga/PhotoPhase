@@ -16,9 +16,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
   <string name="app_description">PhotoPhase 動態牆紙</string>
   <string name="pref_general_settings_wallpaper_dim">牆紙朦朧</string>
   <string name="pref_general_aspect_ratio_correction_summary">嘗試修復圖片的縱橫比透過裁剪以適合目標幀</string>
-  <string name="changelog_title">更新日誌</string>
 </resources>

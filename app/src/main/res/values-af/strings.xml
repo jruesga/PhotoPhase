@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Lewendige Agtergrond</string>
   <string name="no_pictures_oops_msg">Geen foto\'s gevind</string>
   <string name="mnu_restore">Herstel</string>
   <string name="mnu_delete">Verwyder</string>
-  <string name="mnu_settings">Instellings</string>
   <string name="mnu_select_all">Kies alles</string>
   <string name="mnu_deselect_all">Onkies alles</string>
   <string name="mnu_invert">Omgekeerde</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Huidig:</string>
   <string name="color_picker_new_text">Nuut:</string>
   <string name="color_picker_color">Kleur:</string>
-  <string name="changelog_title">Veranderinge</string>
 </resources>

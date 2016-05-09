@@ -56,20 +56,20 @@ public abstract class PhotoPhaseEffect extends Effect {
     private final int GL_STATE_ARRAYBUFFER  = 2;
     private final int GL_STATE_COUNT        = GL_STATE_ARRAYBUFFER + 1;
 
-    private int[] mOldState = new int[GL_STATE_COUNT];
+    private final int[] mOldState = new int[GL_STATE_COUNT];
 
     private final EffectContext mEffectContext;
     private final String mName;
 
-    private Effect mIdentityEffect;
+    private final Effect mIdentityEffect;
 
-    int[] mProgram;
-    int[] mTexSamplerHandle;
-    int[] mTexCoordHandle;
-    int[] mPosCoordHandle;
+    protected int[] mProgram;
+    private int[] mTexSamplerHandle;
+    private int[] mTexCoordHandle;
+    private int[] mPosCoordHandle;
 
-    FloatBuffer[] mTexVertices;
-    FloatBuffer[] mPosVertices;
+    private FloatBuffer[] mTexVertices;
+    private FloatBuffer[] mPosVertices;
 
     /**
      * An abstract constructor of <code>Effect</code> to follow the rules

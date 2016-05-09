@@ -17,7 +17,6 @@
 package com.ruesga.android.wallpapers.photophase.adapters;
 
 import android.animation.Animator;
-import android.animation.AnimatorInflater;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +53,7 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
 
     private List<Album> mData = new ArrayList<>();
 
-    private AlbumInfoView.CallbacksListener mAlbumInfoCallback;
+    private final AlbumInfoView.CallbacksListener mAlbumInfoCallback;
 
     /**
      * Constructor of <code>AlbumCardUiAdapter</code>.

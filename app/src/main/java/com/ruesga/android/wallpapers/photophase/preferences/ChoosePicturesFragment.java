@@ -248,7 +248,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
     };
 
-    private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+    private final OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mShowingAlbums) {
@@ -257,7 +257,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
     };
 
-    private CallbacksListener mPictureListener = new CallbacksListener() {
+    private final CallbacksListener mPictureListener = new CallbacksListener() {
         @Override
         public void onPictureItemViewPressed(View v) {
             onPicturePressed(v);
@@ -939,12 +939,12 @@ public class ChoosePicturesFragment extends PreferenceFragment
         mAlbum = mAlbumAdapter.getItem(position);
 
         // Header view
-        View header = mInflater.inflate(R.layout.album_info, null, false);
+        View header = mInflater.inflate(R.layout.album_info, mContainer, false);
         header.setTranslationY(view.getY() + parent.getPaddingTop());
         header.setLayoutParams(new ViewGroup.LayoutParams(view.getWidth(), view.getHeight()));
 
         // Pictures view
-        mPicturesPanel = (GridView) mInflater.inflate(R.layout.pictures_view, null, false);
+        mPicturesPanel = (GridView) mInflater.inflate(R.layout.pictures_view, mContainer, false);
         if (!mPicturesPanel.isHardwareAccelerated()) {
             mPicturesPanel.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }

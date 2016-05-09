@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase خلفية حية</string>
   <string name="no_pictures_oops_msg">لم يتم العثور على صور</string>
   <string name="mnu_restore">استعادة</string>
   <string name="mnu_delete">حذف</string>
-  <string name="mnu_settings">إعدادات</string>
   <string name="mnu_select_all">تحديد الكل</string>
   <string name="mnu_deselect_all">إلغاء تحديد الكل</string>
   <string name="mnu_invert">عكس</string>
@@ -135,5 +134,4 @@
   <string name="color_picker_current_text">الحالي:</string>
   <string name="color_picker_new_text">الجديد:</string>
   <string name="color_picker_color">لون:</string>
-  <string name="changelog_title">سجل التغييرات</string>
 </resources>

@@ -36,7 +36,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      * Notify whether the picture was loaded
      */
     public static abstract class OnPictureLoaded {
-        Object[] mRefs;
+        final Object[] mRefs;
 
         /**
          * Constructor of <code>OnPictureLoaded</code>
@@ -64,8 +64,8 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     private final ImageView mView;
     private final OnPictureLoaded mCallback;
 
-    private int mWidth;
-    private int mHeight;
+    private final int mWidth;
+    private final int mHeight;
 
     /**
      * Constructor of <code>AsyncPictureLoaderTask</code>

@@ -16,10 +16,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
   <string name="no_pictures_oops_msg">Keng Biller fonnt</string>
   <string name="mnu_delete">Läschen</string>
-  <string name="mnu_settings">Astellungen</string>
   <string name="mnu_select_all">All auswielen</string>
   <string name="mnu_deselect_all">Auswiel ophiewen</string>
   <string name="mnu_invert">Ëmdréinen</string>

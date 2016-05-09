@@ -53,8 +53,8 @@ public class ScanlinesEffect extends PhotoPhaseEffect {
             "    gl_FragColor = mix(vec4(0,0,0,0), pel, wave_pos);\n" +
             "}";
 
-    private int mFrequencyHandle;
-    private int mOffsetHandle;
+    private final int mFrequencyHandle;
+    private final int mOffsetHandle;
 
     private float mStrength = 6f;
 

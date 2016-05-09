@@ -37,7 +37,7 @@ public final class DispositionUtil {
      */
     public static List<Disposition> toDispositions(String value) {
         String[] v = value.split("\\|");
-        List<Disposition> dispositions = new ArrayList<Disposition>(v.length);
+        List<Disposition> dispositions = new ArrayList<>(v.length);
         for (String s : v) {
             String[] s1 = s.split(":");
             String[] s2 = s1[0].split("x");

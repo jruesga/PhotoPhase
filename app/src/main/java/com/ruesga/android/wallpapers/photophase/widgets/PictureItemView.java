@@ -65,7 +65,7 @@ public class PictureItemView extends FrameLayout {
         void onPictureItemViewPressed(View v);
     }
 
-    private OnCheckedChangeListener mSelectionListener = new OnCheckedChangeListener() {
+    private final OnCheckedChangeListener mSelectionListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             for (CallbacksListener cb : mCallbacks) {

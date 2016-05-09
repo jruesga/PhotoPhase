@@ -192,7 +192,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
      * returns boolean True, otherwise set the seekBar's progress to the stored value
      */
     @SuppressWarnings("boxing")
-    void syncProgress(DiscreteSeekBar seekBar) {
+    private void syncProgress(DiscreteSeekBar seekBar) {
         int progress = seekBar.getProgress();
         if (progress != mProgress) {
             if (callChangeListener(progress)) {

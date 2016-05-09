@@ -14,7 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
     <integer name="cards_slide_up_anim">600</integer>
     <integer name="pictures_anim_in">600</integer>
     <integer name="pictures_anim_out">400</integer>

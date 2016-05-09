@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase සජීවී වෝල්පේපර</string>
   <string name="no_pictures_oops_msg">පින්තූර කිසිවක් සොයා නොගැනුණි</string>
   <string name="mnu_restore">පිළිනගන්න</string>
   <string name="mnu_delete">මකන්න</string>
-  <string name="mnu_settings">සැකසීම්</string>
   <string name="mnu_select_all">සියල්ල තෝරන්න</string>
   <string name="mnu_deselect_all">සියල්ල නොතෝරන්න</string>
   <string name="mnu_invert">කණපිට හරවන්න</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">පවත්නා:</string>
   <string name="color_picker_new_text">අලුත්:</string>
   <string name="color_picker_color">පැහැය:</string>
-  <string name="changelog_title">වෙනස්කම් ලොගය</string>
 </resources>

@@ -17,11 +17,10 @@
 package com.ruesga.android.wallpapers.photophase;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 
-import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 
 /**
  * A class that defines some wallpaper GLColor colors.
@@ -36,7 +35,6 @@ public class Colors {
      * This method should be called on initialization for load the preferences color
      */
     public static void register(Context ctx) {
-        Resources res = ctx.getResources();
         sBackground = Preferences.General.getBackgroundColor(ctx);
         sBorder = Preferences.General.Borders.getBorderColor(ctx);
         sOverlay = new GLColor(ContextCompat.getColor(ctx, R.color.wallpaper_overlay_color));

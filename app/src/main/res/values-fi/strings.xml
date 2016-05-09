@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">PhotoPhase Live-taustakuva</string>
   <string name="no_pictures_oops_msg">Kuvia ei löytynyt</string>
   <string name="mnu_restore">Palauta</string>
   <string name="mnu_delete">Poista</string>
-  <string name="mnu_settings">Asetukset</string>
   <string name="mnu_select_all">Valitse kaikki</string>
   <string name="mnu_deselect_all">Poista valinnat</string>
   <string name="mnu_invert">Käännä</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Nykyinen:</string>
   <string name="color_picker_new_text">Uusi:</string>
   <string name="color_picker_color">Väri:</string>
-  <string name="changelog_title">Muutosloki</string>
 </resources>

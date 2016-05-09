@@ -99,8 +99,8 @@ public class Album implements Comparable<Album>, Cloneable {
         return mDisplayed;
     }
 
-    public void setDisplayed(boolean mDisplayed) {
-        this.mDisplayed = mDisplayed;
+    public void setDisplayed(boolean displayed) {
+        this.mDisplayed = displayed;
     }
 
     @Override

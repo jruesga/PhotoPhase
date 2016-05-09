@@ -41,7 +41,7 @@ public class SimpleTextureManager extends TextureManager {
     private final Context mContext;
     private final Effect mEffect;
     private final Border mBorder;
-    private boolean mSingleTexture;
+    private final boolean mSingleTexture;
 
     private Rect mDimensions;
 

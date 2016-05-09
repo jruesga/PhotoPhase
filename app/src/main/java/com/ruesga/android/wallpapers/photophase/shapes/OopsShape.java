@@ -71,11 +71,11 @@ public class OopsShape implements DrawableShape {
     private FloatBuffer mPositionBuffer;
     private FloatBuffer mTextureBuffer;
 
-    private int[] mProgramHandlers;
-    private int[] mTextureHandlers;
-    private int[] mPositionHandlers;
-    private int[] mTextureCoordHandlers;
-    private int[] mMVPMatrixHandlers;
+    private final int[] mProgramHandlers;
+    private final int[] mTextureHandlers;
+    private final int[] mPositionHandlers;
+    private final int[] mTextureCoordHandlers;
+    private final int[] mMVPMatrixHandlers;
 
     private GLESTextureInfo mOopsImageTexture;
     private GLESTextureInfo mOopsTextTexture;
@@ -84,9 +84,8 @@ public class OopsShape implements DrawableShape {
      * Constructor of <code>OopsShape</code>
      *
      * @param ctx The current context
-     * @param resourceMessageId The resource identifier with the message
      */
-    public OopsShape(Context ctx, int resourceMessageId) {
+    public OopsShape(Context ctx) {
         super();
 
         if (sFont == null) {
@@ -139,7 +138,7 @@ public class OopsShape implements DrawableShape {
 
         // Load the textures
         mOopsImageTexture = GLESUtil.loadTexture(ctx, R.drawable.bg_oops, null, null, null, false);
-        Bitmap textBitmap = text2Bitmap(ctx.getString(resourceMessageId));
+        Bitmap textBitmap = text2Bitmap(ctx.getString(R.string.no_pictures_oops_msg));
         mOopsTextTexture = GLESUtil.loadTexture(textBitmap, null, null, null);
 
         // Recycle
@@ -287,7 +286,7 @@ public class OopsShape implements DrawableShape {
      * @param text The text to draw to the bitmap
      * @return Bitmap The bitmap with the text
      */
-    public Bitmap text2Bitmap(String text) {
+    private Bitmap text2Bitmap(String text) {
         Paint paint = new Paint();
         paint.setTypeface(sFont);
         paint.setColor(Color.WHITE);

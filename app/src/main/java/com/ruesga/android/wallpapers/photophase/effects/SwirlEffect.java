@@ -81,9 +81,9 @@ public class SwirlEffect extends PhotoPhaseEffect {
 
     private float mStrength = 1.5f;
 
-    private int mStrengthHandle;
-    private int mWidthHandle;
-    private int mHeightHandle;
+    private final int mStrengthHandle;
+    private final int mWidthHandle;
+    private final int mHeightHandle;
 
     /**
      * Constructor of <code>PixelateEffect</code>.

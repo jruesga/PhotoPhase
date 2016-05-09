@@ -57,21 +57,21 @@ public class PhotoPhaseTextureManager extends TextureManager
 
     private static final int QUEUE_SIZE = 8;
 
-    final Context mContext;
-    final Handler mHandler;
+    private final Context mContext;
+    private final Handler mHandler;
     private final Object mEffectsSync = new Object();
-    Effects mEffects;
-    Borders mBorders;
-    final Object mSync;
-    final List<TextureRequestor> mPendingRequests;
-    final FixedQueue<GLESTextureInfo> mQueue = new FixedQueue<>(QUEUE_SIZE);
-    BackgroundPictureLoaderThread mBackgroundTask;
-    /*protected*/ final MediaPictureDiscoverer mPictureDiscoverer;
+    private Effects mEffects;
+    private Borders mBorders;
+    private final Object mSync;
+    private final List<TextureRequestor> mPendingRequests;
+    private final FixedQueue<GLESTextureInfo> mQueue = new FixedQueue<>(QUEUE_SIZE);
+    private BackgroundPictureLoaderThread mBackgroundTask;
+    private final MediaPictureDiscoverer mPictureDiscoverer;
 
-    Rect mScreenDimensions;
-    Rect mDimensions;
+    private Rect mScreenDimensions;
+    private Rect mDimensions;
 
-    final GLESSurfaceDispatcher mDispatcher;
+    private final GLESSurfaceDispatcher mDispatcher;
 
     // The status of the texture manager:
     // 0 - Loading
@@ -82,7 +82,7 @@ public class PhotoPhaseTextureManager extends TextureManager
     /**
      * A private runnable that will run in the GLThread
      */
-    class PictureDispatcher implements Runnable {
+    private class PictureDispatcher implements Runnable {
         File mImage;
         GLESTextureInfo ti = null;
         final Object mWait = new Object();
@@ -457,7 +457,7 @@ public class PhotoPhaseTextureManager extends TextureManager
      * @param requestor The requestor target
      * @param ti The original texture information
      */
-    void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
+    private void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
         // Check if we have to apply any correction to the image
         if (Preferences.General.isFixAspectRatio(mContext)) {
             // Transform requestor dimensions to screen dimensions

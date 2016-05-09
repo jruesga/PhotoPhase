@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">„PhotoPhase“ judantys darbalaukio fonai</string>
   <string name="no_pictures_oops_msg">Nuotraukų nerasta</string>
   <string name="mnu_restore">Atkurti</string>
   <string name="mnu_delete">Ištrinti</string>
-  <string name="mnu_settings">Nustatymai</string>
   <string name="mnu_select_all">Pasirinkti viską</string>
   <string name="mnu_deselect_all">Atžymėti viską</string>
   <string name="mnu_invert">Apversti</string>
@@ -132,5 +131,4 @@
   <string name="color_picker_current_text">Dabartinė:</string>
   <string name="color_picker_new_text">Nauja:</string>
   <string name="color_picker_color">Spalva:</string>
-  <string name="changelog_title">Pakeitimų sąrašas</string>
 </resources>

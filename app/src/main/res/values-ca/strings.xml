@@ -16,12 +16,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Fons de pantalla animats PhotoPhase</string>
   <string name="no_pictures_oops_msg">No s\'han trobat imatges</string>
   <string name="mnu_restore">Restaura</string>
   <string name="mnu_delete">Elimina</string>
-  <string name="mnu_settings">Configuració</string>
   <string name="mnu_select_all">Selecciona tot</string>
   <string name="mnu_deselect_all">Desselecciona tot</string>
   <string name="mnu_invert">Inverteix</string>
@@ -131,5 +130,4 @@
   <string name="color_picker_current_text">Actual:</string>
   <string name="color_picker_new_text">Nou:</string>
   <string name="color_picker_color">Color:</string>
-  <string name="changelog_title">Registre de canvis</string>
 </resources>

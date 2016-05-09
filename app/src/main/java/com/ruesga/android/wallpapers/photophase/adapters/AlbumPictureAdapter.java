@@ -48,10 +48,10 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         PictureItemView mPictureItemView;
     }
 
-    private Album mAlbum;
+    private final Album mAlbum;
     private List<Picture> mData = new ArrayList<>();
-    private AdapterView<?> mParent;
-    private CallbacksListener mCallback;
+    private final AdapterView<?> mParent;
+    private final CallbacksListener mCallback;
 
     /**
      * Constructor of <code>AlbumPictureAdapter</code>.

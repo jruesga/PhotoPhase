@@ -16,7 +16,6 @@ import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
 import com.ruesga.android.wallpapers.photophase.textures.SimpleTextureManager;
-import com.ruesga.android.wallpapers.photophase.transitions.NullTransition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
@@ -234,7 +233,7 @@ public class LivePreviewView extends GLSurfaceView {
         }
     }
 
-    private Runnable mTransitionRequestRenderer = new Runnable() {
+    private final Runnable mTransitionRequestRenderer = new Runnable() {
         @Override
         public void run() {
             mRenderer.requestTransition();
