@@ -18,6 +18,7 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_description">Fondo de pantalla animado PhotoPhase</string>
+  <string name="app_legal">Copyright \u00A9 <xliff:g id="year">%1$s</xliff:g> Jorge Ruesga</string>
   <string name="no_pictures_oops_msg">No se han encontrado imágenes</string>
   <string name="no_pictures_albums_found_msg">No hay álbumes</string>
   <string name="no_pictures_albums_tap_to_refresh_msg">Toca para refrescar</string>
@@ -41,6 +42,8 @@
   <string name="format_dim">%s%%</string>
   <string name="pref_general">General</string>
   <string name="pref_general_summary">Ajustes generales, efectos y transiciones</string>
+  <string name="pref_general_app_shortcut_title">Acceso directo</string>
+  <string name="pref_general_app_shortcut_summary">Mostrar una acceso directo a PhotoPhase en menu de aplicaciones de tu launcher</string>
   <string name="pref_general_settings">Ajustes</string>
   <string name="pref_general_settings_wallpaper_dim">Oscurecer fondo de pantalla</string>
   <string name="pref_general_settings_background_color">Color del fondo</string>
@@ -51,8 +54,13 @@
   <string name="pref_general_touch_mode_off">Con simple toque</string>
   <string name="pref_general_touch_action">Acción al tocar</string>
   <string name="pref_general_touch_action_summary_format"><xliff:g id="action_summary">%1$s</xliff:g> al tocar una imagen</string>
+  <string name="pref_general_touch_open_with">Abrir con</string>
+  <string name="pref_general_touch_open_with_summary_on">Visor de fotos interno</string>
+  <string name="pref_general_touch_open_with_summary_off">Visor de fotos externo</string>
   <string name="pref_general_aspect_ratio_correction">Relación de aspecto</string>
   <string name="pref_general_aspect_ratio_correction_summary">Intentar corregir la relación de aspecto original de la imagen cortando la imagen para ajustarla a la celda de destino</string>
+  <string name="pref_general_frame_spacer">Espacio entre marcos</string>
+  <string name="pref_general_frame_spacer_summary">Añadir un poco de separación entre los marcos</string>
   <string name="pref_general_transitions">Transiciones</string>
   <string name="pref_general_transitions_types">Tipos</string>
   <string name="pref_general_transitions_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> de <xliff:g id="total">%2$d</xliff:g> tipos seleccionados</string>
@@ -60,6 +68,12 @@
   <string name="pref_general_effects">Efectos</string>
   <string name="pref_general_effects_types">Tipos</string>
   <string name="pref_general_effects_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> de <xliff:g id="total">%2$d</xliff:g> efectos de imagen seleccionados</string>
+  <string name="pref_general_borders">Bordes</string>
+  <string name="pref_general_border_color">Color</string>
+  <string name="pref_general_border_color_summary">Establecer el color del borde</string>
+  <string name="pref_general_borders_types">Tipos</string>
+  <string name="pref_general_borders_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> de <xliff:g id="total">%2$d</xliff:g> bordes de imagen seleccionados</string>
+  <string name="pref_general_live_preview">Previsualización</string>
   <string name="pref_media">Medios</string>
   <string name="pref_media_summary">Álbumes que serán mostrados, intervalo de refresco y otros ajustes de los medios</string>
   <string name="pref_media_settings">Ajustes</string>
@@ -111,6 +125,10 @@
   <string name="transitions_swap">Intercambiar</string>
   <string name="transitions_translation">Trasladar</string>
   <string name="transitions_window">Ventana</string>
+  <string name="transitions_blur">Desenfocar</string>
+  <string name="transitions_vertigo">Vértigo</string>
+  <string name="transitions_mix">Mezclar</string>
+  <string name="transitions_aperture">Apertura</string>
   <string name="effects_noeffect">Normal</string>
   <string name="effects_autofix">Autocorrección</string>
   <string name="effects_blur">Desenfocar</string>
@@ -136,12 +154,24 @@
   <string name="effects_temperature">Temperatura</string>
   <string name="effects_tint">Tintar</string>
   <string name="effects_vignette">Viñeta</string>
+  <string name="effects_noise">Ruido</string>
+  <string name="effects_frosted">Hielo</string>
+  <string name="effects_crosshatching">Crosshatching</string>
+  <string name="effects_thermalvision">Visión térmica</string>
+  <string name="effects_swirl">Remolino</string>
+  <string name="effects_dof">Profundidad de campo</string>
+  <string name="borders_noborder">Sin borde</string>
+  <string name="borders_simple">Simple</string>
+  <string name="borders_rounded">Redondeado</string>
+  <string name="borders_rounded_squares">Esquinas redondeadas</string>
+  <string name="borders_horizontal_film">Película horizontal</string>
+  <string name="borders_vertical_film">Película vertical</string>
+  <string name="borders_elegant">Elegante</string>
   <string name="color_picker_alpha_slider_text">Transparencia</string>
   <string name="color_picker_current_text">Actual:</string>
   <string name="color_picker_new_text">Nuevo:</string>
   <string name="color_picker_color">Color:</string>
   <string name="changelog_title">Registro de cambios</string>
-
   <string name="photoviewer_details_not_available">No disponible</string>
   <string name="photoviewer_details_date">Fecha</string>
   <string name="photoviewer_details_format"><xliff:g id="full_date_format" example="Oct, 11 June 2016">%1$s</xliff:g>, <xliff:g id="short_time_format" example="12:23">%2$s</xliff:g></string>

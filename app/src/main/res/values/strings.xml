@@ -147,13 +147,13 @@
     <string name="touch_actions_share_summary">Share the image</string>
 
     <!-- Transitions -->
-    <string name="transitions_blur">Blur</string>
     <string name="transitions_cube">Cube</string>
     <string name="transitions_fade">Fade</string>
     <string name="transitions_flip">Flip</string>
     <string name="transitions_swap">Swap</string>
     <string name="transitions_translation">Translation</string>
     <string name="transitions_window">Window</string>
+    <string name="transitions_blur">Blur</string>
     <string name="transitions_vertigo">Vertigo</string>
     <string name="transitions_mix">Mix</string>
     <string name="transitions_aperture">Aperture</string>
