@@ -19,7 +19,6 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.borders.Borders.BORDERS;
@@ -279,8 +278,11 @@ public final class PreferencesProvider {
                  * @return GLColor The border color
                  */
                 public static GLColor getBorderColor(Context context) {
-                    return new GLColor(getSharedPreferences(context).getInt(
-                            "ui_border_color", Color.WHITE));
+                    int color = getSharedPreferences(context).getInt("ui_border", -1);
+                    if (color == -1) {
+                        return DEFAULT_BACKGROUND_COLOR;
+                    }
+                    return new GLColor(color);
                 }
 
                 public static Set<String> getSelectedBorders(Context context) {
