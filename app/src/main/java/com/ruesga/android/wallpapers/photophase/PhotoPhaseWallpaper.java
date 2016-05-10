@@ -20,16 +20,20 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewConfiguration;
 
 import com.ruesga.android.wallpapers.photophase.GLESWallpaperService.GLESEngineListener;
+import com.ruesga.android.wallpapers.photophase.preferences.ChoosePicturesFragment;
+import com.ruesga.android.wallpapers.photophase.preferences.PhotoPhasePreferences;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 
 import java.util.ArrayList;
@@ -144,7 +148,22 @@ public class PhotoPhaseWallpaper
                 final Bundle extras, final boolean resultRequested) {
             // Ignore commands in preview mode
             final Context ctx = PhotoPhaseWallpaper.this;
-            if (!isPreview() && action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
+            if (action.compareTo(WallpaperManager.COMMAND_TAP) == 0) {
+                if (!AndroidHelper.hasReadExternalStoragePermissionGranted(getApplicationContext())) {
+                    // Open the album settings
+                    Intent i = new Intent(getApplicationContext(), PhotoPhasePreferences.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT,
+                            ChoosePicturesFragment.class.getName());
+                    i.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+                    startActivity(i);
+                    return super.onCommand(action, x, y, z, extras, resultRequested);
+                }
+
+                if (isPreview()) {
+                    return super.onCommand(action, x, y, z, extras, resultRequested);
+                }
+
                 if (isDoubleTap(ctx, x, y)) {
                     // Pass the x and y position to the renderer
                     ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y);

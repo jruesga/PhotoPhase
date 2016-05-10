@@ -20,6 +20,7 @@
   <string name="app_description">Fondo de pantalla animado PhotoPhase</string>
   <string name="app_legal">Copyright \u00A9 <xliff:g id="year">%1$s</xliff:g> Jorge Ruesga</string>
   <string name="no_pictures_oops_msg">No se han encontrado imágenes</string>
+  <string name="no_pictures_permission_required_msg">Permiso requerido. Toca aquí.</string>
   <string name="no_pictures_albums_found_msg">No hay álbumes</string>
   <string name="no_pictures_albums_tap_to_refresh_msg">Toca para refrescar</string>
   <string name="no_pictures_albums_not_granted_permission_msg">Sin permisos</string>

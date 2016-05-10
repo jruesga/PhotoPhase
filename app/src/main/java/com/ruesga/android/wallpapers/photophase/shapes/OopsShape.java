@@ -26,6 +26,7 @@ import android.graphics.Typeface;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.Colors;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
@@ -68,6 +69,8 @@ public class OopsShape implements DrawableShape {
 
     private static Typeface sFont;
 
+    private final Context mContext;
+
     private FloatBuffer mPositionBuffer;
     private FloatBuffer mTextureBuffer;
 
@@ -79,6 +82,7 @@ public class OopsShape implements DrawableShape {
 
     private GLESTextureInfo mOopsImageTexture;
     private GLESTextureInfo mOopsTextTexture;
+    private GLESTextureInfo mNoPermissionTextTexture;
 
     /**
      * Constructor of <code>OopsShape</code>
@@ -86,7 +90,7 @@ public class OopsShape implements DrawableShape {
      * @param ctx The current context
      */
     public OopsShape(Context ctx) {
-        super();
+        mContext = ctx;
 
         if (sFont == null) {
             sFont = Typeface.createFromAsset(ctx.getAssets(), "fonts/NotoSans-Bold.ttf");
@@ -140,13 +144,18 @@ public class OopsShape implements DrawableShape {
         mOopsImageTexture = GLESUtil.loadTexture(ctx, R.drawable.bg_oops, null, null, null, false);
         Bitmap textBitmap = text2Bitmap(ctx.getString(R.string.no_pictures_oops_msg));
         mOopsTextTexture = GLESUtil.loadTexture(textBitmap, null, null, null);
+        Bitmap noPermissionTextBitmap = text2Bitmap(ctx.getString(R.string.no_pictures_permission_required_msg));
+        mNoPermissionTextTexture = GLESUtil.loadTexture(noPermissionTextBitmap, null, null, null);
 
         // Recycle
         mOopsImageTexture.bitmap.recycle();
         mOopsImageTexture.bitmap = null;
         textBitmap.recycle();
+        noPermissionTextBitmap.recycle();
         mOopsTextTexture.bitmap.recycle();
         mOopsTextTexture.bitmap = null;
+        mNoPermissionTextTexture.bitmap.recycle();
+        mNoPermissionTextTexture.bitmap = null;
     }
 
     /**
@@ -173,7 +182,11 @@ public class OopsShape implements DrawableShape {
 
         // Draw the textures
         drawTexture(matrix, 0, mOopsImageTexture.handle);
-        drawTexture(matrix, 1, mOopsTextTexture.handle);
+        if (AndroidHelper.hasReadExternalStoragePermissionGranted(mContext)) {
+            drawTexture(matrix, 1, mOopsTextTexture.handle);
+        } else {
+            drawTexture(matrix, 1, mNoPermissionTextTexture.handle);
+        }
 
         // Disable blending
         GLES20.glDisable(GLES20.GL_BLEND);
@@ -252,6 +265,16 @@ public class OopsShape implements DrawableShape {
             GLESUtil.glesCheckError("glDeleteTextures");
         }
         mOopsTextTexture = null;
+        if (mNoPermissionTextTexture != null && mNoPermissionTextTexture.handle != 0) {
+            int[] textures = new int[]{mNoPermissionTextTexture.handle};
+            if (GLESUtil.DEBUG_GL_MEMOBJS) {
+                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
+                        + mNoPermissionTextTexture.handle + "]");
+            }
+            GLES20.glDeleteTextures(1, textures, 0);
+            GLESUtil.glesCheckError("glDeleteTextures");
+        }
+        mNoPermissionTextTexture = null;
 
         // Remove buffers
         if (mPositionBuffer != null) {

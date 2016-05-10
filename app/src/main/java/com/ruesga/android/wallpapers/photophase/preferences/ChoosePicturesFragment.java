@@ -95,6 +95,11 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private class AlbumLoaderTask extends AsyncTask<Void, Album, Void> {
 
         private DateFormat mDateFormat;
+        private final boolean mSelectAll;
+
+        public AlbumLoaderTask(boolean selectAll) {
+            mSelectAll = selectAll;
+        }
 
         /**
          * {@inheritDoc}
@@ -146,6 +151,10 @@ public class ChoosePicturesFragment extends PreferenceFragment
                     c.close();
                 }
             }
+
+            if (mSelectAll) {
+                Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
+            }
             return null;
         }
 
@@ -171,6 +180,13 @@ public class ChoosePicturesFragment extends PreferenceFragment
             if (mInvertMenuItem != null) {
                 mInvertMenuItem.setVisible(true);
             }
+
+            if (mSelectAll) {
+                Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+                intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
+                getActivity().sendBroadcast(intent);
+                mRecreateWorld = true;
+            }
         }
 
         /**
@@ -189,31 +205,35 @@ public class ChoosePicturesFragment extends PreferenceFragment
             if (path != null) {
                 File f = new File(path);
                 if (f.isFile() && f.canRead()) {
-                      File p = f.getParentFile();
-                      String name = p.getName();
-                      if (album == null || album.getPath().compareTo(p.getAbsolutePath()) != 0) {
-                          if (album != null) {
-                              // Add to global structures
-                              all.add(album);
-                              mOriginalAlbums.add((Album)album.clone());
+                    File p = f.getParentFile();
+                    String name = p.getName();
+                    if (album == null || album.getPath().compareTo(p.getAbsolutePath()) != 0) {
+                        if (album != null) {
+                            // Add to global structures
+                            all.add(album);
+                            mOriginalAlbums.add((Album)album.clone());
 
-                              // Add to local structures and notify
-                              pending.add(album);
-                          }
-                          album = new Album();
-                          album.setPath(p.getAbsolutePath());
-                          album.setName(name);
-                          album.setDate(mDateFormat.format(new Date(p.lastModified())));
-                          album.setSelected(isSelectedItem(album.getPath()));
-                          album.setItems(new ArrayList<Picture>());
-                          album.setSelectedItems(new ArrayList<String>());
-                      }
-                      boolean selected = isSelectedItem(f.getAbsolutePath());
-                      album.getItems().add(new Picture(f.getAbsolutePath(), selected));
-                      if (selected) {
-                          album.getSelectedItems().add(f.getAbsolutePath());
-                      }
+                            // Add to local structures and notify
+                            pending.add(album);
+                        }
+                        album = new Album();
+                        album.setPath(p.getAbsolutePath());
+                        album.setName(name);
+                        album.setDate(mDateFormat.format(new Date(p.lastModified())));
+                        album.setSelected(isSelectedItem(album.getPath()));
+                        album.setItems(new ArrayList<Picture>());
+                        album.setSelectedItems(new ArrayList<String>());
+                    }
+                    boolean selected = isSelectedItem(f.getAbsolutePath());
+                    album.getItems().add(new Picture(f.getAbsolutePath(), selected));
+                    if (selected) {
+                        album.getSelectedItems().add(f.getAbsolutePath());
+                    }
                 }
+            }
+            if (mSelectAll) {
+                album.setSelected(true);
+                mSelectedAlbums.add(album.getPath());
             }
             return album;
         }
@@ -282,6 +302,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private AlbumPictureAdapter mPictureAdapter;
 
     private boolean mSelectionChanged;
+    private boolean mRecreateWorld;
 
     // Animation references
     private ViewGroup mSrcParent;
@@ -355,6 +376,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, Boolean.TRUE);
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
         }
+        if (mRecreateWorld) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
+        }
         getActivity().sendBroadcast(intent);
 
         super.onDestroy();
@@ -400,7 +424,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         mEmpty.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!requestAlbumData(getActivity(), false)) {
+                if (!requestAlbumData(getActivity(), false, false)) {
                     requestStoragePermission(true);
                 }
             }
@@ -437,7 +461,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (!requestAlbumData(activity, false)) {
+        if (!requestAlbumData(activity, false, false)) {
             requestStoragePermission(false);
         }
     }
@@ -511,20 +535,20 @@ public class ChoosePicturesFragment extends PreferenceFragment
             case READ_EXTERNAL_STORAGE_PERM_REQUEST:
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    requestAlbumData(getActivity(), true);
+                    requestAlbumData(getActivity(), true, true);
                 }
                 break;
         }
     }
 
-    private boolean requestAlbumData(Context context, boolean ignoreGrants) {
+    private boolean requestAlbumData(Context context, boolean ignoreGrants, boolean selectAll) {
         if (mTask != null && mTask.getStatus().compareTo(Status.FINISHED) != 0) {
             mTask.cancel(true);
         }
 
         if (ignoreGrants || AndroidHelper.hasReadExternalStoragePermissionGranted(context)) {
             updateEmptyMsg(true);
-            mTask = new AlbumLoaderTask();
+            mTask = new AlbumLoaderTask(selectAll);
             mTask.execute();
             return true;
         } else {
