@@ -89,6 +89,7 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
             // Open the attribution library
             new LibsBuilder()
                     .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                    .withFields(R.string.class.getFields())
                     .withAboutIconShown(true)
                     .withAboutVersionShown(true)
                     .withLicenseShown(true)
