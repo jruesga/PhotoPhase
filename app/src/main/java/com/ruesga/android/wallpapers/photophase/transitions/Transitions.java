@@ -98,18 +98,21 @@ public class Transitions {
      */
     public static TRANSITIONS getNextTypeOfTransition(Context context) {
         // Get a transition based on the user preference
+        TRANSITIONS nextTransition;
         TRANSITIONS[] transitions = Preferences.General.Transitions.toTransitions(
                         Preferences.General.Transitions.getSelectedTransitions(context));
-        TRANSITIONS nextTransition = null;
-        if (transitions.length > 0) {
-            int low = 0;
-            int high = transitions.length - 1;
-            int pos = Utils.getNextRandom(low, high);
-            nextTransition = transitions[pos];
+        if (transitions.length == 0) {
+            // All the availables except the NO_TRANSITION
+            TRANSITIONS[] values = TRANSITIONS.values();
+            transitions = new TRANSITIONS[values.length - 1];
+            System.arraycopy(values, 1, transitions, 0, transitions.length);
         }
-        if (nextTransition == null) {
-            return TRANSITIONS.NO_TRANSITION;
-        }
+
+        // Get a random transition between all the selected or availables
+        int low = 0;
+        int high = transitions.length - 1;
+        int pos = Utils.getNextRandom(low, high);
+        nextTransition = transitions[pos];
 
         // Select the transition if is available
         if (nextTransition.compareTo(TRANSITIONS.SWAP) == 0) {
