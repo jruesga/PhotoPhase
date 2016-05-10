@@ -140,7 +140,6 @@ public class Borders {
         // The border was cached previously?
         if (mCachedBorders.containsKey(nextBorder)) {
             border = mCachedBorders.get(nextBorder);
-            border.release();
             border.mColor = Colors.getBorder();
             border.mBgColor = Colors.getBackground();
             return border;
