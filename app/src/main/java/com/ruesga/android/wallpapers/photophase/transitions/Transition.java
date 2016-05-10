@@ -31,7 +31,7 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
  */
 public abstract class Transition {
 
-    public static final long MAX_TRANSTION_TIME = 1500L;
+    public static final long MAX_TRANSTION_TIME = 2500L;
 
     private final Context mContext;
     private final TextureManager mTextureManager;
