@@ -57,11 +57,6 @@ public class SwapTransition extends Transition {
     }
 
     @Override
-    public boolean isRunning() {
-        return mRunning;
-    }
-
-    @Override
     public void applyTransition(float delta, float[] matrix) {
         draw(delta < 1f ? mTransitionTarget : mTarget, matrix);
     }
