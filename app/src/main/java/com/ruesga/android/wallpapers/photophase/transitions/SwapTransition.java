@@ -54,7 +54,7 @@ public class SwapTransition extends NullTransition {
 
     @Override
     public void applyTransition(float delta, float[] matrix) {
-        draw(delta < 0.5f ? mTransitionTarget : mTarget, matrix);
+        draw(delta < 1f ? mTransitionTarget : mTarget, matrix);
     }
 
 }
