@@ -78,6 +78,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private boolean mInDetails;
 
     private final float[] mLocation = new float[2];
+    boolean mHasLocation = false;
 
     // To avoid passing a bitmap in an extra
     public static Bitmap sThumbnail;
@@ -340,7 +341,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         mInDetails = true;
 
         // Request the image of the map
-        if (mLocation != null) {
+        if (mHasLocation) {
             ImageView iv = (ImageView) findViewById(R.id.details_map);
             if (iv.getDrawable() == null && mMapLoaderTask.getStatus() != AsyncTask.Status.RUNNING) {
                 mMapLoaderTask.execute(mLocation[0], mLocation[1]);
@@ -386,7 +387,6 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
         String notAvailable = getString(R.string.photoviewer_details_not_available);
         Date datetime = null;
-        boolean hasLocation = false;
         String location = null;
         String manufacturer = null;
         String model = null;
@@ -414,7 +414,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
             // Location
             if (exif.getLatLong(mLocation)) {
-                hasLocation = true;
+                mHasLocation = true;
                 if (Geocoder.isPresent()) {
                     Geocoder geocoder = new Geocoder(this, getResources().getConfiguration().locale);
                     List<Address> addresses = geocoder.getFromLocation(mLocation[0], mLocation[1], 1);
@@ -488,7 +488,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     df.format(datetime), tf.format(datetime)));
 
         // Location
-        if (!hasLocation) {
+        if (!mHasLocation) {
             findViewById(R.id.details_lat_lon).setVisibility(View.GONE);
             findViewById(R.id.details_map_block).setVisibility(View.GONE);
             tv = (TextView) findViewById(R.id.details_location);
