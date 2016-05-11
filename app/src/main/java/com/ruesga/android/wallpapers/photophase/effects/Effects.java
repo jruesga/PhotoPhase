@@ -27,6 +27,7 @@ import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * A class that manages all the supported effects
@@ -212,7 +213,14 @@ public class Effects {
     public void release() {
         if (mCachedEffects != null) {
             for (Effect effect : mCachedEffects.values()) {
-                effect.release();
+                try {
+                    effect.release();
+                } catch (NoSuchElementException ex) {
+                    // Catching a runtime exception is not ideally, but releasing
+                    // the effect causes a fc it the effect is not a valid state.
+                    // Since we are releasing the effect we can ignore it to avoid
+                    // crash the app
+                }
             }
             mCachedEffects.clear();
         }
