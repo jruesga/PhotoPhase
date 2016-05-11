@@ -1,6 +1,9 @@
 #don't warn
 -dontwarn okio.**
 
+#keep source file and line number
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
 
 #keep preference's classes
 -keep public class * extends android.preference.PreferenceFragment {
