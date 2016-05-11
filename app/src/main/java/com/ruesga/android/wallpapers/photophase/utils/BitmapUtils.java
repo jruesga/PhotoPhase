@@ -84,7 +84,7 @@ public class BitmapUtils {
         if (!out.equals(bitmap)) {
             bitmap.recycle();
         }
-        return bitmap;
+        return out;
     }
 
     /**
