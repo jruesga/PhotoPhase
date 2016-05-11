@@ -57,6 +57,8 @@
   <string name="pref_general_touch_open_with">Abrir con</string>
   <string name="pref_general_touch_open_with_summary_on">Visor de fotos interno</string>
   <string name="pref_general_touch_open_with_summary_off">Visor de fotos externo</string>
+  <string name="pref_general_power_of_two">Potencia de dos</string>
+  <string name="pref_general_power_of_two_summary">Convirtiendo la imagen a una textura de potencia de dos, la GPU puede tomar ventaja de más optimizaciones  y ser así más eficiente en el uso de sus recursos, pero, por otro lado, esto creará una textura cuadrática, por lo que dependiendo de la disposición de marcos  elegida algunas imágenes podría verse estiradas para ajustarse al marco, ignorando cualquier corrección de relación de aspecto.</string>
   <string name="pref_general_aspect_ratio_correction">Relación de aspecto</string>
   <string name="pref_general_aspect_ratio_correction_summary">Intentar corregir la relación de aspecto original de la imagen cortando la imagen para ajustarla a la celda de destino</string>
   <string name="pref_general_frame_spacer">Espacio entre marcos</string>

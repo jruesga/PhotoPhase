@@ -63,6 +63,9 @@
     <string name="pref_general_settings_wallpaper_dim">Wallpaper dim</string>
     <string name="pref_general_settings_background_color">Background color</string>
     <string name="pref_general_settings_background_color_summary">Set the background color</string>
+    <string name="pref_general_power_of_two">Power of two</string>
+    <string name="pref_general_power_of_two_summary">By converting the picture to a power of two texture, the graphics pipeline can take advantage of more optimizations and be more efficient using its resources,
+        but, in the other side, it will create a square texture, so depending on your disposition layout some pictures could be appear stretched, ignoring any aspect ratio correction.</string>
     <string name="pref_general_aspect_ratio_correction">Aspect ratio</string>
     <string name="pref_general_aspect_ratio_correction_summary">Try to fix the picture\'s aspect ratio by cropping it to fit the destination frame</string>
     <string name="pref_general_frame_spacer">Frame spacer</string>

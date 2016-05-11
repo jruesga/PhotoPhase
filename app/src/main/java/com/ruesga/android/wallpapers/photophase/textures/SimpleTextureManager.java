@@ -87,7 +87,8 @@ public class SimpleTextureManager extends TextureManager {
         }
 
         if (bitmap != null) {
-            requestor.setTextureHandle(GLESUtil.loadTexture(bitmap, mEffect, mBorder, mDimensions));
+            requestor.setTextureHandle(
+                    GLESUtil.loadTexture(mContext, bitmap, mEffect, mBorder, mDimensions));
         }
     }
 }

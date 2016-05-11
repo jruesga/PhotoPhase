@@ -29,6 +29,7 @@ import android.support.design.BuildConfig;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.borders.Border;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -356,7 +357,7 @@ public final class GLESUtil {
      * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(File file, Rect dimensions, Effect effect,
+    public static GLESTextureInfo loadTexture(Context ctx, File file, Rect dimensions, Effect effect,
             Border border, Rect dimen, boolean recycle) {
         Bitmap bitmap = null;
         try {
@@ -368,7 +369,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            GLESTextureInfo ti = loadTexture(bitmap, effect, border, dimen);
+            GLESTextureInfo ti = loadTexture(ctx, bitmap, effect, border, dimen);
             ti.path = file;
             return ti;
 
@@ -414,7 +415,7 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "resourceId: " + resourceId);
-            return loadTexture(bitmap, effect, border, dimen);
+            return loadTexture(ctx, bitmap, effect, border, dimen);
 
         } catch (Exception e) {
             String msg = "Failed to generate a valid texture from resource: " + resourceId;
@@ -446,13 +447,14 @@ public final class GLESUtil {
      * @param dimen The new dimensions
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Bitmap bitmap, Effect effect, Border border, Rect dimen) {
+    public static GLESTextureInfo loadTexture(Context context, Bitmap bitmap,
+            Effect effect, Border border, Rect dimen) {
         // Check that we have a valid image name reference
         if (bitmap == null) {
             return new GLESTextureInfo();
         }
 
-        Bitmap texture = ensurePowerOfTwoTexture(bitmap);
+        Bitmap texture = ensurePowerOfTwoTexture(context, bitmap);
 
         int num = 1;
         if (effect != null) {
@@ -540,15 +542,14 @@ public final class GLESUtil {
      * @param src The source bitmap
      * @return A bitmap which is power of two
      */
-    private static Bitmap ensurePowerOfTwoTexture(Bitmap src) {
-        if (!BitmapUtils.isPowerOfTwo(src)) {
-            int w = BitmapUtils.calculateUpperPowerOfTwo(src.getWidth());
-            int h = BitmapUtils.calculateUpperPowerOfTwo(
-                    Math.abs(1 - (src.getWidth() / src.getHeight())) > 0.15
-                        ? src.getHeight() : src.getWidth());
+    private static Bitmap ensurePowerOfTwoTexture(Context context, Bitmap src) {
+        if (!BitmapUtils.isPowerOfTwo(src) &&
+                PreferencesProvider.Preferences.General.isPowerOfTwo(context)) {
+            int powerOfTwo = BitmapUtils.calculateUpperPowerOfTwo(
+                    Math.min(src.getWidth(), src.getHeight()));
 
             // Create a power of two bitmap
-            Bitmap out = Bitmap.createScaledBitmap(src, w, h, false);
+            Bitmap out = Bitmap.createScaledBitmap(src, powerOfTwo, powerOfTwo, false);
             src.recycle();
             return out;
         }

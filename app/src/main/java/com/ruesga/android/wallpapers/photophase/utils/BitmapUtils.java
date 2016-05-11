@@ -162,9 +162,25 @@ public class BitmapUtils {
      * @return boolean if the size is power of two
      */
     public static boolean isPowerOfTwo(Bitmap bitmap){
-        int w = bitmap.getWidth();
-        int h = bitmap.getWidth();
-        return (w & (w - 1)) == 0 && (h & (h - 1)) == 0;
+        return isPowerOfTwo(bitmap.getWidth(), bitmap.getHeight());
+    }
+
+    /**
+     * Check if the width and height are power of two
+     *
+     * @param w Width
+     * @param h Height
+     * @return boolean if the size is power of two
+     */
+    public static boolean isPowerOfTwo(int w, int h){
+        return isPowerOfTwo(w) && isPowerOfTwo(h);
+    }
+
+    private static boolean isPowerOfTwo(int x) {
+        while (((x % 2) == 0) && x > 1) {
+            x /= 2;
+        }
+        return (x == 1);
     }
 
     /**

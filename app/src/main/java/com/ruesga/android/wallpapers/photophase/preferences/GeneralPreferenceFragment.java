@@ -51,6 +51,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private static final boolean DEBUG = false;
 
+    private CheckBoxPreference mFixAspectRatio;
     private ListPreference mTouchActions;
     private MultiSelectListPreference mTransitionsTypes;
     private DiscreteSeekBarProgressPreference mTransitionsInterval;
@@ -72,8 +73,13 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
             } else if (key.compareTo("ui_background_color") == 0) {
                 mRedrawFlag = true;
                 Colors.setBackground(new GLColor((Integer) newValue));
+            } else if (key.compareTo("ui_power_of_two") == 0) {
+                mRedrawFlag = true;
+                mEmptyTextureQueueFlag = true;
+                mFixAspectRatio.setEnabled(!((Boolean) newValue));
             } else if (key.compareTo("ui_fix_aspect_ratio") == 0) {
                 mRedrawFlag = true;
+                mEmptyTextureQueueFlag = true;
             } else if (key.compareTo("ui_frame_spacer") == 0) {
                 mRecreateWorld = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
@@ -190,9 +196,12 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mTouchActions.setOnPreferenceChangeListener(mOnChangeListener);
         updateTouchActionSummary(mTouchActions.getValue());
 
-        CheckBoxPreference fixAspectRatio =
-                (CheckBoxPreference) findPreference("ui_fix_aspect_ratio");
-        fixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
+        CheckBoxPreference powerOfTwo = (CheckBoxPreference) findPreference("ui_power_of_two");
+        powerOfTwo.setOnPreferenceChangeListener(mOnChangeListener);
+
+        mFixAspectRatio = (CheckBoxPreference) findPreference("ui_fix_aspect_ratio");
+        mFixAspectRatio.setOnPreferenceChangeListener(mOnChangeListener);
+        mFixAspectRatio.setEnabled(!Preferences.General.isPowerOfTwo(getActivity()));
 
         CheckBoxPreference frameSpacer =
                 (CheckBoxPreference) findPreference("ui_frame_spacer");

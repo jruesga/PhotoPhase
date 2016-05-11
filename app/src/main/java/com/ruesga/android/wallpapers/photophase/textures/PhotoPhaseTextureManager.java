@@ -37,7 +37,9 @@ import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
+import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 import com.ruesga.android.wallpapers.photophase.utils.Utils;
@@ -108,9 +110,11 @@ public class PhotoPhaseTextureManager extends TextureManager
                 // Load and bind to the GLES context. The effect is applied when the image
                 // is associated to the destination target (only if aspect ratio will be applied)
                 if (!Preferences.General.isFixAspectRatio(mContext)) {
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, effect, border, mDimensions, false);
+                    ti = GLESUtil.loadTexture(
+                            mContext, mImage, mDimensions, effect, border, mDimensions, false);
                 } else {
-                    ti = GLESUtil.loadTexture(mImage, mDimensions, null, null, null, false);
+                    ti = GLESUtil.loadTexture(
+                            mContext, mImage, mDimensions, null, null, null, false);
                     ti.effect = effect;
                     ti.border = border;
                 }
@@ -468,13 +472,21 @@ public class PhotoPhaseTextureManager extends TextureManager
                                 (int)(mScreenDimensions.width() * dimens.width() / 2),
                                 (int)(mScreenDimensions.height() * dimens.height() / 2));
 
+            // Create a texture of power of two here to avoid scaling the bitmap twice
+            int w = pixels.width();
+            int h = pixels.height();
+            if (!BitmapUtils.isPowerOfTwo(w, h) &&
+                    PreferencesProvider.Preferences.General.isPowerOfTwo(mContext)) {
+                w = h = BitmapUtils.calculateUpperPowerOfTwo(Math.min(w, h));
+            }
+
             // Create a thumbnail of the image
             Bitmap thumb = ThumbnailUtils.extractThumbnail(
                                     ti.bitmap,
-                                    pixels.width(),
-                                    pixels.height(),
+                                    w,
+                                    h,
                                     ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-            GLESTextureInfo dst = GLESUtil.loadTexture(thumb, ti.effect, ti.border, pixels);
+            GLESTextureInfo dst = GLESUtil.loadTexture(mContext, thumb, ti.effect, ti.border, pixels);
 
             // Destroy references
             int[] textures = new int[]{ti.handle};

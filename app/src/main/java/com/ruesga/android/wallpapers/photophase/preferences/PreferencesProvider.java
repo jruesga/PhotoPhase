@@ -129,6 +129,15 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Return the current user preference about using power of two textures.
+             *
+             * @return boolean Indicates if the image should be converted to a power of two
+             */
+            public static boolean isPowerOfTwo(Context context) {
+                return getSharedPreferences(context).getBoolean("ui_power_of_two", false);
+            }
+
+            /**
              * Return the current user preference about fix or not fix the aspect ratio
              * of the image by cropping the image.
              *

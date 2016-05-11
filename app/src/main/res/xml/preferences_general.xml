@@ -44,6 +44,14 @@
             android:persistent="true"
             android:defaultValue="@color/wallpaper_background_color" />
 
+        <!-- Power of two -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_power_of_two"
+            android:title="@string/pref_general_power_of_two"
+            android:summary="@string/pref_general_power_of_two_summary"
+            android:persistent="true"
+            android:defaultValue="false" />
+
         <!-- Aspect ratio correction -->
         <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
             android:key="ui_fix_aspect_ratio"
