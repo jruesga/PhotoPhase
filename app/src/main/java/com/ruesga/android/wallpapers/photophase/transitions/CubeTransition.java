@@ -56,7 +56,7 @@ public class CubeTransition extends Transition {
     private static final int[] VERTEX_SHADER = {R.raw.default_vertex_shader, R.raw.default_vertex_shader};
     private static final int[] FRAGMENT_SHADER = {R.raw.default_fragment_shader, R.raw.default_fragment_shader};
 
-    private static final float TRANSITION_TIME = 1000.0f;
+    private static final float TRANSITION_TIME = 1500.0f;
 
     private static final float SCALE_AMOUNT = 0.2f;
 
