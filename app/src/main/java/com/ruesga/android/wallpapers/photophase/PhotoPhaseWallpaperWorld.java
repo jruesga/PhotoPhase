@@ -308,11 +308,12 @@ public class PhotoPhaseWallpaperWorld {
         mTransitionsQueue = new ArrayList<>(dispositions.size());
         mUsedTransitionsQueue = new ArrayList<>(dispositions.size());
         int i = 0;
+        int count = dispositions.size();
         for (Disposition disposition : dispositions) {
             // Create the photo frame
             float[] frameVertices = getVerticesFromDisposition(disposition, cellw, cellh);
             float[] photoVertices = getFramePadding(frameVertices,
-                    portrait ? w : h, portrait ? h : w);
+                    portrait ? w : h, portrait ? h : w, count > 1);
             PhotoFrame frame =
                     new PhotoFrame(
                             mTextureManager,
@@ -412,10 +413,11 @@ public class PhotoPhaseWallpaperWorld {
      * @param screenHeight The screen height
      * @return float[] The new coordinates
      */
-    private float[] getFramePadding(float[] coords, int screenWidth, int screenHeight) {
+    private float[] getFramePadding(float[] coords, int screenWidth, int screenHeight,
+            boolean needsFramePadding) {
         float[] paddingCoords = new float[coords.length];
         System.arraycopy(coords, 0, paddingCoords, 0, coords.length);
-        if (Preferences.General.isFrameSpacer(mContext)) {
+        if (needsFramePadding && Preferences.General.isFrameSpacer(mContext)) {
             final float pxw = (1 / (float) screenWidth) * PHOTO_FRAME_PADDING;
             final float pxh = (1 / (float) screenHeight) * PHOTO_FRAME_PADDING;
             paddingCoords[0] += pxw;
