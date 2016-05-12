@@ -156,13 +156,13 @@ public class PhotoViewerActivity extends AppCompatActivity {
         if (getIntent() != null) {
             String photo = getIntent().getStringExtra(EXTRA_PHOTO);
             if (photo == null) {
-                finish();
+                finishActivity();
                 return;
             }
 
             mPhoto = new File(photo);
             if (!mPhoto.exists()) {
-                finish();
+                finishActivity();
                 return;
             }
         }
