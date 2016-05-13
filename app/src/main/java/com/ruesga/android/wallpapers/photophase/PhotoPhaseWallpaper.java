@@ -105,7 +105,7 @@ public class PhotoPhaseWallpaper
         private long mLastTouch = -1;
         private final Point mLastPoint = new Point();
 
-        private static final int DOUBLE_TAP_MIN_TIME = 40;
+        private static final int DOUBLE_TAP_MIN_TIME = 20;
         private final int mDoubleTapSlop;
 
         /**
