@@ -69,7 +69,6 @@ public class ApertureTransition extends Transition {
     }
 
     private void draw(float[] matrix, float radius) {
-System.out.println("jrc:draw aperture");
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
