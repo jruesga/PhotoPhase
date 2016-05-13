@@ -482,10 +482,9 @@ public class PhotoPhaseTextureManager extends TextureManager
             // Create a thumbnail of the image
             Bitmap thumb = BitmapUtils.createScaledBitmap(
                     ti.bitmap, w, h, BitmapUtils.ScalingLogic.CROP);
-            if (thumb.equals(ti.bitmap)) {
-                return;
+            if (!thumb.equals(ti.bitmap)) {
+                ti.bitmap.recycle();
             }
-            ti.bitmap.recycle();
             GLESTextureInfo dst = GLESUtil.loadTexture(mContext, thumb, ti.effect, ti.border, pixels);
 
             // Destroy references
