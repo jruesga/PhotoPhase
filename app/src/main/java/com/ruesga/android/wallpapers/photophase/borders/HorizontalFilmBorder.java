@@ -61,7 +61,7 @@ public class HorizontalFilmBorder extends Border {
             "}" +
             "void main(void)\n" +
             "{\n" +
-            "  float b = strength / w;\n" +
+            "  float b = strength / h;\n" +
             "  float t = b / 5.0;\n" +
             "  if (is_film_border(v_texcoord, b) && !is_film_track(v_texcoord, b, t)) {\n" +
             "    vec4 tex = texture2D (tex_sampler, v_texcoord);\n" +
