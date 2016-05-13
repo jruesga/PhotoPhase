@@ -82,6 +82,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private ColorShape mOverlay;
     private OopsShape mOopsShape;
 
+    private boolean mManualTransition;
     private long mLastRunningTransition;
     private long mLastTransition;
 
@@ -330,7 +331,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      * @param x The x coordinate
      * @param y The y coordinate
      */
-    public void onTouch(float x , float y) {
+    public void onTouch(float x , float y, boolean ignoreBarrier) {
         if (mWorld != null) {
             // Do user action
             TouchAction touchAction = Preferences.General.Touch.getTouchAction(mContext);
@@ -339,7 +340,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 long touchTime = System.currentTimeMillis();
                 long diff = touchTime - mLastTouchTime;
                 mLastTouchTime = touchTime;
-                if (diff < TOUCH_BARRIER_TIME) {
+                if (!ignoreBarrier && diff < TOUCH_BARRIER_TIME) {
                     return;
                 }
 
@@ -362,6 +363,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                                 deselectCurrentTransition();
                                 mWorld.selectTransition(frame);
                                 mLastRunningTransition = System.currentTimeMillis();
+                                mManualTransition = true;
 
                                 // Now force continuously render while transition is applied
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -780,9 +782,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     // exceed its timeout
                     synchronized (mDrawing) {
                         final int interval = Preferences.General.Transitions.getTransitionInterval(mContext);
-                        if (interval > 0) {
+                        if (mManualTransition || interval > 0) {
                             if (!mWorld.hasRunningTransition() || isTransitionTimeoutFired()) {
                                 mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                                mManualTransition = false;
 
                                 // Now start a delayed thread to generate the next effect
                                 deselectCurrentTransition();

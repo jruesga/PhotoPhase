@@ -167,7 +167,7 @@ public class PhotoPhaseWallpaper
 
                 if (isDoubleTap(ctx, x, y)) {
                     // Pass the x and y position to the renderer
-                    ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y);
+                    ((PhotoPhaseRenderer)getRenderer()).onTouch(x, y, true);
                 } else if (!PreferencesProvider.Preferences.General.Touch.getTouchMode(ctx)) {
                     mHandler.postDelayed(new Runnable() {
                         @Override
@@ -188,7 +188,7 @@ public class PhotoPhaseWallpaper
                                 }
 
                                 // Pass the x and y position to the renderer
-                                ((PhotoPhaseRenderer) getRenderer()).onTouch(x, y);
+                                ((PhotoPhaseRenderer) getRenderer()).onTouch(x, y, false);
                             }
                         }
                     }, ViewConfiguration.getLongPressTimeout() + 100L);
