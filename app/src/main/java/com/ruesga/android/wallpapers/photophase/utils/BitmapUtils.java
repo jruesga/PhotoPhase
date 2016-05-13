@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Jorge Ruesga
+ * Copyright (c) 2010, Sony Ericsson Mobile Communication AB. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +20,10 @@ package com.ruesga.android.wallpapers.photophase.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 
 import java.io.File;
@@ -38,10 +42,11 @@ public class BitmapUtils {
      * @return Bitmap The decoded bitmap
      */
     public static Bitmap decodeBitmap(InputStream bitmap) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferQualityOverSpeed = false;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        options.inDither = false;
+        final Options options = new Options();
+        options.inScaled = false;
+        options.inDither = true;
+        options.inPreferQualityOverSpeed = true;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         return BitmapFactory.decodeStream(bitmap, null, options);
     }
 
@@ -49,31 +54,26 @@ public class BitmapUtils {
      * Method that decodes a bitmap
      *
      * @param file The bitmap file to decode
-     * @param reqWidth The request width
-     * @param reqHeight The request height
+     * @param dstWidth The request width
+     * @param dstHeight The request height
      * @return Bitmap The decoded bitmap
      */
     @SuppressWarnings("deprecation")
-    public static Bitmap decodeBitmap(File file, int reqWidth, int reqHeight) {
+    public static Bitmap decodeBitmap(File file, int dstWidth, int dstHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-
-        // Calculate inSampleSize (use 1024 as maximum size, the minimum supported
-        // by all the gles20 devices)
-        options.inSampleSize = calculateBitmapRatio(
-                                    options,
-                                    Math.min(reqWidth, 1024),
-                                    Math.min(reqHeight, 1024));
-
-        // Decode the bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        options.inPreferQualityOverSpeed = false;
+        final Options options = new Options();
+        options.inScaled = false;
+        options.inDither = true;
+        options.inPreferQualityOverSpeed = true;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        // Decode the bitmap with inSampleSize set
+        options.inSampleSize = calculateBitmapRatio(options, dstWidth, dstHeight);
+        options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         if (bitmap == null) {
             return null;
@@ -153,6 +153,105 @@ public class BitmapUtils {
         }
 
         return inSampleSize;
+    }
+
+    /**
+     * Utility function for creating a scaled version of an existing bitmap
+     *
+     * @param unscaledBitmap Bitmap to scale
+     * @param dstWidth Wanted width of destination bitmap
+     * @param dstHeight Wanted height of destination bitmap
+     * @param scalingLogic Logic to use to avoid image stretching
+     * @return New scaled bitmap object
+     */
+    public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight,
+                                            ScalingLogic scalingLogic) {
+        if (unscaledBitmap.getWidth() == dstWidth && unscaledBitmap.getHeight() == dstHeight) {
+            return unscaledBitmap;
+        }
+        Rect srcRect = calculateSrcRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
+                dstWidth, dstHeight, scalingLogic);
+        Rect dstRect = calculateDstRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
+                dstWidth, dstHeight, scalingLogic);
+        Bitmap scaledBitmap = Bitmap.createBitmap(dstRect.width(), dstRect.height(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.drawBitmap(unscaledBitmap, srcRect, dstRect, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return scaledBitmap;
+    }
+
+    /**
+     * ScalingLogic defines how scaling should be carried out if source and
+     * destination image has different aspect ratio.
+     *
+     * CROP: Scales the image the minimum amount while making sure that at least
+     * one of the two dimensions fit inside the requested destination area.
+     * Parts of the source image will be cropped to realize this.
+     *
+     * FIT: Scales the image the minimum amount while making sure both
+     * dimensions fit inside the requested destination area. The resulting
+     * destination dimensions might be adjusted to a smaller size than
+     * requested.
+     */
+    public enum ScalingLogic {
+        CROP, FIT
+    }
+
+    /**
+     * Calculates source rectangle for scaling bitmap
+     *
+     * @param srcWidth Width of source image
+     * @param srcHeight Height of source image
+     * @param dstWidth Width of destination area
+     * @param dstHeight Height of destination area
+     * @param scalingLogic Logic to use to avoid image stretching
+     * @return Optimal source rectangle
+     */
+    public static Rect calculateSrcRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight,
+                                        ScalingLogic scalingLogic) {
+        if (scalingLogic == ScalingLogic.CROP) {
+            final float srcAspect = (float)srcWidth / (float)srcHeight;
+            final float dstAspect = (float)dstWidth / (float)dstHeight;
+
+            if (srcAspect > dstAspect) {
+                final int srcRectWidth = (int)(srcHeight * dstAspect);
+                final int srcRectLeft = (srcWidth - srcRectWidth) / 2;
+                return new Rect(srcRectLeft, 0, srcRectLeft + srcRectWidth, srcHeight);
+            } else {
+                final int srcRectHeight = (int)(srcWidth / dstAspect);
+                final int scrRectTop = (srcHeight - srcRectHeight) / 2;
+                return new Rect(0, scrRectTop, srcWidth, scrRectTop + srcRectHeight);
+            }
+        } else {
+            return new Rect(0, 0, srcWidth, srcHeight);
+        }
+    }
+
+    /**
+     * Calculates destination rectangle for scaling bitmap
+     *
+     * @param srcWidth Width of source image
+     * @param srcHeight Height of source image
+     * @param dstWidth Width of destination area
+     * @param dstHeight Height of destination area
+     * @param scalingLogic Logic to use to avoid image stretching
+     * @return Optimal destination rectangle
+     */
+    public static Rect calculateDstRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight,
+                                        ScalingLogic scalingLogic) {
+        if (scalingLogic == ScalingLogic.FIT) {
+            final float srcAspect = (float)srcWidth / (float)srcHeight;
+            final float dstAspect = (float)dstWidth / (float)dstHeight;
+
+            if (srcAspect > dstAspect) {
+                return new Rect(0, 0, dstWidth, (int)(dstWidth / srcAspect));
+            } else {
+                return new Rect(0, 0, (int)(dstHeight * srcAspect), dstHeight);
+            }
+        } else {
+            return new Rect(0, 0, dstWidth, dstHeight);
+        }
     }
 
     /**

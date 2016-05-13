@@ -47,7 +47,6 @@ import com.ruesga.android.wallpapers.photophase.transitions.Transition;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
-import com.ruesga.android.wallpapers.photophase.utils.Utils;
 
 import java.io.File;
 
@@ -700,9 +699,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mMeasuredHeight = mHeight + mStatusBarHeight;
 
         // Calculate a better fixed size for the pictures
-        Rect dimensions = Utils.isTablet(mContext)
-                             ? new Rect(0, 0, width / 2, height / 2)
-                             : new Rect(0, 0, width / 4, height / 4);
+        Rect dimensions = new Rect(0, 0, width, height);
         Rect screenDimensions = new Rect(0, AndroidHelper.isKitKatOrGreater() ? 0 : mStatusBarHeight,
                 width, AndroidHelper.isKitKatOrGreater() ? height + mStatusBarHeight : height);
         mTextureManager.setDimensions(dimensions);

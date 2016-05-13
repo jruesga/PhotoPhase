@@ -21,6 +21,7 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
@@ -235,6 +236,8 @@ public class PhotoPhaseWallpaper
     @Override
     public void onInitializeEGLView(GLSurfaceView view) {
         if (DEBUG) Log.d(TAG, "onInitializeEGLView");
+        view.getHolder().setFormat(PixelFormat.RGBA_8888);
+        view.setPreserveEGLContextOnPause(mPreserveEGLContext);
     }
 
     /**
@@ -254,7 +257,6 @@ public class PhotoPhaseWallpaper
     @Override
     public void onEGLViewInitialized(GLSurfaceView view) {
         view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        view.setPreserveEGLContextOnPause(mPreserveEGLContext);
     }
 
     /**

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.ThumbnailUtils;
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
 import android.opengl.GLES20;
@@ -57,7 +56,7 @@ public class PhotoPhaseTextureManager extends TextureManager
 
     private static final String TAG = "TextureManager";
 
-    private static final int QUEUE_SIZE = 8;
+    private static final int QUEUE_SIZE = 2;
 
     private final Context mContext;
     private final Handler mHandler;
@@ -481,11 +480,12 @@ public class PhotoPhaseTextureManager extends TextureManager
             }
 
             // Create a thumbnail of the image
-            Bitmap thumb = ThumbnailUtils.extractThumbnail(
-                                    ti.bitmap,
-                                    w,
-                                    h,
-                                    ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+            Bitmap thumb = BitmapUtils.createScaledBitmap(
+                    ti.bitmap, w, h, BitmapUtils.ScalingLogic.CROP);
+            if (thumb.equals(ti.bitmap)) {
+                return;
+            }
+            ti.bitmap.recycle();
             GLESTextureInfo dst = GLESUtil.loadTexture(mContext, thumb, ti.effect, ti.border, pixels);
 
             // Destroy references
