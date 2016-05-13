@@ -362,7 +362,7 @@ public final class GLESUtil {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)
-            bitmap = BitmapUtils.decodeBitmap(file, dimensions.height(), dimensions.width());
+            bitmap = BitmapUtils.decodeBitmap(file, dimensions.width(), dimensions.height());
             if (bitmap == null) {
                 Log.e(TAG, "Failed to decode the file bitmap");
                 return new GLESTextureInfo();
