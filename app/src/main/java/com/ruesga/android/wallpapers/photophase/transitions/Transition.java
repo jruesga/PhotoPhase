@@ -16,10 +16,12 @@
 
 package com.ruesga.android.wallpapers.photophase.transitions;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.animation.AccelerateInterpolator;
 
 import com.ruesga.android.wallpapers.photophase.PhotoFrame;
 import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
@@ -51,6 +53,8 @@ public abstract class Transition {
     private long mTime;
     protected boolean mRunning;
 
+    private AccelerateInterpolator mInterpolator;
+
     /**
      * Constructor of <code>Transition</code>
      *
@@ -79,6 +83,8 @@ public abstract class Transition {
         for (int i = 0; i < cc; i++) {
             createProgram(i);
         }
+
+        mInterpolator = new AccelerateInterpolator();
     }
 
     /**
@@ -267,6 +273,8 @@ public abstract class Transition {
     }
 
     private float getDelta() {
-        return Math.min(SystemClock.uptimeMillis() - mTime, getTransitionTime()) / getTransitionTime();
+        float delta = Math.min(
+                SystemClock.uptimeMillis() - mTime, getTransitionTime()) / getTransitionTime();
+        return mInterpolator.getInterpolation(delta);
     }
 }
