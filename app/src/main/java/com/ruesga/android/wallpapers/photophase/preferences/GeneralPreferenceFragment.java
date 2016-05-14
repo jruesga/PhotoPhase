@@ -92,12 +92,16 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
             } else if (key.compareTo("ui_effect_types") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
+                mRecreateWorld = Preferences.General.Transitions.getTransitionInterval(
+                        getActivity()) == 0;
                 Preferences.General.Effects.setSelectedEffects(
                         getActivity(), (Set<String>) newValue);
                 updateEffectTypeSummary((Set<String>) newValue);
             } else if (key.compareTo("ui_border_types") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
+                mRecreateWorld = Preferences.General.Transitions.getTransitionInterval(
+                        getActivity()) == 0;
                 Preferences.General.Borders.setSelectedBorders(
                         getActivity(), (Set<String>) newValue);
                 updateBorderTypeSummary((Set<String>) newValue);
