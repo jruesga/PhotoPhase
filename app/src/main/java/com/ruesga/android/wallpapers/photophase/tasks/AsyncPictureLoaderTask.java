@@ -67,15 +67,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     private final int mWidth;
     private final int mHeight;
 
-    /**
-     * Constructor of <code>AsyncPictureLoaderTask</code>
-     *
-     * @param context The current context
-     * @param v The associated view
-     */
-    public AsyncPictureLoaderTask(Context context, ImageView v) {
-        this(context, v, v.getMeasuredWidth(), v.getMeasuredHeight(), null);
-    }
+    public int mFactor = 1;
 
     /**
      * Constructor of <code>AsyncPictureLoaderTask</code>
@@ -94,22 +86,6 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     }
 
     /**
-     * Constructor of <code>AsyncPictureLoaderTask</code>
-     *
-     * @param context The current context
-     * @param v The associated view
-     * @param callback A callback to notify when the picture was loaded
-     */
-    public AsyncPictureLoaderTask(Context context, ImageView v, OnPictureLoaded callback) {
-        super();
-        mContext = context;
-        mView = v;
-        mCallback = callback;
-        mWidth = mView.getMeasuredWidth();
-        mHeight = mView.getMeasuredHeight();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -118,9 +94,10 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
             mCallback.onPreloadImage();
         }
 
-        Bitmap bitmap = BitmapUtils.decodeBitmap(params[0], mWidth, mHeight);
-        if (bitmap != null) {
-            return new BitmapDrawable(mContext.getResources(), bitmap);
+        Bitmap unscaledBitmap = BitmapUtils.createUnscaledBitmap(
+                params[0], mWidth / mFactor, mHeight / mFactor);
+        if (unscaledBitmap != null) {
+            return new BitmapDrawable(mContext.getResources(), unscaledBitmap);
         }
         return null;
     }

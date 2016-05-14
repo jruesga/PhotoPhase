@@ -380,12 +380,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                         // Internal
                         File file = getFileFromFrame(frame);
                         if (file != null) {
-                            Bitmap bitmap = getBitmapFromFrame(frame);
                             Intent intent = new Intent(mContext, PhotoViewerActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra(PhotoViewerActivity.EXTRA_PHOTO, file.getAbsolutePath());
-                            PhotoViewerActivity.sThumbnail = bitmap;
                             mContext.startActivity(intent);
                         }
                     } else {

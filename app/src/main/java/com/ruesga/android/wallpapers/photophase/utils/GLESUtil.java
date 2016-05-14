@@ -521,9 +521,7 @@ public final class GLESUtil {
         // Apply the border (we need a thread-safe call here)
         synchronized (SYNC) {
             // No more than 1024 (the minimum supported by all the gles20 devices)
-            int w = Math.min(dimen.width(), 1024);
-            int h = Math.min(dimen.height(), 1024);
-            effect.apply(textureHandles[n], w, h, textureHandles[n + 1]);
+            effect.apply(textureHandles[n], dimen.width(), dimen.height(), textureHandles[n + 1]);
         }
 
         // Delete the unused texture

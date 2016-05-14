@@ -19,15 +19,16 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -289,8 +290,12 @@ public class PictureItemView extends FrameLayout {
                 mIcon.setImageDrawable(null);
 
                 // Show as icon, the first picture
-                int minSize = (int) getResources().getDimension(R.dimen.picture_size);
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, minSize, minSize, null);
+                DisplayMetrics metrics = new DisplayMetrics();
+                WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                wm.getDefaultDisplay().getMetrics(metrics);
+                mTask = new AsyncPictureLoaderTask(getContext(), mIcon,
+                        metrics.widthPixels, metrics.heightPixels, null);
+                mTask.mFactor = 8;
                 mTask.execute(new File(picture.getPath()));
             }
         }
@@ -299,7 +304,6 @@ public class PictureItemView extends FrameLayout {
     private void performDisplayPicture(ImageView photo) {
         Intent intent = new Intent(getContext(), PhotoViewerActivity.class);
         intent.putExtra(PhotoViewerActivity.EXTRA_PHOTO, getPicture().getPath());
-        PhotoViewerActivity.sThumbnail = ((BitmapDrawable) photo.getDrawable()).getBitmap();
         if (AndroidHelper.isJellyBeanOrGreater()) {
             ActivityOptionsCompat options =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(

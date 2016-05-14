@@ -236,7 +236,7 @@ public class PhotoPhaseWallpaper
     @Override
     public void onInitializeEGLView(GLSurfaceView view) {
         if (DEBUG) Log.d(TAG, "onInitializeEGLView");
-        view.getHolder().setFormat(PixelFormat.RGBA_8888);
+        view.getHolder().setFormat(PixelFormat.RGB_565);
         view.setPreserveEGLContextOnPause(mPreserveEGLContext);
     }
 

@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -34,6 +35,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,7 +83,8 @@ public class PhotoViewerActivity extends AppCompatActivity {
     boolean mHasLocation = false;
 
     // To avoid passing a bitmap in an extra
-    public static Bitmap sThumbnail;
+    private Bitmap mThumbnail;
+    private boolean mPictureLoaded;
 
     private final AsyncTask<Float, Void, Bitmap> mMapLoaderTask = new AsyncTask<Float, Void, Bitmap>() {
         private static final String OPEN_STREETMAP_URL =
@@ -172,10 +175,33 @@ public class PhotoViewerActivity extends AppCompatActivity {
         mDetails = findViewById(R.id.photo_details);
         mPhotoView = (ImageView) findViewById(R.id.photo);
         if (mPhotoView != null) {
-            mPhotoView.setImageBitmap(sThumbnail);
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            mThumbnail = BitmapUtils.createUnscaledBitmap(
+                    mPhoto, metrics.widthPixels / 8, metrics.heightPixels / 8);
+            mPhotoView.setImageBitmap(mThumbnail);
             mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
         }
         addTransitionListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mPictureLoaded) {
+            Drawable drawable = mPhotoView.getDrawable();
+            if (drawable instanceof BitmapDrawable) {
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    bitmap.recycle();
+                }
+            }
+        }
+        if (mThumbnail != null) {
+            mThumbnail.recycle();
+            mThumbnail = null;
+        }
     }
 
     @Override
@@ -213,8 +239,10 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
     private void performAsyncPhotoLoading() {
         if (mTask == null) {
-            mTask = new AsyncPictureLoaderTask(
-                    this, mPhotoView, 1024, 1024, new AsyncPictureLoaderTask.OnPictureLoaded() {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            mTask = new AsyncPictureLoaderTask(this, mPhotoView, metrics.widthPixels,
+                    metrics.heightPixels, new AsyncPictureLoaderTask.OnPictureLoaded() {
                 @Override
                 public void onPreloadImage() {
                     try {
@@ -235,6 +263,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     if (mDetailsMenu != null) {
                         mDetailsMenu.setVisible(true);
                     }
+                    mPictureLoaded = true;
                 }
             });
             mTask.execute(new File(mPhoto.getAbsolutePath()));

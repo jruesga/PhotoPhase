@@ -36,6 +36,23 @@ import java.io.InputStream;
 public class BitmapUtils {
 
     /**
+     * ScalingLogic defines how scaling should be carried out if source and
+     * destination image has different aspect ratio.
+     *
+     * CROP: Scales the image the minimum amount while making sure that at least
+     * one of the two dimensions fit inside the requested destination area.
+     * Parts of the source image will be cropped to realize this.
+     *
+     * FIT: Scales the image the minimum amount while making sure both
+     * dimensions fit inside the requested destination area. The resulting
+     * destination dimensions might be adjusted to a smaller size than
+     * requested.
+     */
+    public enum ScalingLogic {
+        CROP, FIT
+    }
+
+    /**
      * Method that decodes a bitmap
      *
      * @param bitmap The bitmap buffer to decode
@@ -45,8 +62,8 @@ public class BitmapUtils {
         final Options options = new Options();
         options.inScaled = false;
         options.inDither = true;
-        options.inPreferQualityOverSpeed = true;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inPreferQualityOverSpeed = false;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         return BitmapFactory.decodeStream(bitmap, null, options);
     }
 
@@ -64,8 +81,8 @@ public class BitmapUtils {
         final Options options = new Options();
         options.inScaled = false;
         options.inDither = true;
-        options.inPreferQualityOverSpeed = true;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inPreferQualityOverSpeed = false;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
@@ -85,6 +102,68 @@ public class BitmapUtils {
             bitmap.recycle();
         }
         return out;
+    }
+
+
+
+    /**
+     * Utility function for decoding an image file. The decoded bitmap will
+     * be optimized for further scaling to the requested destination dimensions
+     * and scaling logic.
+     *
+     * @param file The file to load
+     * @param dstWidth Width of destination area
+     * @param dstHeight Height of destination area
+     * @return Decoded bitmap
+     */
+    @SuppressWarnings("deprecation")
+    public static Bitmap createUnscaledBitmap(File file, int dstWidth, int dstHeight) {
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        options.inDither = true;
+        options.inPreferQualityOverSpeed = false;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        // Deprecated, but still valid for KitKat and lower apis
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        // Determine how much to scale down the image
+        int photoWidth = options.outWidth;
+        int photoHeight = options.outHeight;
+
+        // Decode the image file into a Bitmap sized to fill the View
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = Math.min(photoWidth / dstWidth, photoHeight / dstHeight);
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+    }
+
+    /**
+     * Utility function for creating a scaled version of an existing bitmap
+     *
+     * @param unscaledBitmap Bitmap to scale
+     * @param dstWidth Wanted width of destination bitmap
+     * @param dstHeight Wanted height of destination bitmap
+     * @param scalingLogic Logic to use to avoid image stretching
+     * @return New scaled bitmap object
+     */
+    public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight,
+            ScalingLogic scalingLogic) {
+        if (unscaledBitmap.getWidth() == dstWidth && unscaledBitmap.getHeight() == dstHeight) {
+            return unscaledBitmap;
+        }
+        Rect srcRect = calculateSrcRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
+                dstWidth, dstHeight, scalingLogic);
+        Rect dstRect = calculateDstRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
+                dstWidth, dstHeight, scalingLogic);
+        Bitmap scaledBitmap = Bitmap.createBitmap(dstRect.width(), dstRect.height(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.drawBitmap(unscaledBitmap, srcRect, dstRect, new Paint(Paint.FILTER_BITMAP_FLAG));
+        return scaledBitmap;
     }
 
     /**
@@ -156,49 +235,6 @@ public class BitmapUtils {
     }
 
     /**
-     * Utility function for creating a scaled version of an existing bitmap
-     *
-     * @param unscaledBitmap Bitmap to scale
-     * @param dstWidth Wanted width of destination bitmap
-     * @param dstHeight Wanted height of destination bitmap
-     * @param scalingLogic Logic to use to avoid image stretching
-     * @return New scaled bitmap object
-     */
-    public static Bitmap createScaledBitmap(Bitmap unscaledBitmap, int dstWidth, int dstHeight,
-                                            ScalingLogic scalingLogic) {
-        if (unscaledBitmap.getWidth() == dstWidth && unscaledBitmap.getHeight() == dstHeight) {
-            return unscaledBitmap;
-        }
-        Rect srcRect = calculateSrcRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
-                dstWidth, dstHeight, scalingLogic);
-        Rect dstRect = calculateDstRect(unscaledBitmap.getWidth(), unscaledBitmap.getHeight(),
-                dstWidth, dstHeight, scalingLogic);
-        Bitmap scaledBitmap = Bitmap.createBitmap(dstRect.width(), dstRect.height(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.drawBitmap(unscaledBitmap, srcRect, dstRect, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        return scaledBitmap;
-    }
-
-    /**
-     * ScalingLogic defines how scaling should be carried out if source and
-     * destination image has different aspect ratio.
-     *
-     * CROP: Scales the image the minimum amount while making sure that at least
-     * one of the two dimensions fit inside the requested destination area.
-     * Parts of the source image will be cropped to realize this.
-     *
-     * FIT: Scales the image the minimum amount while making sure both
-     * dimensions fit inside the requested destination area. The resulting
-     * destination dimensions might be adjusted to a smaller size than
-     * requested.
-     */
-    public enum ScalingLogic {
-        CROP, FIT
-    }
-
-    /**
      * Calculates source rectangle for scaling bitmap
      *
      * @param srcWidth Width of source image
@@ -209,7 +245,7 @@ public class BitmapUtils {
      * @return Optimal source rectangle
      */
     public static Rect calculateSrcRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight,
-                                        ScalingLogic scalingLogic) {
+            ScalingLogic scalingLogic) {
         if (scalingLogic == ScalingLogic.CROP) {
             final float srcAspect = (float)srcWidth / (float)srcHeight;
             final float dstAspect = (float)dstWidth / (float)dstHeight;

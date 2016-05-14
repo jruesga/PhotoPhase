@@ -56,7 +56,7 @@ public class PhotoPhaseTextureManager extends TextureManager
 
     private static final String TAG = "TextureManager";
 
-    private static final int QUEUE_SIZE = 2;
+    private static final int QUEUE_SIZE = 1;
 
     private final Context mContext;
     private final Handler mHandler;
@@ -462,7 +462,7 @@ public class PhotoPhaseTextureManager extends TextureManager
      */
     private void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
         // Check if we have to apply any correction to the image
-        if (Preferences.General.isFixAspectRatio(mContext)) {
+        if (ti.bitmap != null && Preferences.General.isFixAspectRatio(mContext)) {
             // Transform requestor dimensions to screen dimensions
             RectF dimens = requestor.getRequestorDimensions();
             Rect pixels = new Rect(

@@ -22,11 +22,13 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -358,8 +360,12 @@ public class AlbumInfoView extends RelativeLayout
                 mIcon.setImageDrawable(null);
 
                 // Show as icon, the first picture
-                int size = (int) getContext().getResources().getDimension(R.dimen.album_size);
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon, size, size, new OnPictureLoaded(album));
+                DisplayMetrics metrics = new DisplayMetrics();
+                WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                wm.getDefaultDisplay().getMetrics(metrics);
+                mTask = new AsyncPictureLoaderTask(getContext(), mIcon,
+                        metrics.widthPixels, metrics.heightPixels, new OnPictureLoaded(album));
+                mTask.mFactor = 8;
                 mTask.execute(new File(album.getItems().get(0).getPath()));
             }
         }
