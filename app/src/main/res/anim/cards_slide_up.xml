@@ -21,7 +21,7 @@
 
     <translate
         android:duration="@integer/cards_slide_up_anim"
-        android:fromYDelta="100%p"
+        android:fromYDelta="20%p"
         android:toYDelta="0" />
 
     <alpha
