@@ -36,6 +36,17 @@ public class GLESSurfaceDispatcher {
     }
 
     /**
+     * Check whether the surface has a valid context
+     */
+    public boolean hasValidSurface() {
+        try {
+            return mSurface.getHolder().getSurface().isValid();
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    /**
      * Method that dispatch a GLES commands inside the main GLThread.
      *
      * @param r The runnable that execute the GLES commands

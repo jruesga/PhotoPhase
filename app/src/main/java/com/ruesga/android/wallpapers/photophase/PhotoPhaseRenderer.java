@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources.NotFoundException;
-import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.effect.EffectContext;
@@ -452,19 +451,6 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         return frame.getTextureInfo().path;
     }
 
-    private static Bitmap getBitmapFromFrame(final PhotoFrame frame) {
-        // Sanity checks
-        GLESTextureInfo info = frame.getTextureInfo();
-        if (info == null) {
-            return null;
-        }
-        if (info.bitmap == null || info.bitmap.isRecycled()) {
-            return null;
-        }
-
-        return info.bitmap;
-    }
-
     /**
      * Method that deselect the current transition
      */
@@ -748,6 +734,11 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     @Override
     public void onDrawFrame(GL10 glUnused) {
+        // Check whether we have a valid surface
+        if (!mDispatcher.hasValidSurface()) {
+            return;
+        }
+
         if (mRecycle) {
             return;
         }

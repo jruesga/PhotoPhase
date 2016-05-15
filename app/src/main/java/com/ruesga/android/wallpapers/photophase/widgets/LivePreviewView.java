@@ -133,6 +133,11 @@ public class LivePreviewView extends GLSurfaceView {
 
         @Override
         public void onDrawFrame(GL10 gl) {
+            // Check whether we have a valid surface
+            if (!hasValidSurface()) {
+                return;
+            }
+
             Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
@@ -305,5 +310,13 @@ public class LivePreviewView extends GLSurfaceView {
                 mRenderer.recycle();
             }
         });
+    }
+
+    private boolean hasValidSurface() {
+        try {
+            return getHolder().getSurface().isValid();
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }

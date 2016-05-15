@@ -498,15 +498,17 @@ public final class GLESUtil {
             return new GLESTextureInfo();
         }
 
-        // Apply effects and borders
-        int n = 0;
+        // Apply effects and borders. Don't apply effects if there is not a valid context
         int handle = textureHandles[0];
-        if (effect != null) {
-            handle = applyEffect(textureHandles, n, effect, dimen);
-            n++;
-        }
-        if (border != null) {
-            handle = applyEffect(textureHandles, n, border, dimen);
+        if (hasValidEglContext()) {
+            int n = 0;
+            if (effect != null) {
+                handle = applyEffect(textureHandles, n, effect, dimen);
+                n++;
+            }
+            if (border != null) {
+                handle = applyEffect(textureHandles, n, border, dimen);
+            }
         }
 
         // Return the texture handle identifier and the associated info
@@ -562,10 +564,7 @@ public final class GLESUtil {
     public static void glesCheckError(String func) {
         // Log when a call happens without a current context or outside the GLThread
         if (BuildConfig.DEBUG) {
-            EGL elg = EGLContext.getEGL();
-            if (elg != null && elg instanceof EGL10 &&
-                    (((EGL10) EGLContext.getEGL()).eglGetCurrentContext() == null ||
-                    ((EGL10) EGLContext.getEGL()).eglGetCurrentContext().equals(EGL10.EGL_NO_CONTEXT))) {
+            if (!hasValidEglContext()) {
                 try {
                     throw new GLException(-1, "call to OpenGL ES API with no current context");
                 } catch (GLException ex) {
@@ -610,6 +609,18 @@ public final class GLESUtil {
             // Ignore
         }
         return "";
+    }
+
+    /**
+     * Return whether a valid Egl context exists
+     *
+     * @return boolean If a valid Egl context exists
+     */
+    public static boolean hasValidEglContext() {
+        final EGL10 egl = (EGL10) EGLContext.getEGL();
+        return egl != null &&
+                egl.eglGetCurrentContext() != null &&
+                !egl.eglGetCurrentContext().equals(EGL10.EGL_NO_CONTEXT);
     }
 
     /**
