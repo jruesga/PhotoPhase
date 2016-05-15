@@ -17,21 +17,39 @@
 package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.annotation.TargetApi;
-import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.MultiSelectListPreference;
-import android.util.AttributeSet;
-
 import android.support.v7.app.AlertDialog;
+import android.util.AttributeSet;
 import android.view.WindowManager;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 
 public class MultiSelectListPreferenceCompat extends MultiSelectListPreference {
+
+    private static class FakeAlertBuilder extends android.app.AlertDialog.Builder {
+        private CharSequence[] mItems;
+        private boolean[] mCheckedItems;
+        private OnMultiChoiceClickListener mOnMultiChoiceClickListener;
+
+        public FakeAlertBuilder(Context context) {
+            super(context);
+        }
+
+        @Override
+        public android.app.AlertDialog.Builder setMultiChoiceItems(
+                CharSequence[] items, boolean[] checkedItems, OnMultiChoiceClickListener listener) {
+            mItems = items;
+            mCheckedItems = checkedItems;
+            mOnMultiChoiceClickListener = listener;
+            return this;
+        }
+    }
 
     private AlertDialog mDialog;
 
@@ -60,6 +78,11 @@ public class MultiSelectListPreferenceCompat extends MultiSelectListPreference {
                 .setIcon(getDialogIcon())
                 .setPositiveButton(getPositiveButtonText(), this)
                 .setNegativeButton(getNegativeButtonText(), this);
+
+        FakeAlertBuilder fakeBuilder = new FakeAlertBuilder(getContext());
+        onPrepareDialogBuilder(fakeBuilder);
+        builder.setMultiChoiceItems(fakeBuilder.mItems,
+                fakeBuilder.mCheckedItems, fakeBuilder.mOnMultiChoiceClickListener);
         AndroidHelper.tryRegisterActivityDestroyListener(getPreferenceManager(), this);
         mDialog = builder.create();
         mDialog.getWindow().setSoftInputMode(
@@ -86,7 +109,7 @@ public class MultiSelectListPreferenceCompat extends MultiSelectListPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(false);
+        super.onDialogClosed(positiveResult);
         mDialog = null;
     }
 
