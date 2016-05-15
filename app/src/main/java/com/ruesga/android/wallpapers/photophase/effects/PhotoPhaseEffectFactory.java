@@ -184,4 +184,13 @@ public class PhotoPhaseEffectFactory {
      * </table>
      */
     public static final String EFFECT_DOF = "com.ruesga.android.wallpapers.photophase.effects.DoFEffect";
+
+    /**
+     * <p>Applies a warhol effect to the image.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String EFFECT_WARHOL = "com.ruesga.android.wallpapers.photophase.effects.WarholEffect";
 }

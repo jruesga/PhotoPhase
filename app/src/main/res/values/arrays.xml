@@ -136,6 +136,7 @@
         <item>@string/effects_thermalvision</item>
         <item>@string/effects_swirl</item>
         <item>@string/effects_dof</item>
+        <item>@string/effects_warhol</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -170,6 +171,7 @@
         <item>28</item>
         <item>29</item>
         <item>30</item>
+        <item>31</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">
