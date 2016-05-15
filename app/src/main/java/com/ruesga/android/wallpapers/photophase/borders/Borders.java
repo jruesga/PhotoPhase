@@ -63,7 +63,27 @@ public class Borders {
         /**
          * @see BordersFactory#BORDER_ELEGANT
          */
-        ELEGANT(6);
+        ELEGANT(6),
+        /**
+         * @see BordersFactory#BORDER_DOUBLE
+         */
+        DOUBLE(7),
+        /**
+         * @see BordersFactory#BORDER_DOUBLE_JOINED
+         */
+        DOUBLE_JOINED(8),
+        /**
+         * @see BordersFactory#BORDER_INSET
+         */
+        INSET(9),
+        /**
+         * @see BordersFactory#BORDER_SQUARES
+         */
+        SQUARES(10),
+        /**
+         * @see BordersFactory#BORDER_INSET_SQUARES
+         */
+        INSET_SQUARES(11);
 
         public final int mId;
         BORDERS(int id) {
@@ -173,6 +193,26 @@ public class Borders {
         } else if (nextBorder.compareTo(BORDERS.ELEGANT) == 0) {
             if (EffectFactory.isEffectSupported(BordersFactory.BORDER_ELEGANT)) {
                 border = (Border) effectFactory.createEffect(BordersFactory.BORDER_ELEGANT);
+            }
+        } else if (nextBorder.compareTo(BORDERS.DOUBLE) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_DOUBLE)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_DOUBLE);
+            }
+        } else if (nextBorder.compareTo(BORDERS.DOUBLE_JOINED) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_DOUBLE_JOINED)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_DOUBLE_JOINED);
+            }
+        } else if (nextBorder.compareTo(BORDERS.INSET) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_INSET)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_INSET);
+            }
+        } else if (nextBorder.compareTo(BORDERS.SQUARES) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_SQUARES)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_SQUARES);
+            }
+        } else if (nextBorder.compareTo(BORDERS.INSET_SQUARES) == 0) {
+            if (EffectFactory.isEffectSupported(BordersFactory.BORDER_INSET_SQUARES)) {
+                border = (Border) effectFactory.createEffect(BordersFactory.BORDER_INSET_SQUARES);
             }
         }
 

@@ -189,6 +189,11 @@
         <item>@string/borders_horizontal_film</item>
         <item>@string/borders_vertical_film</item>
         <item>@string/borders_elegant</item>
+        <item>@string/borders_double</item>
+        <item>@string/borders_double_joined</item>
+        <item>@string/borders_inset</item>
+        <item>@string/borders_squares</item>
+        <item>@string/borders_inset_squares</item>
     </string-array>
 
     <string-array name="borders_values" translatable="false">
@@ -199,6 +204,11 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
     </string-array>
 
     <string-array name="borders_default" translatable="false">

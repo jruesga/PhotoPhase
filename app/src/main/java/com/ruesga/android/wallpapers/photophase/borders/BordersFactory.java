@@ -77,4 +77,44 @@ public class BordersFactory {
      * </table>
      */
     public static final String BORDER_ELEGANT = "com.ruesga.android.wallpapers.photophase.borders.ElegantBorder";
+    /**
+     * <p>An double border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_DOUBLE = "com.ruesga.android.wallpapers.photophase.borders.DoubleBorder";
+    /**
+     * <p>An double joined border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_DOUBLE_JOINED = "com.ruesga.android.wallpapers.photophase.borders.DoubleJoinedBorder";
+    /**
+     * <p>An inset border.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_INSET = "com.ruesga.android.wallpapers.photophase.borders.InsetBorder";
+    /**
+     * <p>A border with squares.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_SQUARES = "com.ruesga.android.wallpapers.photophase.borders.SquaresBorder";
+    /**
+     * <p>A border with inset squares.</p>
+     * <p>Available parameters:</p>
+     * <table>
+     * <tr><td>Parameter name</td><td>Meaning</td><td>Valid values</td></tr>
+     * </table>
+     */
+    public static final String BORDER_INSET_SQUARES = "com.ruesga.android.wallpapers.photophase.borders.InsetSquaresBorder";
 }

@@ -207,6 +207,11 @@
     <string name="borders_horizontal_film">Horizontal film</string>
     <string name="borders_vertical_film">Vertical film</string>
     <string name="borders_elegant">Elegant</string>
+    <string name="borders_double">Double</string>
+    <string name="borders_double_joined">Double joined</string>
+    <string name="borders_inset">Inset</string>
+    <string name="borders_squares">Squares</string>
+    <string name="borders_inset_squares">Inset squares</string>
 
     <!-- ColorPickerDialog -->
     <string name="color_picker_alpha_slider_text">Alpha</string>
