@@ -26,12 +26,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.ArrayRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
 
+import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -172,5 +174,17 @@ public final class AndroidHelper {
             values[i] = entries.get(i).second;
         }
         return new Pair<>(labels, values);
+    }
+
+    public static void tryRegisterActivityDestroyListener(
+            PreferenceManager pm, PreferenceManager.OnActivityDestroyListener listener) {
+        try {
+            Method method = pm.getClass().getDeclaredMethod("registerOnActivityDestroyListener",
+                    PreferenceManager.OnActivityDestroyListener.class);
+            method.setAccessible(true);
+            method.invoke(pm, listener);
+        } catch (Exception e) {
+            // ignored, nothing we can do
+        }
     }
 }

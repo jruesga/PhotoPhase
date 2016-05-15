@@ -16,7 +16,6 @@
 
 package com.ruesga.android.wallpapers.photophase.preferences;
 
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -30,18 +29,23 @@ import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.github.danielnilsson9.colorpickerview.view.ColorPanelView;
 import com.github.danielnilsson9.colorpickerview.view.ColorPickerView;
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
 
 import java.util.Locale;
@@ -50,6 +54,8 @@ import java.util.Locale;
  * A {@link Preference} that allow to select/pick a color in a new window dialog.
  */
 public class ColorPickerPreference extends DialogPreference {
+
+    private AlertDialog mDialog;
 
     private ColorPanelView mColorPicker;
     private int mColor;
@@ -60,6 +66,9 @@ public class ColorPickerPreference extends DialogPreference {
         private ColorPanelView mCurrentColor;
         private ColorPanelView mNewColor;
 
+        private int mMaxLayoutWidth;
+        private int mMaxLayoutHeight;
+
         private boolean mIgnoreTextChanged;
 
         public ColorDialogView(Context context) {
@@ -68,6 +77,10 @@ public class ColorPickerPreference extends DialogPreference {
         }
 
         private void init() {
+            DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+            mMaxLayoutWidth = mMaxLayoutHeight =
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550, metrics);
+
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View v = inflater.inflate(R.layout.color_picker_pref_dialog_view, this, false);
             mColorText = (EditText) v.findViewById(R.id.color_picker_pref_color_text);
@@ -122,6 +135,21 @@ public class ColorPickerPreference extends DialogPreference {
             mColorText.addTextChangedListener(this);
 
             addView(v);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            int measuredWidth = MeasureSpec.getSize(widthMeasureSpec);
+            if(mMaxLayoutWidth < measuredWidth) {
+                int measureMode = MeasureSpec.getMode(widthMeasureSpec);
+                widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxLayoutWidth, measureMode);
+            }
+            int measuredHeight = MeasureSpec.getSize(heightMeasureSpec);
+            if(mMaxLayoutHeight < measuredHeight) {
+                int measureMode = MeasureSpec.getMode(heightMeasureSpec);
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxLayoutHeight, measureMode);
+            }
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
 
         public int getColor() {
@@ -226,14 +254,7 @@ public class ColorPickerPreference extends DialogPreference {
         setColor(restoreValue ? getPersistedInt(0) : (Integer) defaultValue);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void onPrepareDialogBuilder(Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-
-        // Configure the dialog
+    protected void onPrepareDialogBuilderCompat(AlertDialog.Builder builder) {
         final ColorDialogView v = new ColorDialogView(getContext());
         v.setColor(mColor);
         builder.setView(v);
@@ -255,8 +276,41 @@ public class ColorPickerPreference extends DialogPreference {
 
     @Override
     protected void showDialog(Bundle state) {
-        super.showDialog(state);
-        getDialog().getWindow().setFormat(PixelFormat.RGBA_8888);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setTitle(getDialogTitle())
+                .setIcon(getDialogIcon())
+                .setPositiveButton(getPositiveButtonText(), this)
+                .setNegativeButton(getNegativeButtonText(), this);
+        onPrepareDialogBuilderCompat(builder);
+        AndroidHelper.tryRegisterActivityDestroyListener(getPreferenceManager(), this);
+        mDialog = builder.create();
+        mDialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mDialog.setOnDismissListener(this);
+        if (state != null) {
+            mDialog.onRestoreInstanceState(state);
+        }
+        mDialog.show();
+        mDialog.getWindow().setFormat(PixelFormat.RGBA_8888);
+    }
+
+    @Override
+    protected void onClick() {
+        if (mDialog != null && mDialog.isShowing()) return;
+        showDialog(null);
+    }
+
+    public void onActivityDestroy() {
+        if (mDialog == null || !mDialog.isShowing()) {
+            return;
+        }
+        mDialog.dismiss();
+    }
+
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(false);
+        mDialog = null;
     }
 
     /**
@@ -272,25 +326,20 @@ public class ColorPickerPreference extends DialogPreference {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Parcelable onSaveInstanceState() {
         final Parcelable superState = super.onSaveInstanceState();
-        if (isPersistent()) {
-            // No need to save instance state since it's persistent
+        if (mDialog == null || !mDialog.isShowing()) {
             return superState;
         }
 
         final SavedState myState = new SavedState(superState);
+        myState.isDialogShowing = true;
+        myState.dialogBundle = mDialog.onSaveInstanceState();
         myState.color = getColor();
         return myState;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         if (state == null || !state.getClass().equals(SavedState.class)) {
@@ -302,12 +351,17 @@ public class ColorPickerPreference extends DialogPreference {
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
         setColor(myState.color);
+        if (myState.isDialogShowing) {
+            showDialog(myState.dialogBundle);
+        }
     }
 
     /**
      * A class for managing the instance state of a {@link ColorPickerPreference}.
      */
     static class SavedState extends BaseSavedState {
+        boolean isDialogShowing;
+        Bundle dialogBundle;
         int color;
 
         /**
@@ -317,6 +371,8 @@ public class ColorPickerPreference extends DialogPreference {
          */
         public SavedState(Parcel source) {
             super(source);
+            isDialogShowing = source.readInt() == 1;
+            dialogBundle = source.readBundle(getClass().getClassLoader());
             color = source.readInt();
         }
 
@@ -335,6 +391,8 @@ public class ColorPickerPreference extends DialogPreference {
         @Override
         public void writeToParcel(@NonNull Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
+            dest.writeInt(isDialogShowing ? 1 : 0);
+            dest.writeBundle(dialogBundle);
             dest.writeInt(color);
         }
 

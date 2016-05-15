@@ -113,7 +113,7 @@
         android:title="@string/pref_general_transitions">
 
         <!-- Types -->
-        <MultiSelectListPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.MultiSelectListPreferenceCompat
             android:key="ui_transition_types"
             android:title="@string/pref_general_transitions_types"
             android:persistent="false"
@@ -140,7 +140,7 @@
         android:title="@string/pref_general_effects">
 
         <!-- Types -->
-        <MultiSelectListPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.MultiSelectListPreferenceCompat
             android:key="ui_effect_types"
             android:title="@string/pref_general_effects_types"
             android:persistent="false"
@@ -168,7 +168,7 @@
             android:defaultValue="@color/wallpaper_background_color" />
 
         <!-- Types -->
-        <MultiSelectListPreference
+        <com.ruesga.android.wallpapers.photophase.preferences.MultiSelectListPreferenceCompat
             android:key="ui_border_types"
             android:title="@string/pref_general_borders_types"
             android:persistent="false"
