@@ -160,8 +160,7 @@ public class Borders {
         // The border was cached previously?
         if (mCachedBorders.containsKey(nextBorder)) {
             border = mCachedBorders.get(nextBorder);
-            border.mColor = Colors.getBorder();
-            border.mBgColor = Colors.getBackground();
+            updateColors(border);
             return border;
         }
 
@@ -226,12 +225,16 @@ public class Borders {
 
         // Set the color
         if (border != null) {
-            border.mColor = Colors.getBorder();
-            border.mBgColor = Colors.getBackground();
+            updateColors(border);
 
-            // Cache the effects
+            // Cache the border
             mCachedBorders.put(nextBorder, border);
         }
         return border;
+    }
+
+    private void updateColors(Border border) {
+        border.mColor = Colors.getBorder();
+        border.mBgColor = Colors.getBackground();
     }
 }
