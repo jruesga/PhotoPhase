@@ -22,8 +22,6 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     android:baselineAligned="false"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:paddingEnd="?android:attr/scrollbarSize"
     tools:ignore="RtlSymmetry">
 
     <LinearLayout
