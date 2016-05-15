@@ -17,6 +17,8 @@
 
 package com.ruesga.android.wallpapers.photophase.preferences;
 
+import android.app.WallpaperInfo;
+import android.app.WallpaperManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +37,7 @@ import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.Colors;
+import com.ruesga.android.wallpapers.photophase.PhotoPhaseWallpaper;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference.OnDisplayProgress;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
@@ -51,6 +54,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 
     private static final boolean DEBUG = false;
 
+    private Preference mSetAsWallpaper;
     private CheckBoxPreference mFixAspectRatio;
     private ListPreference mTouchActions;
     private MultiSelectListPreference mTransitionsTypes;
@@ -154,6 +158,11 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         updateEffectTypeSummary(effects);
         mBordersTypes.setValues(borders);
         updateBorderTypeSummary(borders);
+
+        // Update set wallpaper status
+        WallpaperInfo info = WallpaperManager.getInstance(getActivity()).getWallpaperInfo();
+        mSetAsWallpaper.setEnabled(info == null
+                || !info.getPackageName().equals(getActivity().getPackageName()));
     }
 
     /**
@@ -183,6 +192,23 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         SwitchPreference appShortcut = (SwitchPreference) findPreference("app_shortcut");
         appShortcut.setChecked(isAppShortcutEnabled());
         appShortcut.setOnPreferenceChangeListener(mOnChangeListener);
+
+        mSetAsWallpaper = findPreference("set_as_wallpaper");
+        mSetAsWallpaper.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                final Intent i;
+                if (AndroidHelper.isJellyBeanOrGreater()) {
+                    i = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                    i.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                            new ComponentName(getActivity(), PhotoPhaseWallpaper.class));
+                } else {
+                    i = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
+                }
+                startActivity(i);
+                return true;
+            }
+        });
 
         DiscreteSeekBarProgressPreference wallpaperDim =
                 (DiscreteSeekBarProgressPreference) findPreference("ui_wallpaper_dim");

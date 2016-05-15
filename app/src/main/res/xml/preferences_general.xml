@@ -24,6 +24,11 @@
         android:summary="@string/pref_general_app_shortcut_summary"
         android:persistent="false" />
 
+    <!-- Set wallpaper -->
+    <Preference
+        android:key="set_as_wallpaper"
+        android:title="@string/pref_general_set_wallpaper" />
+
     <!-- Settings -->
     <PreferenceCategory
         android:key="category_settings"

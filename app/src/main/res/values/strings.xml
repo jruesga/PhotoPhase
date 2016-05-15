@@ -59,6 +59,7 @@
     <string name="pref_general_summary">General settings, effects and transitions</string>
     <string name="pref_general_app_shortcut_title">App shortcut</string>
     <string name="pref_general_app_shortcut_summary">Display a PhotoPhase shortcut in your Launcher\'s drawer</string>
+    <string name="pref_general_set_wallpaper">Set as wallpaper</string>
     <string name="pref_general_settings">Settings</string>
     <string name="pref_general_settings_wallpaper_dim">Wallpaper dim</string>
     <string name="pref_general_settings_background_color">Background color</string>
