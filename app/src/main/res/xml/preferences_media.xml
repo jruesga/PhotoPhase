@@ -37,6 +37,14 @@
             android:summary="@string/pref_media_settings_refresh_now_summary"
             android:persistent="false" />
 
+        <!-- Random media -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_media_random"
+            android:title="@string/pref_media_random_title"
+            android:summaryOn="@string/pref_media_random_summary_on"
+            android:summaryOff="@string/pref_media_random_summary_off"
+            android:defaultValue="true"/>
+
     </PreferenceCategory>
 
     <!-- Pictures -->

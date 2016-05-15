@@ -85,6 +85,9 @@
   <string name="pref_media_settings_refresh_interval_summary">Buscar nuevas fotos cada <xliff:g id="interval">%1$s</xliff:g></string>
   <string name="pref_media_settings_refresh_now">Refrescar ahora</string>
   <string name="pref_media_settings_refresh_now_summary">Refrescar manualmente la base de datos de imágenes</string>
+  <string name="pref_media_random_title">Ver las fotos al azar</string>
+  <string name="pref_media_random_summary_on">Las fotos se muestran en una secuencia al azar</string>
+  <string name="pref_media_random_summary_off">Las fotos se muestran de forma secuencial</string>
   <string name="pref_media_pictures">Imágenes</string>
   <string name="pref_media_albums">Álbumes</string>
   <string name="pref_media_albums_summary">Establecer los álbumes e imágenes a mostrar en el fondo de pantalla</string>

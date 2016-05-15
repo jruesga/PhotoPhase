@@ -533,8 +533,11 @@ public class PhotoPhaseTextureManager extends TextureManager
          */
         public void setAvailableImages(File[] images) {
             synchronized (mLoadSync) {
+                List<File> filtered = Arrays.asList(images);
+                mUsedImages.retainAll(filtered);
+                filtered.removeAll(mUsedImages);
                 mNewImages.clear();
-                mNewImages.addAll(Arrays.asList(images));
+                mNewImages.addAll(filtered);
 
                 // Retain used images
                 int count = mUsedImages.size() - 1;
@@ -597,10 +600,16 @@ public class PhotoPhaseTextureManager extends TextureManager
                             break;
                         }
 
-                        // Extract a random image
+//mNewImages.removeAll(mUsedImages);
+
+                        // Extract a random or sequential image
                         int low = 0;
                         int high = mNewImages.size() - 1;
-                        image = mNewImages.remove(Utils.getNextRandom(low, high));
+                        if (Preferences.Media.isRandomSequence(mContext)) {
+                            image = mNewImages.remove(Utils.getNextRandom(low, high));
+                        } else {
+                            image = mNewImages.remove(0);
+                        }
                     }
 
                     // Run commands in the GLThread

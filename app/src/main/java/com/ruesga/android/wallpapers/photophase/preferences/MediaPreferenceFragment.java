@@ -41,6 +41,7 @@ public class MediaPreferenceFragment extends PreferenceFragment {
     private ListPreference mRefreshInterval;
 
     private boolean mMediaIntevalChangedFlag;
+    private boolean mEmptyTextureQueueFlag;
 
     private final OnPreferenceChangeListener mOnChangeListener = new OnPreferenceChangeListener() {
         @Override
@@ -50,6 +51,8 @@ public class MediaPreferenceFragment extends PreferenceFragment {
             if (key.compareTo("ui_media_refresh_interval") == 0) {
                 setRefreshIntervalSummary(Integer.valueOf(String.valueOf(newValue)));
                 mMediaIntevalChangedFlag = true;
+            } else if (key.compareTo("ui_media_random") == 0) {
+                mEmptyTextureQueueFlag = true;
             }
             return true;
         }
@@ -66,6 +69,9 @@ public class MediaPreferenceFragment extends PreferenceFragment {
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         if (mMediaIntevalChangedFlag) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, Boolean.TRUE);
+        }
+        if (mEmptyTextureQueueFlag) {
+            intent.putExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, Boolean.TRUE);
         }
         getActivity().sendBroadcast(intent);
     }
@@ -100,6 +106,9 @@ public class MediaPreferenceFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        SwitchPreference random = (SwitchPreference) findPreference("ui_media_random");
+        random.setOnPreferenceChangeListener(mOnChangeListener);
     }
 
     /**

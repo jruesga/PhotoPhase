@@ -340,6 +340,15 @@ public final class PreferencesProvider {
             }
 
             /**
+             * Method that returns if the photos are displaye randomly or sequentially
+             *
+             * @return boolean If the app must be select new albums when they are discovered.
+             */
+            public static boolean isRandomSequence(Context context) {
+                return getSharedPreferences(context).getBoolean("ui_media_random", true);
+            }
+
+            /**
              * Method that returns if the app must be select new albums when they are discovered.
              *
              * @return boolean If the app must be select new albums when they are discovered.
