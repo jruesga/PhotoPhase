@@ -600,8 +600,6 @@ public class PhotoPhaseTextureManager extends TextureManager
                             break;
                         }
 
-//mNewImages.removeAll(mUsedImages);
-
                         // Extract a random or sequential image
                         int low = 0;
                         int high = mNewImages.size() - 1;
@@ -610,6 +608,9 @@ public class PhotoPhaseTextureManager extends TextureManager
                         } else {
                             image = mNewImages.remove(0);
                         }
+
+                        // Add to used images
+                        mUsedImages.add(image);
                     }
 
                     // Run commands in the GLThread
@@ -626,9 +627,6 @@ public class PhotoPhaseTextureManager extends TextureManager
                     } catch (Exception e) {
                         // Ignore
                     }
-
-                    // Add to used images
-                    mUsedImages.add(image);
                 }
 
                 // Wait for new request
