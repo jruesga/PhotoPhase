@@ -105,6 +105,15 @@ public class BitmapUtils {
         return out;
     }
 
+    @SuppressWarnings("deprecation")
+    public static Rect getBitmapDimensions(File file) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final Options options = new Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        return new Rect(0, 0, options.outWidth, options.outHeight);
+    }
+
     /**
      * Utility function for decoding an image file. The decoded bitmap will
      * be optimized for further scaling to the requested destination dimensions

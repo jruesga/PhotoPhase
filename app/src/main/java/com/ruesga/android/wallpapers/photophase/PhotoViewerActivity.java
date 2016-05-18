@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -483,13 +484,6 @@ public class PhotoViewerActivity extends AppCompatActivity {
             // Resolution
             w = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
             h = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1);
-            if (w == -1 || h == -1) {
-                final BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(mPhoto.getAbsolutePath(), options);
-                w = options.outWidth;
-                h = options.outWidth;
-            }
 
             // Orientation
             if (orientation == ExifInterface.ORIENTATION_NORMAL) {
@@ -506,6 +500,12 @@ public class PhotoViewerActivity extends AppCompatActivity {
             Log.w(TAG, "Not exif information for "+ mPhoto.getAbsolutePath(), ioEx);
         }
 
+        // Ensure we can have information about the picture size
+        if (w <= 0 || h <= 0) {
+            Rect r = BitmapUtils.getBitmapDimensions(mPhoto);
+            w = r.width();
+            h = r.height();
+        }
 
         TextView tv;
 
