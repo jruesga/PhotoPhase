@@ -86,6 +86,7 @@ public class BitmapUtils {
         // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
+        options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
         // Decode the bitmap with inSampleSize set
@@ -103,8 +104,6 @@ public class BitmapUtils {
         }
         return out;
     }
-
-
 
     /**
      * Utility function for decoding an image file. The decoded bitmap will
