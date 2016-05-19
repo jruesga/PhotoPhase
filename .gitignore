@@ -27,6 +27,7 @@ gradlew.bat
 # Local configuration file (sdk path, etc)
 local.properties
 keystore.config
+release.properties
 
 # Thumbnail db
 .DS_Store
