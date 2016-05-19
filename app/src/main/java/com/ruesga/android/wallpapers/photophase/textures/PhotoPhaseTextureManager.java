@@ -533,7 +533,7 @@ public class PhotoPhaseTextureManager extends TextureManager
          */
         public void setAvailableImages(File[] images) {
             synchronized (mLoadSync) {
-                List<File> filtered = Arrays.asList(images);
+                List<File> filtered = new ArrayList<>(Arrays.asList(images));
                 mUsedImages.retainAll(filtered);
                 filtered.removeAll(mUsedImages);
                 mNewImages.clear();

@@ -19,11 +19,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle-experimental:0.7.0'
     }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
 repositories {
     jcenter()
@@ -42,49 +42,75 @@ dependencies {
     compile ('com.mikepenz:aboutlibraries:5.6.5') { transitive = true }
 }
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+model {
+    android {
+        compileSdkVersion 23
+        buildToolsVersion "23.0.3"
 
-    defaultConfig {
-        versionCode 1018
-        versionName "2.0.2"
+        defaultConfig {
+            versionCode 1018
+            versionName "2.0.2"
 
-        minSdkVersion 15
-        targetSdkVersion 23
+            minSdkVersion.apiLevel 15
+            targetSdkVersion.apiLevel 23
+        }
+
+        ndk {
+            moduleName = "photophase"
+            platformVersion =  16
+            toolchain = 'clang'
+            stl = 'gnustl_static'
+            cppFlags.addAll(['-std=c++11', '-Wall', '-fno-rtti', '-fno-exceptions'])
+            CFlags.addAll(['-Wall'])
+            ldLibs.addAll(['GLESv2', 'EGL'])
+        }
+
+        buildTypes {
+            debug {
+                debuggable true
+                ndk {
+                    debuggable true
+                }
+            }
+            release {
+                debuggable false
+                ndk {
+                    debuggable false
+                }
+
+                signingConfig = $("android.signingConfigs.release-signing-config")
+
+                zipAlignEnabled true
+                minifyEnabled true
+                shrinkResources false
+
+                proguardFiles.add(file('proguard-android.txt'))
+                proguardFiles.add(file('proguard-project.txt'))
+            }
+        }
+
+        compileOptions.with {
+            sourceCompatibility = JavaVersion.VERSION_1_7
+            targetCompatibility = JavaVersion.VERSION_1_7
+        }
     }
 
-    lintOptions {
+    android.lintOptions {
         abortOnError false
     }
 
-    signingConfigs {
-        release {
+    android.signingConfigs {
+        create("release-signing-config") {
+            def Properties releaseProps = new Properties()
+            releaseProps.load(new FileInputStream(rootProject.file('release.properties')))
+
             def Properties ksProps = new Properties()
-            ksProps.load(new FileInputStream(file('../keystore.config')))
+            ksProps.load(new FileInputStream(new File((String) releaseProps['ruesga.com.config'])))
             storeFile file(ksProps["keystore"])
             keyAlias ksProps["alias"]
             storePassword ksProps["storePass"]
             keyPassword ksProps["pass"]
-        }
-    }
-
-    buildTypes {
-        debug {
-            debuggable true
-            jniDebuggable true
-        }
-        release {
-            debuggable false
-            jniDebuggable false
-            //noinspection GroovyAssignabilityCheck
-            signingConfig signingConfigs.release
-            zipAlignEnabled true
-
-            minifyEnabled true
-            shrinkResources false
-            //noinspection GroovyAssignabilityCheck
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-project.txt')
+            storeType ksProps["storeType"]
         }
     }
 }

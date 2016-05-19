@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.ByteBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
@@ -49,12 +50,20 @@ public final class GLESUtil {
     private static final String TAG = "GLESUtil";
 
     private static final boolean DEBUG = false;
+    private static final boolean NATIVE_TEXTURE_BIND = true;
 
     public static final boolean DEBUG_GL_MEMOBJS = false;
     public static final String DEBUG_GL_MEMOBJS_NEW_TAG = "MEMOBJS_NEW";
     public static final String DEBUG_GL_MEMOBJS_DEL_TAG = "MEMOBJS_DEL";
 
     private static final Object SYNC = new Object();
+
+    // Load the native library
+    static {
+        if (NATIVE_TEXTURE_BIND) {
+            System.loadLibrary("photophase");
+        }
+    }
 
     /**
      * A helper class to deal with OpenGL float colors.
@@ -491,7 +500,18 @@ public final class GLESUtil {
         GLESUtil.glesCheckError("glTexParameteri");
 
         // Load the texture
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
+        if (NATIVE_TEXTURE_BIND) {
+            // Create a buffer from the image
+            int width = texture.getWidth();
+            int height = texture.getHeight();
+            int size = bitmap.getRowBytes() * height;
+            ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+            texture.copyPixelsToBuffer(buffer);
+            nativeGlTexImage2D(buffer.array(), width, height);
+        } else {
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
+        }
+
         if (!GLES20.glIsTexture(textureHandles[0])) {
             Log.e(TAG, "Failed to load a valid texture");
             return new GLESTextureInfo();
@@ -517,6 +537,16 @@ public final class GLESUtil {
         ti.path = null;
         return ti;
     }
+
+    /**
+     * Link the image via native code
+     *
+     * @param image The image buffer to bind
+     * @param width The width of the image
+     * @param height The height of the image
+     */
+    @SuppressWarnings("JniMissingFunction")
+    private static native void nativeGlTexImage2D(byte[] image, int width, int height);
 
     private static int applyEffect(int[] textureHandles, int n, Effect effect, Rect dimen) {
         // Apply the border (we need a thread-safe call here)
