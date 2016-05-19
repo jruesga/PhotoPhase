@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
@@ -58,10 +59,13 @@ public final class GLESUtil {
 
     private static final Object SYNC = new Object();
 
+    private static IntBuffer sNativeBuffer;
+
     // Load the native library
     static {
         if (NATIVE_TEXTURE_BIND) {
             System.loadLibrary("photophase");
+            sNativeBuffer = null;
         }
     }
 
@@ -455,7 +459,7 @@ public final class GLESUtil {
      * @param dimen The new dimensions
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Context context, Bitmap bitmap,
+    public static synchronized GLESTextureInfo loadTexture(Context context, Bitmap bitmap,
             Effect effect, Border border, Rect dimen) {
         // Check that we have a valid image name reference
         if (bitmap == null) {
@@ -504,10 +508,14 @@ public final class GLESUtil {
             // Create a buffer from the image
             int width = texture.getWidth();
             int height = texture.getHeight();
-            int size = bitmap.getRowBytes() * height;
-            ByteBuffer buffer = ByteBuffer.allocateDirect(size);
-            texture.copyPixelsToBuffer(buffer);
-            nativeGlTexImage2D(buffer.array(), width, height);
+            final int size = height * texture.getRowBytes();
+            if (sNativeBuffer == null || sNativeBuffer.capacity() < size) {
+                sNativeBuffer = ByteBuffer.allocateDirect(size * 4).asIntBuffer();
+            } else {
+                sNativeBuffer.clear();
+            }
+            texture.copyPixelsToBuffer(sNativeBuffer);
+            nativeGlTexImage2D(sNativeBuffer, width, height);
         } else {
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
         }
@@ -537,16 +545,6 @@ public final class GLESUtil {
         ti.path = null;
         return ti;
     }
-
-    /**
-     * Link the image via native code
-     *
-     * @param image The image buffer to bind
-     * @param width The width of the image
-     * @param height The height of the image
-     */
-    @SuppressWarnings("JniMissingFunction")
-    private static native void nativeGlTexImage2D(byte[] image, int width, int height);
 
     private static int applyEffect(int[] textureHandles, int n, Effect effect, Rect dimen) {
         // Apply the border (we need a thread-safe call here)
@@ -682,4 +680,15 @@ public final class GLESUtil {
         }
     }
 
+
+
+    /**
+     * Link the image via native code
+     *
+     * @param image The image buffer to bind
+     * @param width The width of the image
+     * @param height The height of the image
+     */
+    @SuppressWarnings("JniMissingFunction")
+    private static native void nativeGlTexImage2D(IntBuffer image, int width, int height);
 }

@@ -63,7 +63,7 @@ public class BitmapUtils {
         options.inScaled = false;
         options.inDither = true;
         options.inPreferQualityOverSpeed = false;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         return BitmapFactory.decodeStream(bitmap, null, options);
     }
 
@@ -82,7 +82,7 @@ public class BitmapUtils {
         options.inScaled = false;
         options.inDither = true;
         options.inPreferQualityOverSpeed = false;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
@@ -131,7 +131,7 @@ public class BitmapUtils {
         options.inScaled = false;
         options.inDither = true;
         options.inPreferQualityOverSpeed = false;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;

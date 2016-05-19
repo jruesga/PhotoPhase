@@ -2,6 +2,7 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
@@ -264,6 +265,7 @@ public class LivePreviewView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         setPreserveEGLContextOnPause(true);
         setEGLConfigChooser(false);
+        getHolder().setFormat(PixelFormat.RGBA_8888);
         mRenderer = new Renderer(context);
         setRenderer(mRenderer);
         setRenderMode(RENDERMODE_WHEN_DIRTY);
