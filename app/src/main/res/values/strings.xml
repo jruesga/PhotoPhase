@@ -44,6 +44,7 @@
     <string name="mnu_select_album">Select album</string>
     <string name="mnu_deselect_album">Deselect album</string>
     <string name="mnu_details">Details</string>
+    <string name="mnu_share">Share</string>
 
     <!-- Formats -->
     <string name="format_disabled">Disabled</string>

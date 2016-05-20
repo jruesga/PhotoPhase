@@ -19,11 +19,14 @@ package com.ruesga.android.wallpapers.photophase;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Process;
 import android.preference.PreferenceManager;
@@ -32,6 +35,7 @@ import android.support.annotation.ArrayRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import java.lang.reflect.Method;
 import java.text.Collator;
@@ -44,6 +48,8 @@ import java.util.List;
  * A helper class with useful methods for deal with android.
  */
 public final class AndroidHelper {
+
+    private static final String TAG = "AndroidHelper";
 
     /**
      * This method converts dp unit to equivalent device specific value in pixels.
@@ -186,5 +192,23 @@ public final class AndroidHelper {
         } catch (Exception e) {
             // ignored, nothing we can do
         }
+    }
+
+    public static void sharePicture(Context context, Uri uri) {
+        // Send the image
+        try {
+            context.startActivity(getSharePictureIntent(uri));
+        } catch (ActivityNotFoundException ex) {
+            Log.e(TAG, "Send action not found for " + uri.toString(), ex);
+        }
+    }
+
+    public static Intent getSharePictureIntent(Uri uri) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        return intent;
     }
 }

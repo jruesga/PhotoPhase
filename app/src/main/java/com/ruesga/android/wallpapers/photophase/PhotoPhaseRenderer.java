@@ -401,19 +401,9 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                         }
                     }
                 } else if (touchAction.compareTo(TouchAction.SHARE) == 0) {
-                    // Send the image
-                    try {
-                        Uri uri = getUriFromFrame(frame);
-                        if (uri != null) {
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.setType("image/*");
-                            intent.putExtra(Intent.EXTRA_STREAM, uri);
-                            mContext.startActivity(intent);
-                        }
-                    } catch (ActivityNotFoundException ex) {
-                        Log.e(TAG, "Send action not found for " + frame.getTextureInfo().path, ex);
+                    Uri uri = getUriFromFrame(frame);
+                    if (uri != null) {
+                        AndroidHelper.sharePicture(mContext, uri);
                     }
                 }
             }

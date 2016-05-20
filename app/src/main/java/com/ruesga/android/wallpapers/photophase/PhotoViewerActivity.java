@@ -74,6 +74,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private ImageView mPhotoView;
     private View mDetails;
     private MenuItem mDetailsMenu;
+    private MenuItem mShareMenu;
     private Toolbar mToolbar;
 
     private AsyncPictureLoaderTask mTask;
@@ -224,6 +225,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photoviewer, menu);
         mDetailsMenu = menu.findItem(R.id.mnu_details);
+        mShareMenu = menu.findItem(R.id.mnu_share);
         return true;
     }
 
@@ -279,6 +281,9 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     if (mDetailsMenu != null) {
                         mDetailsMenu.setVisible(true);
                     }
+                    if (mShareMenu != null) {
+                        mShareMenu.setVisible(true);
+                    }
                     mPictureLoaded = true;
                 }
             });
@@ -332,6 +337,9 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     finishActivity();
                 }
                 return true;
+            case R.id.mnu_share:
+                AndroidHelper.sharePicture(this, Uri.fromFile(mPhoto));
+                return true;
             case R.id.mnu_details:
                 displayDetails();
                 return true;
@@ -365,6 +373,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 mDetails.setAlpha(0f);
                 mDetails.setVisibility(View.VISIBLE);
                 mDetailsMenu.setVisible(false);
+                mShareMenu.setVisible(false);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(getString(R.string.mnu_details));
                 }
@@ -405,6 +414,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 mDetails.setAlpha(0f);
                 mDetails.setVisibility(View.GONE);
                 mDetailsMenu.setVisible(true);
+                mShareMenu.setVisible(true);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(" ");
                 }
