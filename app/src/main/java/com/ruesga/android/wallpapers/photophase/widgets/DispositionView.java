@@ -29,6 +29,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
@@ -53,7 +54,8 @@ import java.util.List;
 /**
  * A class that allow to select the frames disposition visually
  */
-public class DispositionView extends RelativeLayout implements OnLongClickListener, OnResizeListener {
+public class DispositionView extends RelativeLayout
+        implements OnClickListener, OnLongClickListener, OnResizeListener {
 
     /**
      * An interface to communicate the selection/unselection of a frame
@@ -379,6 +381,7 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
                 new RelativeLayout.LayoutParams(r.width() - padding, r.height() - padding);
         v.setX(r.left + padding);
         v.setY(r.top + padding);
+        v.setOnClickListener(this);
         v.setOnLongClickListener(this);
         addView(v, params);
 
@@ -419,6 +422,18 @@ public class DispositionView extends RelativeLayout implements OnLongClickListen
         location.right = location.left + disposition.w * cw;
         location.bottom = location.top + disposition.h * ch;
         return location;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onClick(View v) {
+        // if the frame is selected then unselect it
+        if (mResizeFrame != null && v.equals(mTarget)) {
+            mResizeFrame.hide();
+            mTarget = null;
+        }
     }
 
     /**
