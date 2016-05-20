@@ -22,7 +22,6 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -41,6 +40,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,6 +74,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private ImageView mPhotoView;
     private View mDetails;
     private MenuItem mDetailsMenu;
+    private Toolbar mToolbar;
 
     private AsyncPictureLoaderTask mTask;
 
@@ -182,6 +183,20 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     mPhoto, metrics.widthPixels / 8, metrics.heightPixels / 8);
             mPhotoView.setImageBitmap(mThumbnail);
             mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
+            mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+                @Override
+                public void onViewTap(View view, float v, float v1) {
+                    if (mToolbar != null) {
+                        boolean hide = mToolbar.getAlpha() > 0.0f;
+                        mToolbar.animate()
+                                .translationY(hide ? mToolbar.getHeight() * -1 : 0)
+                                .alpha(hide ? 0.0f : 1.0f)
+                                .setDuration(350L)
+                                .setInterpolator(new AccelerateInterpolator())
+                                .start();
+                    }
+                }
+            });
         }
         addTransitionListener();
     }
@@ -299,8 +314,8 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
     private void initToolbar() {
         // Add a toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(" ");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
