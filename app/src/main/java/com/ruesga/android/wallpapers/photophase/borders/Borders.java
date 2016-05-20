@@ -234,7 +234,7 @@ public class Borders {
     }
 
     private void updateColors(Border border) {
-        border.mColor = Colors.getBorder();
-        border.mBgColor = Colors.getBackground();
+        border.mColor = Colors.getInstance(mContext).getBorder();
+        border.mBgColor = Colors.getInstance(mContext).getBackground();
     }
 }

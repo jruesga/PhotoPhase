@@ -705,7 +705,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                                 -1.0f,  1.0f,
                                  1.0f,  1.0f
                                };
-        mOverlay = new ColorShape(mContext, vertex, Colors.getOverlay());
+        mOverlay = new ColorShape(mContext, vertex, Colors.getInstance(mContext).getOverlay());
 
         // Create the Oops shape
         mOopsShape = new OopsShape(mContext);
@@ -817,8 +817,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     /**
      * Method that draws the background of the wallpaper
      */
-    private static void drawBackground() {
-        GLColor bg = Colors.getBackground();
+    private void drawBackground() {
+        GLColor bg = Colors.getInstance(mContext).getBackground();
         GLES20.glClearColor(bg.r, bg.g, bg.b, bg.a);
         GLESUtil.glesCheckError("glClearColor");
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);

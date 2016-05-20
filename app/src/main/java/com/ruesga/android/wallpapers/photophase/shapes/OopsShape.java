@@ -170,7 +170,7 @@ public class OopsShape implements DrawableShape {
         GLESUtil.glesCheckError("glBindFramebuffer");
 
         // Clear background
-        GLColor bg = Colors.getBackground();
+        GLColor bg = Colors.getInstance(mContext).getBackground();
         GLES20.glClearColor(bg.r, bg.g, bg.b, bg.a);
         GLESUtil.glesCheckError("glClearColor");
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);

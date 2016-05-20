@@ -121,8 +121,8 @@ public final class PreferencesProvider {
              * @return GLColor The background color
              */
             public static GLColor getBackgroundColor(Context context) {
-                int color = getSharedPreferences(context).getInt("ui_background_color", -1);
-                if (color == -1) {
+                int color = getSharedPreferences(context).getInt("ui_background_color", -2);
+                if (color == -2) {
                     return DEFAULT_BACKGROUND_COLOR;
                 }
                 return new GLColor(color);
@@ -287,8 +287,8 @@ public final class PreferencesProvider {
                  * @return GLColor The border color
                  */
                 public static GLColor getBorderColor(Context context) {
-                    int color = getSharedPreferences(context).getInt("ui_border", -1);
-                    if (color == -1) {
+                    int color = getSharedPreferences(context).getInt("ui_border_color", -2);
+                    if (color == -2) {
                         return DEFAULT_BACKGROUND_COLOR;
                     }
                     return new GLColor(color);

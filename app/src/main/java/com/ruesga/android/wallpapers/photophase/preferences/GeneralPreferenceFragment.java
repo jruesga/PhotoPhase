@@ -76,7 +76,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mRedrawFlag = true;
             } else if (key.compareTo("ui_background_color") == 0) {
                 mRedrawFlag = true;
-                Colors.setBackground(new GLColor((Integer) newValue));
+                Colors.getInstance(getActivity()).setBackground(new GLColor((Integer) newValue));
             } else if (key.compareTo("ui_power_of_two") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
@@ -112,7 +112,7 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
             } else if (key.compareTo("ui_border_color") == 0) {
                 mRedrawFlag = true;
                 mEmptyTextureQueueFlag = true;
-                Colors.setBorder(new GLColor((Integer) newValue));
+                Colors.getInstance(getActivity()).setBorder(new GLColor((Integer) newValue));
             } else if (key.compareTo("ui_touch_action") == 0) {
                 updateTouchActionSummary((String) newValue);
             } else if (key.compareTo("app_shortcut") == 0) {

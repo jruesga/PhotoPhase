@@ -319,7 +319,7 @@ public class PhotoPhaseWallpaperWorld {
                             mTextureManager,
                             frameVertices,
                             photoVertices,
-                            Colors.getBackground());
+                            Colors.getInstance(mContext).getBackground());
             mPhotoFrames.add(frame);
 
             // Assign a null transition to the photo frame

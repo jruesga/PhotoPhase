@@ -251,7 +251,7 @@ public class ColorPickerPreference extends DialogPreference {
      */
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setColor(restoreValue ? getPersistedInt(0) : (Integer) defaultValue);
+        setColor(restoreValue ? getPersistedInt((Integer) defaultValue) : (Integer) defaultValue);
     }
 
     protected void onPrepareDialogBuilderCompat(AlertDialog.Builder builder) {

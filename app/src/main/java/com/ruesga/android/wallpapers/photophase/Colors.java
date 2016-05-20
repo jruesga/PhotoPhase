@@ -27,36 +27,43 @@ import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
  */
 public class Colors {
 
-    private static GLColor sBackground = new GLColor(0);
-    private static GLColor sBorder = new GLColor(0);
-    private static GLColor sOverlay = new GLColor(0);
+    private GLColor mBackground = new GLColor(0);
+    private GLColor mBorder = new GLColor(0);
+    private GLColor mOverlay = new GLColor(0);
 
-    /**
-     * This method should be called on initialization for load the preferences color
-     */
-    public static void register(Context ctx) {
-        sBackground = Preferences.General.getBackgroundColor(ctx);
-        sBorder = Preferences.General.Borders.getBorderColor(ctx);
-        sOverlay = new GLColor(ContextCompat.getColor(ctx, R.color.wallpaper_overlay_color));
+    private static Colors sInstance;
+
+    public synchronized static Colors getInstance(Context ctx) {
+        if (sInstance == null) {
+            sInstance = new Colors();
+            sInstance.update(ctx);
+        }
+        return sInstance;
     }
 
-    public static GLColor getBackground() {
-        return sBackground;
+    private void update(Context ctx) {
+        mBackground = Preferences.General.getBackgroundColor(ctx);
+        mBorder = Preferences.General.Borders.getBorderColor(ctx);
+        mOverlay = new GLColor(ContextCompat.getColor(ctx, R.color.wallpaper_overlay_color));
     }
 
-    public static void setBackground(GLColor background) {
-        Colors.sBackground = background;
+    public GLColor getBackground() {
+        return mBackground;
     }
 
-    public static GLColor getBorder() {
-        return sBorder;
+    public void setBackground(GLColor background) {
+        mBackground = background;
     }
 
-    public static void setBorder(GLColor border) {
-        Colors.sBorder = border;
+    public GLColor getBorder() {
+        return mBorder;
     }
 
-    public static GLColor getOverlay() {
-        return sOverlay;
+    public void setBorder(GLColor border) {
+        mBorder = border;
+    }
+
+    public GLColor getOverlay() {
+        return mOverlay;
     }
 }

@@ -6,8 +6,5 @@ public class PhotoPhaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Initialize the application
-        Colors.register(this);
     }
 }
