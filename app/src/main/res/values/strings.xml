@@ -112,6 +112,7 @@
     <string name="pref_media_albums_summary">Set the albums and pictures that will be displayed on the wallpaper</string>
     <string name="pref_media_auto_select_new">Auto select albums</string>
     <string name="pref_media_auto_select_new_summary">Automatically select new albums when media discovery occurs</string>
+    <string name="pref_media_album_not_exists">Album not exists</string>
 
     <string name="pref_layout">Layout</string>
     <string name="pref_layout_summary">Positioning of pictures on the screen</string>

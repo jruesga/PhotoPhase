@@ -54,6 +54,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
@@ -233,7 +234,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             }
             if (mSelectAll) {
                 album.setSelected(true);
-                synchronized (mSelectedAlbums) {
+                synchronized (mAlbumLock) {
                     mSelectedAlbums.add(album.getPath());
                 }
             }
@@ -247,7 +248,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
          * @return boolean if an item is selected
          */
         private boolean isSelectedItem(String item) {
-            synchronized (mSelectedAlbums) {
+            synchronized (mAlbumLock) {
                 for (String albumPath : mSelectedAlbums) {
                     if (item.compareTo(albumPath) == 0) {
                         return true;
@@ -291,6 +292,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private List<Album> mAlbums;
     private List<Album> mOriginalAlbums;
 
+    private final Object mAlbumLock = new Object();
     private Set<String> mSelectedAlbums;
     private Set<String> mOriginalSelectedAlbums;
 
@@ -588,7 +590,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void restoreData() {
         // Restore and the albums the selection
-        synchronized (mSelectedAlbums) {
+        synchronized (mAlbumLock) {
             mSelectedAlbums.clear();
             mSelectedAlbums.addAll(mOriginalSelectedAlbums);
         }
@@ -618,7 +620,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void invertAll() {
         // Restore and the albums the selection
-        synchronized (mSelectedAlbums) {
+        synchronized (mAlbumLock) {
             mSelectedAlbums.clear();
             for (Album album : mAlbums) {
                 album.setSelected(!album.isSelected());
@@ -662,7 +664,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         // Notify pictures dataset changed
         updateAlbumInfo(mDstView, album);
         mPictureAdapter.notifyViewChanged();
-        synchronized (mSelectedAlbums) {
+        synchronized (mAlbumLock) {
             mSelectedAlbums.addAll(album.getSelectedItems());
         }
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
@@ -729,7 +731,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             picture.setSelected(false);
         }
         if (selected) {
-            synchronized (mSelectedAlbums) {
+            synchronized (mAlbumLock) {
                 mSelectedAlbums.add(album.getPath());
             }
         }
@@ -765,7 +767,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
         album.setSelected(false);
 
-        synchronized (mSelectedAlbums) {
+        synchronized (mAlbumLock) {
             mSelectedAlbums.addAll(album.getSelectedItems());
         }
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
@@ -782,7 +784,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param ref The album
      */
     private void removeAlbumItems(Album ref) {
-        synchronized (mSelectedAlbums) {
+        synchronized (mAlbumLock) {
             Iterator<String> it = mSelectedAlbums.iterator();
             while (it.hasNext()) {
                 String item = it.next();
@@ -975,6 +977,15 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void onHeaderPressed(AdapterView<?> parent, View view, int position) {
         mAlbum = mAlbumAdapter.getItem(position);
+        File path = new File(mAlbum.getPath());
+        if (!path.exists()) {
+            Toast.makeText(getActivity(),
+                    R.string.pref_media_album_not_exists, Toast.LENGTH_SHORT).show();
+            updateAlbumSelection(mAlbum, false);
+            mAlbums.remove(mAlbum);
+            mAlbumAdapter.notifyDataSetChanged();
+            return;
+        }
 
         // Header view
         View header = mInflater.inflate(R.layout.album_info, mContainer, false);
@@ -1022,7 +1033,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             mPictureAdapter.notifyViewChanged();
 
             // Update settings
-            synchronized (mSelectedAlbums) {
+            synchronized (mAlbumLock) {
                 mSelectedAlbums.addAll(mAlbum.getSelectedItems());
             }
             Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);

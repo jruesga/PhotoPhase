@@ -93,6 +93,7 @@
   <string name="pref_media_albums_summary">Establecer los álbumes e imágenes a mostrar en el fondo de pantalla</string>
   <string name="pref_media_auto_select_new">Autoseleccionar álbumes</string>
   <string name="pref_media_auto_select_new_summary">Seleccionar automáticamente los nuevos álbumes cuando se descubran nuevos elementos en los medios</string>
+  <string name="pref_media_album_not_exists">El álbum no existe</string>
   <string name="pref_layout">Disposición</string>
   <string name="pref_layout_summary">Posicionamiento de imágenes en la pantalla</string>
   <string name="pref_layout_disposition">Disposición</string>
