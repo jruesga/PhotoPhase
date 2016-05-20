@@ -104,7 +104,7 @@ public final class PreferencesProvider {
          * General preferences
          */
         public static class General {
-            private static final GLColor DEFAULT_BACKGROUND_COLOR = new GLColor("#ff202020");
+            public static final GLColor DEFAULT_BACKGROUND_COLOR = new GLColor("#ff202020");
 
             /**
              * Method that returns the wallpaper dimmed value.

@@ -28,6 +28,7 @@ import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.Colors;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
@@ -170,7 +171,7 @@ public class OopsShape implements DrawableShape {
         GLESUtil.glesCheckError("glBindFramebuffer");
 
         // Clear background
-        GLColor bg = Colors.getInstance(mContext).getBackground();
+        GLColor bg = PreferencesProvider.Preferences.General.DEFAULT_BACKGROUND_COLOR;
         GLES20.glClearColor(bg.r, bg.g, bg.b, bg.a);
         GLESUtil.glesCheckError("glClearColor");
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
