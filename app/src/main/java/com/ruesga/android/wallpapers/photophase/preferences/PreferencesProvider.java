@@ -28,6 +28,9 @@ import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITI
 import com.ruesga.android.wallpapers.photophase.utils.DispositionUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -501,7 +504,7 @@ public final class PreferencesProvider {
                         context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
                 Editor editor = preferences.edit();
                 editor.putString("ui_layout_portrait_disposition",
-                                    DispositionUtil.fromDispositions(dispositions));
+                        DispositionUtil.fromDispositions(dispositions));
                 editor.apply();
             }
 
@@ -531,6 +534,64 @@ public final class PreferencesProvider {
                 Editor editor = preferences.edit();
                 editor.putString("ui_layout_landscape_disposition",
                             DispositionUtil.fromDispositions(dispositions));
+                editor.apply();
+            }
+
+            public static List<List<Disposition>> getPortraitUserDispositions(Context context) {
+                return getUserDispositions(context, "ui_layout_portrait_saved_disposition");
+            }
+
+            public static void setPortraitUserDispositions(
+                    Context context, List<List<Disposition>> dispositions) {
+                setUserDispositions(context, "ui_layout_portrait_saved_disposition", dispositions);
+            }
+
+            public static List<List<Disposition>> getLandscapeUserDispositions(Context context) {
+                return getUserDispositions(context, "ui_layout_landscape_saved_disposition");
+            }
+
+            public static void setLandscapeUserDispositions(
+                    Context context, List<List<Disposition>> dispositions) {
+                setUserDispositions(context, "ui_layout_landscape_saved_disposition", dispositions);
+            }
+
+            private static List<List<Disposition>> getUserDispositions(Context context, String key) {
+                Set<String> savedDispositions = getSharedPreferences(context).getStringSet(
+                        key, null);
+                if (savedDispositions == null) {
+                    return new ArrayList<>();
+                }
+
+                List<String> ordered = new ArrayList<>(savedDispositions);
+                Collections.sort(ordered, new Comparator<String>() {
+                    @Override
+                    public int compare(String lhs, String rhs) {
+                        Integer lid = Integer.valueOf(lhs.substring(0, lhs.indexOf("=")));
+                        Integer rid = Integer.valueOf(rhs.substring(0, rhs.indexOf("=")));
+                        return lid.compareTo(rid);
+                    }
+                });
+
+                List<List<Disposition>> dispositions = new ArrayList<>();
+                for (String s : ordered) {
+                    dispositions.add(DispositionUtil.toDispositions(
+                            s.substring(s.indexOf("=") + 1)));
+                }
+                return dispositions;
+            }
+
+            private static void setUserDispositions(
+                    Context context, String key, List<List<Disposition>> dispositions) {
+                Set<String> savedDispositions = new HashSet<>(dispositions.size());
+                int i = 0;
+                for (List<Disposition> d : dispositions) {
+                    savedDispositions.add(i + "=" + DispositionUtil.fromDispositions(d));
+                }
+
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putStringSet(key, savedDispositions);
                 editor.apply();
             }
         }

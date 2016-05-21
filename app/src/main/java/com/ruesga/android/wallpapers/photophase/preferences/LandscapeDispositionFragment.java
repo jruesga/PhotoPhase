@@ -52,7 +52,7 @@ public class LandscapeDispositionFragment extends DispositionFragment {
      * {@inheritDoc}
      */
     @Override
-    public List<Disposition> getUserDispositions() {
+    public List<Disposition> getCurrentDispositions() {
         return Preferences.Layout.getLandscapeDisposition(getActivity());
     }
 
@@ -79,6 +79,36 @@ public class LandscapeDispositionFragment extends DispositionFragment {
     @Override
     public void saveDispositions(List<Disposition> dispositions) {
         Preferences.Layout.setLandscapeDisposition(getActivity(), dispositions);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<List<Disposition>> getUserDispositions() {
+        return PreferencesProvider.Preferences.Layout.getLandscapeUserDispositions(getActivity());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveUserDisposition(List<Disposition> disposition) {
+        List<List<Disposition>> dispositions =
+                PreferencesProvider.Preferences.Layout.getLandscapeUserDispositions(getActivity());
+        dispositions.add(disposition);
+        PreferencesProvider.Preferences.Layout.setLandscapeUserDispositions(getActivity(), dispositions);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteUserDisposition(int position) {
+        List<List<Disposition>> dispositions =
+                PreferencesProvider.Preferences.Layout.getLandscapeUserDispositions(getActivity());
+        dispositions.remove(position);
+        PreferencesProvider.Preferences.Layout.setLandscapeUserDispositions(getActivity(), dispositions);
     }
 
     /**

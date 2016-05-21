@@ -39,6 +39,12 @@ public final class DispositionUtil {
         String[] v = value.split("\\|");
         List<Disposition> dispositions = new ArrayList<>(v.length);
         for (String s : v) {
+            int flags = Disposition.ALL_FLAGS;
+            if (s.contains("~")) {
+                String[] s0 = s.split("~");
+                flags = Integer.parseInt(s0[1]);
+                s = s0[0];
+            }
             String[] s1 = s.split(":");
             String[] s2 = s1[0].split("x");
             String[] s3 = s1[1].split("x");
@@ -47,6 +53,7 @@ public final class DispositionUtil {
             disposition.y = Integer.parseInt(s2[1]);
             disposition.w = Integer.parseInt(s3[0]) - disposition.x + 1;
             disposition.h = Integer.parseInt(s3[1]) - disposition.y + 1;
+            disposition.flags = flags;
             dispositions.add(disposition);
         }
         Collections.sort(dispositions);
@@ -66,12 +73,14 @@ public final class DispositionUtil {
         for (int i = 0; i < count; i++) {
             Disposition disposition = dispositions.get(i);
             sb.append(disposition.x)
-              .append("x")
-              .append(disposition.y)
-              .append(":")
-              .append(disposition.x + disposition.w - 1)
-              .append("x")
-              .append(disposition.y + disposition.h - 1);
+                .append("x")
+                .append(disposition.y)
+                .append(":")
+                .append(disposition.x + disposition.w - 1)
+                .append("x")
+                .append(disposition.y + disposition.h - 1)
+                .append("~")
+                .append(disposition.flags);
             if (i < (count - 1)) {
                 sb.append("|");
             }

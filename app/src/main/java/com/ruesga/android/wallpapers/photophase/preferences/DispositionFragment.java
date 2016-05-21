@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.adapters.DispositionAdapter;
@@ -63,6 +64,7 @@ public abstract class DispositionFragment extends PreferenceFragment
 
     private MenuItem mRestoreMenu;
     private MenuItem mDeleteMenu;
+    private MenuItem mSaveMenu;
 
     private boolean mOkPressed;
 
@@ -78,7 +80,7 @@ public abstract class DispositionFragment extends PreferenceFragment
      *
      * @return List<Disposition> The current user preference dispositions
      */
-    public abstract List<Disposition> getUserDispositions();
+    public abstract List<Disposition> getCurrentDispositions();
 
     /**
      * Method that returns the default preference for the disposition
@@ -100,6 +102,27 @@ public abstract class DispositionFragment extends PreferenceFragment
      * @param dispositions The dispositions to save
      */
     public abstract void saveDispositions(List<Disposition> dispositions);
+
+    /**
+     * Method that returns the user saved dispositions
+     *
+     * @return List<Disposition> The user saved dispositions
+     */
+    public abstract List<List<Disposition>> getUserDispositions();
+
+    /**
+     * Method that request to save a user saved disposition
+     *
+     * @param disposition The disposition to save
+     */
+    public abstract void saveUserDisposition(List<Disposition> disposition);
+
+    /**
+     * Method that request to delete a user saved disposition
+     *
+     * @param position The position to delete
+     */
+    public abstract void deleteUserDisposition(int position);
 
     /**
      * Method that returns the number of rows to use
@@ -200,6 +223,7 @@ public abstract class DispositionFragment extends PreferenceFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.dispositions, menu);
         mRestoreMenu = menu.findItem(R.id.mnu_restore);
+        mSaveMenu = menu.findItem(R.id.mnu_save);
         mDeleteMenu = menu.findItem(R.id.mnu_delete);
         mDeleteMenu.setVisible(false);
     }
@@ -217,8 +241,15 @@ public abstract class DispositionFragment extends PreferenceFragment
             case R.id.mnu_restore:
                 restoreData();
                 return true;
+            case R.id.mnu_save:
+                addCurrentToSaved();
+                return true;
             case R.id.mnu_delete:
-                deleteFrame();
+                if (mPager.getCurrentItem() > 0) {
+                    deleteCurrentSaved();
+                } else {
+                    deleteFrame();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -232,16 +263,14 @@ public abstract class DispositionFragment extends PreferenceFragment
         if (mCurrentDispositionView == null) {
             mCurrentDispositionView = mAdapter.getView(0);
         }
-        mCurrentDispositionView.setDispositions(getUserDispositions(), getCols(), getRows(), true);
+        mCurrentDispositionView.setDispositions(getCurrentDispositions(), getCols(), getRows(), true);
     }
 
     /**
      * Method that restores the disposition view to the default state
      */
     private void deleteFrame() {
-        if (mCurrentDispositionView == null) {
-            mCurrentDispositionView = mAdapter.getView(0);
-        }
+        mCurrentDispositionView = mAdapter.getView(0);
         mCurrentDispositionView.deleteCurrentFrame();
     }
 
@@ -255,9 +284,27 @@ public abstract class DispositionFragment extends PreferenceFragment
         final int cols = getCols();
 
         List<Dispositions> allDispositions = new ArrayList<>();
-        allDispositions.add(new Dispositions(getUserDispositions(), rows, cols));
+        allDispositions.add(new Dispositions(
+                Dispositions.TYPE_CURRENT, getCurrentDispositions(), rows, cols));
+        allDispositions.addAll(getSavedDispositions(rows, cols));
         allDispositions.addAll(getSystemDefinedDispositions(rows, cols));
         return allDispositions;
+    }
+
+    /**
+     * Method that returns the user-saved dispositions
+     *
+     * @param rows The number of rows
+     * @param cols The number of columns
+     * @return List<Dispositions> All the user-saved dispositions
+     */
+    private List<Dispositions> getSavedDispositions(int rows, int cols) {
+        List<List<Disposition>> saved = getUserDispositions();
+        List<Dispositions> savedDispositions = new ArrayList<>(saved.size());
+        for (List<Disposition> d : saved) {
+            savedDispositions.add(new Dispositions(Dispositions.TYPE_SAVED, d, rows, cols));
+        }
+        return savedDispositions;
     }
 
     /**
@@ -271,7 +318,7 @@ public abstract class DispositionFragment extends PreferenceFragment
         String[] templates = getDispositionsTemplates();
         List<Dispositions> systemDispositions = new ArrayList<>(templates.length);
         for (String template : templates) {
-            systemDispositions.add(new Dispositions(
+            systemDispositions.add(new Dispositions(Dispositions.TYPE_SYSTEM,
                     DispositionUtil.toDispositions(template), rows, cols));
         }
         return systemDispositions;
@@ -293,7 +340,7 @@ public abstract class DispositionFragment extends PreferenceFragment
     @Override
     public void onFrameUnselectedListener() {
         if (mDeleteMenu != null) {
-            mDeleteMenu.setVisible(false);
+            mDeleteMenu.setVisible(mAdapter.getView(mPager.getCurrentItem()).isSaved());
         }
     }
 
@@ -320,7 +367,10 @@ public abstract class DispositionFragment extends PreferenceFragment
             mRestoreMenu.setVisible(position == 0);
         }
         if (mDeleteMenu != null) {
-            mDeleteMenu.setVisible(false);
+            mDeleteMenu.setVisible(mAdapter.getView(position).isSaved());
+        }
+        if (mSaveMenu != null) {
+            mSaveMenu.setVisible(position == 0);
         }
 
         // Set the title
@@ -331,8 +381,14 @@ public abstract class DispositionFragment extends PreferenceFragment
                 mAdviseLines = mAdvise.getLineCount();
                 mAdvise.setLines(mAdviseLines);
             }
-            mAdvise.setText(getString(R.string.pref_disposition_template,
-                    String.valueOf(position), String.valueOf(mNumberOfTemplates)));
+            int saved = mAdapter.getCountOfSavedDispositions();
+            if (position <= saved) {
+                mAdvise.setText(getString(R.string.pref_disposition_saved,
+                        String.valueOf(position), String.valueOf(saved)));
+            } else {
+                mAdvise.setText(getString(R.string.pref_disposition_template,
+                        String.valueOf(position - saved), String.valueOf(mNumberOfTemplates)));
+            }
         }
     }
 
@@ -341,10 +397,36 @@ public abstract class DispositionFragment extends PreferenceFragment
      */
     @Override
     public void onPageScrollStateChanged(int state) {
-        if (mDeleteMenu != null) {
+        if (state != ViewPager.SCROLL_STATE_IDLE && mDeleteMenu != null) {
             mDeleteMenu.setVisible(false);
         }
         mResizeFrame.setVisibility(View.GONE);
+    }
+
+    private void deleteCurrentSaved() {
+        int current = mPager.getCurrentItem();
+        deleteUserDisposition(current - 1);
+        mAdapter.deleteUserDisposition(current);
+        mPager.setCurrentItem(current - 1);
+        mPager.setAdapter(mAdapter);
+        Toast.makeText(getActivity(), R.string.saved_dispositions_delete_success,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void addCurrentToSaved() {
+        List<Disposition> current = mAdapter.getView(0).getDispositions();
+        if (getUserDispositions().contains(current)) {
+            Toast.makeText(getActivity(), R.string.saved_dispositions_save_exists,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Dispositions dispositions = new Dispositions(Dispositions.TYPE_SAVED,
+                current, getRows(), getCols());
+        saveUserDisposition(current);
+        mAdapter.addUserDisposition(dispositions);
+        mPager.setAdapter(mAdapter);
+        Toast.makeText(getActivity(), R.string.saved_dispositions_save_success,
+                Toast.LENGTH_SHORT).show();
     }
 
 }

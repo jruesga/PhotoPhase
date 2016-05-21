@@ -52,7 +52,7 @@ public class PortraitDispositionFragment extends DispositionFragment {
      * {@inheritDoc}
      */
     @Override
-    public List<Disposition> getUserDispositions() {
+    public List<Disposition> getCurrentDispositions() {
         return Preferences.Layout.getPortraitDisposition(getActivity());
     }
 
@@ -79,6 +79,36 @@ public class PortraitDispositionFragment extends DispositionFragment {
     @Override
     public void saveDispositions(List<Disposition> dispositions) {
         Preferences.Layout.setPortraitDisposition(getActivity(), dispositions);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<List<Disposition>> getUserDispositions() {
+        return PreferencesProvider.Preferences.Layout.getPortraitUserDispositions(getActivity());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveUserDisposition(List<Disposition> disposition) {
+        List<List<Disposition>> dispositions =
+                PreferencesProvider.Preferences.Layout.getPortraitUserDispositions(getActivity());
+        dispositions.add(disposition);
+        PreferencesProvider.Preferences.Layout.setPortraitUserDispositions(getActivity(), dispositions);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteUserDisposition(int position) {
+        List<List<Disposition>> dispositions =
+                PreferencesProvider.Preferences.Layout.getPortraitUserDispositions(getActivity());
+        dispositions.remove(position);
+        PreferencesProvider.Preferences.Layout.setPortraitUserDispositions(getActivity(), dispositions);
     }
 
     /**

@@ -46,6 +46,8 @@ public class DispositionAdapter extends PagerAdapter {
 
     private boolean mFirstAnimation;
 
+    private Dispositions mEditingDispositions;
+
     /**
      * Constructor of <code>DispositionAdapter</code>.
      *
@@ -65,6 +67,24 @@ public class DispositionAdapter extends PagerAdapter {
         mCurrentViews = new SparseArray<>();
     }
 
+    public List<Dispositions> getDispositions() {
+        return mDispositions;
+    }
+
+    public void addUserDisposition(Dispositions dispositions) {
+        int pos = getCountOfSavedDispositions() + 1;
+        mDispositions.add(pos, dispositions);
+        notifyDataSetChanged();
+    }
+
+    public void deleteUserDisposition(int position) {
+        Dispositions d = mDispositions.get(position);
+        if (d.getType() == Dispositions.TYPE_SAVED) {
+            mDispositions.remove(position);
+            notifyDataSetChanged();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -80,6 +100,8 @@ public class DispositionAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         final DispositionView view = (DispositionView)mInflater.inflate(
                 R.layout.disposition_view, container, false);
+        view.setEditable(position == 0);
+        view.setSaved(mDispositions.get(position).getType() == Dispositions.TYPE_SAVED);
         if (position == 0) {
             view.setResizeFrame(mResizeFrame);
             view.setOnFrameSelectedListener(mCallback);
@@ -87,8 +109,11 @@ public class DispositionAdapter extends PagerAdapter {
         view.post(new Runnable() {
             @Override
             public void run() {
-                view.setDispositions(mDispositions.get(position),
-                        position == 0 &&  mFirstAnimation);
+                Dispositions dispositions = mDispositions.get(position);
+                if (position == 0 && mEditingDispositions != null) {
+                    dispositions = mEditingDispositions;
+                }
+                view.setDispositions(dispositions, position == 0 &&  mFirstAnimation);
                 mFirstAnimation = false;
             }
         });
@@ -102,6 +127,13 @@ public class DispositionAdapter extends PagerAdapter {
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+        if (position == 0) {
+            mEditingDispositions = new Dispositions(
+                    Dispositions.TYPE_CURRENT,
+                    mCurrentViews.get(position).getDispositions(),
+                    mDispositions.get(position).getRows(),
+                    mDispositions.get(position).getCols());
+        }
         mCurrentViews.remove(position);
         container.removeView((View) object);
     }
@@ -124,4 +156,15 @@ public class DispositionAdapter extends PagerAdapter {
         return view == object || view == mResizeFrame;
     }
 
+    public int getCountOfSavedDispositions() {
+        int count = 0;
+        int c = mDispositions.size();
+        for (int i = 1; i < c; i++) {
+            if (mDispositions.get(i).getType() != Dispositions.TYPE_SAVED) {
+                break;
+            }
+            count++;
+        }
+        return count;
+    }
 }

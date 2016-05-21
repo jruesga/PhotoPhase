@@ -17,9 +17,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/mnu_delete"
-        android:title="@string/mnu_delete"
-        android:icon="@drawable/ic_delete"
-        app:showAsAction="ifRoom|withText" />
+          android:title="@string/mnu_delete"
+          android:icon="@drawable/ic_delete"
+          app:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/mnu_save"
+          android:title="@string/mnu_save"
+          android:icon="@drawable/ic_save"
+          app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/mnu_restore"
         android:title="@string/mnu_restore"
         android:icon="@drawable/ic_restore"

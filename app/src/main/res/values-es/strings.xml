@@ -27,6 +27,7 @@
   <string name="no_pictures_albums_tap_to_request_permission_msg">Toca para solicitar permisos</string>
   <string name="mnu_restore">Restaurar</string>
   <string name="mnu_delete">Eliminar</string>
+  <string name="mnu_save">Guardar</string>
   <string name="mnu_select_all">Seleccionar todo</string>
   <string name="mnu_deselect_all">Deseleccionar todo</string>
   <string name="mnu_invert">Invertir</string>
@@ -109,6 +110,7 @@
   <string name="disposition_orientation_portrait">disposición vertical</string>
   <string name="disposition_orientation_landscape">disposición horizontal</string>
   <string name="pref_disposition_description">Presiona una celda y arrastra sus bordes. Desliza a izquierda y derecha para ver plantillas predefinidas</string>
+  <string name="pref_disposition_saved">Guardada <xliff:g id="number_of_saved">%1$s</xliff:g> de <xliff:g id="total_of_saved">%2$s</xliff:g></string>
   <string name="pref_disposition_template">Plantilla <xliff:g id="number_of_template">%1$s</xliff:g> de <xliff:g id="total_of_templates">%2$s</xliff:g></string>
   <string name="pref_disposition_unable_delete_advise">No es posible borrar la celda seleccionada</string>
   <string name="pref_about">Acerca de</string>
@@ -204,4 +206,12 @@
   <string name="photoviewer_details_resolution">Resolución: <xliff:g id="w" example="1024">%1$d</xliff:g>x<xliff:g id="h" example="678">%2$d</xliff:g></string>
   <string name="photoviewer_details_orientation">Orientación: <xliff:g id="orientation" example="0">%1$s</xliff:g>\u00B0</string>
   <string name="photoviewer_details_path">Ruta: <xliff:g id="path" example="/storage/emulated/0/photos">%1$s</xliff:g></string>
+  <string name="frame_settings_dialog_title">Ajuste de marco</string>
+  <string name="frame_settings_flag_background">Fondo</string>
+  <string name="frame_settings_flag_transition">Transición</string>
+  <string name="frame_settings_flag_effect">Efecto</string>
+  <string name="frame_settings_flag_border">Borde</string>
+  <string name="saved_dispositions_save_success">Guardado correctamente</string>
+  <string name="saved_dispositions_save_exists">Otra disposición existe con el mismo diseño</string>
+  <string name="saved_dispositions_delete_success">Borrado correctamente</string>
 </resources>

@@ -23,19 +23,26 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -77,6 +84,8 @@ public class DispositionView extends RelativeLayout
     private List<Disposition> mDispositions;
     private int mCols;
     private int mRows;
+    private boolean mEditable = false;
+    private boolean mSaved = false;
 
     private View mTarget;
     private ResizeFrame mResizeFrame;
@@ -148,6 +157,22 @@ public class DispositionView extends RelativeLayout
                 dispositions.getRows(), animate);
     }
 
+    public boolean isEditable() {
+        return mEditable;
+    }
+
+    public void setEditable(boolean editable) {
+        mEditable = editable;
+    }
+
+    public boolean isSaved() {
+        return mSaved;
+    }
+
+    public void setSaved(boolean saved) {
+        mSaved = saved;
+    }
+
     /**
      * Method that sets the disposition to draw on this view
      *
@@ -207,7 +232,7 @@ public class DispositionView extends RelativeLayout
         // Remove all the current views and add the new ones
         removeAllViews();
         for (Disposition disposition : mDispositions) {
-            createFrame(getLocationFromDisposition(disposition), animate);
+            createFrame(disposition, getLocationFromDisposition(disposition), animate);
         }
         mOldResizeFrameLocation = null;
         mTarget = null;
@@ -366,24 +391,56 @@ public class DispositionView extends RelativeLayout
      * @param r The location relative to the parent layout
      * @return v The new view
      */
-    private View createFrame(Rect r, boolean animate) {
+    private View createFrame(Disposition disposition, Rect r, boolean animate) {
         int padding = (int)getResources().getDimension(R.dimen.disposition_frame_padding);
-        final ImageView v = new ImageView(getContext());
-        v.setImageResource(R.drawable.ic_photo);
-        v.setScaleType(ScaleType.CENTER);
 
-        // Is locked? Then change the background color
-        v.setBackgroundColor(ContextCompat.getColor(getContext(), mResizeFrame == null
-                ? R.color.disposition_locked_frame_bg_color
-                : R.color.disposition_frame_bg_color));
-
-        RelativeLayout.LayoutParams params =
+        final FrameLayout v = new FrameLayout(getContext());
+        ViewGroup.LayoutParams params =
                 new RelativeLayout.LayoutParams(r.width() - padding, r.height() - padding);
         v.setX(r.left + padding);
         v.setY(r.top + padding);
-        v.setOnClickListener(this);
-        v.setOnLongClickListener(this);
+        if (mEditable) {
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
+        }
+        v.setTag(disposition.uid);
         addView(v, params);
+
+        // Image
+        final ImageView image = new ImageView(getContext());
+        image.setImageResource(mEditable ? R.drawable.ic_settings : R.drawable.ic_photo);
+        image.setScaleType(ScaleType.CENTER);
+        image.setBackgroundColor(ContextCompat.getColor(getContext(), mResizeFrame == null
+                ? mSaved
+                    ? R.color.disposition_saved_frame_bg_color
+                    : R.color.disposition_locked_frame_bg_color
+                : R.color.disposition_frame_bg_color));
+        v.addView(image);
+
+        // Flags toolbar
+        final LinearLayout toolbar = new LinearLayout(getContext());
+        FrameLayout.LayoutParams toolbarParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        toolbarParams.gravity = Gravity.BOTTOM | Gravity.START;
+        v.addView(toolbar, toolbarParams);
+
+        int flagDimen = (int) getResources().getDimension(R.dimen.frame_settings_flag_size);
+        padding = (int) getResources().getDimension(R.dimen.frame_settings_flag_padding);
+        LinearLayout.LayoutParams flagParams = new LinearLayout.LayoutParams(flagDimen, flagDimen);
+        flagParams.setMargins(padding, padding, padding, padding);
+        if (!disposition.hasFlag(Disposition.BACKGROUND_FLAG)) {
+            toolbar.addView(createFrameSettingFlag(R.drawable.ic_background_off), flagParams);
+        } else {
+            if (!disposition.hasFlag(Disposition.TRANSITION_FLAG)) {
+                toolbar.addView(createFrameSettingFlag(R.drawable.ic_transition_off), flagParams);
+            }
+            if (!disposition.hasFlag(Disposition.EFFECT_FLAG)) {
+                toolbar.addView(createFrameSettingFlag(R.drawable.ic_effect_off), flagParams);
+            }
+            if (!disposition.hasFlag(Disposition.BORDER_FLAG)) {
+                toolbar.addView(createFrameSettingFlag(R.drawable.ic_border_off), flagParams);
+            }
+        }
 
         // Animate the view
         if (animate) {
@@ -429,10 +486,18 @@ public class DispositionView extends RelativeLayout
      */
     @Override
     public void onClick(View v) {
-        // if the frame is selected then unselect it
-        if (mResizeFrame != null && v.equals(mTarget)) {
+        // if there is a frame selected then unselect it
+        if (mResizeFrame != null && mResizeFrame.getVisibility() == View.VISIBLE) {
             mResizeFrame.hide();
             mTarget = null;
+            if (mOnFrameSelectedListener != null) {
+                mOnFrameSelectedListener.onFrameUnselectedListener();
+            }
+        } else {
+            // Show settings?
+            if (mEditable) {
+                displayFrameSettings(v);
+            }
         }
     }
 
@@ -636,6 +701,8 @@ public class DispositionView extends RelativeLayout
         for (int i = count - 1; i >= 0; i--) {
             Disposition disposition = mDispositions.get(i);
             if (!isVisible(disposition) || isOverlapped(resizeRubber, disposition)) {
+                resizeRubber.uid = disposition.uid;
+                resizeRubber.flags = disposition.flags;
                 mDispositions.remove(disposition);
             }
         }
@@ -660,7 +727,7 @@ public class DispositionView extends RelativeLayout
                 break;
             }
             Disposition disposition = DispositionUtil.fromRect(rect);
-            createFrame(getLocationFromDisposition(disposition), true);
+            createFrame(disposition, getLocationFromDisposition(disposition), true);
             mDispositions.add(disposition);
         } while (true);
 
@@ -813,5 +880,90 @@ public class DispositionView extends RelativeLayout
      */
     private static boolean isVisible(Disposition d) {
         return d.w > 0 && d.h > 0;
+    }
+
+    @SuppressLint("InflateParams")
+    private void displayFrameSettings(final View v) {
+        final String uid = (String) v.getTag();
+        if (uid == null) {
+            return;
+        }
+        final Disposition disposition = fromUid(uid);
+        if (disposition == null) {
+            return;
+        }
+
+        View dialogView = LayoutInflater.from(
+                getContext()).inflate(R.layout.frame_settings, null, false);
+        final SwitchCompat background = (SwitchCompat) dialogView.findViewById(R.id.flag_background);
+        final SwitchCompat transition = (SwitchCompat) dialogView.findViewById(R.id.flag_transition);
+        final SwitchCompat effect = (SwitchCompat) dialogView.findViewById(R.id.flag_effect);
+        final SwitchCompat border = (SwitchCompat) dialogView.findViewById(R.id.flag_border);
+        background.setChecked(disposition.hasFlag(Disposition.BACKGROUND_FLAG));
+        transition.setChecked(disposition.hasFlag(Disposition.TRANSITION_FLAG));
+        effect.setChecked(disposition.hasFlag(Disposition.EFFECT_FLAG));
+        border.setChecked(disposition.hasFlag(Disposition.BORDER_FLAG));
+        transition.setEnabled(background.isChecked());
+        effect.setEnabled(background.isChecked());
+        border.setEnabled(background.isChecked());
+        background.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                transition.setEnabled(background.isChecked());
+                effect.setEnabled(background.isChecked());
+                border.setEnabled(background.isChecked());
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.frame_settings_dialog_title);
+        builder.setView(dialogView);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (background.isChecked()) {
+                    disposition.addFlag(Disposition.BACKGROUND_FLAG);
+                } else {
+                    disposition.removeFlag(Disposition.BACKGROUND_FLAG);
+                }
+                if (transition.isChecked()) {
+                    disposition.addFlag(Disposition.TRANSITION_FLAG);
+                } else {
+                    disposition.removeFlag(Disposition.TRANSITION_FLAG);
+                }
+                if (effect.isChecked()) {
+                    disposition.addFlag(Disposition.EFFECT_FLAG);
+                } else {
+                    disposition.removeFlag(Disposition.EFFECT_FLAG);
+                }
+                if (border.isChecked()) {
+                    disposition.addFlag(Disposition.BORDER_FLAG);
+                } else {
+                    disposition.removeFlag(Disposition.BORDER_FLAG);
+                }
+
+                // Redraw
+                recreateDispositions(false);
+                mChanged = true;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private Disposition fromUid(String uid) {
+        for (Disposition disposition : mDispositions) {
+            if (disposition.uid.equals(uid)) {
+                return disposition;
+            }
+        }
+        return null;
+    }
+
+    private ImageView createFrameSettingFlag(int imageResId) {
+        final ImageView image = new ImageView(getContext());
+        image.setImageResource(imageResId);
+        image.setScaleType(ScaleType.FIT_CENTER);
+        return image;
     }
 }

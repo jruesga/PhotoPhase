@@ -24,19 +24,26 @@ import java.util.List;
  */
 public class Dispositions {
 
+    public static final int TYPE_CURRENT = 0;
+    public static final int TYPE_SAVED = 1;
+    public static final int TYPE_SYSTEM = 2;
+
     private final List<Disposition> mDispositions;
     private final int mRows;
     private final int mCols;
+    private final int mType;
 
     /**
      * Constructor of <code>Dispositions</code>
      *
+     * @param type Type of dispositions
      * @param dispositions List of all dispositions
      * @param rows The number of rows of the dispositions
      * @param cols The number of columns of the dispositions
      */
-    public Dispositions(List<Disposition> dispositions, int rows, int cols) {
+    public Dispositions(int type, List<Disposition> dispositions, int rows, int cols) {
         super();
+        mType = type;
         mDispositions = dispositions;
         mRows = rows;
         mCols = cols;
@@ -48,6 +55,9 @@ public class Dispositions {
      * @return List<Disposition> All the dispositions
      */
     public List<Disposition> getDispositions() {
+        if (mDispositions == null) {
+            return new ArrayList<>();
+        }
         return new ArrayList<>(mDispositions);
     }
 
@@ -69,4 +79,7 @@ public class Dispositions {
         return mCols;
     }
 
+    public int getType() {
+        return mType;
+    }
 }
