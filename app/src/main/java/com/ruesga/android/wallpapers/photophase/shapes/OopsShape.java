@@ -316,13 +316,13 @@ public class OopsShape implements DrawableShape {
         Paint paint = new Paint();
         paint.setTypeface(sFont);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(24.0f);
+        paint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.oops_shape_text_size));
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
         Bitmap src = mOopsImageTexture.bitmap;
         Bitmap image = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
-        canvas.drawText(text, src.getWidth() /2, src.getHeight() - (src.getHeight() * 0.33f), paint);
+        canvas.drawText(text, src.getWidth() / 2, src.getHeight() - (src.getHeight() * 0.33f), paint);
         return image;
     }
 }
