@@ -1,7 +1,4 @@
-#don't warn
--dontwarn okio.**
-
-#keep source file and line number
+# keep source file and line number
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
@@ -13,16 +10,24 @@
     public <init>(...);
 }
 
-#keep effects, transitions and borders classes public
--keep public class com.ruesga.android.wallpapers.photophase.effects.* {
+# keep effects, transitions and borders classes public
+-keep,includedescriptorclasses public class com.ruesga.android.wallpapers.photophase.effects.* {
     public <init>(...);
 }
--keep public class com.ruesga.android.wallpapers.photophase.borders.* {
+-keep,includedescriptorclasses public class com.ruesga.android.wallpapers.photophase.borders.* {
     public <init>(...);
 }
--keep public class com.ruesga.android.wallpapers.photophase.transitions.* {
+-keep,includedescriptorclasses public class com.ruesga.android.wallpapers.photophase.transitions.* {
     public <init>(...);
 }
+
+# keep native methods
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
+
+# don't warn okio
+-dontwarn okio.**
 
 # Dont warn about missing setLatestEventInfo
 -dontwarn android.support.v4.app.NotificationCompatBase
