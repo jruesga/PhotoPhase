@@ -84,7 +84,7 @@ model {
                 minifyEnabled true
                 useProguard true
 
-                proguardFiles.add(file('proguard-project.txt'))
+                proguardFiles.addAll([file('proguard-android.txt'), file('proguard-project.txt')])
             }
         }
 
