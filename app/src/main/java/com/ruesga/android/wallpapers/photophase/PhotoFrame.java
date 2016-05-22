@@ -20,6 +20,7 @@ import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.textures.TextureManager;
 import com.ruesga.android.wallpapers.photophase.textures.TextureRequestor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
@@ -45,6 +46,7 @@ public class PhotoFrame implements TextureRequestor {
                                                           };
 
 
+    private final Disposition mDisposition;
     private final TextureManager mTextureManager;
 
     private final float[] mFrameVertex, mPhotoVertex;
@@ -66,14 +68,16 @@ public class PhotoFrame implements TextureRequestor {
     /**
      * Constructor of <code>PhotoFrame</code>.
      *
+     * @param disposition The associated disposition
      * @param textureManager The texture manager
      * @param frameVertex A 4 dimension array with the coordinates per vertex plus padding
      * @param photoVertex A 4 dimension array with the coordinates per vertex without padding
      * @param color Background color
      */
-    public PhotoFrame(TextureManager textureManager, float[] frameVertex,
+    public PhotoFrame(Disposition disposition, TextureManager textureManager, float[] frameVertex,
             float[] photoVertex, GLColor color) {
         super();
+        mDisposition = disposition;
         mLoaded = false;
         mBackgroundColor = color;
         mTextureManager = textureManager;
@@ -98,6 +102,10 @@ public class PhotoFrame implements TextureRequestor {
 
         // Request a new image for this frame
         requestTexture();
+    }
+
+    public Disposition getDisposition() {
+        return mDisposition;
     }
 
     /**
@@ -198,24 +206,6 @@ public class PhotoFrame implements TextureRequestor {
      */
     public float[] getPhotoVertex() {
         return mPhotoVertex;
-    }
-
-    /**
-     * Method that returns the photo width
-     *
-     * @return float The photo width
-     */
-    public float getPhotoWidth() {
-        return mPhotoWidth;
-    }
-
-    /**
-     * Method that returns the photo height
-     *
-     * @return float The photo height
-     */
-    public float getPhotoHeight() {
-        return mPhotoHeight;
     }
 
     /**

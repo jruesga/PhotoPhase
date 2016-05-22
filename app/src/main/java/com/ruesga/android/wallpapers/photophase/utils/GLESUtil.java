@@ -359,18 +359,13 @@ public final class GLESUtil {
     }
 
     /**
-     * Method that loads a texture from a file.
+     * Method that loads a fake texture (the bitmap but no gles data) from a file.
      *
      * @param file The image file
      * @param dimensions The desired dimensions
-     * @param effect The effect to apply to the image or null if no effect is needed
-     * @param border The border to apply to the image or null if no border was defined
-     * @param dimen The new dimensions
-     * @param recycle If the bitmap should be recycled
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadTexture(Context ctx, File file, Rect dimensions, Effect effect,
-            Border border, Rect dimen, boolean recycle) {
+    public static GLESTextureInfo loadFadeTexture(File file, Rect dimensions) {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)
@@ -381,7 +376,8 @@ public final class GLESUtil {
             }
 
             if (DEBUG) Log.d(TAG, "image: " + file.getAbsolutePath());
-            GLESTextureInfo ti = loadTexture(ctx, bitmap, effect, border, dimen);
+            GLESTextureInfo ti = new GLESTextureInfo();
+            ti.bitmap = bitmap;
             ti.path = file;
             return ti;
 
@@ -391,13 +387,11 @@ public final class GLESUtil {
                         file.getAbsolutePath();
                 Log.e(TAG, msg, e);
             }
-            return new GLESTextureInfo();
-
-        } finally {
-            // Recycle the bitmap
-            if (bitmap != null && recycle) {
+            if (bitmap != null) {
                 bitmap.recycle();
             }
+            return new GLESTextureInfo();
+
         }
     }
 

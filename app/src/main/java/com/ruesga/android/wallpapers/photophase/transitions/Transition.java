@@ -16,7 +16,6 @@
 
 package com.ruesga.android.wallpapers.photophase.transitions;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.os.SystemClock;
@@ -98,6 +97,7 @@ public abstract class Transition {
             // Load the transition frame and request a picture for it
             mTransitionTarget =
                     new PhotoFrame(
+                            target.getDisposition(),
                             mTextureManager,
                             mTarget.getFrameVertex(),
                             mTarget.getPhotoVertex(),

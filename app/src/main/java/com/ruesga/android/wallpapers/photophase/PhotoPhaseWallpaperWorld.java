@@ -134,7 +134,7 @@ public class PhotoPhaseWallpaperWorld {
         // Ensure queue
         ensureTransitionsQueue();
 
-        // Get a random frame to which apply the transition
+        // Get a random frame to apply the transition to
         int item = Utils.getNextRandom(0, mTransitionsQueue.size() - 1);
         int pos = mTransitionsQueue.remove(item);
         mUsedTransitionsQueue.add(pos);
@@ -153,7 +153,7 @@ public class PhotoPhaseWallpaperWorld {
         // Ensure queue
         ensureTransitionsQueue();
 
-        // Get a random frame to which apply the transition
+        // Get a the frame to apply the transition to
         int pos = mPhotoFrames.indexOf(frame);
         if (pos == -1) {
             return;
@@ -316,6 +316,7 @@ public class PhotoPhaseWallpaperWorld {
                     portrait ? w : h, portrait ? h : w, count > 1);
             PhotoFrame frame =
                     new PhotoFrame(
+                            disposition,
                             mTextureManager,
                             frameVertices,
                             photoVertices,
@@ -327,7 +328,10 @@ public class PhotoPhaseWallpaperWorld {
             transition.select(frame);
             mTransitions.add(transition);
 
-            mTransitionsQueue.add(i);
+            if (disposition.hasFlag(Disposition.BACKGROUND_FLAG) &&
+                    disposition.hasFlag(Disposition.TRANSITION_FLAG)) {
+                mTransitionsQueue.add(i);
+            }
             i++;
         }
     }
@@ -363,11 +367,21 @@ public class PhotoPhaseWallpaperWorld {
         if (mTransitions != null) {
             // First draw the non-running transitions; then the active ones
             for (Transition transition : mTransitions) {
+                // Don't draw frames with no background flagged
+                if (!transition.getTarget().getDisposition().hasFlag(Disposition.BACKGROUND_FLAG)) {
+                    continue;
+                }
+
                 if (!transition.isRunning()) {
                     transition.apply(matrix);
                 }
             }
             for (Transition transition : mTransitions) {
+                // Don't draw frames with no background flagged
+                if (!transition.getTarget().getDisposition().hasFlag(Disposition.BACKGROUND_FLAG)) {
+                    continue;
+                }
+
                 if (transition.isRunning()) {
                     transition.apply(matrix);
                 }

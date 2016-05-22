@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.effect.Effect;
 import android.media.effect.EffectContext;
 import android.opengl.GLES20;
 import android.os.Handler;
@@ -33,9 +32,9 @@ import com.ruesga.android.wallpapers.photophase.GLESSurfaceDispatcher;
 import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer;
 import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer.OnMediaPictureDiscoveredListener;
 import com.ruesga.android.wallpapers.photophase.R;
-import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.borders.Borders;
 import com.ruesga.android.wallpapers.photophase.effects.Effects;
+import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
@@ -94,43 +93,19 @@ public class PhotoPhaseTextureManager extends TextureManager
         @Override
         public void run() {
             try {
-                Effect effect;
-                Border border;
-                synchronized (mEffectsSync) {
-                    effect = mEffects.getNextEffect();
-                    border = mBorders.getNextBorder();
-                }
+                // Load the bitmap and create a fake gles information
+                ti = GLESUtil.loadFadeTexture(mImage, mDimensions);
 
                 boolean enqueue;
                 synchronized (mSync) {
                     enqueue = mPendingRequests.size() == 0;
                 }
-
-                // Load and bind to the GLES context. The effect is applied when the image
-                // is associated to the destination target (only if aspect ratio will be applied)
-                if (!Preferences.General.isFixAspectRatio(mContext)) {
-                    ti = GLESUtil.loadTexture(
-                            mContext, mImage, mDimensions, effect, border, mDimensions, false);
-                } else {
-                    ti = GLESUtil.loadTexture(
-                            mContext, mImage, mDimensions, null, null, null, false);
-                    ti.effect = effect;
-                    ti.border = border;
-                }
-
                 synchronized (mSync) {
                     // Notify the new images to all pending frames
                     if (!enqueue) {
                         // Invalid textures are also reported, so requestor can handle it
                         TextureRequestor requestor = mPendingRequests.remove(0);
-                        fixAspectRatio(requestor, ti);
-                        requestor.setTextureHandle(ti);
-
-                        // Clean up memory
-                        if (ti.bitmap != null) {
-                            ti.bitmap.recycle();
-                            ti.bitmap = null;
-                        }
+                        applyToRequestor(requestor, ti);
 
                     } else {
                         // Add to the queue (only valid textures)
@@ -227,6 +202,7 @@ public class PhotoPhaseTextureManager extends TextureManager
      *
      * @return boolean whether the texture manager is paused
      */
+    @SuppressWarnings("unused")
     public boolean isPaused() {
         return mBackgroundTask != null && mBackgroundTask.mTaskPaused;
     }
@@ -269,14 +245,7 @@ public class PhotoPhaseTextureManager extends TextureManager
         synchronized (mSync) {
             try {
                 GLESTextureInfo ti = mQueue.remove();
-                fixAspectRatio(requestor, ti);
-                requestor.setTextureHandle(ti);
-
-                // Clean up memory
-                if (ti.bitmap != null) {
-                    ti.bitmap.recycle();
-                    ti.bitmap = null;
-                }
+                applyToRequestor(requestor, ti);
 
             } catch (EmptyQueueException eqex) {
                 // Add to queue of pending request to be notified when
@@ -340,6 +309,7 @@ public class PhotoPhaseTextureManager extends TextureManager
      *
      * @param requestor The requestor of the texture
      */
+    @SuppressWarnings("unused")
     public void cancelRequest(TextureRequestor requestor) {
         synchronized (mSync) {
             if (mPendingRequests.contains(requestor)) {
@@ -455,21 +425,34 @@ public class PhotoPhaseTextureManager extends TextureManager
     }
 
     /**
-     * Method that fix the aspect ratio of a image to fit the destination target
+     * Method that load the gles texture and apply to the requestor frame (which includes
+     * fix the aspect ratio and/or effects and borders)
      *
      * @param requestor The requestor target
-     * @param ti The original texture information
+     * @param ti The original texture information (the one with the bitmap one)
      */
-    private void fixAspectRatio(TextureRequestor requestor, GLESTextureInfo ti) {
+    private void applyToRequestor(TextureRequestor requestor, GLESTextureInfo ti) {
+        // Transform requestor dimensions to screen dimensions
+        RectF dimens = requestor.getRequestorDimensions();
+        Rect pixels = new Rect(
+                0,
+                0,
+                (int)(mScreenDimensions.width() * dimens.width() / 2),
+                (int)(mScreenDimensions.height() * dimens.height() / 2));
+
+        final Disposition disposition = requestor.getDisposition();
+        synchronized (mEffectsSync) {
+            if (disposition.hasFlag(Disposition.EFFECT_FLAG)) {
+                ti.effect = mEffects.getNextEffect();
+            }
+            if (disposition.hasFlag(Disposition.BORDER_FLAG)) {
+                ti.border = mBorders.getNextBorder();
+            }
+        }
+
         // Check if we have to apply any correction to the image
+        GLESTextureInfo dst;
         if (ti.bitmap != null && Preferences.General.isFixAspectRatio(mContext)) {
-            // Transform requestor dimensions to screen dimensions
-            RectF dimens = requestor.getRequestorDimensions();
-            Rect pixels = new Rect(
-                                0,
-                                0,
-                                (int)(mScreenDimensions.width() * dimens.width() / 2),
-                                (int)(mScreenDimensions.height() * dimens.height() / 2));
 
             // Create a texture of power of two here to avoid scaling the bitmap twice
             int w = pixels.width();
@@ -485,22 +468,28 @@ public class PhotoPhaseTextureManager extends TextureManager
             if (!thumb.equals(ti.bitmap)) {
                 ti.bitmap.recycle();
             }
-            GLESTextureInfo dst = GLESUtil.loadTexture(mContext, thumb, ti.effect, ti.border, pixels);
+            dst = GLESUtil.loadTexture(mContext, thumb, ti.effect, ti.border, pixels);
+        } else {
+            // Load the texture without any correction
+            dst = GLESUtil.loadTexture(
+                    mContext, ti.bitmap, ti.effect, ti.border, pixels);
+        }
 
-            // Destroy references
-            int[] textures = new int[]{ti.handle};
-            if (GLESUtil.DEBUG_GL_MEMOBJS) {
-                Log.d(GLESUtil.DEBUG_GL_MEMOBJS_DEL_TAG, "glDeleteTextures: ["
-                        + ti.handle + "]");
-            }
-            GLES20.glDeleteTextures(1, textures, 0);
-            GLESUtil.glesCheckError("glDeleteTextures");
+        // Swap references
+        ti.bitmap = dst.bitmap;
+        ti.handle = dst.handle;
+        ti.effect = null;
+        ti.border = null;
+        dst.handle = 0;
+        dst.bitmap = null;
 
-            // Swap references
-            ti.bitmap = dst.bitmap;
-            ti.handle = dst.handle;
-            ti.effect = null;
-            ti.border = null;
+        // And notify to the requestor
+        requestor.setTextureHandle(ti);
+
+        // Clean up memory
+        if (ti.bitmap != null) {
+            ti.bitmap.recycle();
+            ti.bitmap = null;
         }
     }
 

@@ -36,6 +36,7 @@ import android.opengl.Matrix;
 import android.os.Handler;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.preferences.TouchAction;
@@ -349,9 +350,18 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                     Log.w(TAG, "No frame from coordenates");
                     return;
                 }
+                if (!frame.getDisposition().hasFlag(Disposition.BACKGROUND_FLAG)) {
+                    // Ignore touch
+                    return;
+                }
 
                 // Apply the action
                 if (touchAction.compareTo(TouchAction.TRANSITION) == 0) {
+                    if (!frame.getDisposition().hasFlag(Disposition.TRANSITION_FLAG)) {
+                        // Ignore touch
+                        return;
+                    }
+
                     try {
                         // Select the frame with a transition
                         // Run in GLES's thread

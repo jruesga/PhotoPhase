@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.textures;
 
 import android.graphics.RectF;
 
+import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
 
 /**
@@ -38,4 +39,11 @@ public interface TextureRequestor {
      * @return RectF The dimensions of the requestor
      */
     RectF getRequestorDimensions();
+
+    /**
+     * Returns the mapped disposition or null if there is associated disposition
+     *
+     * @return the associated disposition
+     */
+    Disposition getDisposition();
 }
