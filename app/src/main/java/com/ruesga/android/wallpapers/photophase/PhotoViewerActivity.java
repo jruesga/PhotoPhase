@@ -199,7 +199,9 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 }
             });
         }
-        addTransitionListener();
+        if (AndroidHelper.isLollipopOrGreater() && !mHasTransition) {
+            addTransitionListener();
+        }
     }
 
     @Override
