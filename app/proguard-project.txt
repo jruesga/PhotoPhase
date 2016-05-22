@@ -23,3 +23,7 @@
 -keep public class com.ruesga.android.wallpapers.photophase.transitions.* {
     public <init>(...);
 }
+
+# Dont warn about missing setLatestEventInfo
+-dontwarn android.support.v4.app.NotificationCompatBase
+-dontwarn android.support.v4.app.NotificationCompatGingerbread
