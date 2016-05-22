@@ -60,8 +60,6 @@ model {
             moduleName = "photophase"
             platformVersion =  16
             toolchain = 'clang'
-            stl = 'gnustl_static'
-            cppFlags.addAll(['-std=c++11', '-Wall', '-fno-rtti', '-fno-exceptions'])
             CFlags.addAll(['-Wall'])
             ldLibs.addAll(['GLESv2'])
         }
