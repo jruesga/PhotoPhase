@@ -63,7 +63,7 @@ model {
             stl = 'gnustl_static'
             cppFlags.addAll(['-std=c++11', '-Wall', '-fno-rtti', '-fno-exceptions'])
             CFlags.addAll(['-Wall'])
-            ldLibs.addAll(['GLESv2', 'EGL'])
+            ldLibs.addAll(['GLESv2'])
         }
 
         buildTypes {
