@@ -97,7 +97,7 @@ model {
     }
 
     android.lintOptions {
-        abortOnError false
+        disable 'MissingTranslation', 'ManifestResource'
     }
 
     android.signingConfigs {
