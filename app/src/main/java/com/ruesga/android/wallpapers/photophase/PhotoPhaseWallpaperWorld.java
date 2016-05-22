@@ -133,6 +133,9 @@ public class PhotoPhaseWallpaperWorld {
     public void selectRandomTransition() {
         // Ensure queue
         ensureTransitionsQueue();
+        if (mTransitionsQueue.isEmpty()) {
+            return;
+        }
 
         // Get a random frame to apply the transition to
         int item = Utils.getNextRandom(0, mTransitionsQueue.size() - 1);
