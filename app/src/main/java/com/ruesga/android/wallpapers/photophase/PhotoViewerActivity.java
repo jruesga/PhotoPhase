@@ -237,6 +237,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
             @Override
             public void onTransitionStart(Transition transition) {
                 performAsyncPhotoLoading();
+                getWindow().getSharedElementEnterTransition().removeListener(this);
             }
 
             @Override
