@@ -81,10 +81,10 @@ model {
                 signingConfig = $("android.signingConfigs.release-signing-config")
 
                 zipAlignEnabled true
-                minifyEnabled true
                 shrinkResources false
+                minifyEnabled true
+                useProguard true
 
-                proguardFiles.add(file('proguard-android.txt'))
                 proguardFiles.add(file('proguard-project.txt'))
             }
         }
