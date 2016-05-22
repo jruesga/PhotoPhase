@@ -109,7 +109,7 @@ public class PhotoPhaseTextureManager extends TextureManager
 
                     } else {
                         // Add to the queue (only valid textures)
-                        if (ti.handle > 0) {
+                        if (ti.bitmap != null) {
                             mQueue.insert(ti);
                         }
                     }
