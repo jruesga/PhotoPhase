@@ -326,6 +326,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private MenuItem mRestoreMenuItem;
     private MenuItem mInvertMenuItem;
 
+    private boolean mIsViewCreated;
+    private boolean mIsAttached;
+
     /**
      * {@inheritDoc}
      */
@@ -454,7 +457,16 @@ public class ChoosePicturesFragment extends PreferenceFragment
         // Load the albums
         unregister();
 
+        mIsViewCreated = true;
+        onViewCreatedAndAttached(getActivity());
+
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mIsViewCreated = false;
     }
 
     /**
@@ -464,8 +476,16 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (!requestAlbumData(activity, false, false)) {
-            requestStoragePermission(false);
+
+        mIsAttached = true;
+        onViewCreatedAndAttached(getActivity());
+    }
+
+    private void onViewCreatedAndAttached(Context context) {
+        if (mIsAttached && mIsViewCreated) {
+            if (!requestAlbumData(context, false, false)) {
+                requestStoragePermission(false);
+            }
         }
     }
 
@@ -478,6 +498,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             mTask.cancel(true);
         }
         super.onDetach();
+        mIsAttached = false;
     }
 
     /**
