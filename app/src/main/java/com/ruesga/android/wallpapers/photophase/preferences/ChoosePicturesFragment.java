@@ -234,7 +234,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             }
             if (mSelectAll) {
                 album.setSelected(true);
-                synchronized (mAlbumLock) {
+                synchronized (mSelectedAlbums) {
                     mSelectedAlbums.add(album.getPath());
                 }
             }
@@ -248,7 +248,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
          * @return boolean if an item is selected
          */
         private boolean isSelectedItem(String item) {
-            synchronized (mAlbumLock) {
+            synchronized (mSelectedAlbums) {
                 for (String albumPath : mSelectedAlbums) {
                     if (item.compareTo(albumPath) == 0) {
                         return true;
@@ -292,9 +292,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private List<Album> mAlbums;
     private List<Album> mOriginalAlbums;
 
-    private final Object mAlbumLock = new Object();
-    private Set<String> mSelectedAlbums;
-    private Set<String> mOriginalSelectedAlbums;
+    private final Set<String> mSelectedAlbums = new HashSet<>();
+    private final Set<String> mOriginalSelectedAlbums = new HashSet<>();
 
     private ViewGroup mContainer;
 
@@ -346,9 +345,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
         getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
 
         // Load the albums user selection
-        mOriginalSelectedAlbums = removeObsoleteAlbumsData(
-                Preferences.Media.getSelectedMedia(getActivity()));
-        mSelectedAlbums = new HashSet<>(mOriginalSelectedAlbums);
+        mOriginalSelectedAlbums.addAll(removeObsoleteAlbumsData(
+                Preferences.Media.getSelectedMedia(getActivity())));
+        mSelectedAlbums.addAll(mOriginalSelectedAlbums);
         mSelectionChanged = false;
 
         final Resources res = getResources();
@@ -590,7 +589,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void restoreData() {
         // Restore and the albums the selection
-        synchronized (mAlbumLock) {
+        synchronized (mSelectedAlbums) {
             mSelectedAlbums.clear();
             mSelectedAlbums.addAll(mOriginalSelectedAlbums);
         }
@@ -620,7 +619,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void invertAll() {
         // Restore and the albums the selection
-        synchronized (mAlbumLock) {
+        synchronized (mSelectedAlbums) {
             mSelectedAlbums.clear();
             for (Album album : mAlbums) {
                 album.setSelected(!album.isSelected());
@@ -664,7 +663,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         // Notify pictures dataset changed
         updateAlbumInfo(mDstView, album);
         mPictureAdapter.notifyViewChanged();
-        synchronized (mAlbumLock) {
+        synchronized (mSelectedAlbums) {
             mSelectedAlbums.addAll(album.getSelectedItems());
         }
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
@@ -731,7 +730,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             picture.setSelected(false);
         }
         if (selected) {
-            synchronized (mAlbumLock) {
+            synchronized (mSelectedAlbums) {
                 mSelectedAlbums.add(album.getPath());
             }
         }
@@ -767,7 +766,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         }
         album.setSelected(false);
 
-        synchronized (mAlbumLock) {
+        synchronized (mSelectedAlbums) {
             mSelectedAlbums.addAll(album.getSelectedItems());
         }
         Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
@@ -784,7 +783,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param ref The album
      */
     private void removeAlbumItems(Album ref) {
-        synchronized (mAlbumLock) {
+        synchronized (mSelectedAlbums) {
             Iterator<String> it = mSelectedAlbums.iterator();
             while (it.hasNext()) {
                 String item = it.next();
@@ -1033,7 +1032,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             mPictureAdapter.notifyViewChanged();
 
             // Update settings
-            synchronized (mAlbumLock) {
+            synchronized (mSelectedAlbums) {
                 mSelectedAlbums.addAll(mAlbum.getSelectedItems());
             }
             Preferences.Media.setSelectedMedia(getActivity(), mSelectedAlbums);
