@@ -179,11 +179,13 @@ public class PhotoPhaseWallpaper
                                 // This is still valid, because we need the HOME task which is still
                                 // part of the list after LOLLIPOP, and valid prior to this api
                                 List<RunningTaskInfo> taskInfo = mActivityManager.getRunningTasks(1);
-                                String topActivity = taskInfo.get(0).topActivity.getClassName();
-                                for (String activity : TOP_ACTIVITIES) {
-                                    if (activity.compareTo(topActivity) == 0) {
-                                        // Ignore tap event
-                                        return;
+                                if (taskInfo.size() > 0 && taskInfo.get(0).topActivity != null) {
+                                    String topActivity = taskInfo.get(0).topActivity.getClassName();
+                                    for (String activity : TOP_ACTIVITIES) {
+                                        if (activity.compareTo(topActivity) == 0) {
+                                            // Ignore tap event
+                                            return;
+                                        }
                                     }
                                 }
 
