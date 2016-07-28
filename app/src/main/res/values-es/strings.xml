@@ -34,6 +34,9 @@
   <string name="mnu_select_album">Seleccionar álbum</string>
   <string name="mnu_deselect_album">Deseleccionar álbum</string>
   <string name="mnu_details">Detalles</string>
+  <string name="mnu_share">Compartir</string>
+  <string name="mnu_cast">Enviar a Chromecast</string>
+  <string name="mnu_enqueue">Añadir a cola Chromecast</string>
   <string name="format_disabled">Deshabilitado</string>
   <string name="format_rotate_only">Durante la rotación</string>
   <string name="format_seconds">%s s</string>
@@ -109,6 +112,35 @@
   </plurals>
   <string name="disposition_orientation_portrait">disposición vertical</string>
   <string name="disposition_orientation_landscape">disposición horizontal</string>
+  <string name="pref_cast">Chromecast</string>
+  <string name="pref_cast_summary">Ajustes de Chromecast</string>
+  <string name="pref_cast_discovery_title">Descubrir</string>
+  <string name="pref_cast_enable_title">Habilitado</string>
+  <string name="pref_cast_autoconnect_title">Autoconectar</string>
+  <string name="pref_cast_autoconnect_summary">Intentar conectar al último dispositivo conectado sin mostrar la selección de dispositivos disponibles</string>
+  <string name="pref_cast_last_connected_device_title">Último dispoositivo conectado</string>
+  <string name="pref_cast_no_connected_device">No hay dispositivos conectados</string>
+  <string name="pref_cast_clear_connected_device">¿Olvidar el último dispositivo conectado?</string>
+  <string name="pref_cast_discovery_time_title">Tiempo de búsqueda de dispositivos</string>
+  <string name="pref_cast_slideshow_title">Presentación</string>
+  <string name="pref_cast_slideshow_time_title">Tiempo</string>
+  <string name="pref_cast_slideshow_time_summary">El tiempo ha transcurrir entre transicionado de fotos</string>
+  <string name="pref_cast_slideshow_repeat_title">Repetir</string>
+  <string name="pref_cast_slideshow_shuffle_title">Mezclar</string>
+  <string name="pref_cast_visualization_title">Visualización</string>
+  <string name="pref_cast_full_quality_title">Máxima calidad</string>
+  <string name="pref_cast_full_quality_summary_on">Las fotos serán mostradas a su máxima calidad. Los tiempos de carga se incrementarán según la foto tenga mayor calidad.</string>
+  <string name="pref_cast_full_quality_summary_off">Las fotos serán comprimidas para obtener mejores tiempos de carga.</string>
+  <string name="pref_cast_aspect_ratio_title">Relación de aspecto</string>
+  <string name="pref_cast_aspect_ratio_summary_on">Mantener la relación de aspecto</string>
+  <string name="pref_cast_aspect_ratio_summary_off">Encoger para ajustar a tamaño de pantalla</string>
+  <string name="pref_cast_blurred_background_title">Fondo difuminado</string>
+  <string name="pref_cast_blurred_background_summary">Rellenar el fondo coun una efecto de imagen difuminada de la misma foto cuando la foto no cubre toda la pantalla</string>
+  <string name="pref_cast_ui_title">Interfaz de usuario</string>
+  <string name="pref_cast_show_time_title">Mostrar tiempo</string>
+  <string name="pref_cast_show_weather_title">Mostrar clima</string>
+  <string name="pref_cast_show_logo_title">Mostrar logo</string>
+  <string name="pref_cast_show_track_title">Mostrar información de la foto</string>
   <string name="pref_disposition_description">Presiona una celda y arrastra sus bordes. Desliza a izquierda y derecha para ver plantillas predefinidas</string>
   <string name="pref_disposition_saved">Guardada <xliff:g id="number_of_saved">%1$s</xliff:g> de <xliff:g id="total_of_saved">%2$s</xliff:g></string>
   <string name="pref_disposition_template">Plantilla <xliff:g id="number_of_template">%1$s</xliff:g> de <xliff:g id="total_of_templates">%2$s</xliff:g></string>
@@ -124,10 +156,12 @@
   <string name="touch_actions_transition">Siguiente transición</string>
   <string name="touch_actions_open">Abrir</string>
   <string name="touch_actions_share">Compartir</string>
+  <string name="touch_actions_cast">Enviar</string>
   <string name="touch_actions_none_summary">No hacer nada</string>
   <string name="touch_actions_transition_summary">Efectuar la transición</string>
   <string name="touch_actions_open_summary">Abrir la imagen</string>
   <string name="touch_actions_share_summary">Compartir la imagen</string>
+  <string name="touch_actions_cast_summary">Enviar la imagen</string>
   <string name="transitions_cube">Cubo</string>
   <string name="transitions_fade">Desvanecer</string>
   <string name="transitions_flip">Voltear</string>
@@ -214,4 +248,17 @@
   <string name="saved_dispositions_save_success">Guardado correctamente</string>
   <string name="saved_dispositions_save_exists">Otra disposición existe con el mismo diseño</string>
   <string name="saved_dispositions_delete_success">Borrado correctamente</string>
+  <string name="cast_app_description">Muestra tus fotos</string>
+  <string name="cast_dialog_title">Enviar a</string>
+  <string name="cast_dialog_sent_to_device">Enviado a dispositivo <xliff:g id="device">%1$s</xliff:g></string>
+  <string name="cast_dialog_no_devices_found">No se han encontrado dispositivos</string>
+  <string name="cast_connect_error">No se puede conectar al dispositivo</string>
+  <string name="cast_resume">Reanudar</string>
+  <string name="cast_pause">Pausar</string>
+  <string name="cast_previous">Anterior</string>
+  <string name="cast_next">Siguiente</string>
+  <string name="cast_shuffle">Mezclar</string>
+  <string name="cast_repeat">Repetir</string>
+  <string name="cast_stop">Detener</string>
+  <string name="cast_queue_title">Cola de envio</string>
 </resources>

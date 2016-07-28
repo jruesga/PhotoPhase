@@ -141,7 +141,7 @@
     <string name="pref_cast_autoconnect_summary">Try to connect to the last connected device without ask to choose a device</string>
     <string name="pref_cast_last_connected_device_title">Last connected device</string>
     <string name="pref_cast_no_connected_device">No device connected</string>
-    <string name="pref_cast_clear_connected_device">¿Forget last connected device?</string>
+    <string name="pref_cast_clear_connected_device">Forget last connected device?</string>
     <string name="pref_cast_connected_device" translatable="false"><xliff:g id="name">%1$s</xliff:g>\n<xliff:g id="address">%2$s</xliff:g></string>
     <string name="pref_cast_discovery_time_title">Discovery time</string>
     <string name="pref_cast_slideshow_title">Slideshow</string>
