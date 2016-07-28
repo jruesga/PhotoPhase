@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2016 Jorge Ruesga
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    //classpath fileTree(dir: 'libs', includes: ['htmlcompressor-1.5.3.jar'])
+    classpath 'com.googlecode.htmlcompressor:htmlcompressor:1.5.2'
+  }
+}
+
+plugins {
+  id "com.eriwen.gradle.css" version "2.12.0"
+  id "com.eriwen.gradle.js" version "2.12.0"
+}
+
+defaultTasks 'build'
+
+def opts = new com.google.javascript.jscomp.CompilerOptions()
+opts.language = 'ECMASCRIPT5_STRICT'
+
+task clean {
+  delete fileTree(dir: 'build')
+}
+
+task copyResources(type: Copy) {
+    from('./')
+    into('build/')
+    include ('*.png')
+}
+
+minifyCss {
+  source = "styles.css"
+  dest = "build/styles.min.css"
+}
+
+minifyJs {
+  source = ["receiver.js", "time.js", "weather.js"]
+  dest = "build/receiver.min.js"
+  closure {
+    warningLevel = 'QUIET'
+    compilerOptions = opts
+  }
+}
+
+task minifyHtml() << {
+  String contents = new File('receiver.html').getText('UTF-8')
+  contents = contents.replaceAll("'styles.css'", "'styles.min.css'")
+  contents = contents.replaceAll("'receiver.js'", "'receiver.min.js'")
+  contents = contents.replaceAll("<script src='time.js'></script>", "")
+  contents = contents.replaceAll("<script src='weather.js'></script>", "")
+  def compressor = new com.googlecode.htmlcompressor.compressor.HtmlCompressor()
+  new File('build/receiver.min.html').write(compressor.compress(contents), 'UTF-8')
+  new File('build/receiver.min.html').renameTo('build/receiver.html')
+}
+
+task build(dependsOn: ['clean', 'copyResources', 'minifyJs', 'minifyCss', 'minifyHtml']) {
+}
