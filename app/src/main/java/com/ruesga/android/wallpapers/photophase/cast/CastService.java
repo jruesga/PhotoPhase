@@ -479,9 +479,20 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         mCastStatusInfo.mCastMode = CAST_MODE_NONE;
         cancelSlideShowAlarm();
         if (mServer != null) {
-            mServer.stop();
-            mServer = null;
-            Log.i(TAG, "Cast server was stopped");
+            try {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mServer.stop();
+                        mServer = null;
+                        Log.i(TAG, "Cast server was stopped");
+                    }
+                });
+                t.start();
+                t.join(3000L);
+            } catch (InterruptedException ex) {
+                // ignore
+            }
         }
 
         Intent i = new Intent(ACTION_SERVER_STOPPED);
