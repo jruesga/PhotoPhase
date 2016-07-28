@@ -142,7 +142,7 @@ public class CastPreferenceFragment extends PreferenceFragment {
                 (DiscreteSeekBarProgressPreference) findPreference("cast_discovery_time");
         discoveryTime.setFormat(formatSeconds);
         discoveryTime.setOnPreferenceChangeListener(mOnChangeListener);
-        discoveryTime.setMin(3);
+        discoveryTime.setMin(8);
         discoveryTime.setMax(15);
 
         //- Slideshow settings
@@ -150,7 +150,7 @@ public class CastPreferenceFragment extends PreferenceFragment {
                 (DiscreteSeekBarProgressPreference) findPreference("cast_slideshow_time");
         slideshowTime.setFormat(formatSeconds);
         slideshowTime.setOnPreferenceChangeListener(mOnChangeListener);
-        slideshowTime.setMin(10);
+        slideshowTime.setMin(20);
         slideshowTime.setMax(120);
         CheckBoxPreference slideShowRepeat = (CheckBoxPreference) findPreference("cast_slideshow_repeat");
         slideShowRepeat.setOnPreferenceChangeListener(mOnChangeListener);

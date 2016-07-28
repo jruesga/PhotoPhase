@@ -38,7 +38,7 @@
         <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
             android:key="cast_discovery_time"
             android:title="@string/pref_cast_discovery_time_title"
-            android:defaultValue="4" />
+            android:defaultValue="8" />
     </PreferenceCategory>
 
     <PreferenceCategory

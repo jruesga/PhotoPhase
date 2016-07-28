@@ -614,7 +614,7 @@ public final class PreferencesProvider {
 
         public static class Cast {
 
-            private static final int DEFAULT_DISCOVERY_TIME = 4;
+            private static final int DEFAULT_DISCOVERY_TIME = 8;
             private static final int DEFAULT_SLIDESHOW_TIME = 20;
 
             /**
