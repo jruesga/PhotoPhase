@@ -17,6 +17,8 @@
 
 package com.ruesga.android.wallpapers.photophase.utils;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -25,6 +27,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.ExifInterface;
+
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +62,7 @@ public class BitmapUtils {
      * @param bitmap The bitmap buffer to decode
      * @return Bitmap The decoded bitmap
      */
+    @SuppressWarnings("deprecation")
     public static Bitmap decodeBitmap(InputStream bitmap) {
         final Options options = new Options();
         options.inScaled = false;
@@ -105,13 +110,16 @@ public class BitmapUtils {
         return out;
     }
 
-    @SuppressWarnings("deprecation")
     public static Rect getBitmapDimensions(File file) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final Options options = new Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        return new Rect(0, 0, options.outWidth, options.outHeight);
+        if (options.outWidth != -1 && options.outHeight != -1) {
+            return new Rect(0, 0, options.outWidth, options.outHeight);
+        }
+        // Not an image
+        return null;
     }
 
     /**
@@ -135,7 +143,6 @@ public class BitmapUtils {
         // Deprecated, but still valid for KitKat and lower apis
         options.inPurgeable = true;
         options.inInputShareable = true;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
@@ -143,9 +150,10 @@ public class BitmapUtils {
         int photoWidth = options.outWidth;
         int photoHeight = options.outHeight;
 
-        // Decode the image file into a Bitmap sized to fill the View
+        // Decode the image file into a Bitmap sized to fill the view
         options.inJustDecodeBounds = false;
-        options.inSampleSize = Math.min(photoWidth / dstWidth, photoHeight / dstHeight);
+        options.inSampleSize = Math.max(Math.round(photoWidth / dstWidth),
+                Math.round(photoHeight / dstHeight));
         return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
     }
 
@@ -283,7 +291,7 @@ public class BitmapUtils {
      * @return Optimal destination rectangle
      */
     public static Rect calculateDstRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight,
-                                        ScalingLogic scalingLogic) {
+            ScalingLogic scalingLogic) {
         if (scalingLogic == ScalingLogic.FIT) {
             final float srcAspect = (float)srcWidth / (float)srcHeight;
             final float dstAspect = (float)dstWidth / (float)dstHeight;
@@ -341,5 +349,40 @@ public class BitmapUtils {
         v |= v >>> 16;
         v++;
         return v;
+    }
+
+    public static void adjustRectToMinimumSize(Rect r, int size) {
+        int w = r.width();
+        int h = r.height();
+        if (w > size || h > size) {
+            if (w == h && w > size) {
+                r.right = r.bottom = size;
+            } else if (w < h && w > size) {
+                r.right = w * size / h;
+                r.bottom = size;
+            } else {
+                r.bottom = h * size / w;
+                r.right = size;
+            }
+        }
+    }
+
+    public static int calculateMaxAvailableSize(Context context) {
+        if (AndroidHelper.isJellyBeanOrGreater()) {
+            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+            ActivityManager activityManager =
+                    (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            activityManager.getMemoryInfo(mi);
+            return (int)((mi.totalMem / 1073741824) * 1024);
+        }
+        // The minimum for all android devices
+        return 1024;
+    }
+
+    public static int byteSizeOf(Bitmap bitmap) {
+        if (AndroidHelper.isKitKatOrGreater()) {
+            return bitmap.getAllocationByteCount();
+        }
+        return bitmap.getByteCount();
     }
 }

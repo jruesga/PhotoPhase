@@ -19,6 +19,8 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -43,6 +45,8 @@ import com.ruesga.android.wallpapers.photophase.PhotoViewerActivity;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
+import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask.OnPictureLoaded;
+import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -92,6 +96,8 @@ public class PictureItemView extends FrameLayout {
     private boolean mInEditMode;
     private boolean mLongClickFired;
 
+    private DisplayMetrics mMetrics;
+
     /**
      * Constructor of <code>PictureItemView</code>.
      *
@@ -133,6 +139,10 @@ public class PictureItemView extends FrameLayout {
      */
     private void init() {
         mCallbacks = new ArrayList<>();
+
+        mMetrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(mMetrics);
 
         mScaleInAnimation = new ScaleAnimation(
                 1f, 0.98f, 1f, 0.98f,
@@ -284,19 +294,29 @@ public class PictureItemView extends FrameLayout {
             mExpand.setVisibility(editMode ? View.VISIBLE : View.GONE);
             mOverlay.setVisibility(editMode ? View.VISIBLE : View.GONE);
 
-            // Do no try to cache the images (this generates a lot of memory and we want
-            // to have a low memory footprint)
-            if (refreshIcon) {
-                mIcon.setImageDrawable(null);
+            // Choose whether use the cache or just redraw the image to avoid to much
+            // memory footprint (cache only in high-end devices)
+            if (AndroidHelper.isHighEndDevice(getContext()) && picture.getBitmap() != null) {
+                mIcon.setImageBitmap(picture.getBitmap());
+
+            } else if (refreshIcon) {
+                mIcon.setImageBitmap(null);
 
                 // Show as icon, the first picture
-                DisplayMetrics metrics = new DisplayMetrics();
-                WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-                wm.getDefaultDisplay().getMetrics(metrics);
+                File f = new File(picture.getPath());
                 mTask = new AsyncPictureLoaderTask(getContext(), mIcon,
-                        metrics.widthPixels, metrics.heightPixels, null);
+                        mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded() {
+                    @Override
+                    public void onPictureLoaded(Object o, Drawable drawable) {
+                        if (AndroidHelper.isHighEndDevice(getContext())) {
+                            if (drawable instanceof BitmapDrawable) {
+                                picture.setBitmap(((BitmapDrawable) drawable).getBitmap());
+                            }
+                        }
+                    }
+                });
                 mTask.mFactor = 8;
-                mTask.execute(new File(picture.getPath()));
+                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, f);
             }
         }
     }

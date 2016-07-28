@@ -16,16 +16,26 @@
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/mnu_select_album"
-        android:title="@string/mnu_select_album"
-        app:showAsAction="never" />
-    <item android:id="@+id/mnu_deselect_album"
-        android:title="@string/mnu_deselect_album"
-        app:showAsAction="never" />
-    <item android:id="@+id/mnu_select_all"
-        android:title="@string/mnu_select_all"
-        app:showAsAction="never" />
-    <item android:id="@+id/mnu_deselect_all"
-        android:title="@string/mnu_deselect_all"
-        app:showAsAction="never" />
+    <group>
+        <item android:id="@+id/mnu_select_album"
+            android:title="@string/mnu_select_album"
+            app:showAsAction="never" />
+        <item android:id="@+id/mnu_deselect_album"
+            android:title="@string/mnu_deselect_album"
+            app:showAsAction="never" />
+        <item android:id="@+id/mnu_select_all"
+            android:title="@string/mnu_select_all"
+            app:showAsAction="never" />
+        <item android:id="@+id/mnu_deselect_all"
+            android:title="@string/mnu_deselect_all"
+            app:showAsAction="never" />
+    </group>
+    <group>
+        <item android:id="@+id/mnu_cast"
+            android:title="@string/mnu_cast"
+            app:showAsAction="never" />
+        <item android:id="@+id/mnu_enqueue"
+              android:title="@string/mnu_enqueue"
+              app:showAsAction="never" />
+    </group>
 </menu>

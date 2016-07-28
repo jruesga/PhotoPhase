@@ -28,6 +28,7 @@ import android.opengl.GLUtils;
 import android.support.design.BuildConfig;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 
@@ -60,6 +61,9 @@ public final class GLESUtil {
     private static final Object SYNC = new Object();
 
     private static IntBuffer sNativeBuffer;
+
+    private static final int MAX_GLES_ERRORS = 50;
+    private static int sGlErrors = 0;
 
     // Load the native library
     static {
@@ -333,8 +337,15 @@ public final class GLESUtil {
             if (link[0] <= 0) {
                 String msg = "Program compilation error trace:\n" + GLES20.glGetProgramInfoLog(progid);
                 Log.e(TAG, msg);
+
+                // If something is wrong repeatedly, then restart the wallpaper
+                sGlErrors++;
+                if (sGlErrors > MAX_GLES_ERRORS) {
+                    AndroidHelper.restartWallpaper();
+                }
                 return 0;
             }
+            sGlErrors = 0;
 
             // Return the program
             return progid;

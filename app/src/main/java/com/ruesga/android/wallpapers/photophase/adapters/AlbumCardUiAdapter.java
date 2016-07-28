@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.ruesga.android.wallpapers.photophase.R;
@@ -54,28 +53,22 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
     private List<Album> mData = new ArrayList<>();
 
     private final AlbumInfoView.CallbacksListener mAlbumInfoCallback;
+    private final AlbumInfoView.CastProxy mCastProxy;
 
     /**
      * Constructor of <code>AlbumCardUiAdapter</code>.
      *
      * @param context The current context
-     * @param parent The adapter view
      * @param data The array with all the album data
+     * @param castProxy A helper class to deal con cast status information
      * @param callback The album info view callback
      */
-    public AlbumCardUiAdapter(Context context, AdapterView<?> parent, List<Album> data,
+    public AlbumCardUiAdapter(Context context, List<Album> data, AlbumInfoView.CastProxy castProxy,
             AlbumInfoView.CallbacksListener callback) {
         super(context, R.layout.album_info, R.id.album_name, data);
         mData = data;
         mAlbumInfoCallback = callback;
-    }
-
-    /**
-     * Method that dispose the elements of the adapter.
-     */
-    public void dispose() {
-        clear();
-        this.mData = null;
+        mCastProxy = castProxy;
     }
 
     /**
@@ -100,6 +93,7 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
             viewHolder.mAlbumInfoView = (AlbumInfoView)v.findViewById(R.id.album_info);
             viewHolder.mAlbumInfoView.setAlbum(album);
             viewHolder.mAlbumInfoView.addCallBackListener(mAlbumInfoCallback);
+            viewHolder.mAlbumInfoView.setCastProxy(mCastProxy);
             v.setTag(viewHolder);
         }
 

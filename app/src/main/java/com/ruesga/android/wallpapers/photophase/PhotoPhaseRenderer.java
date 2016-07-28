@@ -20,9 +20,11 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.PointF;
@@ -34,8 +36,12 @@ import android.opengl.GLException;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.cast.CastService;
+import com.ruesga.android.wallpapers.photophase.cast.CastUtils;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
@@ -68,6 +74,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final boolean mIsPreview;
     private boolean mIsPaused;
     private boolean mRecreateWorld;
+    private boolean mIsDestroyed;
 
     private final Context mContext;
     private EffectContext mEffectContext;
@@ -104,59 +111,71 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private final Object mMediaSync = new Object();
     private PendingIntent mMediaScanIntent;
 
+    private ICastService mCastService;
+    private boolean mCastConnecting;
+
     private final BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Check what flags are been requested
-            boolean recreateWorld = intent.getBooleanExtra(
-                    PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, false);
-            boolean redraw = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, false);
-            boolean emptyTextureQueue = intent.getBooleanExtra(
-                    PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, false);
-            boolean mediaReload = intent.getBooleanExtra(
-                    PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, false);
-            boolean mediaIntervalChanged = intent.getBooleanExtra(
-                    PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, false);
-            int dispositionInterval = intent.getIntExtra(
-                    PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, -1);
+            String action = intent.getAction();
+            if (action.equals(PreferencesProvider.ACTION_SETTINGS_CHANGED)) {
+                // Check what flags are been requested
+                boolean recreateWorld = intent.getBooleanExtra(
+                        PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, false);
+                boolean redraw = intent.getBooleanExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, false);
+                boolean emptyTextureQueue = intent.getBooleanExtra(
+                        PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, false);
+                boolean mediaReload = intent.getBooleanExtra(
+                        PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, false);
+                boolean mediaIntervalChanged = intent.getBooleanExtra(
+                        PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, false);
+                int dispositionInterval = intent.getIntExtra(
+                        PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, -1);
 
-            // Empty texture queue?
-            if (emptyTextureQueue) {
-                if (mTextureManager != null) {
-                    mTextureManager.emptyTextureQueue(true);
-                }
-            }
-
-            // Media reload. Purging resources and performs a media query
-            if (mediaReload) {
-                synchronized (mMediaSync) {
+                // Empty texture queue?
+                if (emptyTextureQueue) {
                     if (mTextureManager != null) {
-                        boolean userReloadRequest = intent.getBooleanExtra(
-                                PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, false);
-                        mTextureManager.reloadMedia(userReloadRequest);
-                        scheduleOrCancelMediaScan();
+                        mTextureManager.emptyTextureQueue(true);
                     }
                 }
-            }
 
-            // Media scan interval was changed. Reschedule
-            if (mediaIntervalChanged) {
-                scheduleOrCancelMediaScan();
-            }
+                // Media reload. Purging resources and performs a media query
+                if (mediaReload) {
+                    synchronized (mMediaSync) {
+                        if (mTextureManager != null) {
+                            boolean userReloadRequest = intent.getBooleanExtra(
+                                    PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, false);
+                            mTextureManager.reloadMedia(userReloadRequest);
+                            scheduleOrCancelMediaScan();
+                        }
+                    }
+                }
 
-            // Media scan interval was changed. Reschedule
-            if (dispositionInterval != -1) {
-                scheduleDispositionRecreation();
-            }
+                // Media scan interval was changed. Reschedule
+                if (mediaIntervalChanged) {
+                    scheduleOrCancelMediaScan();
+                }
 
-            // Recreate the whole world?
-            if (recreateWorld && mWorld != null) {
-                recreateWorld();
-            }
+                // Media scan interval was changed. Reschedule
+                if (dispositionInterval != -1) {
+                    scheduleDispositionRecreation();
+                }
 
-            // Performs a redraw?
-            if (redraw) {
-                forceRedraw();
+                // Recreate the whole world?
+                if (recreateWorld && mWorld != null) {
+                    recreateWorld();
+                }
+
+                // Performs a redraw?
+                if (redraw) {
+                    forceRedraw();
+                }
+
+                // Preference could be changed, should disconnect the cast service?
+                handleCastStatusChanged();
+            } else if (action.equals(CastService.ACTION_CONNECTIVITY_CHANGED)) {
+                // Have a valid cast connectivity?
+                handleCastStatusChanged();
             }
         }
     };
@@ -191,6 +210,30 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         public void run() {
             // Restart the wallpaper
             AndroidHelper.restartWallpaper();
+        }
+    };
+
+    private final ServiceConnection mCastConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            mCastService = ICastService.Stub.asInterface(binder);
+            mCastConnecting = false;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mCastService = null;
+            boolean enabled = PreferencesProvider.Preferences.Cast.isEnabled(mContext);
+            boolean validNetwork = CastUtils.hasValidCastNetwork(mContext);
+            if (enabled && validNetwork && !mIsDestroyed) {
+                // Reconnect
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        bindToCastService();
+                    }
+                }, 5000L);
+            }
         }
     };
 
@@ -256,6 +299,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         // Register a receiver to listen for media reload request
         IntentFilter filter = new IntentFilter();
         filter.addAction(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+        filter.addAction(CastService.ACTION_CONNECTIVITY_CHANGED);
         mContext.registerReceiver(mSettingsChangedReceiver, filter);
 
         // Check whether the media scan is active
@@ -264,6 +308,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             // Schedule a media scan
             scheduleMediaScan(interval);
         }
+
+        // Link to cast service, only if we need to do
+        boolean castEnabled = PreferencesProvider.Preferences.Cast.isEnabled(mContext);
+        boolean validNetwork = CastUtils.hasValidCastNetwork(mContext);
+        if (castEnabled && validNetwork) {
+            bindToCastService();
+        }
     }
 
     /**
@@ -271,7 +322,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "onDestroy [" + mInstance + "]");
+        mIsDestroyed = true;
+
         // Register a receiver to listen for media reload request
+        unbindFromCastService();
         mContext.unregisterReceiver(mSettingsChangedReceiver);
         recycle();
         if (mEffectContext != null) {
@@ -410,10 +464,22 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                             }
                         }
                     }
+
                 } else if (touchAction.compareTo(TouchAction.SHARE) == 0) {
                     Uri uri = getUriFromFrame(frame);
                     if (uri != null) {
                         AndroidHelper.sharePicture(mContext, uri);
+                    }
+
+                } else if (touchAction.compareTo(TouchAction.CAST) == 0) {
+                    // Send the current photo of the target frame to a cast device
+                    File file = getFileFromFrame(frame);
+                    if (file != null && mCastService != null) {
+                        try {
+                            mCastService.cast(file.toString());
+                        } catch (RemoteException e) {
+                            Log.w(TAG, "Got a remote exception while casting " + file, e);
+                        }
                     }
                 }
             }
@@ -449,6 +515,30 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
         // Return the uri from the path
         return frame.getTextureInfo().path;
+    }
+
+    private void bindToCastService() {
+        // Bind to cast service
+        if (!mIsPreview && mCastService == null && !mCastConnecting) {
+            mCastConnecting = true;
+            try {
+                Intent i = new Intent(mContext, CastService.class);
+                boolean ret = mContext.bindService(i, mCastConnection, Context.BIND_AUTO_CREATE);
+                if (!ret) {
+                    mCastConnecting = false;
+                }
+            } catch (SecurityException se) {
+                Log.w(TAG, "Can't bound to CastService", se);
+                mCastConnecting = false;
+            }
+        }
+    }
+
+    private void unbindFromCastService() {
+        if (mCastService != null) {
+            mCastService = null;
+            mContext.unbindService(mCastConnection);
+        }
     }
 
     /**
@@ -844,4 +934,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         }
     }
 
+    private void handleCastStatusChanged() {
+        boolean hasConnectivity = CastUtils.hasValidCastNetwork(mContext);
+        boolean castEnabled = PreferencesProvider.Preferences.Cast.isEnabled(mContext);
+        if (castEnabled && hasConnectivity) {
+            bindToCastService();
+        } else if (castEnabled) {
+            unbindFromCastService();
+        }
+    }
 }

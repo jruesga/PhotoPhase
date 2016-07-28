@@ -19,6 +19,8 @@ package com.ruesga.android.wallpapers.photophase;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.TaskDescription;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A helper class with useful methods for deal with android.
@@ -74,6 +77,15 @@ public final class AndroidHelper {
     }
 
     /**
+     * Method that returns if the device is running jellybean MR1 or greater
+     *
+     * @return boolean true if is running jellybean MR1 or greater
+     */
+    public static boolean isJellyBeanMr1OrGreater() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
+    }
+
+    /**
      * Method that returns if the device is running kitkat or greater
      *
      * @return boolean true if is running kitkat or greater
@@ -98,6 +110,15 @@ public final class AndroidHelper {
      */
     public static boolean isMarshmallowOrGreater() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    /**
+     * Method that returns if the device is running nougat or greater
+     *
+     * @return boolean true if is running nougat or greater
+     */
+    public static boolean isNougatOrGreater() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     }
 
     /**
@@ -156,8 +177,7 @@ public final class AndroidHelper {
         for (int i = 0; i < count; i++) {
             entries.add(new Pair<>(labels[i], values[i]));
         }
-        final Collator collator = Collator.getInstance(
-                context.getResources().getConfiguration().locale);
+        final Collator collator = Collator.getInstance(getLocale(context.getResources()));
         Collections.sort(entries, new Comparator<Pair<String, String>>() {
             @Override
             public int compare(Pair<String, String> lhs, Pair<String, String> rhs) {
@@ -210,5 +230,41 @@ public final class AndroidHelper {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;
+    }
+
+    public static Locale getLocale(Resources res) {
+        if (isNougatOrGreater()) {
+            return res.getConfiguration().getLocales().get(0);
+        }
+        //noinspection deprecation
+        return res.getConfiguration().locale;
+    }
+
+    @TargetApi(value=Build.VERSION_CODES.LOLLIPOP)
+    public static void setupRecentBar(Activity activity) {
+        if (isLollipopOrGreater()) {
+            TaskDescription taskDesc = new TaskDescription(
+                    activity.getString(R.string.app_name),
+                    null, ContextCompat.getColor(activity, R.color.color_primary));
+            activity.setTaskDescription(taskDesc);
+        }
+    }
+
+    public static Boolean sHighEndDevice = null;
+    public static boolean isHighEndDevice(Context context) {
+        if (sHighEndDevice != null) {
+            return sHighEndDevice.booleanValue();
+        }
+        if (AndroidHelper.isJellyBeanOrGreater()) {
+            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+            ActivityManager activityManager =
+                    (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            activityManager.getMemoryInfo(mi);
+            // Devices with 1Gb or more RAM
+            sHighEndDevice = (mi.totalMem / 1073741824) >= 1;
+        } else {
+            sHighEndDevice = Boolean.TRUE;
+        }
+        return sHighEndDevice;
     }
 }

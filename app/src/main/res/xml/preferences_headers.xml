@@ -28,6 +28,10 @@
         android:fragment="com.ruesga.android.wallpapers.photophase.preferences.LayoutPreferenceFragment"
         android:summary="@string/pref_layout_summary" />
     <header
+        android:title="@string/pref_cast"
+        android:fragment="com.ruesga.android.wallpapers.photophase.preferences.CastPreferenceFragment"
+        android:summary="@string/pref_cast_summary" />
+    <header
         android:title="@string/pref_about"
         android:summary="@null" />
 </preference-headers>

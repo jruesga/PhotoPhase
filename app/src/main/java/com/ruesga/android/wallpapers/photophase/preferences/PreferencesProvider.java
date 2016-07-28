@@ -19,9 +19,11 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.text.format.DateUtils;
 
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.borders.Borders.BORDERS;
+import com.ruesga.android.wallpapers.photophase.cast.CastUtils;
 import com.ruesga.android.wallpapers.photophase.effects.Effects.EFFECTS;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.transitions.Transitions.TRANSITIONS;
@@ -32,8 +34,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import su.litvak.chromecast.api.v2.ChromeCast;
 
 /**
  * A class that holds all the preferences of the wallpaper
@@ -89,6 +94,17 @@ public final class PreferencesProvider {
      */
     public static final String EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED =
             "flag_disposition_interval_changed";
+
+    /**
+     * An extra setting that indicates that cast configuration was changed
+     */
+    public static final String EXTRA_FLAG_CAST_CONFIGURATION_CHANGE =
+            "flag_cast_configuration_changed";
+
+    /**
+     * An extra indicating the settings changed
+     */
+    public static final String EXTRA_PREF_KEY = "pref_key";
 
     /**
      * The shared preferences file
@@ -593,6 +609,184 @@ public final class PreferencesProvider {
                 Editor editor = preferences.edit();
                 editor.putStringSet(key, savedDispositions);
                 editor.apply();
+            }
+        }
+
+        public static class Cast {
+
+            private static final int DEFAULT_DISCOVERY_TIME = 4;
+            private static final int DEFAULT_SLIDESHOW_TIME = 20;
+
+            /**
+             * Returns weather the app should search for cast devices
+             */
+            public static boolean isEnabled(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_enabled", false);
+            }
+
+            public static List<ChromeCast> getLastDiscoveredDevices(Context context) {
+                SharedPreferences sp = getSharedPreferences(context);
+                Long time = sp.getLong("cast_last_discovered_devices_time", 0);
+                Set<String> set = sp.getStringSet("cast_last_discovered_devices", null);
+                if (set == null) {
+                    return null;
+                }
+                if (System.currentTimeMillis() - time > DateUtils.HOUR_IN_MILLIS) {
+                    return null;
+                }
+                List<ChromeCast> devices = new ArrayList<>(set.size());
+                for (String device : set) {
+                    devices.add(CastUtils.string2chromecast(device));
+                }
+                return devices;
+            }
+
+            public static void setLastDiscoveredDevices(Context context, List<ChromeCast> devices) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                if (devices != null && !devices.isEmpty()) {
+                    Set<String> set = new LinkedHashSet<>(devices.size());
+                    for (ChromeCast device : devices) {
+                        set.add(CastUtils.chromecast2string(device));
+                    }
+                    editor.putStringSet("cast_last_discovered_devices", set);
+                } else {
+                    editor.remove("cast_last_discovered_devices");
+                }
+                editor.putLong("cast_last_discovered_devices_time", System.currentTimeMillis());
+                editor.apply();
+            }
+
+            /**
+             * Returns the last connected device
+             */
+            public static ChromeCast getLastConnectedDevice(Context context) {
+                String deviceInfo = getSharedPreferences(context).getString(
+                        "cast_last_connected_device", null);
+                if (deviceInfo == null) {
+                    return null;
+                }
+                return CastUtils.string2chromecast(deviceInfo);
+            }
+
+            /**
+             * Sets the last connected device
+             */
+            public static void setLastConnectedDevice(Context context, ChromeCast device) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                if (device != null) {
+                    editor.putString("cast_last_connected_device",
+                            CastUtils.chromecast2string(device));
+                } else {
+                    editor.remove("cast_last_connected_device");
+                }
+                editor.apply();
+            }
+
+            /**
+             * Returns weather it should directly to try to connect to the last connected
+             * device
+             */
+            public static boolean isUseLastConnectedDevice(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_autoconnect", true);
+            }
+
+            /**
+             * Returns the cast discovery time
+             */
+            public static int getDiscoveryTime(Context context) {
+                return getSharedPreferences(context).getInt(
+                        "cast_discovery_time", DEFAULT_DISCOVERY_TIME);
+            }
+
+            /**
+             * Returns the cast discovery time
+             */
+            public static int getSlideshowTime(Context context) {
+                return getSharedPreferences(context).getInt(
+                        "cast_slideshow_time", DEFAULT_SLIDESHOW_TIME);
+            }
+
+            /**
+             * Returns weather should restart the queue after finish the slideshow
+             */
+            public static boolean isSlideshowRepeat(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_slideshow_repeat", false);
+            }
+
+            public static void setSlideshowRepeat(Context context, boolean repeat) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putBoolean("cast_slideshow_repeat", repeat);
+                editor.apply();
+            }
+
+            /**
+             * Returns weather should shuffle the queue in slideshow mode
+             */
+            public static boolean isSlideshowShuffle(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_slideshow_shuffle", false);
+            }
+
+            public static void setSlideshowShuffle(Context context, boolean shuffle) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putBoolean("cast_slideshow_shuffle", shuffle);
+                editor.apply();
+            }
+
+            /**
+             * Returns weather the cast app should use full quality
+             */
+            public static boolean isFullQuality(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_full_quality", false);
+            }
+
+            /**
+             * Returns weather the cast app should keep aspect ratio
+             */
+            public static boolean isKeepAspectRatio(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_aspect_ratio", false);
+            }
+
+            /**
+             * Returns weather the cast app should respect aspect ratio
+             */
+            public static boolean isBlurredBackground(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_blurred_background", true);
+            }
+
+            /**
+             * Returns weather the cast app should display the time
+             */
+            public static boolean isShowTime(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_ui_show_time", true);
+            }
+
+            /**
+             * Returns weather the cast app should display the weather
+             */
+            public static boolean isShowWeather(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_ui_show_weather", true);
+            }
+
+            /**
+             * Returns weather the cast app should display the logo
+             */
+            public static boolean isShowLogo(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_ui_show_logo", true);
+            }
+
+            /**
+             * Returns weather the cast app should display the track
+             */
+            public static boolean isShowTrack(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_ui_show_track", true);
             }
         }
 

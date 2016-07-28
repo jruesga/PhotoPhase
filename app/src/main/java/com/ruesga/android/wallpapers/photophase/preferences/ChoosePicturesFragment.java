@@ -22,8 +22,10 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -32,7 +34,9 @@ import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -57,9 +61,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
+import com.ruesga.android.wallpapers.photophase.ICastService;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.adapters.AlbumCardUiAdapter;
 import com.ruesga.android.wallpapers.photophase.adapters.AlbumPictureAdapter;
+import com.ruesga.android.wallpapers.photophase.cast.CastService;
 import com.ruesga.android.wallpapers.photophase.model.Album;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
@@ -82,7 +88,8 @@ import java.util.Set;
  * A fragment class for select the picture that will be displayed on the wallpaper
  */
 public class ChoosePicturesFragment extends PreferenceFragment
-        implements AlbumInfoView.CallbacksListener, OnClickListener, OnBackPressedListener {
+        implements AlbumInfoView.CallbacksListener, AlbumInfoView.CastProxy,
+        OnClickListener, OnBackPressedListener {
 
     private static final String TAG = "ChoosePicturesFragment";
 
@@ -91,6 +98,27 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private static final int PROGRESS_STEPS = 5;
 
     private static final int READ_EXTERNAL_STORAGE_PERM_REQUEST = 0;
+
+    private ICastService mCastService;
+
+    private final ServiceConnection mCastConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            mCastService = ICastService.Stub.asInterface(binder);
+            if (!hasNearDevices()) {
+                try {
+                    mCastService.requestScan();
+                } catch (RemoteException ex) {
+                    // Ignore
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mCastService = null;
+        }
+    };
 
     // The album loader task
     private class AlbumLoaderTask extends AsyncTask<Void, Album, Void> {
@@ -442,7 +470,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         mAlbumsPanel = (ListView)root.findViewById(R.id.albums_panel);
         mAlbumsPanel.setSmoothScrollbarEnabled(true);
         mAlbumsPanel.setEmptyView(mEmpty);
-        mAlbumAdapter = new AlbumCardUiAdapter(getActivity(), mAlbumsPanel, mAlbums, this);
+        mAlbumAdapter = new AlbumCardUiAdapter(getActivity(), mAlbums, this, this);
         mAlbumsPanel.setAdapter(mAlbumAdapter);
         mAlbumsPanel.setOnItemClickListener(mOnItemClickListener);
 
@@ -486,6 +514,15 @@ public class ChoosePicturesFragment extends PreferenceFragment
             if (!requestAlbumData(context, false, false)) {
                 requestStoragePermission(false);
             }
+
+            if (PreferencesProvider.Preferences.Cast.isEnabled(getActivity())) {
+                try {
+                    Intent i = new Intent(getActivity(), CastService.class);
+                    getActivity().bindService(i, mCastConnection, Context.BIND_AUTO_CREATE);
+                } catch (SecurityException se) {
+                    Log.w(TAG, "Can't bound to CastService", se);
+                }
+            }
         }
     }
 
@@ -497,6 +534,11 @@ public class ChoosePicturesFragment extends PreferenceFragment
         if (mTask != null && mTask.getStatus().compareTo(Status.FINISHED) != 0) {
             mTask.cancel(true);
         }
+
+        if (mCastService != null) {
+            getActivity().unbindService(mCastConnection);
+        }
+
         super.onDetach();
         mIsAttached = false;
     }
@@ -1030,6 +1072,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         // Update and display the album pictures view
         AlbumInfoView info = (AlbumInfoView)header.findViewById(R.id.album_info);
         info.addCallBackListener(ChoosePicturesFragment.this);
+        info.setCastProxy(ChoosePicturesFragment.this);
         info.setAlbumMode(false);
         updateAlbumInfo(header, mAlbum);
         showAlbumPictures(parent, view, mContainer, header);
@@ -1099,5 +1142,38 @@ public class ChoosePicturesFragment extends PreferenceFragment
             Preferences.Media.setSelectedMedia(getActivity(), mOriginalSelectedAlbums);
         }
         return data;
+    }
+
+    public boolean hasNearDevices() {
+        if (mCastService != null) {
+            try {
+                return mCastService.hasNearDevices();
+            } catch (RemoteException ex) {
+                // Ignore
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void enqueue(Album album) {
+        if (mCastService != null) {
+            try {
+                mCastService.enqueue(album.getPath());
+            } catch (RemoteException ex) {
+                // Ignore
+            }
+        }
+    }
+
+    @Override
+    public void cast(Album album) {
+        if (mCastService != null) {
+            try {
+                mCastService.cast(album.getPath());
+            } catch (RemoteException ex) {
+                // Ignore
+            }
+        }
     }
 }

@@ -150,7 +150,7 @@ public class PhotoPhaseTextureManager extends TextureManager
         mDimensions = screenDimensions; // For now, use the screen dimensions as the preferred dimensions for bitmaps
         mSync = new Object();
         mPendingRequests = new ArrayList<>(requestors);
-        mPictureDiscoverer = new MediaPictureDiscoverer(mContext, this);
+        mPictureDiscoverer = new MediaPictureDiscoverer(mContext);
 
         // Run the media discovery thread
         mBackgroundTask = new BackgroundPictureLoaderThread();
@@ -235,7 +235,7 @@ public class PhotoPhaseTextureManager extends TextureManager
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                mPictureDiscoverer.discover(userRequest);
+                mPictureDiscoverer.discover(userRequest, PhotoPhaseTextureManager.this);
             }
         });
     }

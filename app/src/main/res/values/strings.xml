@@ -46,6 +46,8 @@
     <string name="mnu_deselect_album">Deselect album</string>
     <string name="mnu_details">Details</string>
     <string name="mnu_share">Share</string>
+    <string name="mnu_cast">Cast</string>
+    <string name="mnu_enqueue">Enqueue</string>
 
     <!-- Formats -->
     <string name="format_disabled">Disabled</string>
@@ -131,6 +133,38 @@
     <string name="disposition_orientation_portrait">portrait orientation</string>
     <string name="disposition_orientation_landscape">landscape orientation</string>
 
+    <string name="pref_cast">Cast</string>
+    <string name="pref_cast_summary">Photo cast settings</string>
+    <string name="pref_cast_discovery_title">Discovery</string>
+    <string name="pref_cast_enable_title">Enabled</string>
+    <string name="pref_cast_autoconnect_title">Auto-connect</string>
+    <string name="pref_cast_autoconnect_summary">Try to connect to the last connected device without ask to choose a device</string>
+    <string name="pref_cast_last_connected_device_title">Last connected device</string>
+    <string name="pref_cast_no_connected_device">No device connected</string>
+    <string name="pref_cast_clear_connected_device">¿Forget last connected device?</string>
+    <string name="pref_cast_connected_device" translatable="false"><xliff:g id="name">%1$s</xliff:g>\n<xliff:g id="address">%2$s</xliff:g></string>
+    <string name="pref_cast_discovery_time_title">Discovery time</string>
+    <string name="pref_cast_slideshow_title">Slideshow</string>
+    <string name="pref_cast_slideshow_time_title">Time</string>
+    <string name="pref_cast_slideshow_time_summary">The elapsed time between photo transitions</string>
+    <string name="pref_cast_slideshow_repeat_title">Repeat</string>
+    <string name="pref_cast_slideshow_shuffle_title">Shuffle</string>
+    <string name="pref_cast_visualization_title">Visualization</string>
+    <string name="pref_cast_full_quality_title">Full quality</string>
+    <string name="pref_cast_full_quality_summary_on">Photos will be shown in the highest quality. Load times will increase as picture quality increases.</string>
+    <string name="pref_cast_full_quality_summary_off">Photos will be compressed in order to gain better load times.</string>
+    <string name="pref_cast_aspect_ratio_title">Aspect ratio</string>
+    <string name="pref_cast_aspect_ratio_summary_on">Keep aspect ratio</string>
+    <string name="pref_cast_aspect_ratio_summary_off">Stretch to fit on screen</string>
+    <string name="pref_cast_blurred_background_title">Blurred background</string>
+    <string name="pref_cast_blurred_background_summary">Fill background with a blurred effect of the same photo whenever it doesn\'t cover all the screen</string>
+    <string name="pref_cast_ui_title">User interface</string>
+    <string name="pref_cast_show_time_title">Show time</string>
+    <string name="pref_cast_show_weather_title">Show weather</string>
+    <string name="pref_cast_show_logo_title">Show logo</string>
+    <string name="pref_cast_show_track_title">Show track info</string>
+
+
     <!-- [2 lines one for describe long tap and another for describe swipe] -->
     <string name="pref_disposition_description">Long tap a frame and drag \u0026 drop its borders. Swipe left and right to show defined templates</string>
     <string name="pref_disposition_saved">Saved <xliff:g id="number_of_saved">%1$s</xliff:g> de <xliff:g id="total_of_saved">%2$s</xliff:g></string>
@@ -152,10 +186,12 @@
     <string name="touch_actions_transition">Perform transition</string>
     <string name="touch_actions_open">Open</string>
     <string name="touch_actions_share">Share</string>
+    <string name="touch_actions_cast">Cast</string>
     <string name="touch_actions_none_summary">Do nothing</string>
     <string name="touch_actions_transition_summary">Perform image transition</string>
     <string name="touch_actions_open_summary">Open the image</string>
     <string name="touch_actions_share_summary">Share the image</string>
+    <string name="touch_actions_cast_summary">Cast the image</string>
 
     <!-- Transitions -->
     <string name="transitions_cube">Cube</string>
@@ -257,4 +293,21 @@
     <string name="saved_dispositions_save_success">Successfully saved</string>
     <string name="saved_dispositions_save_exists">Another disposition with the same layout exists</string>
     <string name="saved_dispositions_delete_success">Successfully deleted</string>
+
+    <!-- Cast -->
+    <string name="cast_app_description">Cast your photos</string>
+    <string name="cast_dialog_title">Send to</string>
+    <string name="cast_dialog_sent_to_device">Sent to device <xliff:g id="device">%1$s</xliff:g></string>
+    <string name="cast_dialog_no_devices_found">No devices found</string>
+    <string name="cast_connect_error">Cannot connect to device</string>
+    <string name="cast_resume">Resume</string>
+    <string name="cast_pause">Pause</string>
+    <string name="cast_previous">Previous</string>
+    <string name="cast_next">Next</string>
+    <string name="cast_shuffle">Shuffle</string>
+    <string name="cast_repeat">Repeat</string>
+    <string name="cast_stop">Stop</string>
+
+    <!-- Cast queue activity -->
+    <string name="cast_queue_title">Cast queue</string>
 </resources>

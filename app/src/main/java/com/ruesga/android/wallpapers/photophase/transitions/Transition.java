@@ -224,6 +224,7 @@ public abstract class Transition {
                         mContext.getResources(), mVertexShader[index], mFragmentShader[index]);
         mTextureHandlers[index] =
                 GLES20.glGetUniformLocation(mProgramHandlers[index], "sTexture");
+        GLESUtil.glesCheckError("glGetUniformLocation");
         mPositionHandlers[index] =
                 GLES20.glGetAttribLocation(mProgramHandlers[index], "aPosition");
         GLESUtil.glesCheckError("glGetAttribLocation");

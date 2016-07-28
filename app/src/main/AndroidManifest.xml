@@ -21,12 +21,22 @@
 
     <uses-feature android:name="android.software.live_wallpaper" android:required="true" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!--suppress DeprecatedClassUsageInspection -->
     <uses-permission android:name="android.permission.GET_TASKS" android:maxSdkVersion="19"/>
+
+    <uses-permission android:name="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION"/>
+    <permission
+        android:name="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION"
+        android:protectionLevel="signature" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -73,6 +83,37 @@
             android:name=".PhotoViewerActivity"
             android:exported="false"
             android:theme="@style/PhotoPhaseTheme.FullScreen"/>
+
+        <activity
+            android:name=".cast.CastPhotoQueueActivity"
+            android:theme="@style/PhotoPhaseTheme.FullScreen"/>
+
+        <activity
+            android:name=".cast.CastRouteActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@style/PhotoPhaseTheme.Overlay"/>
+
+        <service
+            android:name=".cast.CastService"
+            android:permission="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION" />
+
+        <receiver
+            android:name=".cast.CastReceiver"
+            android:permission="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION">
+            <intent-filter>
+                <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".cast.CastGcmTaskService"
+                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"
+                 android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
+            </intent-filter>
+        </service>
 
     </application>
 

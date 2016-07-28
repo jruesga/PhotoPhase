@@ -51,7 +51,6 @@ public class AlbumInfoView extends RelativeLayout
 
     /**
      * A convenient listener for receive events of the AlbumPictures class
-     *
      */
     public interface CallbacksListener {
         /**
@@ -83,6 +82,26 @@ public class AlbumInfoView extends RelativeLayout
         void onAllPicturesDeselected(Album album);
     }
 
+    /**
+     * A CastService proxy
+     */
+    public interface CastProxy {
+        /**
+         * Returns whether there are near devices to cast
+         */
+        boolean hasNearDevices();
+
+        /**
+         * Send this album to the cast device
+         */
+        void cast(Album album);
+
+        /**
+         * Enqueue this album to be send to the cast device
+         */
+        void enqueue(Album album);
+    }
+
     private class OnPictureLoaded extends AsyncPictureLoaderTask.OnPictureLoaded {
         public OnPictureLoaded(Album album) {
             super(album);
@@ -107,6 +126,10 @@ public class AlbumInfoView extends RelativeLayout
     private View mOverflowButton;
 
     private boolean mAlbumMode;
+
+    private CastProxy mCastProxy;
+
+    private DisplayMetrics mMetrics;
 
     /**
      * Constructor of <code>AlbumInfoView</code>.
@@ -150,6 +173,11 @@ public class AlbumInfoView extends RelativeLayout
     private void init() {
         mCallbacks = new ArrayList<>();
         mAlbumMode = true;
+
+
+        mMetrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(mMetrics);
     }
 
     /**
@@ -170,13 +198,8 @@ public class AlbumInfoView extends RelativeLayout
         this.mCallbacks.add(callback);
     }
 
-    /**
-     * Method that removes the class from the current callbacks
-     *
-     * @param callback The callback class
-     */
-    public void removeCallBackListener(CallbacksListener callback) {
-        this.mCallbacks.remove(callback);
+    public void setCastProxy(CastProxy castProxy) {
+        mCastProxy = castProxy;
     }
 
     /**
@@ -232,6 +255,11 @@ public class AlbumInfoView extends RelativeLayout
             popup.findItem(R.id.mnu_select_all).setVisible(false);
             popup.findItem(R.id.mnu_deselect_all).setVisible(false);
         }
+
+        if (mCastProxy == null || !mCastProxy.hasNearDevices()) {
+            popup.findItem(R.id.mnu_cast).setVisible(false);
+            popup.findItem(R.id.mnu_enqueue).setVisible(false);
+        }
     }
 
     /**
@@ -254,6 +282,14 @@ public class AlbumInfoView extends RelativeLayout
 
             case R.id.mnu_deselect_all:
                 notifyPictureSelectionChanged(false);
+                break;
+
+            case R.id.mnu_cast:
+                mCastProxy.cast(mAlbum);
+                break;
+
+            case R.id.mnu_enqueue:
+                mCastProxy.enqueue(mAlbum);
                 break;
 
             default:
@@ -360,13 +396,11 @@ public class AlbumInfoView extends RelativeLayout
                 mIcon.setImageDrawable(null);
 
                 // Show as icon, the first picture
-                DisplayMetrics metrics = new DisplayMetrics();
-                WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-                wm.getDefaultDisplay().getMetrics(metrics);
+                File f = new File(album.getItems().get(0).getPath());
                 mTask = new AsyncPictureLoaderTask(getContext(), mIcon,
-                        metrics.widthPixels, metrics.heightPixels, new OnPictureLoaded(album));
+                        mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded(album));
                 mTask.mFactor = 8;
-                mTask.execute(new File(album.getItems().get(0).getPath()));
+                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, f);
             }
         }
     }

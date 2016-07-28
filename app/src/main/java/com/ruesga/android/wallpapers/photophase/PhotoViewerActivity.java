@@ -19,7 +19,12 @@ package com.ruesga.android.wallpapers.photophase;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -29,11 +34,17 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -44,6 +55,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ruesga.android.wallpapers.photophase.cast.CastService;
+import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 
@@ -75,6 +88,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private View mDetails;
     private MenuItem mDetailsMenu;
     private MenuItem mShareMenu;
+    private MenuItem mCastMenu;
     private Toolbar mToolbar;
 
     private AsyncPictureLoaderTask mTask;
@@ -88,6 +102,45 @@ public class PhotoViewerActivity extends AppCompatActivity {
     // To avoid passing a bitmap in an extra
     private Bitmap mThumbnail;
     private boolean mPictureLoaded;
+
+    private ICastService mCastService;
+    private NfcAdapter mNfcAdapter;
+
+    private final ServiceConnection mCastConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            mCastService = ICastService.Stub.asInterface(binder);
+            boolean hasDevices = hasNearDevices();
+            if (!hasDevices) {
+                try {
+                    mCastService.requestScan();
+                } catch (RemoteException ex) {
+                    // Ignore
+                }
+            }
+
+            if (mCastMenu != null && mPictureLoaded) {
+                mCastMenu.setVisible(hasDevices);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mCastService = null;
+            if (mCastMenu != null) {
+                mCastMenu.setVisible(false);
+            }
+        }
+    };
+
+    private final BroadcastReceiver mCastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mCastMenu != null && mPictureLoaded) {
+                mCastMenu.setVisible(hasNearDevices());
+            }
+        }
+    };
 
     private final AsyncTask<Float, Void, Bitmap> mMapLoaderTask = new AsyncTask<Float, Void, Bitmap>() {
         private static final String OPEN_STREETMAP_URL =
@@ -174,6 +227,13 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
 
         initToolbar();
+        AndroidHelper.setupRecentBar(this);
+
+        // Initialize the nfc adapter if available
+        if (AndroidHelper.isJellyBeanMr1OrGreater()
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        }
 
         mDetails = findViewById(R.id.photo_details);
         mPhotoView = (ImageView) findViewById(R.id.photo);
@@ -202,6 +262,19 @@ public class PhotoViewerActivity extends AppCompatActivity {
         if (AndroidHelper.isLollipopOrGreater() && !mHasTransition) {
             addTransitionListener();
         }
+
+        if (PreferencesProvider.Preferences.Cast.isEnabled(this)) {
+            try {
+                Intent i = new Intent(this, CastService.class);
+                bindService(i, mCastConnection, Context.BIND_AUTO_CREATE);
+            } catch (SecurityException se) {
+                Log.w(TAG, "Can't bound to CastService", se);
+            }
+        }
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(CastService.ACTION_SCAN_FINISHED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCastReceiver, filter);
     }
 
     @Override
@@ -221,6 +294,12 @@ public class PhotoViewerActivity extends AppCompatActivity {
             mThumbnail.recycle();
             mThumbnail = null;
         }
+
+        if (mCastService != null) {
+            unbindService(mCastConnection);
+        }
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCastReceiver);
     }
 
     @Override
@@ -228,6 +307,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.photoviewer, menu);
         mDetailsMenu = menu.findItem(R.id.mnu_details);
         mShareMenu = menu.findItem(R.id.mnu_share);
+        mCastMenu = menu.findItem(R.id.mnu_cast);
         return true;
     }
 
@@ -287,7 +367,13 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     if (mShareMenu != null) {
                         mShareMenu.setVisible(true);
                     }
+                    if (mCastMenu != null) {
+                        mCastMenu.setVisible(hasNearDevices());
+                    }
                     mPictureLoaded = true;
+
+                    // publish the photo via nfc if available
+                    shareViaNfc();
                 }
             });
             mTask.execute(new File(mPhoto.getAbsolutePath()));
@@ -343,6 +429,13 @@ public class PhotoViewerActivity extends AppCompatActivity {
             case R.id.mnu_share:
                 AndroidHelper.sharePicture(this, Uri.fromFile(mPhoto));
                 return true;
+            case R.id.mnu_cast:
+                try {
+                    mCastService.cast(mPhoto.toString());
+                } catch (RemoteException e) {
+                    Log.w(TAG, "Got a remote exception while casting " + mPhoto, e);
+                }
+                return true;
             case R.id.mnu_details:
                 displayDetails();
                 return true;
@@ -377,6 +470,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 mDetails.setVisibility(View.VISIBLE);
                 mDetailsMenu.setVisible(false);
                 mShareMenu.setVisible(false);
+                mCastMenu.setVisible(false);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(getString(R.string.mnu_details));
                 }
@@ -418,6 +512,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 mDetails.setVisibility(View.GONE);
                 mDetailsMenu.setVisible(true);
                 mShareMenu.setVisible(true);
+                mCastMenu.setVisible(hasNearDevices());
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(" ");
                 }
@@ -444,6 +539,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         DecimalFormat nf2 = new DecimalFormat("0.#");
 
         String notAvailable = getString(R.string.photoviewer_details_not_available);
+        String title = mPhoto.getName();
         Date datetime = null;
         String location = null;
         String manufacturer = null;
@@ -460,6 +556,17 @@ public class PhotoViewerActivity extends AppCompatActivity {
         try {
             exif = new ExifInterface(mPhoto.getAbsolutePath());
 
+            // Title
+            if (AndroidHelper.isNougatOrGreater()) {
+                title = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
+                if (TextUtils.isEmpty(title)) {
+                    title = exif.getAttribute(ExifInterface.TAG_USER_COMMENT);
+                    if (TextUtils.isEmpty(title)) {
+                        title = mPhoto.getName();
+                    }
+                }
+            }
+
             // Date
             String date = exif.getAttribute(ExifInterface.TAG_DATETIME);
             if (date != null) {
@@ -474,7 +581,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
             if (exif.getLatLong(mLocation)) {
                 mHasLocation = true;
                 if (Geocoder.isPresent()) {
-                    Geocoder geocoder = new Geocoder(this, getResources().getConfiguration().locale);
+                    Geocoder geocoder = new Geocoder(this, AndroidHelper.getLocale(getResources()));
                     List<Address> addresses = geocoder.getFromLocation(mLocation[0], mLocation[1], 1);
                     if (!addresses.isEmpty()) {
                         Address address = addresses.get(0);
@@ -502,11 +609,21 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 // Ignore
             }
             try {
-                aperture = Double.parseDouble(exif.getAttribute(ExifInterface.TAG_APERTURE));
+                if (AndroidHelper.isNougatOrGreater()) {
+                    aperture = Double.parseDouble(exif.getAttribute(ExifInterface.TAG_F_NUMBER));
+                } else {
+                    //noinspection deprecation
+                    aperture = Double.parseDouble(exif.getAttribute(ExifInterface.TAG_APERTURE));
+                }
             } catch (NullPointerException | NumberFormatException ex) {
                 // Ignore
             }
-            iso = exif.getAttribute(ExifInterface.TAG_ISO);
+            if (AndroidHelper.isNougatOrGreater()) {
+                iso = exif.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
+            } else {
+                //noinspection deprecation
+                iso = exif.getAttribute(ExifInterface.TAG_ISO);
+            }
             flash = exif.getAttributeInt(ExifInterface.TAG_FLASH, -1);
 
             // Resolution
@@ -607,7 +724,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
         // Info
         tv = (TextView) findViewById(R.id.details_name);
-        tv.setText(getString(R.string.photoviewer_details_name, mPhoto.getName()));
+        tv.setText(getString(R.string.photoviewer_details_name, title));
         tv = (TextView) findViewById(R.id.details_size);
         tv.setText(getString(R.string.photoviewer_details_size, mPhoto.length() / 1024));
         tv = (TextView) findViewById(R.id.details_resolution);
@@ -638,5 +755,29 @@ public class PhotoViewerActivity extends AppCompatActivity {
         String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         startActivity(intent);
+    }
+
+    private boolean hasNearDevices() {
+        if (mCastService != null) {
+            try {
+
+                return mCastService.hasNearDevices();
+            } catch (RemoteException ex) {
+                // Ignore
+            }
+        }
+        return false;
+    }
+
+    @TargetApi(value=Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void shareViaNfc() {
+        if (mNfcAdapter != null) {
+            mNfcAdapter.setBeamPushUrisCallback(new NfcAdapter.CreateBeamUrisCallback() {
+                @Override
+                public Uri[] createBeamUris(NfcEvent nfcEvent) {
+                    return new Uri[]{Uri.fromFile(mPhoto)};
+                }
+            }, this);
+        }
     }
 }

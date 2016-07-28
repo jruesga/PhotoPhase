@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.aboutlibraries.util.Colors;
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
 
 import java.util.Calendar;
@@ -49,6 +50,7 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initToolbar();
+        AndroidHelper.setupRecentBar(this);
     }
 
     /**

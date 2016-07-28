@@ -115,7 +115,8 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
         ViewHolder viewHolder = (ViewHolder)v.getTag();
 
         // Retrieve the view holder and update the view
-        viewHolder.mPictureItemView.updateView(picture, mAlbum.getSelectedItems().size() > 0, refreshIcon);
+        final boolean editMode = mAlbum.getSelectedItems().size() > 0;
+        viewHolder.mPictureItemView.updateView(picture, editMode, refreshIcon);
 
         // Return the view
         return v;

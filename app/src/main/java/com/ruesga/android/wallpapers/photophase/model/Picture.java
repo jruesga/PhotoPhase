@@ -16,6 +16,7 @@
 
 package com.ruesga.android.wallpapers.photophase.model;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import java.io.File;
@@ -27,6 +28,7 @@ public class Picture implements Comparable<Picture>, Cloneable {
 
     private String mPath;
     private boolean mSelected;
+    private Bitmap mBitmap;
 
     public Picture(String path, boolean selected) {
         super();
@@ -50,6 +52,14 @@ public class Picture implements Comparable<Picture>, Cloneable {
         this.mSelected = selected;
     }
 
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        mBitmap = bitmap;
+    }
+
     public String getName() {
         return new File(mPath).getName();
     }
@@ -62,6 +72,8 @@ public class Picture implements Comparable<Picture>, Cloneable {
     @Override
     @SuppressWarnings("CloneDoesntCallSuperClone")
     public Object clone() {
-        return new Picture(mPath, mSelected);
+        Picture pic = new Picture(mPath, mSelected);
+        pic.mBitmap = mBitmap;
+        return pic;
     }
 }

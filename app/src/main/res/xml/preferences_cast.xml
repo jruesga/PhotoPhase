@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2016 Jorge Ruesga
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+        android:key="cast_enabled"
+        android:title="@string/pref_cast_enable_title"
+        android:defaultValue="false" />
+
+    <PreferenceCategory
+        android:key="category_cast_discovery"
+        android:title="@string/pref_cast_discovery_title">
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_autoconnect"
+            android:title="@string/pref_cast_autoconnect_title"
+            android:summary="@string/pref_cast_autoconnect_summary"
+            android:defaultValue="false" />
+
+        <Preference
+            android:key="cast_last_connected_device"
+            android:title="@string/pref_cast_last_connected_device_title" />
+
+        <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
+            android:key="cast_discovery_time"
+            android:title="@string/pref_cast_discovery_time_title"
+            android:defaultValue="4" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_cast_slideshow"
+        android:title="@string/pref_cast_slideshow_title">
+
+        <com.ruesga.android.wallpapers.photophase.preferences.DiscreteSeekBarProgressPreference
+            android:key="cast_slideshow_time"
+            android:title="@string/pref_cast_slideshow_time_title"
+            android:summary="@string/pref_cast_slideshow_time_summary"
+            android:defaultValue="20" />
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_slideshow_repeat"
+            android:title="@string/pref_cast_slideshow_repeat_title"
+            android:defaultValue="false" />
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_slideshow_shuffle"
+            android:title="@string/pref_cast_slideshow_shuffle_title"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_cast_visualization"
+        android:title="@string/pref_cast_visualization_title">
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_full_quality"
+            android:title="@string/pref_cast_full_quality_title"
+            android:summaryOn="@string/pref_cast_full_quality_summary_on"
+            android:summaryOff="@string/pref_cast_full_quality_summary_off"
+            android:defaultValue="false" />
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_aspect_ratio"
+            android:title="@string/pref_cast_aspect_ratio_title"
+            android:summaryOn="@string/pref_cast_aspect_ratio_summary_on"
+            android:summaryOff="@string/pref_cast_aspect_ratio_summary_off"
+            android:defaultValue="false" />
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_blurred_background"
+            android:title="@string/pref_cast_blurred_background_title"
+            android:summary="@string/pref_cast_blurred_background_summary"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_cast_ui"
+        android:title="@string/pref_cast_ui_title">
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_ui_show_time"
+            android:title="@string/pref_cast_show_time_title"
+            android:defaultValue="true" />
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_ui_show_weather"
+            android:title="@string/pref_cast_show_weather_title"
+            android:defaultValue="true"/>
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_ui_show_logo"
+            android:title="@string/pref_cast_show_logo_title"
+            android:defaultValue="true"/>
+
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="cast_ui_show_track"
+            android:title="@string/pref_cast_show_track_title"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

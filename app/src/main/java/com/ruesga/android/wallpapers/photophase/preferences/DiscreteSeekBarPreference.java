@@ -38,6 +38,7 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar.OnProgressChangeL
 public class DiscreteSeekBarPreference extends Preference implements OnProgressChangeListener {
 
     private int mProgress;
+    private int mMin;
     private int mMax;
     private boolean mTrackingTouch;
     DiscreteSeekBar mSeekBar;
@@ -52,6 +53,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
     public DiscreteSeekBarPreference(
             Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        setMin(0);
         setMax(100);
         setLayoutResource(R.layout.preference_widget_seekbar);
     }
@@ -83,7 +85,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
         super.onBindView(view);
         mSeekBar = (DiscreteSeekBar) view.findViewById(R.id.seekbar);
         mSeekBar.setOnProgressChangeListener(this);
-        mSeekBar.setMax(0);
+        mSeekBar.setMin(mMin);
         mSeekBar.setMax(mMax);
         mSeekBar.setProgress(mProgress);
         mSeekBar.setEnabled(isEnabled());
@@ -134,6 +136,18 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
     }
 
     /**
+     * Method that set the minimum progress
+     *
+     * @param min The minimum progress
+     */
+    public void setMin(int min) {
+        if (min != mMin) {
+            mMin = min;
+            notifyChanged();
+        }
+    }
+
+    /**
      * Method that set the maximum progress
      *
      * @param max The maximum progress
@@ -165,8 +179,8 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
         if (p > mMax) {
             p = mMax;
         }
-        if (p < 0) {
-            p = 0;
+        if (p < mMin) {
+            p = mMin;
         }
         if (p != mProgress) {
             mProgress = p;
@@ -252,6 +266,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
         // Save the instance state
         final SavedState myState = new SavedState(superState);
         myState.progress = mProgress;
+        myState.min = mMin;
         myState.max = mMax;
         return myState;
     }
@@ -271,6 +286,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
         mProgress = myState.progress;
+        mMin = myState.min;
         mMax = myState.max;
         notifyChanged();
     }
@@ -283,6 +299,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
      */
     private static class SavedState extends BaseSavedState {
         int progress;
+        int min;
         int max;
 
         public SavedState(Parcel source) {
@@ -290,6 +307,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
 
             // Restore the click counter
             progress = source.readInt();
+            min = source.readInt();
             max = source.readInt();
         }
 
@@ -299,6 +317,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
 
             // Save the click counter
             dest.writeInt(progress);
+            dest.writeInt(min);
             dest.writeInt(max);
         }
 

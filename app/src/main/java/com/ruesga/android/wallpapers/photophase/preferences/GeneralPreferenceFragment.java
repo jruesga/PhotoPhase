@@ -19,6 +19,7 @@ package com.ruesga.android.wallpapers.photophase.preferences;
 
 import android.app.WallpaperInfo;
 import android.app.WallpaperManager;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -197,15 +198,21 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mSetAsWallpaper.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                final Intent i;
+                Intent i;
                 if (AndroidHelper.isJellyBeanOrGreater()) {
-                    i = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                    i.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                            new ComponentName(getActivity(), PhotoPhaseWallpaper.class));
+                    try {
+                        i = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                        i.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                                new ComponentName(getActivity(), PhotoPhaseWallpaper.class));
+                        startActivity(i);
+                    } catch (ActivityNotFoundException ex) {
+                        i = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
+                        startActivity(i);
+                    }
                 } else {
                     i = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
+                    startActivity(i);
                 }
-                startActivity(i);
                 return true;
             }
         });
