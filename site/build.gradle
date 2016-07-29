@@ -19,7 +19,6 @@ buildscript {
     jcenter()
   }
   dependencies {
-    //classpath fileTree(dir: 'libs', includes: ['htmlcompressor-1.5.3.jar'])
     classpath 'com.googlecode.htmlcompressor:htmlcompressor:1.5.2'
   }
 }
@@ -50,6 +49,7 @@ minifyCss {
 }
 
 minifyJs {
+  //noinspection GrReassignedInClosureLocalVar
   source = ["receiver.js", "time.js", "weather.js"]
   dest = "build/receiver.min.js"
   closure {

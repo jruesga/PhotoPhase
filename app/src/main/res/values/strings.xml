@@ -307,7 +307,4 @@
     <string name="cast_shuffle">Shuffle</string>
     <string name="cast_repeat">Repeat</string>
     <string name="cast_stop">Stop</string>
-
-    <!-- Cast queue activity -->
-    <string name="cast_queue_title">Cast queue</string>
 </resources>

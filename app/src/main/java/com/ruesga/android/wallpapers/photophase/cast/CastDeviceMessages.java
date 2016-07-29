@@ -31,7 +31,7 @@ public class CastDeviceMessages {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static BaseDeviceMessage parseDeviceMessage(String appMsg) {
-        JsonNode json = null;
+        JsonNode json;
         try {
             json = MAPPER.readTree(appMsg);
             String type = json.get("type").asText();

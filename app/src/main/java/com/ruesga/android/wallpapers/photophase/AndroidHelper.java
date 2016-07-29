@@ -253,7 +253,7 @@ public final class AndroidHelper {
     public static Boolean sHighEndDevice = null;
     public static boolean isHighEndDevice(Context context) {
         if (sHighEndDevice != null) {
-            return sHighEndDevice.booleanValue();
+            return sHighEndDevice;
         }
         if (AndroidHelper.isJellyBeanOrGreater()) {
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();

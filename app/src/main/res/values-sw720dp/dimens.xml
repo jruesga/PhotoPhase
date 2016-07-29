@@ -15,6 +15,5 @@
      limitations under the License.
  -->
 <resources>
-    <dimen name="picture_size">116dp</dimen>
     <dimen name="preference_icon_minWidth">56dp</dimen>
 </resources>

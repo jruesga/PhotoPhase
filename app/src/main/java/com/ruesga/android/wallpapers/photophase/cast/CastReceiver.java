@@ -18,7 +18,6 @@ package com.ruesga.android.wallpapers.photophase.cast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceCategory;
 
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 
@@ -32,14 +31,18 @@ public class CastReceiver extends BroadcastReceiver {
         }
 
         if (intent != null) {
-            // Request a cast scan
-            Intent i = new Intent(context, CastService.class);
-            i.setAction(CastService.ACTION_CONNECTIVITY_CHANGED);
-            context.startService(i);
+            String action = intent.getAction();
+            if (action.equals("android.net.wifi.supplicant.CONNECTION_CHANGE")
+                    || action.equals("android.net.wifi.STATE_CHANGE")) {
+                // Request a cast scan
+                Intent i = new Intent(context, CastService.class);
+                i.setAction(CastService.ACTION_CONNECTIVITY_CHANGED);
+                context.startService(i);
 
-            // Notify anyone that connectivity changed
-            i = new Intent(CastService.ACTION_CONNECTIVITY_CHANGED);
-            context.sendBroadcast(i);
+                // Notify anyone that connectivity changed
+                i = new Intent(CastService.ACTION_CONNECTIVITY_CHANGED);
+                context.sendBroadcast(i);
+            }
         }
     }
 }

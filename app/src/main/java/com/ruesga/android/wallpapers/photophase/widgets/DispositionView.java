@@ -432,7 +432,7 @@ public class DispositionView extends RelativeLayout
             toolbar.addView(createFrameSettingFlag(R.drawable.ic_background_off), flagParams);
         } else {
             if (!disposition.hasFlag(Disposition.TRANSITION_FLAG)) {
-                toolbar.addView(createFrameSettingFlag(R.drawable.ic_transition_off), flagParams);
+                toolbar.addView(createFrameSettingFlag(R.drawable.ic_pause), flagParams);
             }
             if (!disposition.hasFlag(Disposition.EFFECT_FLAG)) {
                 toolbar.addView(createFrameSettingFlag(R.drawable.ic_effect_off), flagParams);

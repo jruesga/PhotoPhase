@@ -46,7 +46,6 @@ import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask.OnPictureLoaded;
-import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 
 import java.io.File;
 import java.util.ArrayList;

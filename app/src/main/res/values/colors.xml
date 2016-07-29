@@ -32,5 +32,4 @@
     <color name="album_selector">#db4b38</color>
     <color name="photoviewer_details_color">#cecece</color>
     <color name="photoviewer_control_color">#b14d4d4d</color>
-    <color name="cast_queue_control">#99607d8b</color>
 </resources>

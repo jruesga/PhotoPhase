@@ -27,12 +27,11 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
-import com.ruesga.android.wallpapers.photophase.Colors;
+import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLColor;
 import com.ruesga.android.wallpapers.photophase.utils.GLESUtil.GLESTextureInfo;
-import com.ruesga.android.wallpapers.photophase.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
