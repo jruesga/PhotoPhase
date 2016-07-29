@@ -16,6 +16,7 @@
 
 package com.ruesga.android.wallpapers.photophase.cast;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -23,9 +24,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.PhotoViewerActivity;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.cast.CastService.CastStatusInfo;
@@ -135,14 +138,32 @@ public class CastNotification {
         return PendingIntent.getService(context, command, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static PendingIntent getDisplayPhotoActionIntent(Context context, File media) {
         Intent i = new Intent(context, PhotoViewerActivity.class);
         i.putExtra(PhotoViewerActivity.EXTRA_PHOTO, media.getAbsolutePath());
+        //noinspection deprecation
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_NO_HISTORY
+                | (AndroidHelper.isLollipopOrGreater()
+                    ? Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                    : Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
         return PendingIntent.getActivity(context, 2000, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static PendingIntent getShowCastQueueActionIntent(Context context) {
         Intent i = new Intent(context, CastPhotoQueueActivity.class);
+        //noinspection deprecation
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_NO_HISTORY
+                | (AndroidHelper.isLollipopOrGreater()
+                    ? Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                    : Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
         return PendingIntent.getActivity(context, 3000, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
