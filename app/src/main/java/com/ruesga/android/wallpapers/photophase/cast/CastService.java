@@ -718,11 +718,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
         // Check if at least one devices is listening
         mScanning = true;
-        mHasNearDevices = CastUtils.isNearDevicesAvailable();
-        if (!mHasNearDevices) {
-            // Retry one more time
-            mHasNearDevices = CastUtils.isNearDevicesAvailable();
-        }
+        mHasNearDevices = CastUtils.isNearDevicesAvailable(this);
         mScanning = false;
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ACTION_SCAN_FINISHED));
         Log.d(TAG, "Performed discovery device scan. Has near devices?: " + mHasNearDevices);

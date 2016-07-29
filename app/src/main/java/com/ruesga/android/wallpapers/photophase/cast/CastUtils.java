@@ -32,8 +32,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import su.litvak.chromecast.api.v2.ChromeCast;
-import su.litvak.chromecast.api.v2.ChromeCasts;
-import su.litvak.chromecast.api.v2.ChromeCastsListener;
 
 public final class CastUtils {
 
@@ -127,31 +125,21 @@ public final class CastUtils {
         return activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
-    public static synchronized boolean isNearDevicesAvailable() {
+    public static synchronized boolean isNearDevicesAvailable(Context context) {
         sHasDevices = false;
 
-        // Check for devices
-        ChromeCasts.registerListener(new ChromeCastsListener() {
+        // Check if there are near devices
+        CastDiscover discover = new CastDiscover(context, new CastDiscover.DeviceResolverListener() {
             @Override
-            public void newChromeCastDiscovered(ChromeCast device) {
+            public void onDeviceDiscovered(ChromeCast device) {
                 sHasDevices = true;
                 synchronized (sLock) {
                     sLock.notify();
                 }
             }
-
-            @Override
-            public void chromeCastRemoved(ChromeCast cc) {
-            }
         });
+        discover.startDiscovery();
 
-        try {
-            ChromeCasts.startDiscovery();
-        } catch (IOException ex) {
-            return false;
-        }
-
-        // Wait for a seconds while seeking the network
         synchronized (sLock) {
             try {
                 sLock.wait(DateUtils.SECOND_IN_MILLIS * 10);
@@ -160,17 +148,7 @@ public final class CastUtils {
             }
         }
 
-        // Shutdown in background (this is a heavy process in the jmDNS library)
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ChromeCasts.stopDiscovery();
-                } catch (IOException ex) {
-                    // Ignore
-                }
-            }
-        }).start();
+        discover.stopDiscovery();
 
         return sHasDevices;
     }

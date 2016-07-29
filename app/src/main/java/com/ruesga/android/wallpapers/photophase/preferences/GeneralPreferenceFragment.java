@@ -230,6 +230,22 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         backgroundColor.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTouchActions = (ListPreference)findPreference("ui_touch_action");
+        if (!AndroidHelper.isJellyBeanOrGreater() || !Preferences.Cast.isEnabled(getActivity())) {
+            // Remove cast action
+            String[] oldLabels = getResources().getStringArray(R.array.touch_actions_labels);
+            String[] oldValues = getResources().getStringArray(R.array.touch_actions_values);
+            String[] newLabels = new String[oldLabels.length - 1];
+            String[] newValues = new String[oldValues.length - 1];
+            System.arraycopy(oldLabels, 0, newLabels, 0, newLabels.length);
+            System.arraycopy(oldValues, 0, newValues, 0, newValues.length);
+            mTouchActions.setEntries(newLabels);
+            mTouchActions.setEntryValues(newValues);
+            TouchAction action = Preferences.General.Touch.getTouchAction(getActivity());
+            if (action.equals(TouchAction.CAST)) {
+                mTouchActions.setValue(String.valueOf(TouchAction.CAST.getValue()));
+            }
+        }
+
         mTouchActions.setOnPreferenceChangeListener(mOnChangeListener);
         updateTouchActionSummary(mTouchActions.getValue());
 

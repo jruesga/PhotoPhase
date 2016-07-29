@@ -19,17 +19,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences.Cast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import su.litvak.chromecast.api.v2.ChromeCast;
-import su.litvak.chromecast.api.v2.ChromeCasts;
-import su.litvak.chromecast.api.v2.ChromeCastsListener;
 
 public class CastRouteActivity extends AppCompatActivity {
 
@@ -126,12 +124,20 @@ public class CastRouteActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            final Context ctx = CastRouteActivity.this;
+
             // Add the last discovered devices
             List<ChromeCast> storedDevices = Cast.getLastDiscoveredDevices(CastRouteActivity.this);
             if (storedDevices != null) {
                 for (ChromeCast device : storedDevices) {
                     publishProgress(device);
                 }
+            }
+
+            // NsdManager is not supported in api 15 or lower
+            if (!AndroidHelper.isJellyBeanOrGreater()) {
+                Log.d(TAG, "Cast is not supported");
+                return null;
             }
 
             // ChromeCast only works on wifi networks, so it doesn't made sense to
@@ -141,36 +147,25 @@ public class CastRouteActivity extends AppCompatActivity {
                 return null;
             }
 
-            ChromeCasts.registerListener(new ChromeCastsListener() {
+            final CastDiscover discover = new CastDiscover(ctx, new CastDiscover.DeviceResolverListener() {
                 @Override
-                public void newChromeCastDiscovered(ChromeCast device) {
+                public void onDeviceDiscovered(ChromeCast device) {
                     if (isNewDevice(device)) {
                         Log.d(TAG, "Found device " + device.getName() + " at "
                                 + device.getAddress() + ":" + device.getPort());
                         publishProgress(device);
                     }
                 }
-
-                @Override
-                public void chromeCastRemoved(ChromeCast cc) {
-                }
             });
 
-            try {
-                Log.d(TAG, "Start discovering new devices");
-                ChromeCasts.startDiscovery();
-                mSeeking = true;
-            } catch (IOException ex) {
-                Log.e(TAG, "Failed to discover new devices", ex);
-
-                // Stop seeking and place a advise message with no item founds
-                return null;
-            }
+            Log.d(TAG, "Start discovering new devices");
+            discover.startDiscovery();
+            mSeeking = true;
 
             // Wait for a seconds while seeking the network
             synchronized (mLock) {
                 try {
-                    mLock.wait(Cast.getDiscoveryTime(CastRouteActivity.this) * 1000L);
+                    mLock.wait(Cast.getDiscoveryTime(ctx) * 1000L);
                 } catch (InterruptedException e) {
                     // Ignore
                 }
@@ -179,16 +174,7 @@ public class CastRouteActivity extends AppCompatActivity {
 
             // Done. We should have all available devices
             mSeeking = false;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        ChromeCasts.stopDiscovery();
-                    } catch (IOException ex) {
-                        // Ignore
-                    }
-                }
-            }).start();
+            discover.stopDiscovery();
             Log.d(TAG, "Stop discovering new devices");
             return null;
         }
@@ -245,8 +231,6 @@ public class CastRouteActivity extends AppCompatActivity {
                 String deviceInfo = savedInstanceState.getString("cast." + i + ".device");
                 if (deviceInfo != null) {
                     ChromeCast device = CastUtils.string2chromecast(deviceInfo);
-                    device.setAppsURL(savedInstanceState.getString("cast." + i + ".urls"));
-                    device.setApplication(savedInstanceState.getString("cast." + i + ".app"));
                     mDevices.add(device);
                 }
             }
@@ -308,8 +292,6 @@ public class CastRouteActivity extends AppCompatActivity {
         outState.putInt("cast.count", mDevices.size());
         for (ChromeCast device : mDevices) {
             outState.putString("cast." + i + ".device", CastUtils.chromecast2string(device));
-            outState.putString("cast." + i + ".urls", device.getAppsURL());
-            outState.putString("cast." + i + ".app", device.getApplication());
             i++;
         }
     }

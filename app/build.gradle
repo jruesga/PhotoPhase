@@ -44,12 +44,10 @@ dependencies {
 
     // Chromecast
     compile 'com.google.android.gms:play-services-gcm:9.2.1'
-    compile ('com.github.jruesga:chromecast-java-api-v2:33123f63f0') { transitive = false }
-    compile ('org.jmdns:jmdns:3.5.0') { transitive = false }
+    compile ('com.github.jruesga:chromecast-java-api-v2:e189575082') { transitive = false }
     compile ('com.google.protobuf:protobuf-java:2.6.1') { transitive = false }
     compile ('org.codehaus.jackson:jackson-core-asl:1.9.13') { transitive = false }
     compile ('org.codehaus.jackson:jackson-mapper-asl:1.9.13') { transitive = false }
-    compile ('org.slf4j:slf4j-api:1.7.2') { transitive = false }
     compile 'org.nanohttpd:nanohttpd:2.3.0'
 }
 
@@ -68,7 +66,7 @@ model {
 
         ndk {
             moduleName = "photophase"
-            platformVersion =  16
+            platformVersion =  15
             toolchain = 'clang'
             CFlags.addAll(['-Wall'])
             ldLibs.addAll(['GLESv2'])

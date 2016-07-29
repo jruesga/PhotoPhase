@@ -76,6 +76,11 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.preferences_headers, target);
 
+        // Cast is only supported after API16
+        if (!AndroidHelper.isJellyBeanOrGreater()) {
+            target.remove(target.size() - 2);
+        }
+
         // Retrieve the about header
         mAboutHeader = target.get(target.size() - 1);
     }
