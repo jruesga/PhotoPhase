@@ -27,15 +27,14 @@
 }
 
 # keep jackson
--keepattributes *Annotation*,EnclosingMethod,Signature
--keepnames class com.fasterxml.jackson.** { *; }
--dontwarn com.fasterxml.jackson.databind.**
--keep class org.codehaus.** { *; }
+-keepattributes *Annotation*, EnclosingMethod, Signature
+-keepclasseswithmembernames,includedescriptorclasses class org.codehaus.** { *; }
 -keepclassmembers public final enum org.codehaus.jackson.annotate.JsonAutoDetect$Visibility {
-public static final org.codehaus.jackson.annotate.JsonAutoDetect$Visibility *; }
--keep public class your.class.** {
-  *;
+    public static final org.codehaus.jackson.annotate.JsonAutoDetect$Visibility *;
 }
+
+# keep chromecast-java-api
+-keep class su.litvak.chromecast.api.v2.** { *; }
 
 # don't warn okio
 -dontwarn okio.**

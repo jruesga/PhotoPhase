@@ -25,12 +25,11 @@ import su.litvak.chromecast.api.v2.Request;
 public class CastMessages {
     public static abstract class BaseMessage implements Request {
         private Long mRequestId;
+        @JsonProperty("type") public final String mType;
 
-        private BaseMessage() {
+        private BaseMessage(String type) {
+            mType = type;
         }
-
-        @JsonProperty("type")
-        public abstract String getType();
 
         @Override
         public Long getRequestId() {
@@ -40,6 +39,10 @@ public class CastMessages {
         @Override
         public void setRequestId(Long requestId) {
             mRequestId = requestId;
+        }
+
+        public String getType() {
+            return mType;
         }
     }
 
@@ -55,9 +58,7 @@ public class CastMessages {
         @JsonProperty("cc") public boolean mCropCenter = false;
         @JsonProperty("bb") public boolean mBlurBackground = true;
         public Configuration() {
-        }
-        public String getType() {
-            return "conf";
+            super("conf");
         }
     }
 
@@ -70,6 +71,7 @@ public class CastMessages {
         @JsonProperty("w") public final int mWidth;
         @JsonProperty("h") public final int mHeight;
         public Cast(String url, String token, String title, String album, int width, int height) {
+            super("cast");
             mUrl = url;
             mSender = Settings.Secure.ANDROID_ID;
             mToken = token;
@@ -78,24 +80,17 @@ public class CastMessages {
             mWidth = width;
             mHeight = height;
         }
-        public String getType() {
-            return "cast";
-        }
     }
 
     public static class Ping extends BaseMessage {
         public Ping() {
-        }
-        public String getType() {
-            return "ping";
+            super("ping");
         }
     }
 
     public static class Stop extends BaseMessage {
         public Stop() {
-        }
-        public String getType() {
-            return "stop";
+            super("stop");
         }
     }
 }
