@@ -20,6 +20,7 @@ A live wallpaper that displays a subset of your photos on your wallpaper.
 * Choose your preferred transitions
 * Choose your preferred frame borders
 * Custom touch actions
+* Chromecast support
 * and much more
 
 
