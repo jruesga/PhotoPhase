@@ -472,9 +472,12 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                     @Override
                     public void run() {
                         int pos = mQueueList.indexOf(current) - 1;
-                        if (pos >= 0) {
+                        if (pos >= -1) {
                             int size = (int) getResources().getDimension(R.dimen.queue_photo_size);
                             int dx = size * pos;
+                            if (dx < 0) {
+                                dx = 0;
+                            }
                             if (mode == CastService.CAST_MODE_SLIDESHOW && shuffle) {
                                 mQueue.scrollBy(dx - mOverallXScroll, 0);
                             } else {
