@@ -681,7 +681,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     private void performSelectDevice(String path, boolean isError) {
         boolean isRouted = false;
         ChromeCast device = Cast.getLastConnectedDevice(this);
-        if (device != null && Cast.isUseLastConnectedDevice(this)) {
+        if (!isError && device != null && Cast.isUseLastConnectedDevice(this)) {
             if (CastUtils.testConnectivity(device)) {
                 Pair<String, String> o = new Pair<>(CastUtils.chromecast2string(device), path);
                 Message.obtain(mBackgroundHandler, MESSAGE_START_AND_CAST, o).sendToTarget();
