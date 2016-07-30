@@ -100,6 +100,7 @@ $.fn.app_onConfigurationChanged = function (config) {
   $('#splash-subtitle').text(config.label);
   $('#appinfo-name').text(config.name);
   $('#appinfo-device').text(config.device);
+  $('#loading-text').text(config.loadingMsg);
 
   if (!config.logo) {
     $('#appinfo').css('display', 'none');
@@ -248,6 +249,7 @@ $.fn.app_onNewEvent = function (senderId, event) {
     if (event.hasOwnProperty('d')) $.app_Configuration.device = event['d'];
     if (event.hasOwnProperty('cc')) $.app_Configuration.cropCenter = event['cc'];
     if (event.hasOwnProperty('bb')) $.app_Configuration.blurredBackground = event['bb'];
+    if (event.hasOwnProperty('ml')) $.app_Configuration.loadingMsg = event['ml'];
     $().app_onConfigurationChanged($.app_Configuration);
   } else if (type == 'cast') {
     // Cast request

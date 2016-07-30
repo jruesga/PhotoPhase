@@ -296,6 +296,7 @@
 
     <!-- Cast -->
     <string name="cast_app_description">Cast your photos</string>
+    <string name="cast_loading_msg">Loading</string>
     <string name="cast_dialog_title">Send to</string>
     <string name="cast_dialog_sent_to_device">Sent to device <xliff:g id="device">%1$s</xliff:g></string>
     <string name="cast_dialog_no_devices_found">No devices found</string>

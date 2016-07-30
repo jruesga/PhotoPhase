@@ -249,6 +249,7 @@
   <string name="saved_dispositions_save_exists">Otra disposición existe con el mismo diseño</string>
   <string name="saved_dispositions_delete_success">Borrado correctamente</string>
   <string name="cast_app_description">Muestra tus fotos</string>
+  <string name="cast_loading_msg">Cargando</string>
   <string name="cast_dialog_title">Enviar a</string>
   <string name="cast_dialog_sent_to_device">Enviado a dispositivo <xliff:g id="device">%1$s</xliff:g></string>
   <string name="cast_dialog_no_devices_found">No se han encontrado dispositivos</string>

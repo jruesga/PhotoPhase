@@ -57,6 +57,7 @@ public class CastMessages {
         @JsonProperty("d") public String mDeviceName = "";
         @JsonProperty("cc") public boolean mCropCenter = false;
         @JsonProperty("bb") public boolean mBlurBackground = true;
+        @JsonProperty("ml") public String mLoadingMsg = "";
         public Configuration() {
             super("conf");
         }

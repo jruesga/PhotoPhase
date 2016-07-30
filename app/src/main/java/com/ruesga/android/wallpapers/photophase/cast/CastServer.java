@@ -288,6 +288,7 @@ public class CastServer extends NanoHTTPD {
         config.mShowTrack = PreferencesProvider.Preferences.Cast.isShowTrack(mContext);
         config.mCropCenter = !PreferencesProvider.Preferences.Cast.isKeepAspectRatio(mContext);
         config.mBlurBackground = PreferencesProvider.Preferences.Cast.isBlurredBackground(mContext);
+        config.mLoadingMsg = mContext.getString(R.string.cast_loading_msg);;
         printRequestMessage(config);
         if (safelyCheckIfAppIsRunning()) {
             mChromecast.send(PHOTOPHASE_NAMESPACE, config);
