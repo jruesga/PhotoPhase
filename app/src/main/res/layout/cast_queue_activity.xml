@@ -39,6 +39,28 @@
             android:layout_height="match_parent"
             android:background="@color/black_transparent" />
 
+        <LinearLayout
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#2c3e50"
+            android:gravity="center"
+            android:alpha="0"
+            tools:ignore="UseCompoundDrawables">
+            <ImageView
+                android:layout_width="124dp"
+                android:layout_height="124dp"
+                android:src="@drawable/bg_cast_icon"
+                tools:ignore="ContentDescription"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cast_app_description"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
         <ProgressBar
             android:id="@+id/loading"
             android:layout_width="36dp"

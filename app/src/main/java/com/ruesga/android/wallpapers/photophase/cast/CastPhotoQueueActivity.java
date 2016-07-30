@@ -185,6 +185,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                         if (!mPlayPauseDrawable.isPlay()) {
                             mPlayPauseDrawable.getPausePlayAnimator().start();
                         }
+                        updateCurrentPlaying(null);
                         break;
                     case CastService.ACTION_SERVER_EXITED:
                         finish();
@@ -245,6 +246,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
     private ImageView mRepeat;
     private PlayPauseDrawable mPlayPauseDrawable;
 
+    private View mLogo;
     private ImageView mPhoto;
     private TextView mTitle;
     private TextView mAlbum;
@@ -295,6 +297,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         ImageView previous = (ImageView) findViewById(R.id.previous);
         ImageView next = (ImageView) findViewById(R.id.next);
 
+        mLogo = findViewById(R.id.logo);
         mPhoto = (ImageView) findViewById(R.id.photo);
         mTitle = (TextView) findViewById(R.id.photo_title);
         mAlbum = (TextView) findViewById(R.id.photo_album);
@@ -420,9 +423,12 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         if (media == null) {
             mTitle.setText(null);
             mAlbum.setText(null);
+            mQueueAdapter.updateCurrent(null);
+            mQueueAdapter.notifyDataSetChanged();
             if (mPhoto.getAlpha() != 0.0f) {
                 mPhoto.animate().alpha(0.0f).setDuration(250L).start();
             }
+            mLogo.animate().alpha(1.0f).setDuration(250L).start();
             return;
         }
 
@@ -433,6 +439,9 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         }
 
         // Update the track info
+        if (mLogo.getAlpha() != 0.0f) {
+            mLogo.animate().alpha(0.0f).setDuration(250L).start();
+        }
         mPhoto.animate().alpha(0.2f).setDuration(250L).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
