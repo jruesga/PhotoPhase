@@ -41,6 +41,7 @@ task copyResources(type: Copy) {
     from('./')
     into('build/')
     include ('*.png')
+    include ('*.jpg')
 }
 
 minifyCss {
