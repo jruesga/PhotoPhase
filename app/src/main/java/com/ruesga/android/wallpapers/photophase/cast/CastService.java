@@ -72,8 +72,10 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             "com.ruesga.android.wallpapers.photophase.broadcast.CAST_QUEUE_CHANGED";
     public static final String ACTION_LOADING_MEDIA =
             "com.ruesga.android.wallpapers.photophase.broadcast.CAST_LOADING_MEDIA";
-    public static final String ACTION_SERVER_STOPPED =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_SERVER_STOPPED";
+    public static final String ACTION_SERVER_STOP =
+            "com.ruesga.android.wallpapers.photophase.broadcast.SERVER_STOP";
+    public static final String ACTION_SERVER_EXITED =
+            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_SERVER_EXITED";
 
     public static final String EXTRA_PATH = "path";
     public static final String EXTRA_DEVICE = "device";
@@ -299,35 +301,40 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
         @Override
         public void resume() throws RemoteException {
-            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW) {
+            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW ||
+                    (mCastStatusInfo.mCastMode == CAST_MODE_NONE && !mQueue.isEmpty())) {
                 Message.obtain(mBackgroundHandler, MESSAGE_RESUME).sendToTarget();
             }
         }
 
         @Override
         public void show(String media) throws RemoteException {
-            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW) {
+            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW ||
+                    (mCastStatusInfo.mCastMode == CAST_MODE_NONE && !mQueue.isEmpty())) {
                 Message.obtain(mBackgroundHandler, MESSAGE_SHOW, media).sendToTarget();
             }
         }
 
         @Override
         public void remove(String media) throws RemoteException {
-            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW) {
+            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW ||
+                    (mCastStatusInfo.mCastMode == CAST_MODE_NONE && !mQueue.isEmpty())) {
                 performRemove(media);
             }
         }
 
         @Override
         public void previous() throws RemoteException {
-            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW) {
+            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW ||
+                    (mCastStatusInfo.mCastMode == CAST_MODE_NONE && !mQueue.isEmpty())) {
                 Message.obtain(mBackgroundHandler, MESSAGE_SHOW_PREVIOUS).sendToTarget();
             }
         }
 
         @Override
         public void next() throws RemoteException {
-            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW) {
+            if (mCastStatusInfo.mCastMode == CAST_MODE_SLIDESHOW ||
+                    (mCastStatusInfo.mCastMode == CAST_MODE_NONE && !mQueue.isEmpty())) {
                 Message.obtain(mBackgroundHandler, MESSAGE_SHOW_NEXT).sendToTarget();
             }
         }
@@ -495,7 +502,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             }
         }
 
-        Intent i = new Intent(ACTION_SERVER_STOPPED);
+        Intent i = new Intent(ACTION_SERVER_EXITED);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
     }
 
@@ -611,8 +618,15 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
             checkAndRestoreServerStatusIfNeeded();
             if (mServer != null) {
-                mCastStatusInfo.mCastMode = CAST_MODE_NONE;
                 mServer.sendStopCast();
+
+                mCastStatusInfo.mCastMode = CAST_MODE_NONE;
+                mServer.onCastStatusUpdated(mCastStatusInfo);
+
+                Intent i = new Intent(ACTION_SERVER_STOP);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+
+                mQueuePointer = -2;
             } else {
                 Log.e(TAG, "Cannot send stop app to device. Server is down");
             }
@@ -637,7 +651,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             return;
         }
 
-        if (mQueuePointer < 0) {
+        if (mQueuePointer == -1) {
             boolean repeat = Cast.isSlideshowRepeat(this);
             if (!repeat) {
                 // Stop here
@@ -647,6 +661,8 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
             mShuffleQueue.clear();
             mShuffleQueue.addAll(mQueue);
+        } else if (mQueuePointer <= -2) {
+            mQueuePointer = -1;
         }
 
 
@@ -654,6 +670,16 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         mQueuePointer++;
         int size = mQueue.size();
         if (mQueuePointer >= size) {
+            boolean repeat = Cast.isSlideshowRepeat(this);
+            if (!repeat) {
+                // Stop here
+                performStopCast();
+                return;
+            }
+
+            mShuffleQueue.clear();
+            mShuffleQueue.addAll(mQueue);
+
             mQueuePointer = 0;
         }
 
@@ -726,6 +752,9 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
     private void performShow(String media) {
         Log.d(TAG, "Show media: " + media);
+        if (!mQueue.isEmpty() && mCastStatusInfo.mCastMode == CAST_MODE_NONE) {
+            mCastStatusInfo.mCastMode = CAST_MODE_SLIDESHOW;
+        }
         int pos = mQueue.indexOf(media);
         if (pos >= 0) {
             cancelSlideShowAlarm();
@@ -765,6 +794,9 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
     private void performShowPrevious() {
         Log.d(TAG, "Show previous");
+        if (!mQueue.isEmpty() && mCastStatusInfo.mCastMode == CAST_MODE_NONE) {
+            mCastStatusInfo.mCastMode = CAST_MODE_SLIDESHOW;
+        }
         File current = mServer.getCurrentlyPlaying();
         if (current != null) {
             int pos = mQueue.indexOf(current.getAbsolutePath());
@@ -799,6 +831,9 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
     private void performShowNext() {
         Log.d(TAG, "Show next");
+        if (!mQueue.isEmpty() && mCastStatusInfo.mCastMode == CAST_MODE_NONE) {
+            mCastStatusInfo.mCastMode = CAST_MODE_SLIDESHOW;
+        }
         File current = mServer.getCurrentlyPlaying();
         if (current != null) {
             int pos = mQueue.indexOf(current.getAbsolutePath());
@@ -833,6 +868,9 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
     private void performResume() {
         Log.d(TAG, "Resume slide show");
+        if (!mQueue.isEmpty() && mCastStatusInfo.mCastMode == CAST_MODE_NONE) {
+            mCastStatusInfo.mCastMode = CAST_MODE_SLIDESHOW;
+        }
         mCastStatusInfo.mPaused = false;
         performSlideShowNext();
         if (mServer != null) {

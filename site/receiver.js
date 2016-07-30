@@ -30,6 +30,7 @@ $.app_Configuration = new function () {
   this.name;
   this.label;
   this.device;
+  this.loadingMsg = 'Loading';
 };
 
 $.app_Status = new function () {
@@ -149,6 +150,13 @@ $.fn.app_onStop = function () {
     $('#backdrop, #media').on('transitionend webkitTransitionEnd', function(){
       if ($('#backdrop').hasClass('fadeout')) {
         $('#splash').removeClass().addClass('fadein');
+
+        $('#media-fg-blur').css('background','url() no-repeat center');
+        $('#media-fg-normal').css('background','url() no-repeat center');
+        $('#media-bg-blur').css('background','url() no-repeat center');
+        $('#media-bg-normal').css('background','url() no-repeat center');
+        $('#media-fg').removeClass().addClass('fadeout');
+        $('#media-bg').removeClass().addClass('fadeout');
       }
     });
   }

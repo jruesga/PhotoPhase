@@ -181,7 +181,12 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                     case CastService.ACTION_LOADING_MEDIA:
                         showLoading();
                         break;
-                    case CastService.ACTION_SERVER_STOPPED:
+                    case CastService.ACTION_SERVER_STOP:
+                        if (!mPlayPauseDrawable.isPlay()) {
+                            mPlayPauseDrawable.getPausePlayAnimator().start();
+                        }
+                        break;
+                    case CastService.ACTION_SERVER_EXITED:
                         finish();
                         break;
                 }
@@ -319,7 +324,8 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         filter.addAction(CastService.ACTION_MEDIA_CHANGED);
         filter.addAction(CastService.ACTION_QUEUE_CHANGED);
         filter.addAction(CastService.ACTION_LOADING_MEDIA);
-        filter.addAction(CastService.ACTION_SERVER_STOPPED);
+        filter.addAction(CastService.ACTION_SERVER_STOP);
+        filter.addAction(CastService.ACTION_SERVER_EXITED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mCastReceiver, filter);
 
         try {

@@ -242,11 +242,6 @@ public class CastServer extends NanoHTTPD {
             throw new IOException("Argument is not a file");
         }
 
-        if (mCurrentlyPlaying != null && f.equals(mCurrentlyPlaying)) {
-            // We are serving this image. Don't send it again
-            return true;
-        }
-
         // Get bitmap dimensions
         Rect r = BitmapUtils.getBitmapDimensions(f);
         if (r == null) {
@@ -259,9 +254,7 @@ public class CastServer extends NanoHTTPD {
         }
 
         // Notify the user that we are interacting with the device
-        if (mCurrentlyPlaying == null) {
-            CastNotification.showNotification(mContext, mCurrentlyPlaying, new CastStatusInfo());
-        }
+        CastNotification.showNotification(mContext, mCurrentlyPlaying, new CastStatusInfo());
 
         // Authorize the request
         String token = UUID.randomUUID().toString();
@@ -288,7 +281,7 @@ public class CastServer extends NanoHTTPD {
         config.mShowTrack = PreferencesProvider.Preferences.Cast.isShowTrack(mContext);
         config.mCropCenter = !PreferencesProvider.Preferences.Cast.isKeepAspectRatio(mContext);
         config.mBlurBackground = PreferencesProvider.Preferences.Cast.isBlurredBackground(mContext);
-        config.mLoadingMsg = mContext.getString(R.string.cast_loading_msg);;
+        config.mLoadingMsg = mContext.getString(R.string.cast_loading_msg);
         printRequestMessage(config);
         if (safelyCheckIfAppIsRunning()) {
             mChromecast.send(PHOTOPHASE_NAMESPACE, config);
