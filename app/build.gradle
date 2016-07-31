@@ -57,8 +57,8 @@ model {
         buildToolsVersion "24.0.1"
 
         defaultConfig {
-            versionCode 1021
-            versionName "2.2.0"
+            versionCode 1022
+            versionName "2.2.1"
 
             minSdkVersion.apiLevel 15
             targetSdkVersion.apiLevel 24
