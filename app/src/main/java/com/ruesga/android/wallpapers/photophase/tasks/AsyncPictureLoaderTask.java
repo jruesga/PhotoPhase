@@ -26,11 +26,32 @@ import android.widget.ImageView;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 
 import java.io.File;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * A class for load images associated to a ImageView in background.
  */
 public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
+
+    public static class AsyncPictureLoaderRunnable implements Runnable {
+        public final AsyncPictureLoaderTask mTask;
+        public final File mFile;
+
+        public AsyncPictureLoaderRunnable(AsyncPictureLoaderTask task, File f) {
+            mTask = task;
+            mFile = f;
+        }
+
+        @Override
+        public void run() {
+            try {
+                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mFile);
+            } catch (RejectedExecutionException ex) {
+                // Ignore
+                mTask.cancel(true);
+            }
+        }
+    }
 
     /**
      * Notify whether the picture was loaded

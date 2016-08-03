@@ -21,10 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -45,6 +45,7 @@ import com.ruesga.android.wallpapers.photophase.PhotoViewerActivity;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Picture;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
+import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask.AsyncPictureLoaderRunnable;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask.OnPictureLoaded;
 
 import java.io.File;
@@ -82,7 +83,7 @@ public class PictureItemView extends FrameLayout {
 
     private Picture mPicture;
 
-    private AsyncPictureLoaderTask mTask;
+    private AsyncPictureLoaderRunnable mTask;
 
     private Animation mScaleInAnimation;
     private Animation mScaleOutAnimation;
@@ -226,8 +227,11 @@ public class PictureItemView extends FrameLayout {
         super.onDetachedFromWindow();
 
         // Cancel pending tasks
-        if (mTask != null && mTask.getStatus().compareTo(Status.PENDING) == 0) {
-            mTask.cancel(true);
+        if (mTask != null) {
+            removeCallbacks(mTask);
+            if (mTask.mTask.getStatus() != Status.FINISHED) {
+                mTask.mTask.cancel(true);
+            }
         }
     }
 
@@ -256,9 +260,11 @@ public class PictureItemView extends FrameLayout {
      */
     public void updateView(final Picture picture, boolean editMode, boolean refreshIcon) {
         // Destroy the update drawable task
-        if (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
-                mTask.getStatus() == AsyncTask.Status.PENDING)) {
-            mTask.cancel(true);
+        if (mTask != null) {
+            removeCallbacks(mTask);
+            if (mTask.mTask.getStatus() != Status.FINISHED) {
+                mTask.mTask.cancel(true);
+            }
         }
 
         // Retrieve the views references
@@ -303,7 +309,7 @@ public class PictureItemView extends FrameLayout {
 
                 // Show as icon, the first picture
                 File f = new File(picture.getPath());
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon,
+                AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(getContext(), mIcon,
                         mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded() {
                     @Override
                     public void onPictureLoaded(Object o, Drawable drawable) {
@@ -314,8 +320,9 @@ public class PictureItemView extends FrameLayout {
                         }
                     }
                 });
-                mTask.mFactor = 8;
-                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, f);
+                task.mFactor = 8;
+                mTask = new AsyncPictureLoaderRunnable(task, f);
+                ViewCompat.postOnAnimation(this, mTask);
             }
         }
     }

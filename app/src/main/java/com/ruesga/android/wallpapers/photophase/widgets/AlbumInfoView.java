@@ -19,8 +19,8 @@ package com.ruesga.android.wallpapers.photophase.widgets;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -38,6 +38,7 @@ import android.widget.TextView;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Album;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
+import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask.AsyncPictureLoaderRunnable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class AlbumInfoView extends RelativeLayout
 
     private Album mAlbum;
 
-    private AsyncPictureLoaderTask mTask;
+    private AsyncPictureLoaderRunnable mTask;
 
     private ImageView mIcon;
     private TextView mSelectedItems;
@@ -220,8 +221,11 @@ public class AlbumInfoView extends RelativeLayout
         super.onDetachedFromWindow();
 
         // Cancel pending tasks
-        if (mTask != null && mTask.getStatus().compareTo(Status.PENDING) == 0) {
-            mTask.cancel(true);
+        if (mTask != null) {
+            removeCallbacks(mTask);
+            if (mTask.mTask.getStatus() != Status.FINISHED) {
+                mTask.mTask.cancel(true);
+            }
         }
     }
 
@@ -356,9 +360,11 @@ public class AlbumInfoView extends RelativeLayout
     @SuppressWarnings("boxing")
     public void updateView(Album album) {
         // Destroy the update drawable task
-        if (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
-                mTask.getStatus() == AsyncTask.Status.PENDING)) {
-            mTask.cancel(true);
+        if (mTask != null) {
+            removeCallbacks(mTask);
+            if (mTask.mTask.getStatus() != Status.FINISHED) {
+                mTask.mTask.cancel(true);
+            }
         }
 
         // Retrieve the views references
@@ -397,10 +403,11 @@ public class AlbumInfoView extends RelativeLayout
 
                 // Show as icon, the first picture
                 File f = new File(album.getItems().get(0).getPath());
-                mTask = new AsyncPictureLoaderTask(getContext(), mIcon,
+                AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(getContext(), mIcon,
                         mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded(album));
-                mTask.mFactor = 8;
-                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, f);
+                task.mFactor = 8;
+                mTask = new AsyncPictureLoaderRunnable(task, f);
+                ViewCompat.postOnAnimation(this, mTask);
             }
         }
     }

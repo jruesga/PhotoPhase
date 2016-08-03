@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +54,7 @@ import com.ruesga.android.wallpapers.photophase.ICastService;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
+import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask.AsyncPictureLoaderRunnable;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
 import com.ruesga.android.wallpapers.photophase.widgets.PlayPauseDrawable;
 
@@ -105,9 +107,12 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
             synchronized (mQueue) {
                 // Cancel any non finished task
                 if (holder.mPhoto.getTag() != null) {
-                    AsyncPictureLoaderTask task = (AsyncPictureLoaderTask) holder.mPhoto.getTag();
-                    if (task != null && !task.getStatus().equals(AsyncTask.Status.FINISHED)) {
-                        task.cancel(true);
+                    AsyncPictureLoaderRunnable task = (AsyncPictureLoaderRunnable) holder.mPhoto.getTag();
+                    if (task != null) {
+                        holder.mPhoto.removeCallbacks(task);
+                        if (task.mTask.getStatus() != AsyncTask.Status.FINISHED) {
+                            task.mTask.cancel(true);
+                        }
                     }
                 }
 
@@ -135,8 +140,9 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                         }
                     });
                     task.mFactor = 1;
-                    task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, f);
-                    holder.mPhoto.setTag(task);
+                    AsyncPictureLoaderRunnable runnable = new AsyncPictureLoaderRunnable(task, f);
+                    ViewCompat.postOnAnimation(holder.mPhoto, runnable);
+                    holder.mPhoto.setTag(runnable);
                 }
             }
         }
