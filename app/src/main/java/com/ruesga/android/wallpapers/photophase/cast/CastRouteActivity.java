@@ -123,16 +123,18 @@ public class CastRouteActivity extends AppCompatActivity {
         private final Object mLock = new Object();
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            final Context ctx = CastRouteActivity.this;
-
+        protected void onPreExecute() {
             // Add the last discovered devices
             List<ChromeCast> storedDevices = Cast.getLastDiscoveredDevices(CastRouteActivity.this);
             if (storedDevices != null) {
-                for (ChromeCast device : storedDevices) {
-                    publishProgress(device);
-                }
+                mDevices.addAll(storedDevices);
+                mAdapter.notifyDataSetChanged();
             }
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final Context ctx = CastRouteActivity.this;
 
             // NsdManager is not supported in api 15 or lower
             if (!AndroidHelper.isJellyBeanOrGreater()) {
@@ -194,14 +196,22 @@ public class CastRouteActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(ChromeCast... devices) {
-            Collections.addAll(mDevices, devices);
-            mAdapter.notifyItemInserted(mDevices.size() - 1);
+            Collections.addAll(mLastDiscoveredDevices, devices);
+            for (ChromeCast device : devices) {
+                if (!mDevices.contains(device)) {
+                    mDevices.add(device);
+                    mAdapter.notifyItemInserted(mDevices.size() - 1);
+                } else {
+                    int index = mDevices.indexOf(device);
+                    mDevices.set(index, device);
+                    mAdapter.notifyItemChanged(index);
+                }
+            }
         }
 
         private void notifyStop() {
             // Save the last discovered devices
-            Cast.setLastDiscoveredDevices(
-                    CastRouteActivity.this, mDevices);
+            Cast.setLastDiscoveredDevices(CastRouteActivity.this, mLastDiscoveredDevices);
 
             // Stop seeking
             if (mDevices.size() == 0) {
@@ -213,6 +223,7 @@ public class CastRouteActivity extends AppCompatActivity {
     };
 
     private final List<ChromeCast> mDevices = new ArrayList<>();
+    private final List<ChromeCast> mLastDiscoveredDevices = new ArrayList<>();
     private AlertDialog mDialog;
     private DeviceAdapter mAdapter;
     private boolean mSeeking;
