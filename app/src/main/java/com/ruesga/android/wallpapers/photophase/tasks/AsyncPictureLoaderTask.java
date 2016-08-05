@@ -49,6 +49,8 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
             } catch (RejectedExecutionException ex) {
                 // Ignore
                 mTask.cancel(true);
+            } catch (IllegalStateException ex) {
+                // Ignore
             }
         }
     }
