@@ -120,6 +120,8 @@ public class CastPreferenceFragment extends PreferenceFragment {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     PreferencesProvider.Preferences.Cast.setLastConnectedDevice(
                                             getActivity(), null);
+                                    PreferencesProvider.Preferences.Cast.setLastDiscoveredDevices(
+                                            getActivity(), null);
                                     lastConnectedDevice.setSummary(R.string.pref_cast_no_connected_device);
                                     lastConnectedDevice.setSelectable(false);
                                     dialogInterface.dismiss();
