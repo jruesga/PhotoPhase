@@ -45,7 +45,9 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
         @Override
         public void run() {
             try {
-                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mFile);
+                if (mTask.getStatus().equals(Status.PENDING)) {
+                    mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mFile);
+                }
             } catch (RejectedExecutionException ex) {
                 // Ignore
                 mTask.cancel(true);
