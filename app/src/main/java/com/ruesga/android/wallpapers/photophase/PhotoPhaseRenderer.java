@@ -46,6 +46,7 @@ import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.preferences.TouchAction;
+import com.ruesga.android.wallpapers.photophase.providers.TemporaryContentAccessProvider;
 import com.ruesga.android.wallpapers.photophase.shapes.ColorShape;
 import com.ruesga.android.wallpapers.photophase.shapes.OopsShape;
 import com.ruesga.android.wallpapers.photophase.textures.PhotoPhaseTextureManager;
@@ -58,6 +59,8 @@ import java.io.File;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import static com.ruesga.android.wallpapers.photophase.providers.TemporaryContentAccessProvider.createAuthorizationUri;
 
 /**
  * The EGL renderer of PhotoPhase Live Wallpaper.
@@ -457,7 +460,8 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.setDataAndType(uri, "image/*");
+                                Uri temporaryUri = createAuthorizationUri(uri);
+                                intent.setDataAndType(temporaryUri, "image/*");
                                 mContext.startActivity(intent);
                             } catch (ActivityNotFoundException ex) {
                                 Log.e(TAG, "Open action not found for " + frame.getTextureInfo().path, ex);

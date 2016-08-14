@@ -39,6 +39,8 @@ import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.ruesga.android.wallpapers.photophase.providers.TemporaryContentAccessProvider;
+
 import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -228,7 +230,8 @@ public final class AndroidHelper {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        Uri temporaryUri = TemporaryContentAccessProvider.createAuthorizationUri(uri);
+        intent.putExtra(Intent.EXTRA_STREAM, temporaryUri);
         return intent;
     }
 
