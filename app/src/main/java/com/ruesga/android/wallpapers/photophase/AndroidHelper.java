@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -246,9 +247,13 @@ public final class AndroidHelper {
     @TargetApi(value=Build.VERSION_CODES.LOLLIPOP)
     public static void setupRecentBar(Activity activity) {
         if (isLollipopOrGreater()) {
+            int color = ContextCompat.getColor(activity, R.color.color_primary);
+            if (Color.alpha(color) != 255) {
+                // Remove alpha color. TaskDescription needs an opaque color
+                color = Color.rgb(Color.red(color), Color.green(color), Color.blue(color));
+            }
             TaskDescription taskDesc = new TaskDescription(
-                    activity.getString(R.string.app_name),
-                    null, ContextCompat.getColor(activity, R.color.color_primary));
+                    activity.getString(R.string.app_name), null, color);
             activity.setTaskDescription(taskDesc);
         }
     }
