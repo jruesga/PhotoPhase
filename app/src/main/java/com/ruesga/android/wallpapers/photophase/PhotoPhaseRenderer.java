@@ -46,7 +46,6 @@ import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider.Preferences;
 import com.ruesga.android.wallpapers.photophase.preferences.TouchAction;
-import com.ruesga.android.wallpapers.photophase.providers.TemporaryContentAccessProvider;
 import com.ruesga.android.wallpapers.photophase.shapes.ColorShape;
 import com.ruesga.android.wallpapers.photophase.shapes.OopsShape;
 import com.ruesga.android.wallpapers.photophase.textures.PhotoPhaseTextureManager;
