@@ -293,7 +293,7 @@ public class MediaPictureDiscoverer {
 
         if (AndroidHelper.hasReadExternalStoragePermissionGranted(mContext)) {
             mTask = new AsyncDiscoverTask(mContext.getContentResolver(), cb, userRequest);
-            mTask.execute();
+            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             // Notify that we don't have any files
             cb.onEndMediaDiscovered(new File[0], userRequest);
