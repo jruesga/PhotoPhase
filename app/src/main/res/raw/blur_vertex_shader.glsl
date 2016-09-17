@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+uniform mat4 uMVPMatrix;
+
 attribute vec4 aPosition;
 attribute vec2 aTextureCoord;
 
@@ -24,7 +26,7 @@ uniform float strength;
 
 void main()
 {
-    gl_Position = aPosition;
+    gl_Position = uMVPMatrix * aPosition;
     v_texcoord = aTextureCoord;
     v_blurTexCoords[ 0] = v_texcoord + vec2(-0.028 * strength, 0.0);
     v_blurTexCoords[ 1] = v_texcoord + vec2(-0.024 * strength, 0.0);
