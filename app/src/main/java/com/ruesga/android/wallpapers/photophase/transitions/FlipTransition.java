@@ -156,11 +156,13 @@ public class FlipTransition extends Transition {
         switch (mMode) {
             case HORIZONTAL:
                 rotateY = -1.0f;
-                translateX = ((mTarget.getFrameVertex()[2] - ((mTarget.getFrameVertex()[2] - mTarget.getFrameVertex()[0]) / 2)) * -1);
+                translateX = (mTarget.getFrameVertex()[2] -
+                        ((mTarget.getFrameVertex()[2] - mTarget.getFrameVertex()[0]) / 2)) * -1;
                 break;
             case VERTICAL:
                 rotateX = -1.0f;
-                translateY = (mTarget.getFrameVertex()[5] - ((mTarget.getFrameVertex()[5] - mTarget.getFrameVertex()[1]) / 2)) * -1;
+                translateY = (mTarget.getFrameVertex()[5] -
+                        ((mTarget.getFrameVertex()[5] - mTarget.getFrameVertex()[1]) / 2)) * -1;
                 break;
 
             default:
