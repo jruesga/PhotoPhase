@@ -117,7 +117,6 @@ public class PhotoPhaseWallpaper
             super();
             mHandler = new Handler();
             mActivityManager = (ActivityManager)getApplication().getSystemService(ACTIVITY_SERVICE);
-            setOffsetNotificationsEnabled(false);
             setTouchEventsEnabled(false);
             setGLESEngineListener(wallpaper);
             setWallpaperGLSurfaceView(new PhotoPhaseWallpaperGLSurfaceView(wallpaper));
@@ -139,6 +138,12 @@ public class PhotoPhaseWallpaper
             public PhotoPhaseWallpaperGLSurfaceView(Context context) {
                 super(context);
             }
+        }
+
+        @Override
+        public void onOffsetsChanged(float xOffset, float yOffset, float xOffsetStep,
+                float yOffsetStep, int xPixelOffset, int yPixelOffset) {
+            ((PhotoPhaseRenderer)getRenderer()).onOffsetChanged(xOffset, yOffset);
         }
 
         /**

@@ -149,7 +149,7 @@ public class LivePreviewView extends GLSurfaceView {
                 drawBackground();
 
                 // Draw the image
-                mTransition.apply(mMVPMatrix);
+                mTransition.apply(mMVPMatrix, 0);
                 if (!mTransitionType.equals(Transitions.TRANSITIONS.NO_TRANSITION)) {
                     if (!mTransition.isRunning()) {
                         if (getRenderMode() != RENDERMODE_WHEN_DIRTY) {

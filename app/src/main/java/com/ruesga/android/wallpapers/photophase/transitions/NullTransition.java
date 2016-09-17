@@ -56,7 +56,7 @@ public class NullTransition extends Transition {
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
+    public void applyTransition(float delta, float[] matrix, float offset) {
         draw(mTarget, matrix);
     }
 

@@ -102,10 +102,13 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private int mHeight = -1;
     private int mStatusBarHeight = 0;
     private int mMeasuredHeight  = -1;
+    private boolean mUseWallpaperOffset;
+    private float mOffsetX;
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjMatrix = new float[16];
     private final float[] mVMatrix = new float[16];
+    private float mMVPMatrixOffset;
 
     private final Object mDrawing = new Object();
     private boolean mRecycle;
@@ -133,6 +136,10 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                         PreferencesProvider.EXTRA_FLAG_MEDIA_INTERVAL_CHANGED, false);
                 int dispositionInterval = intent.getIntExtra(
                         PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, -1);
+
+                // Update wallpaper offset
+                mUseWallpaperOffset = PreferencesProvider.Preferences.General
+                        .isWallpaperOffset(context);
 
                 // Empty texture queue?
                 if (emptyTextureQueue) {
@@ -257,6 +264,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         mRecreateWorld = false;
         sInstances++;
         mAlarmManager = (AlarmManager)ctx.getSystemService(Context.ALARM_SERVICE);
+        mUseWallpaperOffset = PreferencesProvider.Preferences.General.isWallpaperOffset(ctx);
     }
 
     /**
@@ -379,6 +387,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (!mIsPreview) {
             mHandler.postDelayed(mEGLContextWatchDog, 15000L);
         }
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public void onOffsetChanged(float x , float y) {
+        mOffsetX = x;
+        mDispatcher.requestRender();
     }
 
     /**
@@ -549,7 +563,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
      */
     private synchronized void deselectCurrentTransition() {
         mHandler.removeCallbacks(mTransitionThread);
-        mWorld.deselectTransition(mMVPMatrix);
+        mWorld.deselectTransition(mMVPMatrix, mMVPMatrixOffset);
         mLastRunningTransition = 0;
     }
 
@@ -841,9 +855,19 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
             mHandler.removeCallbacks(mEGLContextWatchDog);
         }
 
+        // Calculate wallpaper offset
+        int widthOffset = 0;
+        if (!mIsPreview && mUseWallpaperOffset) {
+            widthOffset = (int) (mWidth / 3f);
+        }
+        mMVPMatrixOffset = (!mIsPreview && mUseWallpaperOffset) ? -0.5f * mOffsetX : 0.0f;
+
         // Set the projection, view and model
-        GLES20.glViewport(0, -mStatusBarHeight, mWidth, mHeight);
+        GLES20.glViewport(0, -mStatusBarHeight, mWidth + widthOffset, mHeight);
         Matrix.setLookAtM(mVMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        if (mMVPMatrixOffset != 0.0f) {
+            Matrix.translateM(mVMatrix, 0, mMVPMatrixOffset, 0.0f, 0.0f);
+        }
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
         if (mTextureManager != null) {
@@ -858,7 +882,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
                 if (!mIsPaused && mWorld != null) {
                     // Now draw the world (all the photo frames with effects)
-                    mWorld.draw(mMVPMatrix);
+                    mWorld.draw(mMVPMatrix, mMVPMatrixOffset);
 
                     // Check if we have some pending transition or transition has
                     // exceed its timeout
@@ -885,7 +909,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                 } else {
                     if (mWorld != null) {
                         // Just draw the world before notify GLView to goto sleep
-                        mWorld.draw(mMVPMatrix);
+                        mWorld.draw(mMVPMatrix, mMVPMatrixOffset);
                     }
                     mDispatcher.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
                 }

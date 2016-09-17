@@ -57,7 +57,7 @@ public class SwapTransition extends Transition {
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
+    public void applyTransition(float delta, float[] matrix, float offset) {
         draw(delta < 1f ? mTransitionTarget : mTarget, matrix);
     }
 

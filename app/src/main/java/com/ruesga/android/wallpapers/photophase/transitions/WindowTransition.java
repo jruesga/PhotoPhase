@@ -126,15 +126,15 @@ public class WindowTransition extends Transition {
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
+    public void applyTransition(float delta, float[] matrix, float offset) {
         // Apply the transition
         applyDstTransition(matrix);
         if (delta < 1) {
-            applySrcTransition(delta, matrix);
+            applySrcTransition(delta, matrix, offset);
         }
     }
 
-    private void applySrcTransition(float delta, float[] matrix) {
+    private void applySrcTransition(float delta, float[] matrix, float offset) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
@@ -210,6 +210,9 @@ public class WindowTransition extends Transition {
 
         // Apply the projection and view transformation
         Matrix.setIdentityM(matrix, 0);
+        if (offset != 0.0f) {
+            Matrix.translateM(matrix, 0, offset, 0.0f, 0.0f);
+        }
         Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
         Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
         Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, 0.0f, 0.0f);

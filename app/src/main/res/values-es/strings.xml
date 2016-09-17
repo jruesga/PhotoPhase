@@ -68,6 +68,8 @@
   <string name="pref_general_aspect_ratio_correction_summary">Intentar corregir la relación de aspecto original de la imagen cortando la imagen para ajustarla a la celda de destino</string>
   <string name="pref_general_frame_spacer">Espacio entre marcos</string>
   <string name="pref_general_frame_spacer_summary">Añadir un poco de separación entre los marcos</string>
+  <string name="pref_general_wallpaper_offset">Desplazamiento fondo de pantalla</string>
+  <string name="pref_general_wallpaper_offset_summary">Ajustar el desplazamiento del fondo de pantalla para moverse a través de todas las páginas de la applicación de inicio</string>
   <string name="pref_general_transitions">Transiciones</string>
   <string name="pref_general_transitions_types">Tipos</string>
   <string name="pref_general_transitions_types_summary_format"><xliff:g id="selected">%1$d</xliff:g> de <xliff:g id="total">%2$d</xliff:g> tipos seleccionados</string>

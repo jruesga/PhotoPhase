@@ -121,16 +121,16 @@ public class CubeTransition extends Transition {
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
+    public void applyTransition(float delta, float[] matrix, float offset) {
         if (delta < 1) {
-            applyDstTransition(delta, matrix);
-            applySrcTransition(delta, matrix);
+            applyDstTransition(delta, matrix, offset);
+            applySrcTransition(delta, matrix, offset);
         } else {
             applyFinalTransition(matrix);
         }
     }
 
-    private void applySrcTransition(float delta, float[] matrix) {
+    private void applySrcTransition(float delta, float[] matrix, float offset) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
@@ -211,6 +211,9 @@ public class CubeTransition extends Transition {
 
         // Apply the projection and view transformation
         Matrix.setIdentityM(matrix, 0);
+        if (offset != 0.0f) {
+            Matrix.translateM(matrix, 0, offset, 0.0f, 0.0f);
+        }
         Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
         Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
         Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, 0.0f, 0.0f);
@@ -228,7 +231,7 @@ public class CubeTransition extends Transition {
         GLESUtil.glesCheckError("glDisableVertexAttribArray");
     }
 
-    private void applyDstTransition(float delta, float[] matrix) {
+    private void applyDstTransition(float delta, float[] matrix, float offset) {
         // Bind default FBO
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLESUtil.glesCheckError("glBindFramebuffer");
@@ -309,6 +312,9 @@ public class CubeTransition extends Transition {
 
         // Apply the projection and view transformation
         Matrix.setIdentityM(matrix, 0);
+        if (offset != 0.0f) {
+            Matrix.translateM(matrix, 0, offset, 0.0f, 0.0f);
+        }
         Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, 0.0f, 0.0f);
         Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, 0.0f, rotateY, 0.0f);
         Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, 0.0f, 0.0f);

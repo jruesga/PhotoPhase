@@ -128,7 +128,7 @@ public class TranslateTransition extends Transition {
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
+    public void applyTransition(float delta, float[] matrix, float offset) {
         // Apply the transition
         applyTransitionToDst(matrix);
         if (delta < 1) {

@@ -87,6 +87,8 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
                 mEmptyTextureQueueFlag = true;
             } else if (key.compareTo("ui_frame_spacer") == 0) {
                 mRecreateWorld = true;
+            } else if (key.compareTo("ui_wallpaper_offset") == 0) {
+                mRedrawFlag = true;
             } else if (key.compareTo("ui_transition_types") == 0) {
                 mRedrawFlag = true;
                 Preferences.General.Transitions.setSelectedTransitions(
@@ -259,6 +261,10 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         CheckBoxPreference frameSpacer =
                 (CheckBoxPreference) findPreference("ui_frame_spacer");
         frameSpacer.setOnPreferenceChangeListener(mOnChangeListener);
+
+        CheckBoxPreference wallpaperOffset =
+                (CheckBoxPreference) findPreference("ui_wallpaper_offset");
+        wallpaperOffset.setOnPreferenceChangeListener(mOnChangeListener);
 
         mTransitionsTypes = (MultiSelectListPreference) findPreference("ui_transition_types");
         Pair<String[], String[]> entries = AndroidHelper.sortEntries(

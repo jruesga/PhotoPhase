@@ -96,14 +96,15 @@ public class FlipTransition extends Transition {
         int low = 0;
         int high = modes.length - 1;
         mMode = modes[Utils.getNextRandom(low, high)];
+//        mMode = FLIP_MODES.VERTICAL;
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
-        applyTransition(delta, matrix, delta <= 0.5 ? mTarget : mTransitionTarget);
+    public void applyTransition(float delta, float[] matrix, float offset) {
+        applyTransition(delta, matrix, offset, delta <= 0.5 ? mTarget : mTransitionTarget);
     }
 
-    private void applyTransition(float delta, float[] matrix, PhotoFrame target) {
+    private void applyTransition(float delta, float[] matrix, float offset, PhotoFrame target) {
         // Retrieve the index of the structures
         int index = delta <= 0.5f ? 0 : 1;
 
@@ -155,7 +156,7 @@ public class FlipTransition extends Transition {
         switch (mMode) {
             case HORIZONTAL:
                 rotateY = -1.0f;
-                translateX = (mTarget.getFrameVertex()[2] - ((mTarget.getFrameVertex()[2] - mTarget.getFrameVertex()[0]) / 2)) * -1;
+                translateX = ((mTarget.getFrameVertex()[2] - ((mTarget.getFrameVertex()[2] - mTarget.getFrameVertex()[0]) / 2)) * -1);
                 break;
             case VERTICAL:
                 rotateX = -1.0f;
@@ -168,6 +169,9 @@ public class FlipTransition extends Transition {
 
         // Apply the projection and view transformation
         Matrix.setIdentityM(matrix, 0);
+        if (offset != 0.0f) {
+            Matrix.translateM(matrix, 0, offset, 0.0f, 0.0f);
+        }
         Matrix.translateM(mTranslationMatrix, 0, matrix, 0, -translateX, -translateY, 0.0f);
         Matrix.rotateM(mTranslationMatrix, 0, mTranslationMatrix, 0, angle, rotateX, rotateY, 0.0f);
         Matrix.translateM(mTranslationMatrix, 0, mTranslationMatrix, 0, translateX, translateY, 0.0f);

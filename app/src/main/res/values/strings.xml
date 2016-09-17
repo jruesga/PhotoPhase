@@ -75,6 +75,8 @@
     <string name="pref_general_aspect_ratio_correction_summary">Try to fix the picture\'s aspect ratio by cropping it to fit the destination frame</string>
     <string name="pref_general_frame_spacer">Frame spacer</string>
     <string name="pref_general_frame_spacer_summary">Add a bit of separation between frames</string>
+    <string name="pref_general_wallpaper_offset">Wallpaper offset</string>
+    <string name="pref_general_wallpaper_offset_summary">Adjust wallpaper offset to move across all your launcher drawer pages</string>
 
     <string name="pref_general_touch">Touch</string>
     <string name="pref_general_touch_mode">Touch mode</string>

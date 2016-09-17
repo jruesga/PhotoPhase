@@ -73,6 +73,14 @@
             android:persistent="true"
             android:defaultValue="true" />
 
+        <!-- Wallpaper offset -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_wallpaper_offset"
+            android:title="@string/pref_general_wallpaper_offset"
+            android:summary="@string/pref_general_wallpaper_offset_summary"
+            android:persistent="true"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
     <!-- Touch behaviour -->

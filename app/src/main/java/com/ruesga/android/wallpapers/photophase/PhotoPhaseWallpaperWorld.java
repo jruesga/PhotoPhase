@@ -202,8 +202,9 @@ public class PhotoPhaseWallpaperWorld {
      * Method that deselect the current transition.
      *
      * @param matrix The model-view-projection matrix
+     * @param offset The current x offset
      */
-    public void deselectTransition(float[] matrix) {
+    public void deselectTransition(float[] matrix, float offset) {
         if (mCurrent != -1 && mCurrent < mTransitions.size()) {
             // Retrieve the finally target
             Transition currentTransition = mTransitions.get(mCurrent);
@@ -220,7 +221,7 @@ public class PhotoPhaseWallpaperWorld {
                 transition.select(finalTarget);
 
                 // Draw the transition once
-                transition.apply(matrix);
+                transition.apply(matrix, offset);
             }
             mCurrent = -1;
         }
@@ -364,8 +365,9 @@ public class PhotoPhaseWallpaperWorld {
      * Method that draws all the photo frames.
      *
      * @param matrix The model-view-projection matrix
+     * @param offset The current x offset
      */
-    public void draw(float[] matrix) {
+    public void draw(float[] matrix, float offset) {
         // Apply every transition
         if (mTransitions != null) {
             // First draw the non-running transitions; then the active ones
@@ -376,7 +378,7 @@ public class PhotoPhaseWallpaperWorld {
                 }
 
                 if (!transition.isRunning()) {
-                    transition.apply(matrix);
+                    transition.apply(matrix, offset);
                 }
             }
             for (Transition transition : mTransitions) {
@@ -386,7 +388,7 @@ public class PhotoPhaseWallpaperWorld {
                 }
 
                 if (transition.isRunning()) {
-                    transition.apply(matrix);
+                    transition.apply(matrix, offset);
                 }
             }
         }

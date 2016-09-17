@@ -169,8 +169,9 @@ public abstract class Transition {
      * Method that requests to apply this transition.
      *
      * @param matrix The model-view-projection matrix
+     * @param offset The x offset (only if Matrix.setIdentityM if applied to the matrix)
      */
-    public final void apply(float[] matrix) {
+    public final void apply(float[] matrix, float offset) {
         // Check internal vars
         if (mTarget == null ||
                 mTarget.getPositionBuffer() == null ||
@@ -190,12 +191,12 @@ public abstract class Transition {
         }
 
         float delta = getDelta();
-        applyTransition(delta, matrix);
+        applyTransition(delta, matrix, offset);
 
         mRunning = delta < 1;
     }
 
-    protected abstract void applyTransition(float delta, float[] matrix);
+    protected abstract void applyTransition(float delta, float[] matrix, float offset);
 
     /**
      * Method that returns if the transition is being transition.

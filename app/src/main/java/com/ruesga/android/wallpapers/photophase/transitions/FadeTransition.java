@@ -70,7 +70,7 @@ public class FadeTransition extends Transition {
     }
 
     @Override
-    public void applyTransition(float delta, float[] matrix) {
+    public void applyTransition(float delta, float[] matrix, float offset) {
         if (delta <= 0.5) {
             // Draw the src target
             mColor.a = delta * 2.0f;
