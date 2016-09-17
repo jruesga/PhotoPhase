@@ -66,6 +66,8 @@ public class TranslateTransition extends Transition {
 
     private TRANSLATE_MODES mMode;
 
+    private float[] mTranslationMatrix = new float[16];
+
     public TranslateTransition(Context ctx, TextureManager tm) {
         super(ctx, tm, VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -183,13 +185,12 @@ public class TranslateTransition extends Transition {
         boolean vertical = (mMode.compareTo(TRANSLATE_MODES.UP_TO_DOWN) == 0 || mMode.compareTo(TRANSLATE_MODES.DOWN_TO_UP) == 0);
 
         // Apply the projection and view transformation
-        float[] translationMatrix = new float[16];
         if (vertical) {
-            Matrix.translateM(translationMatrix, 0, matrix, 0, 0.0f, distance, 0.0f);
+            Matrix.translateM(mTranslationMatrix, 0, matrix, 0, 0.0f, distance, 0.0f);
         } else {
-            Matrix.translateM(translationMatrix, 0, matrix, 0, distance, 0.0f, 0.0f);
+            Matrix.translateM(mTranslationMatrix, 0, matrix, 0, distance, 0.0f, 0.0f);
         }
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, translationMatrix, 0);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandlers[0], 1, false, mTranslationMatrix, 0);
         GLESUtil.glesCheckError("glUniformMatrix4fv");
 
         // Draw
