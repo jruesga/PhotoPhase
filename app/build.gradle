@@ -45,7 +45,7 @@ dependencies {
     // Chromecast
     compile 'com.google.android.gms:play-services-gcm:9.4.0'
     compile ('com.github.jruesga:chromecast-java-api-v2:e189575082') { transitive = false }
-    compile ('com.google.protobuf:protobuf-java:3.0.2') { transitive = false }
+    compile ('com.google.protobuf:protobuf-java:2.6.1') { transitive = false }
     compile ('org.codehaus.jackson:jackson-core-asl:1.9.13') { transitive = false }
     compile ('org.codehaus.jackson:jackson-mapper-asl:1.9.13') { transitive = false }
     compile 'org.nanohttpd:nanohttpd:2.3.1'
@@ -57,8 +57,8 @@ model {
         buildToolsVersion "24.0.2"
 
         defaultConfig {
-            versionCode 1025
-            versionName "2.2.4"
+            versionCode 1026
+            versionName "2.3.0"
 
             minSdkVersion.apiLevel 15
             targetSdkVersion.apiLevel 24
