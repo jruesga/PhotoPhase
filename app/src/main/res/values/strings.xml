@@ -114,8 +114,8 @@
     <string name="pref_media_random_summary_on">Images are displayed in a randomly sequence</string>
     <string name="pref_media_random_summary_off">Images are displayed in a sequential way</string>
     <string name="pref_media_remember_last_title">Remember last image</string>
-    <string name="pref_media_remember_last_summary_on">The wallpaper will start showing the latest shown image</string>
-    <string name="pref_media_remember_last_summary_off">The wallpaper will start showing the first image in the queue</string>
+    <string name="pref_media_remember_last_summary_on">The app will start showing the latest shown image</string>
+    <string name="pref_media_remember_last_summary_off">The app will start showing the first image in the queue</string>
     <string name="pref_media_pictures">Pictures</string>
     <string name="pref_media_albums">Albums</string>
     <string name="pref_media_albums_summary">Set the albums and pictures that will be displayed on the wallpaper</string>

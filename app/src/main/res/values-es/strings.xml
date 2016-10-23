@@ -94,6 +94,9 @@
   <string name="pref_media_random_title">Ver las fotos al azar</string>
   <string name="pref_media_random_summary_on">Las fotos se muestran en una secuencia al azar</string>
   <string name="pref_media_random_summary_off">Las fotos se muestran de forma secuencial</string>
+  <string name="pref_media_remember_last_title">Recordar última imagen</string>
+  <string name="pref_media_remember_last_summary_on">La aplicación recordar la última imagen mostrada al arrancar</string>
+  <string name="pref_media_remember_last_summary_off">La aplicación mostrará la primera imagen en la cola al arrancar</string>
   <string name="pref_media_pictures">Imágenes</string>
   <string name="pref_media_albums">Álbumes</string>
   <string name="pref_media_albums_summary">Establecer los álbumes e imágenes a mostrar en el fondo de pantalla</string>
