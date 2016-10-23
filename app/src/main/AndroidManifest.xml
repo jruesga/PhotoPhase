@@ -45,6 +45,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:description="@string/app_description"
         android:theme="@style/PhotoPhaseTheme"
@@ -52,7 +53,7 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:supportsRtl="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <service
             android:name="PhotoPhaseWallpaper"
