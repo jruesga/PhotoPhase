@@ -104,6 +104,7 @@ model {
         packagingOptions.with {
             // Ignore duplicate apache license files which breaks the AS build
             exclude 'META-INF/ASL2.0'
+            exclude 'META-INF/LICENSE'
         }
     }
 
