@@ -145,6 +145,8 @@ public class PhotoPhaseWallpaper
                 float yOffsetStep, int xPixelOffset, int yPixelOffset) {
             if (xOffsetStep != Float.POSITIVE_INFINITY && xOffsetStep != Float.NEGATIVE_INFINITY) {
                 ((PhotoPhaseRenderer) getRenderer()).onOffsetChanged(xOffset, yOffset);
+            } else {
+                ((PhotoPhaseRenderer) getRenderer()).onOffsetChanged(-1, yOffset);
             }
         }
 
