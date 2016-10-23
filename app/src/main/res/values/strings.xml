@@ -28,6 +28,9 @@
     <string name="no_pictures_oops_msg">No pictures found</string>
     <string name="no_pictures_permission_required_msg">Permission required. Tap here.</string>
 
+    <!-- Wallpaper live preview -->
+    <string name="no_wallpaper_live_preview_activity_found">Can\'t open Wallpaper Live Preview</string>
+
     <!-- No albums message -->
     <string name="no_pictures_albums_found_msg">No albums found</string>
     <string name="no_pictures_albums_tap_to_refresh_msg">Tap to refresh</string>

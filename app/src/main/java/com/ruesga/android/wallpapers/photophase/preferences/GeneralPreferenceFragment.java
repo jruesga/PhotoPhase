@@ -35,6 +35,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.support.v4.util.Pair;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.Colors;
@@ -200,20 +201,25 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         mSetAsWallpaper.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent i;
-                if (AndroidHelper.isJellyBeanOrGreater()) {
-                    try {
-                        i = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                        i.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                                new ComponentName(getActivity(), PhotoPhaseWallpaper.class));
-                        startActivity(i);
-                    } catch (ActivityNotFoundException ex) {
+                try {
+                    Intent i;
+                    if (AndroidHelper.isJellyBeanOrGreater()) {
+                        try {
+                            i = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                            i.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                                    new ComponentName(getActivity(), PhotoPhaseWallpaper.class));
+                            startActivity(i);
+                        } catch (ActivityNotFoundException ex) {
+                            i = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
+                            startActivity(i);
+                        }
+                    } else {
                         i = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
                         startActivity(i);
                     }
-                } else {
-                    i = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
-                    startActivity(i);
+                } catch (ActivityNotFoundException ex) {
+                    Toast.makeText(getActivity(), R.string.no_wallpaper_live_preview_activity_found,
+                            Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
