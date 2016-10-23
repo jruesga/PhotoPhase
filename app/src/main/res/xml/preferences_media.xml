@@ -45,6 +45,14 @@
             android:summaryOff="@string/pref_media_random_summary_off"
             android:defaultValue="true"/>
 
+        <!-- Remember the last shown media -->
+        <com.ruesga.android.wallpapers.photophase.preferences.SwitchPreference
+            android:key="ui_media_remember_last_media_show"
+            android:title="@string/pref_media_remember_last_title"
+            android:summaryOn="@string/pref_media_remember_last_summary_on"
+            android:summaryOff="@string/pref_media_remember_last_summary_off"
+            android:defaultValue="false"/>
+
     </PreferenceCategory>
 
     <!-- Pictures -->

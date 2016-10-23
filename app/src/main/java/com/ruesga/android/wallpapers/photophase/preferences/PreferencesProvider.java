@@ -366,12 +366,22 @@ public final class PreferencesProvider {
             }
 
             /**
-             * Method that returns if the photos are displaye randomly or sequentially
+             * Method that returns if the photos are displayed randomly or sequentially
              *
              * @return boolean If the app must be select new albums when they are discovered.
              */
             public static boolean isRandomSequence(Context context) {
                 return getSharedPreferences(context).getBoolean("ui_media_random", true);
+            }
+
+            /**
+             * Method that returns if it should use the last shown image on wallpaper start
+             *
+             * @return boolean If it should use the last shown image on wallpaper start
+             */
+            public static boolean isRememberLastMediaShown(Context context) {
+                return getSharedPreferences(context).getBoolean(
+                        "ui_media_remember_last_media_show", false);
             }
 
             /**
@@ -435,6 +445,29 @@ public final class PreferencesProvider {
                editor.putStringSet("media_last_discovered_albums", albums);
                editor.apply();
            }
+
+            /**
+             * Method that returns the last media shown
+             *
+             * @return String The last media shown
+             */
+            public static String getLastMediaShown(Context context) {
+                return getSharedPreferences(context).getString("media_last_media_shown", null);
+            }
+
+            /**
+             * Method that returns the list of albums and pictures to be displayed
+             *
+             * @param context The current context
+             * @param media The current media shown
+             */
+            public static synchronized void setLastMediaShown(Context context, String media) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putString("media_last_media_shown", media);
+                editor.apply();
+            }
         }
 
         /**
