@@ -103,7 +103,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
     private int mStatusBarHeight = 0;
     private int mMeasuredHeight  = -1;
     private boolean mUseWallpaperOffset;
-    private float mOffsetX;
+    private float mOffsetX = -1f;
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjMatrix = new float[16];
@@ -857,10 +857,11 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
         // Calculate wallpaper offset
         int widthOffset = 0;
-        if (!mIsPreview && mUseWallpaperOffset) {
+        if (!mIsPreview && mUseWallpaperOffset && mOffsetX != -1) {
             widthOffset = (int) (mWidth / 3f);
         }
-        mMVPMatrixOffset = (!mIsPreview && mUseWallpaperOffset) ? -0.5f * mOffsetX : 0.0f;
+        mMVPMatrixOffset = (!mIsPreview && mUseWallpaperOffset && mOffsetX != -1)
+                ? -0.5f * mOffsetX : 0.0f;
 
         // Set the projection, view and model
         GLES20.glViewport(0, -mStatusBarHeight, mWidth + widthOffset, mHeight);

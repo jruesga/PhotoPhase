@@ -143,7 +143,9 @@ public class PhotoPhaseWallpaper
         @Override
         public void onOffsetsChanged(float xOffset, float yOffset, float xOffsetStep,
                 float yOffsetStep, int xPixelOffset, int yPixelOffset) {
-            ((PhotoPhaseRenderer)getRenderer()).onOffsetChanged(xOffset, yOffset);
+            if (xOffsetStep != Float.POSITIVE_INFINITY && xOffsetStep != Float.NEGATIVE_INFINITY) {
+                ((PhotoPhaseRenderer) getRenderer()).onOffsetChanged(xOffset, yOffset);
+            }
         }
 
         /**
