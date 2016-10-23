@@ -43,7 +43,7 @@ dependencies {
     compile ('com.mikepenz:aboutlibraries:5.8.1') { transitive = false }
 
     // Chromecast
-    compile 'com.google.android.gms:play-services-gcm:9.8.00'
+    compile 'com.google.android.gms:play-services-gcm:9.6.1'
     compile ('com.github.jruesga:chromecast-java-api-v2:e189575082') { transitive = false }
     compile ('com.google.protobuf:protobuf-java:2.6.1') { transitive = false }
     compile ('org.codehaus.jackson:jackson-core-asl:1.9.13') { transitive = false }
