@@ -34,8 +34,13 @@
     <uses-permission android:name="android.permission.GET_TASKS" android:maxSdkVersion="19"/>
 
     <uses-permission android:name="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION"/>
+    <uses-permission android:name="com.ruesga.android.wallpapers.photophase.WRITE_CONTENT_PERMISSION"/>
+
     <permission
         android:name="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION"
+        android:protectionLevel="signature" />
+    <permission
+        android:name="com.ruesga.android.wallpapers.photophase.WRITE_CONTENT_PERMISSION"
         android:protectionLevel="signature" />
 
     <application
@@ -119,6 +124,7 @@
             android:name=".providers.TemporaryContentAccessProvider"
             android:authorities="com.ruesga.android.wallpapers.photophase.providers"
             android:grantUriPermissions="true"
+            android:writePermission="com.ruesga.android.wallpapers.photophase.WRITE_CONTENT_PERMISSION"
             android:exported="true"
             tools:ignore="ExportedContentProvider"/>
 
