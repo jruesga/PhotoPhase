@@ -178,9 +178,13 @@ public class Effects {
          */
         WARHOL(31, null),
         /**
-         * @see PhotoPhaseEffectFactory#EFFECT_WARHOL
+         * @see PhotoPhaseEffectFactory#EFFECT_TOON
          */
-        TOON(32, null);
+        TOON(32, null),
+        /**
+         * @see PhotoPhaseEffectFactory#EFFECT_SOBEL
+         */
+        SOBEL(33, null);
 
         public final int mId;
         public final Settings mSettings;
@@ -402,6 +406,10 @@ public class Effects {
         } else if (nextEffect.compareTo(EFFECTS.TOON) == 0) {
             if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_TOON)) {
                 effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_TOON);
+            }
+        } else if (nextEffect.compareTo(EFFECTS.SOBEL) == 0) {
+            if (EffectFactory.isEffectSupported(PhotoPhaseEffectFactory.EFFECT_SOBEL)) {
+                effect = effectFactory.createEffect(PhotoPhaseEffectFactory.EFFECT_SOBEL);
             }
         }
 

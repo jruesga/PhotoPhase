@@ -144,6 +144,7 @@
         <item>@string/effects_dof</item>
         <item>@string/effects_warhol</item>
         <item>@string/effects_toon</item>
+        <item>@string/effects_sobel</item>
     </string-array>
 
     <string-array name="effects_values" translatable="false">
@@ -180,6 +181,7 @@
         <item>30</item>
         <item>31</item>
         <item>32</item>
+        <item>33</item>
     </string-array>
 
     <string-array name="effects_default" translatable="false">

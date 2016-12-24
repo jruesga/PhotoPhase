@@ -246,7 +246,8 @@
     <string name="effects_swirl">Swirl</string>
     <string name="effects_dof">Deep of field</string>
     <string name="effects_warhol" translatable="false">Warhol</string>
-    <string name="effects_toon" translatable="false">Toon</string>
+    <string name="effects_toon">Toon</string>
+    <string name="effects_sobel">Sobel</string>
 
     <!-- Borders -->
     <string name="borders_noborder">No border</string>
