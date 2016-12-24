@@ -209,6 +209,7 @@
   <string name="effects_thermalvision">Visión térmica</string>
   <string name="effects_swirl">Remolino</string>
   <string name="effects_dof">Profundidad de campo</string>
+  <string name="effects_toon">Cartoon</string>
   <string name="borders_noborder">Sin borde</string>
   <string name="borders_simple">Simple</string>
   <string name="borders_rounded">Redondeado</string>
