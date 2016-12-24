@@ -17,9 +17,9 @@
 package com.ruesga.android.wallpapers.photophase.cast;
 
 import android.content.Context;
-import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.media.ExifInterface;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.webkit.MimeTypeMap;

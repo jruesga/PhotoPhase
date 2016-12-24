@@ -32,7 +32,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
@@ -41,6 +40,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.media.ExifInterface;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -613,7 +613,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     aperture = Double.parseDouble(exif.getAttribute(ExifInterface.TAG_F_NUMBER));
                 } else {
                     //noinspection deprecation
-                    aperture = Double.parseDouble(exif.getAttribute(ExifInterface.TAG_APERTURE));
+                    aperture = Double.parseDouble(exif.getAttribute(ExifInterface.TAG_F_NUMBER));
                 }
             } catch (NullPointerException | NumberFormatException ex) {
                 // Ignore
@@ -622,7 +622,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 iso = exif.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
             } else {
                 //noinspection deprecation
-                iso = exif.getAttribute(ExifInterface.TAG_ISO);
+                iso = exif.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
             }
             flash = exif.getAttributeInt(ExifInterface.TAG_FLASH, -1);
 

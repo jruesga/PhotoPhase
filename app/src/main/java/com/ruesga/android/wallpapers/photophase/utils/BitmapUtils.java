@@ -26,7 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 
