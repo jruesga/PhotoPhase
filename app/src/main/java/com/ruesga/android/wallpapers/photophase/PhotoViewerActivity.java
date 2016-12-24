@@ -146,7 +146,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         private static final String OPEN_STREETMAP_URL =
                 "http://staticmap.openstreetmap.de/staticmap.php/";
         private static final String IMAGE_URL = OPEN_STREETMAP_URL +
-                "?center=%f,%f&zoom=14&size=800x600&maptype=osmarenderer&markers=%f,%f,red-pushpin";
+                "?center=%f,%f&zoom=14&size=800x600&maptype=mapnik&markers=%f,%f,red-pushpin";
 
         @Override
         @SuppressWarnings("ConstantConditions")
