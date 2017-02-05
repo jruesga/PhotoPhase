@@ -157,11 +157,14 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean isValidFragment(String fragmentName) {
-        return true;
+    protected boolean isValidFragment(String fragmentName) {
+        return ChoosePicturesFragment.class.getName().equals(fragmentName)
+                || DispositionFragment.class.getName().equals(fragmentName)
+                || LayoutPreferenceFragment.class.getName().equals(fragmentName)
+                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
+                || MediaPreferenceFragment.class.getName().equals(fragmentName)
+                || CastPreferenceFragment.class.getName().equals(fragmentName)
+                || LivePreviewFragment.class.getName().equals(fragmentName);
     }
 }
