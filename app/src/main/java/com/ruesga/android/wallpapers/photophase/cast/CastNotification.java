@@ -138,11 +138,11 @@ public class CastNotification {
         return PendingIntent.getService(context, command, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static PendingIntent getDisplayPhotoActionIntent(Context context, File media) {
         Intent i = new Intent(context, PhotoViewerActivity.class);
         i.putExtra(PhotoViewerActivity.EXTRA_PHOTO, media.getAbsolutePath());
-        //noinspection deprecation
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -153,10 +153,10 @@ public class CastNotification {
         return PendingIntent.getActivity(context, 2000, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static PendingIntent getShowCastQueueActionIntent(Context context) {
         Intent i = new Intent(context, CastPhotoQueueActivity.class);
-        //noinspection deprecation
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP

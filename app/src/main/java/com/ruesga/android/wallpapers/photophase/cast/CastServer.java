@@ -43,6 +43,7 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -336,7 +337,7 @@ public class CastServer extends NanoHTTPD {
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions"})
     public synchronized Response serve(IHTTPSession session) {
         // Acquire a wakelock while serving the file
         mCpuWakeLock.acquire();
@@ -347,14 +348,14 @@ public class CastServer extends NanoHTTPD {
         }
 
         // Check we received a valid request before serve it
-        Map<String, String> params = session.getParms();
+        final Map<String, List<String>> params = session.getParameters();
         if (!params.containsKey(HASH_KEY)) {
             return createFailureResponse(Response.Status.BAD_REQUEST);
         }
-        if (TextUtils.isEmpty(params.get(HASH_KEY))) {
+        final String hash = params.isEmpty() ? null : params.get(HASH_KEY).get(0);
+        if (TextUtils.isEmpty(hash)) {
             return createFailureResponse(Response.Status.BAD_REQUEST);
         }
-        String hash = params.get(HASH_KEY);
         if (!mRequests.containsKey(hash)) {
             return createFailureResponse(Response.Status.FORBIDDEN);
         }

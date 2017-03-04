@@ -236,11 +236,11 @@ public final class AndroidHelper {
         return intent;
     }
 
+    @SuppressWarnings("deprecation")
     public static Locale getLocale(Resources res) {
         if (isNougatOrGreater()) {
             return res.getConfiguration().getLocales().get(0);
         }
-        //noinspection deprecation
         return res.getConfiguration().locale;
     }
 

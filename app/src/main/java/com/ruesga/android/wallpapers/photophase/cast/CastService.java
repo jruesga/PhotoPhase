@@ -93,9 +93,9 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     public static final int COMMAND_NEXT = 2;
     public static final int COMMAND_STOP = 3;
 
-    public static class CastStatusInfo {
-        public int mCastMode = CAST_MODE_NONE;
-        public boolean mPaused;
+    static class CastStatusInfo {
+        int mCastMode = CAST_MODE_NONE;
+        boolean mPaused;
     }
 
     private static final int MESSAGE_START_AND_CAST = 1;
@@ -135,10 +135,10 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
     private final Handler.Callback mMessenger = new Handler.Callback() {
         @Override
+        @SuppressWarnings("unchecked")
         public boolean handleMessage(Message message) {
             switch (message.what) {
                 case MESSAGE_START_AND_CAST:
-                    //noinspection unchecked
                     Pair<String, String> o1 = (Pair<String, String>) message.obj;
                     startServerAndCastPath(o1.first, o1.second);
                     return true;
@@ -152,7 +152,6 @@ public class CastService extends Service implements CastServer.CastServerEventLi
                     return true;
 
                 case MESSAGE_SELECT_DEVICE:
-                    //noinspection unchecked
                     Pair<String, Boolean> o2 = (Pair<String, Boolean>) message.obj;
                     performSelectDevice(o2.first, o2.second);
                     return true;
