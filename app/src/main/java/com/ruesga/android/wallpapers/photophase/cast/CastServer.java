@@ -237,7 +237,7 @@ public class CastServer extends NanoHTTPD {
         mIsConnected = true;
     }
 
-    protected boolean send(String path) throws IOException {
+    protected void send(String path) throws IOException {
         File f = new File(path);
         if (!f.isFile()) {
             throw new IOException("Argument is not a file");
@@ -267,7 +267,6 @@ public class CastServer extends NanoHTTPD {
         CastMessages.Cast cast = new CastMessages.Cast(url, token, name, album, r.width(), r.height());
         printRequestMessage(cast);
         mChromecast.send(PHOTOPHASE_NAMESPACE, cast);
-        return true;
     }
 
     protected void sendConfiguration() throws IOException {

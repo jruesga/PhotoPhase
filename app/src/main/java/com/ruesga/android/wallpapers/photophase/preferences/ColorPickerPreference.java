@@ -184,7 +184,7 @@ public class ColorPickerPreference extends DialogPreference {
             if (!mIgnoreTextChanged && s.length() == 8) {
                 try {
                     setColor(Color.parseColor("#" + s.toString()), true);
-                } catch (Exception e) {/**NON BLOCK**/}
+                } catch (Exception e) {/*NON BLOCK*/}
             }
         }
     }
@@ -288,8 +288,10 @@ public class ColorPickerPreference extends DialogPreference {
         onPrepareDialogBuilderCompat(builder);
         AndroidHelper.tryRegisterActivityDestroyListener(getPreferenceManager(), this);
         mDialog = builder.create();
-        mDialog.getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        if (mDialog.getWindow() != null) {
+            mDialog.getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
         mDialog.setOnDismissListener(this);
         if (state != null) {
             mDialog.onRestoreInstanceState(state);

@@ -1039,6 +1039,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
      */
     private void onHeaderPressed(AdapterView<?> parent, View view, int position) {
         mAlbum = mAlbumAdapter.getItem(position);
+        if (mAlbum == null) {
+            return;
+        }
         File path = new File(mAlbum.getPath());
         if (!path.exists()) {
             Toast.makeText(getActivity(),

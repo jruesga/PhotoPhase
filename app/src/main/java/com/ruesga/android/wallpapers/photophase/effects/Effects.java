@@ -223,19 +223,17 @@ public class Effects {
      * Method that that release the cached data
      */
     public void release() {
-        if (mCachedEffects != null) {
-            for (Effect effect : mCachedEffects.values()) {
-                try {
-                    effect.release();
-                } catch (NoSuchElementException ex) {
-                    // Catching a runtime exception is not ideally, but releasing
-                    // the effect causes a fc it the effect is not a valid state.
-                    // Since we are releasing the effect we can ignore it to avoid
-                    // crash the app
-                }
+        for (Effect effect : mCachedEffects.values()) {
+            try {
+                effect.release();
+            } catch (NoSuchElementException ex) {
+                // Catching a runtime exception is not ideally, but releasing
+                // the effect causes a fc it the effect is not a valid state.
+                // Since we are releasing the effect we can ignore it to avoid
+                // crash the app
             }
-            mCachedEffects.clear();
         }
+        mCachedEffects.clear();
     }
 
     /**

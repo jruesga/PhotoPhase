@@ -99,7 +99,7 @@ public class MDNSDiscover {
      *                 incoming reply packets.
      * @param timeout duration in milliseconds to wait for answer packets. If {@code 0}, this method
      *                will listen forever.
-     * @throws IOException
+     * @throws IOException If an exception happens while discovering services.
      */
     @SuppressWarnings("unused")
     public static void discover(String serviceType, Callback callback, int timeout) throws IOException {
@@ -148,7 +148,7 @@ public class MDNSDiscover {
      * @param timeout duration in milliseconds to wait for an answer packet. If {@code 0}, this
      *                method will listen forever.
      * @return the reply packet's decoded answer data
-     * @throws IOException
+     * @throws IOException If an exception happens while resolving the service.
      */
     public static Result resolve(String serviceName, int timeout) throws IOException {
         if (timeout < 0) throw new IllegalArgumentException();

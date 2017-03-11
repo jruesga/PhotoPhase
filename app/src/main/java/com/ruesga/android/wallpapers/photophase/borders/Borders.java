@@ -120,12 +120,10 @@ public class Borders {
      * Method that that release the cached data
      */
     public void release() {
-        if (mCachedBorders != null) {
-            for (Border border : mCachedBorders.values()) {
-                border.release();
-            }
-            mCachedBorders.clear();
+        for (Border border : mCachedBorders.values()) {
+            border.release();
         }
+        mCachedBorders.clear();
     }
 
     /**

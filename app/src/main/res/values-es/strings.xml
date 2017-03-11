@@ -246,7 +246,7 @@
   <string name="photoviewer_details_name">Nombre: <xliff:g id="name" example="myphoto.jpg">%1$s</xliff:g></string>
   <string name="photoviewer_details_size">Tamaño: <xliff:g id="size" example="234">%1$d</xliff:g> KB</string>
   <string name="photoviewer_details_resolution">Resolución: <xliff:g id="w" example="1024">%1$d</xliff:g>x<xliff:g id="h" example="678">%2$d</xliff:g></string>
-  <string name="photoviewer_details_orientation">Orientación: <xliff:g id="orientation" example="0">%1$s</xliff:g>\u00B0</string>
+  <string name="photoviewer_details_orientation">Orientación: <xliff:g id="orientation" example="0">%1$d</xliff:g>\u00B0</string>
   <string name="photoviewer_details_path">Ruta: <xliff:g id="path" example="/storage/emulated/0/photos">%1$s</xliff:g></string>
   <string name="frame_settings_dialog_title">Ajuste de marco</string>
   <string name="frame_settings_flag_background">Fondo</string>

@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.adapters;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,8 +75,9 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
     /**
      * {@inheritDoc}
      */
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         // Retrieve album
         final Album album = this.mData.get(position);

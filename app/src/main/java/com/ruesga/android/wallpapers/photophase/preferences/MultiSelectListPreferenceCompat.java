@@ -85,8 +85,10 @@ public class MultiSelectListPreferenceCompat extends MultiSelectListPreference {
                 fakeBuilder.mCheckedItems, fakeBuilder.mOnMultiChoiceClickListener);
         AndroidHelper.tryRegisterActivityDestroyListener(getPreferenceManager(), this);
         mDialog = builder.create();
-        mDialog.getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        if (mDialog.getWindow() != null) {
+            mDialog.getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
         mDialog.setOnDismissListener(this);
         if (state != null) {
             mDialog.onRestoreInstanceState(state);

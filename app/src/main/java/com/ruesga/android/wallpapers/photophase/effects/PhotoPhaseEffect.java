@@ -58,7 +58,6 @@ public abstract class PhotoPhaseEffect extends Effect {
 
     private final int[] mOldState = new int[GL_STATE_COUNT];
 
-    private final EffectContext mEffectContext;
     private final String mName;
 
     private final Effect mIdentityEffect;
@@ -80,11 +79,10 @@ public abstract class PhotoPhaseEffect extends Effect {
      */
     public PhotoPhaseEffect(EffectContext ctx, String name) {
         super();
-        mEffectContext = ctx;
         mName = name;
 
         // Stand on MCA identity effect for the initialization work
-        EffectFactory effectFactory = mEffectContext.getFactory();
+        EffectFactory effectFactory = ctx.getFactory();
         mIdentityEffect = effectFactory.createEffect(MCA_IDENTITY_EFFECT);
     }
 

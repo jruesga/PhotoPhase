@@ -58,7 +58,6 @@ public abstract class Border extends Effect {
 
     private final int[] mOldState = new int[GL_STATE_COUNT];
 
-    private final EffectContext mEffectContext;
     private final String mName;
 
     private final Effect mIdentityEffect;
@@ -82,13 +81,12 @@ public abstract class Border extends Effect {
      */
     public Border(EffectContext ctx, String name) {
         super();
-        mEffectContext = ctx;
         mName = name;
         mColor = new GLESUtil.GLColor(1, 0, 0, 0);
         mBgColor = new GLESUtil.GLColor(1, 0, 0, 0);
 
         // Stand on MCA identity effect for the initialization work
-        EffectFactory effectFactory = mEffectContext.getFactory();
+        EffectFactory effectFactory = ctx.getFactory();
         mIdentityEffect = effectFactory.createEffect(MCA_IDENTITY_EFFECT);
     }
 

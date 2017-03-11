@@ -65,7 +65,7 @@ public class FixedQueue<T> {
             if (this.mQueue[this.mHead] != null) {
                 try {
                     noSynchronizedRemove();
-                } catch (Throwable ex) {/**NON BLOCK**/}
+                } catch (Throwable ex) {/*NON BLOCK*/}
             }
             this.mQueue[this.mHead] = o;
             this.mHead++;

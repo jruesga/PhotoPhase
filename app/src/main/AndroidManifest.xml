@@ -53,6 +53,7 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:supportsRtl="true"
+        android:extractNativeLibs="false"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <service
