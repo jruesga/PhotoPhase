@@ -165,6 +165,11 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || MediaPreferenceFragment.class.getName().equals(fragmentName)
                 || CastPreferenceFragment.class.getName().equals(fragmentName)
-                || LivePreviewFragment.class.getName().equals(fragmentName);
+                || LivePreviewFragment.class.getName().equals(fragmentName)
+                || LiveTransitionsPreviewFragment.class.getName().equals(fragmentName)
+                || LiveEffectsPreviewFragment.class.getName().equals(fragmentName)
+                || LiveBordersPreviewFragment.class.getName().equals(fragmentName)
+                || PortraitDispositionFragment.class.getName().equals(fragmentName)
+                || LandscapeDispositionFragment.class.getName().equals(fragmentName);
     }
 }
