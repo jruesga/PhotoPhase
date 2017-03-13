@@ -21,7 +21,7 @@
     public <init>(...);
 }
 
-# keep native methods
+# keep gles methods
 -keepclasseswithmembernames,includedescriptorclasses class * {
     native <methods>;
 }

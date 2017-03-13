@@ -14,117 +14,86 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle-experimental:0.9.0'
-    }
-}
+apply plugin: 'com.android.application'
 
-apply plugin: 'com.android.model.application'
-
-repositories {
-    jcenter()
-    maven { url "https://jitpack.io" }
-}
+def libraries = rootProject.ext.libraries;
 
 dependencies {
-    compile 'com.android.support:design:25.2.0'
-    compile 'com.android.support:cardview-v7:25.2.0'
-    compile 'com.android.support:exifinterface:25.2.0'
-    compile 'com.github.danielnilsson9:color-picker-view:1.4.0'
-    compile ('org.adw.library:discrete-seekbar:1.0.1') { transitive = false }
-    compile ('com.github.chrisbanes:PhotoView:1.3.1') { transitive = false }
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
-    compile 'com.squareup.okio:okio:1.11.0'
-    compile ('com.mikepenz:fastadapter:2.1.7') { transitive = false }
-    compile ('com.mikepenz:iconics-core:2.8.2') { transitive = false }
-    compile ('com.mikepenz:aboutlibraries:5.9.3') { transitive = false }
+    compile project(':native')
+    compile "com.android.support:design:${libraries.support}"
+    compile "com.android.support:cardview-v7:${libraries.support}"
+    compile "com.android.support:exifinterface:${libraries.support}"
+    compile "com.github.danielnilsson9:color-picker-view:${libraries.colorpickerview}"
+    compile ("org.adw.library:discrete-seekbar:${libraries.discrete_seekbar}") { transitive = false }
+    compile ("com.github.chrisbanes:PhotoView:${libraries.photoview}") { transitive = false }
+    compile "com.squareup.okhttp3:okhttp:${libraries.okhttp3}"
+    compile "com.squareup.okio:okio:${libraries.okio}"
+    compile "com.mikepenz:aboutlibraries:${libraries.aboutlibraries}"
 
     // Chromecast
-    compile 'com.google.android.gms:play-services-gcm:10.2.0'
-    compile ('com.github.jruesga:chromecast-java-api-v2:2f777b443c') { transitive = false }
-    compile ('com.google.protobuf:protobuf-java:2.6.1') { transitive = false }
-    compile ('org.codehaus.jackson:jackson-core-asl:1.9.13') { transitive = false }
-    compile ('org.codehaus.jackson:jackson-mapper-asl:1.9.13') { transitive = false }
-    compile 'org.nanohttpd:nanohttpd:2.3.1'
+    compile "com.google.android.gms:play-services-gcm:${libraries.gms}"
+    compile ("com.github.jruesga:chromecast-java-api-v2:${libraries.chromecast}") { transitive = false }
+    compile ("com.google.protobuf:protobuf-java:${libraries.protobuf}") { transitive = false }
+    compile ("org.codehaus.jackson:jackson-core-asl:${libraries.jackson}") { transitive = false }
+    compile ("org.codehaus.jackson:jackson-mapper-asl:${libraries.jackson}") { transitive = false }
+    compile "org.nanohttpd:nanohttpd:${libraries.nanohttpd}"
 }
 
-model {
-    android {
-        compileSdkVersion 25
-        buildToolsVersion "25.0.2"
+android {
+    defaultConfig {
+        versionCode 1030
+        versionName "2.4.3"
 
-        defaultConfig {
-            versionCode 1030
-            versionName "2.4.3"
+        applicationId 'com.ruesga.android.wallpapers.photophase'
 
-            minSdkVersion.apiLevel 15
-            targetSdkVersion.apiLevel 25
-        }
+        return void;
+    }
 
-        ndk {
-            moduleName = "photophase"
-            platformVersion =  15
-            toolchain = 'clang'
-            CFlags.addAll(['-Wall'])
-            ldLibs.addAll(['GLESv2'])
-        }
+    signingConfigs {
+        release {
+            if (rootProject.file('release.properties').exists()) {
+                def Properties releaseProps = new Properties()
+                releaseProps.load(new FileInputStream(rootProject.file('release.properties')))
 
-        buildTypes {
-            debug {
-                debuggable true
-                ndk {
-                    debuggable true
-                }
+                def Properties ksProps = new Properties()
+                ksProps.load(new FileInputStream(new File((String) releaseProps['signing.config'])))
+                storeFile file(ksProps['keystore'])
+                keyAlias ksProps['alias']
+                storePassword ksProps['storePass']
+                keyPassword ksProps['pass']
+                storeType ksProps['storeType']
             }
-            release {
-                debuggable false
-                ndk {
-                    debuggable false
-                }
 
-                signingConfig = $("android.signingConfigs.release-signing-config")
-
-                zipAlignEnabled true
-                shrinkResources false
-                minifyEnabled true
-                useProguard true
-
-                proguardFiles.addAll([file('proguard-android.txt'), file('proguard-project.txt')])
-            }
-        }
-
-        compileOptions.with {
-            sourceCompatibility = JavaVersion.VERSION_1_7
-            targetCompatibility = JavaVersion.VERSION_1_7
-        }
-
-        packagingOptions.with {
-            // Ignore duplicate apache license files which breaks the AS build
-            exclude 'META-INF/ASL2.0'
-            exclude 'META-INF/LICENSE'
+            return void;
         }
     }
 
-    android.lintOptions {
+    buildTypes {
+        debug {
+            debuggable true
+
+            return void;
+        }
+        release {
+            debuggable false
+
+            zipAlignEnabled true
+            shrinkResources false
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-project.txt')
+
+            signingConfig signingConfigs.release
+
+            return void;
+        }
+    }
+
+    lintOptions {
         disable 'MissingTranslation', 'ManifestResource'
     }
 
-    android.signingConfigs {
-        create("release-signing-config") {
-            def Properties releaseProps = new Properties()
-            releaseProps.load(new FileInputStream(rootProject.file('release.properties')))
-
-            def Properties ksProps = new Properties()
-            ksProps.load(new FileInputStream(new File((String) releaseProps['signing.config'])))
-            storeFile file(ksProps["keystore"])
-            keyAlias ksProps["alias"]
-            storePassword ksProps["storePass"]
-            keyPassword ksProps["pass"]
-            storeType ksProps["storeType"]
-        }
-    }
+    return void;
 }
+
+apply plugin: 'com.getkeepsafe.dexcount'

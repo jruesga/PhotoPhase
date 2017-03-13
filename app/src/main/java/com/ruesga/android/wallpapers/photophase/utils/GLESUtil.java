@@ -30,6 +30,7 @@ import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.borders.Border;
+import com.ruesga.android.wallpapers.photophase.glesnative.GLESNative;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 
 import java.io.File;
@@ -37,8 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
@@ -52,7 +51,6 @@ public final class GLESUtil {
     private static final String TAG = "GLESUtil";
 
     private static final boolean DEBUG = false;
-    private static final boolean NATIVE_TEXTURE_BIND = true;
 
     public static final boolean DEBUG_GL_MEMOBJS = false;
     public static final String DEBUG_GL_MEMOBJS_NEW_TAG = "MEMOBJS_NEW";
@@ -60,18 +58,8 @@ public final class GLESUtil {
 
     private static final Object SYNC = new Object();
 
-    private static IntBuffer sNativeBuffer;
-
     private static final int MAX_GLES_ERRORS = 50;
     private static int sGlErrors = 0;
-
-    // Load the native library
-    static {
-        if (NATIVE_TEXTURE_BIND) {
-            System.loadLibrary("photophase");
-            sNativeBuffer = null;
-        }
-    }
 
     /**
      * A helper class to deal with OpenGL float colors.
@@ -247,7 +235,7 @@ public final class GLESUtil {
      * @param type The type of shader
      * @return int The handler identifier of the shader
      */
-    public static int loadShader(String src, int type) {
+    private static int loadShader(String src, int type) {
         int[] compiled = new int[1];
         // Create, load and compile the shader
         int shader = GLES20.glCreateShader(type);
@@ -509,18 +497,8 @@ public final class GLESUtil {
         GLESUtil.glesCheckError("glTexParameteri");
 
         // Load the texture
-        if (NATIVE_TEXTURE_BIND) {
-            // Create a buffer from the image
-            int width = texture.getWidth();
-            int height = texture.getHeight();
-            final int size = height * texture.getRowBytes();
-            if (sNativeBuffer == null || sNativeBuffer.capacity() < size) {
-                sNativeBuffer = ByteBuffer.allocateDirect(size * 4).asIntBuffer();
-            } else {
-                sNativeBuffer.clear();
-            }
-            texture.copyPixelsToBuffer(sNativeBuffer);
-            nativeGlTexImage2D(sNativeBuffer, width, height);
+        if (GLESNative.isUseNativeTextureBind()) {
+            GLESNative.glTexImage2D(texture);
         } else {
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
         }
@@ -648,7 +626,7 @@ public final class GLESUtil {
      *
      * @return boolean If a valid Egl context exists
      */
-    public static boolean hasValidEglContext() {
+    private static boolean hasValidEglContext() {
         final EGL10 egl = (EGL10) EGLContext.getEGL();
         return egl != null &&
                 egl.eglGetCurrentContext() != null &&
@@ -684,16 +662,4 @@ public final class GLESUtil {
             }
         }
     }
-
-
-
-    /**
-     * Link the image via native code
-     *
-     * @param image The image buffer to bind
-     * @param width The width of the image
-     * @param height The height of the image
-     */
-    @SuppressWarnings("JniMissingFunction")
-    private static native void nativeGlTexImage2D(IntBuffer image, int width, int height);
 }
