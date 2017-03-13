@@ -944,7 +944,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             return;
         }
 
-        if (!mInDozeMode) {
+        if (!mInDozeMode || !mCastTaskManager.canNetworkSchedule()) {
             // AlarmManager
             Intent i = new Intent(this, CastService.class);
             i.setAction(ACTION_MEDIA_COMMAND);
