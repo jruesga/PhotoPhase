@@ -49,7 +49,29 @@ import java.util.Random;
 import fi.iki.elonen.NanoHTTPD;
 import su.litvak.chromecast.api.v2.ChromeCast;
 
-import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.*;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_CONNECTIVITY_CHANGED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_DEVICE_SELECTED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_LOADING_MEDIA;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_MEDIA_CHANGED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_MEDIA_COMMAND;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_ON_RELEASE_NETWORK;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_QUEUE_CHANGED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_SCAN_FINISHED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_SERVER_EXITED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.ACTION_SERVER_STOP;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.CAST_MODE_NONE;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.CAST_MODE_SINGLE;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.CAST_MODE_SLIDESHOW;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.COMMAND_NEXT;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.COMMAND_PAUSE;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.COMMAND_RESUME;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.COMMAND_STOP;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.EXTRA_COMMAND;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.EXTRA_DEVICE;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.EXTRA_IS_ERROR;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.EXTRA_PATH;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.EXTRA_ROUTED;
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.INVALID_COMMAND;
 
 public class CastService extends Service implements CastServer.CastServerEventListener {
     private static final String TAG = "CastService";
@@ -400,6 +422,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         Message.obtain(mBackgroundHandler, MESSAGE_SELECT_DEVICE, o).sendToTarget();
     }
 
+    @SuppressWarnings("deprecation")
     public boolean startServer(String deviceInfo) {
         Log.d(TAG, "Start server");
 
@@ -426,6 +449,21 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             // Create a new cast server
             startServer(device);
             Cast.setLastConnectedDevice(this, device);
+
+            if (AndroidHelper.isMarshmallowOrGreater() && !mCastTaskManager.canNetworkSchedule()) {
+                // Open the queue activity so we can held the screen off
+                Intent i = new Intent(this, CastPhotoQueueActivity.class);
+                i.putExtra(CastPhotoQueueActivity.EXTRA_SHOW_DOZE_WARNING,
+                        PreferencesProvider.Preferences.Cast.isShowDozeModeWarning(this));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NO_HISTORY
+                        | (AndroidHelper.isLollipopOrGreater()
+                            ? Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                            : Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
+                startActivity(i);
+            }
             return true;
 
         } catch (IOException ex) {

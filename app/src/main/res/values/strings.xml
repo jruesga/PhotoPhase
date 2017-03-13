@@ -318,4 +318,6 @@
     <string name="cast_shuffle">Shuffle</string>
     <string name="cast_repeat">Repeat</string>
     <string name="cast_stop">Stop</string>
+    <string name="cast_doze_warning_title">Doze mode</string>
+    <string name="cast_doze_warning_message">To prevent enter in Doze mode, and keep the slideshow running, just retain this activity in foreground.</string>
 </resources>

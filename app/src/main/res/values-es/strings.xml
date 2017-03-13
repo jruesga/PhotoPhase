@@ -269,4 +269,6 @@
   <string name="cast_shuffle">Mezclar</string>
   <string name="cast_repeat">Repetir</string>
   <string name="cast_stop">Detener</string>
+  <string name="cast_doze_warning_title">Modo Doze</string>
+  <string name="cast_doze_warning_message">Para prevenir que el dispositivo entre en modo Doze, y mantener la presentación de imágenes funcionando, mantenga esta actividad en pantalla.</string>
 </resources>

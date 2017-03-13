@@ -828,6 +828,18 @@ public final class PreferencesProvider {
             public static boolean isShowTrack(Context context) {
                 return getSharedPreferences(context).getBoolean("cast_ui_show_track", true);
             }
+
+            public static boolean isShowDozeModeWarning(Context context) {
+                return getSharedPreferences(context).getBoolean("cast_show_doze_mode_warning", true);
+            }
+
+            public static void setShowDozeModeWarning(Context context, boolean show) {
+                SharedPreferences preferences =
+                        context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                Editor editor = preferences.edit();
+                editor.putBoolean("cast_show_doze_mode_warning", show);
+                editor.apply();
+            }
         }
 
     }

@@ -33,6 +33,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,6 +69,8 @@ import java.util.Map;
 public class CastPhotoQueueActivity extends AppCompatActivity implements OnClickListener {
 
     private static final String TAG = "CastPhotoQueueActivity";
+
+    public static final String EXTRA_SHOW_DOZE_WARNING = "doze_warning";
 
     private class QueueViewHolder extends RecyclerView.ViewHolder {
         private ImageView mPhoto;
@@ -343,6 +346,11 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         } catch (SecurityException se) {
             Log.w(TAG, "Can't bound to CastService", se);
         }
+
+        // Display a warning about doze mode
+        if (getIntent() != null && getIntent().getBooleanExtra(EXTRA_SHOW_DOZE_WARNING, false)) {
+            showDozeModeWarning();
+        }
     }
 
     @Override
@@ -543,5 +551,22 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
     private void showLoading() {
         mLoading.setVisibility(View.VISIBLE);
         mLoadingStatus = true;
+    }
+
+    private void showDozeModeWarning() {
+        if (PreferencesProvider.Preferences.Cast.isShowDozeModeWarning(this)) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.cast_doze_warning_title)
+                    .setMessage(R.string.cast_doze_warning_message)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .create();
+            dialog.show();
+
+            // Show warning only once
+            PreferencesProvider.Preferences.Cast.setShowDozeModeWarning(this, false);
+        }
+
+
+
     }
 }
