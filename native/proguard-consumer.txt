@@ -1,0 +1,1 @@
+-keep class com.ruesga.android.wallpapers.photophase.glesnative.GLESNative { *; }

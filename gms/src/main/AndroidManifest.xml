@@ -15,12 +15,11 @@
      limitations under the License.
  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.ruesga.android.wallpapers.photophase.gms">
     <application>
 
         <service
-            android:name=".cast.CastGcmTaskService"
+            android:name="com.ruesga.android.wallpapers.photophase.cast.CastGcmTaskService"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"
             android:exported="true">
             <intent-filter>

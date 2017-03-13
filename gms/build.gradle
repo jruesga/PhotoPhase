@@ -22,3 +22,11 @@ dependencies {
     compile project(':cast')
     compile "com.google.android.gms:play-services-gcm:${libraries.gms}"
 }
+
+android {
+    defaultConfig {
+        consumerProguardFiles file('proguard-consumer.txt')
+
+        return void;
+    }
+}
