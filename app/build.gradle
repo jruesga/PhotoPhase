@@ -20,8 +20,8 @@ def libraries = rootProject.ext.libraries;
 
 android {
     defaultConfig {
-        versionCode 1030
-        versionName "2.4.3"
+        versionCode 1031
+        versionName "2.4.4"
 
         applicationId 'com.ruesga.android.wallpapers.photophase'
 
