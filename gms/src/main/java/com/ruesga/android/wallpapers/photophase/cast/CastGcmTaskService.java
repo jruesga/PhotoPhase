@@ -30,14 +30,6 @@ public class CastGcmTaskService extends GcmTaskService {
 
     private static final long MAX_NETWORK_WAIT = 8000L;
 
-    public static final String ACTION_MEDIA_COMMAND =
-            "com.ruesga.android.wallpapers.photophase.actions.CAST_MEDIA_COMMAND";
-    public static final String EXTRA_COMMAND = "command";
-    public static final int COMMAND_NEXT = 2;
-
-    public static final String ACTION_ON_RELEASE_NETWORK =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_NETWORK_RELEASED";
-
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -54,7 +46,7 @@ public class CastGcmTaskService extends GcmTaskService {
         super.onCreate();
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_ON_RELEASE_NETWORK);
+        filter.addAction(CastServiceConstants.ACTION_ON_RELEASE_NETWORK);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, filter);
     }
 
@@ -69,8 +61,8 @@ public class CastGcmTaskService extends GcmTaskService {
     public int onRunTask(TaskParams taskParams) {
         Intent i = new Intent();
         i.setPackage(getPackageName());
-        i.setAction(ACTION_MEDIA_COMMAND);
-        i.putExtra(EXTRA_COMMAND, COMMAND_NEXT);
+        i.setAction(CastServiceConstants.ACTION_MEDIA_COMMAND);
+        i.putExtra(CastServiceConstants.EXTRA_COMMAND, CastServiceConstants.COMMAND_NEXT);
         startService(i);
 
         // Hold a bit the job, to ensure the picture was sent over the network
