@@ -34,9 +34,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.OneoffTask;
-import com.google.android.gms.gcm.Task;
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.ICastService;
 import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer;
@@ -52,46 +49,10 @@ import java.util.Random;
 import fi.iki.elonen.NanoHTTPD;
 import su.litvak.chromecast.api.v2.ChromeCast;
 
+import static com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants.*;
+
 public class CastService extends Service implements CastServer.CastServerEventListener {
     private static final String TAG = "CastService";
-
-    public static final String ACTION_DEVICE_SELECTED =
-            "com.ruesga.android.wallpapers.photophase.actions.CAST_DEVICE_SELECTED";
-    public static final String ACTION_CONNECTIVITY_CHANGED =
-            "com.ruesga.android.wallpapers.photophase.actions.CAST_CONNECTIVITY_CHANGED";
-    public static final String ACTION_MEDIA_COMMAND =
-            "com.ruesga.android.wallpapers.photophase.actions.CAST_MEDIA_COMMAND";
-
-    public static final String ACTION_ON_RELEASE_NETWORK =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_NETWORK_RELEASED";
-    public static final String ACTION_SCAN_FINISHED =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_SCAN_FINISHED";
-    public static final String ACTION_MEDIA_CHANGED =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_MEDIA_CHANGED";
-    public static final String ACTION_QUEUE_CHANGED =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_QUEUE_CHANGED";
-    public static final String ACTION_LOADING_MEDIA =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_LOADING_MEDIA";
-    public static final String ACTION_SERVER_STOP =
-            "com.ruesga.android.wallpapers.photophase.broadcast.SERVER_STOP";
-    public static final String ACTION_SERVER_EXITED =
-            "com.ruesga.android.wallpapers.photophase.broadcast.CAST_SERVER_EXITED";
-
-    public static final String EXTRA_PATH = "path";
-    public static final String EXTRA_DEVICE = "device";
-    public static final String EXTRA_IS_ERROR = "is_error";
-    public static final String EXTRA_ROUTED = "routed";
-    public static final String EXTRA_COMMAND = "command";
-
-    public static final int CAST_MODE_NONE = -1;
-    public static final int CAST_MODE_SINGLE = 0;
-    public static final int CAST_MODE_SLIDESHOW = 1;
-
-    public static final int INVALID_COMMAND = -1;
-    public static final int COMMAND_PAUSE = 0;
-    public static final int COMMAND_RESUME = 1;
-    public static final int COMMAND_NEXT = 2;
-    public static final int COMMAND_STOP = 3;
 
     static class CastStatusInfo {
         int mCastMode = CAST_MODE_NONE;
@@ -113,14 +74,12 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     private static final int MESSAGE_STOP = 13;
     private static final int MESSAGE_EXIT = 14;
 
-    private static final String CAST_SERVICE_TAG = "photophase-cast-slideshow";
-
     private CastServer mServer;
     private MediaPictureDiscoverer mMediaDiscoverer;
 
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundHandlerThread;
-    private GcmNetworkManager mGcmNetworkManager;
+    private ICastTaskManager mCastTaskManager;
     private boolean mInDozeMode = false;
 
     private boolean mScanning;
@@ -377,11 +336,8 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     public void onCreate() {
         super.onCreate();
         mRandom = new Random();
-        try {
-            mGcmNetworkManager = GcmNetworkManager.getInstance(this);
-        } catch (Exception ex) {
-            Log.e(TAG, "No Gcm network", ex);
-        }
+        mCastTaskManager = new CastTaskManager();
+        mCastTaskManager.instance(this);
 
         // Create a background messenger
         mBackgroundHandlerThread = new HandlerThread(TAG + "BackgroundThread");
@@ -1009,14 +965,8 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         } else {
             // Gcm
             long time = Cast.getSlideshowTime(this);
-            if (mGcmNetworkManager != null) {
-                OneoffTask task = new OneoffTask.Builder()
-                        .setService(CastGcmTaskService.class)
-                        .setTag(CAST_SERVICE_TAG)
-                        .setExecutionWindow(time - 1, time)
-                        .setRequiredNetwork(Task.NETWORK_STATE_UNMETERED)
-                        .build();
-                mGcmNetworkManager.schedule(task);
+            if (mCastTaskManager.canNetworkSchedule()) {
+                mCastTaskManager.schedule(time);
             }
         }
     }
@@ -1031,8 +981,8 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.cancel(pi);
 
-        if (mGcmNetworkManager != null) {
-            mGcmNetworkManager.cancelAllTasks(CastGcmTaskService.class);
+        if (mCastTaskManager.canNetworkSchedule()) {
+            mCastTaskManager.cancelTasks();
         }
     }
 

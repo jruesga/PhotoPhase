@@ -79,7 +79,7 @@ public class CastNotification {
         style.bigPicture(thumbnail);
 
         final PendingIntent contentIntent;
-        if (statusInfo.mCastMode != CastService.CAST_MODE_SLIDESHOW && media != null) {
+        if (statusInfo.mCastMode != CastServiceConstants.CAST_MODE_SLIDESHOW && media != null) {
             contentIntent = getDisplayPhotoActionIntent(ctx, media);
         } else {
             contentIntent = getShowCastQueueActionIntent(ctx);
@@ -104,23 +104,23 @@ public class CastNotification {
                 .setContentIntent(contentIntent)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        if (statusInfo.mCastMode == CastService.CAST_MODE_SLIDESHOW) {
+        if (statusInfo.mCastMode == CastServiceConstants.CAST_MODE_SLIDESHOW) {
             if (statusInfo.mPaused) {
                 builder.addAction(R.drawable.ic_play,
                         ctx.getString(R.string.cast_resume),
-                        getCastActionIntent(ctx, CastService.COMMAND_RESUME));
+                        getCastActionIntent(ctx, CastServiceConstants.COMMAND_RESUME));
             } else {
                 builder.addAction(R.drawable.ic_pause,
                         ctx.getString(R.string.cast_pause),
-                        getCastActionIntent(ctx, CastService.COMMAND_PAUSE));
+                        getCastActionIntent(ctx, CastServiceConstants.COMMAND_PAUSE));
             }
             builder.addAction(R.drawable.ic_skip_next,
                     ctx.getString(R.string.cast_next),
-                    getCastActionIntent(ctx, CastService.COMMAND_NEXT));
+                    getCastActionIntent(ctx, CastServiceConstants.COMMAND_NEXT));
         }
         builder.addAction(R.drawable.ic_stop,
                 ctx.getString(R.string.cast_stop),
-                getCastActionIntent(ctx, CastService.COMMAND_STOP));
+                getCastActionIntent(ctx, CastServiceConstants.COMMAND_STOP));
 
         Notification notification = builder.build();
         if (ctx instanceof Service) {
@@ -133,8 +133,8 @@ public class CastNotification {
 
     private static PendingIntent getCastActionIntent(Context context, int command) {
         Intent i = new Intent(context, CastService.class);
-        i.setAction(CastService.ACTION_MEDIA_COMMAND);
-        i.putExtra(CastService.EXTRA_COMMAND, command);
+        i.setAction(CastServiceConstants.ACTION_MEDIA_COMMAND);
+        i.putExtra(CastServiceConstants.EXTRA_COMMAND, command);
         return PendingIntent.getService(context, command, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

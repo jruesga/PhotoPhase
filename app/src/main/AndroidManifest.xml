@@ -103,7 +103,13 @@
 
         <service
             android:name=".cast.CastService"
-            android:permission="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION" />
+            android:permission="com.ruesga.android.wallpapers.photophase.BIND_PERMISSION">
+            <intent-filter>
+                <action android:name="com.ruesga.android.wallpapers.photophase.actions.CAST_DEVICE_SELECTED" />
+                <action android:name="com.ruesga.android.wallpapers.photophase.actions.CAST_CONNECTIVITY_CHANGED" />
+                <action android:name="com.ruesga.android.wallpapers.photophase.actions.CAST_MEDIA_COMMAND" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".cast.CastReceiver"
@@ -113,14 +119,6 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".cast.CastGcmTaskService"
-                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"
-                 android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
-            </intent-filter>
-        </service>
 
         <provider
             android:name=".providers.TemporaryContentAccessProvider"

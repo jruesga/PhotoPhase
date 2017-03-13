@@ -36,11 +36,11 @@ public class CastReceiver extends BroadcastReceiver {
                     || action.equals("android.net.wifi.STATE_CHANGE")) {
                 // Request a cast scan
                 Intent i = new Intent(context, CastService.class);
-                i.setAction(CastService.ACTION_CONNECTIVITY_CHANGED);
+                i.setAction(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED);
                 context.startService(i);
 
                 // Notify anyone that connectivity changed
-                i = new Intent(CastService.ACTION_CONNECTIVITY_CHANGED);
+                i = new Intent(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED);
                 context.sendBroadcast(i);
             }
         }

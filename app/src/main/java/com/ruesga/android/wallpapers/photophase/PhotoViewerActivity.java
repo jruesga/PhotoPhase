@@ -56,6 +56,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruesga.android.wallpapers.photophase.cast.CastService;
+import com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
 import com.ruesga.android.wallpapers.photophase.utils.BitmapUtils;
@@ -273,7 +274,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(CastService.ACTION_SCAN_FINISHED);
+        filter.addAction(CastServiceConstants.ACTION_SCAN_FINISHED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mCastReceiver, filter);
     }
 

@@ -41,6 +41,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.cast.CastService;
+import com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants;
 import com.ruesga.android.wallpapers.photophase.cast.CastUtils;
 import com.ruesga.android.wallpapers.photophase.model.Disposition;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
@@ -182,7 +183,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
                 // Preference could be changed, should disconnect the cast service?
                 handleCastStatusChanged();
-            } else if (action.equals(CastService.ACTION_CONNECTIVITY_CHANGED)) {
+            } else if (action.equals(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED)) {
                 // Have a valid cast connectivity?
                 handleCastStatusChanged();
             }
@@ -309,7 +310,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         // Register a receiver to listen for media reload request
         IntentFilter filter = new IntentFilter();
         filter.addAction(PreferencesProvider.ACTION_SETTINGS_CHANGED);
-        filter.addAction(CastService.ACTION_CONNECTIVITY_CHANGED);
+        filter.addAction(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED);
         mContext.registerReceiver(mSettingsChangedReceiver, filter);
 
         // Check whether the media scan is active

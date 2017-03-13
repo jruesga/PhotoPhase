@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Jorge Ruesga
+ * Copyright (C) 2016 Jorge Ruesga
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 
-include ':native', ':cast', ':gms', ':floss', ':app'
+package com.ruesga.android.wallpapers.photophase.cast;
+
+import android.content.Context;
+
+public interface ICastTaskManager {
+    void instance(Context context);
+    boolean canNetworkSchedule();
+    void schedule(long time);
+    void cancelTasks();
+}

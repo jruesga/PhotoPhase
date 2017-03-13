@@ -178,22 +178,22 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
             if (mCastService != null) {
                 String action = intent.getAction();
                 switch (action) {
-                    case CastService.ACTION_MEDIA_CHANGED:
+                    case CastServiceConstants.ACTION_MEDIA_CHANGED:
                         updateTrackInfo();
                         break;
-                    case CastService.ACTION_QUEUE_CHANGED:
+                    case CastServiceConstants.ACTION_QUEUE_CHANGED:
                         refreshQueue(true);
                         break;
-                    case CastService.ACTION_LOADING_MEDIA:
+                    case CastServiceConstants.ACTION_LOADING_MEDIA:
                         showLoading();
                         break;
-                    case CastService.ACTION_SERVER_STOP:
+                    case CastServiceConstants.ACTION_SERVER_STOP:
                         if (!mPlayPauseDrawable.isPlay()) {
                             mPlayPauseDrawable.getPausePlayAnimator().start();
                         }
                         updateCurrentPlaying(null);
                         break;
-                    case CastService.ACTION_SERVER_EXITED:
+                    case CastServiceConstants.ACTION_SERVER_EXITED:
                         finish();
                         break;
                 }
@@ -330,11 +330,11 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         next.setOnClickListener(this);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(CastService.ACTION_MEDIA_CHANGED);
-        filter.addAction(CastService.ACTION_QUEUE_CHANGED);
-        filter.addAction(CastService.ACTION_LOADING_MEDIA);
-        filter.addAction(CastService.ACTION_SERVER_STOP);
-        filter.addAction(CastService.ACTION_SERVER_EXITED);
+        filter.addAction(CastServiceConstants.ACTION_MEDIA_CHANGED);
+        filter.addAction(CastServiceConstants.ACTION_QUEUE_CHANGED);
+        filter.addAction(CastServiceConstants.ACTION_LOADING_MEDIA);
+        filter.addAction(CastServiceConstants.ACTION_SERVER_STOP);
+        filter.addAction(CastServiceConstants.ACTION_SERVER_EXITED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mCastReceiver, filter);
 
         try {
@@ -499,7 +499,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                             if (dx < 0) {
                                 dx = 0;
                             }
-                            if (mode == CastService.CAST_MODE_SLIDESHOW && shuffle) {
+                            if (mode == CastServiceConstants.CAST_MODE_SLIDESHOW && shuffle) {
                                 mQueue.scrollBy(dx - mOverallXScroll, 0);
                             } else {
                                 mQueue.smoothScrollBy(dx - mOverallXScroll, 0);

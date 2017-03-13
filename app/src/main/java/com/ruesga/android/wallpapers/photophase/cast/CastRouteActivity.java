@@ -245,10 +245,10 @@ public class CastRouteActivity extends AppCompatActivity {
                     mDevices.add(device);
                 }
             }
-            mPath = savedInstanceState.getString(CastService.EXTRA_PATH);
+            mPath = savedInstanceState.getString(CastServiceConstants.EXTRA_PATH);
         } else {
             // Check if it was routed. In that case just show a toast
-            boolean routed = getIntent().getBooleanExtra(CastService.EXTRA_ROUTED, false);
+            boolean routed = getIntent().getBooleanExtra(CastServiceConstants.EXTRA_ROUTED, false);
             if (routed) {
                 ChromeCast device = Cast.getLastConnectedDevice(this);
                 String msg = getString(R.string.cast_dialog_sent_to_device,
@@ -259,10 +259,10 @@ public class CastRouteActivity extends AppCompatActivity {
             }
 
             // Recovery the path
-            mPath = getIntent().getStringExtra(CastService.EXTRA_PATH);
+            mPath = getIntent().getStringExtra(CastServiceConstants.EXTRA_PATH);
 
             // An error happened? Notify the user
-            boolean isError = getIntent().getBooleanExtra(CastService.EXTRA_IS_ERROR, false);
+            boolean isError = getIntent().getBooleanExtra(CastServiceConstants.EXTRA_IS_ERROR, false);
             if (isError) {
                 Toast.makeText(this, R.string.cast_connect_error, Toast.LENGTH_SHORT).show();
             }
@@ -297,7 +297,7 @@ public class CastRouteActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(CastService.EXTRA_PATH, mPath);
+        outState.putString(CastServiceConstants.EXTRA_PATH, mPath);
         outState.putBoolean("seeking", mSeeking);
         int i = 0;
         outState.putInt("cast.count", mDevices.size());
@@ -363,9 +363,9 @@ public class CastRouteActivity extends AppCompatActivity {
 
         // Initialize the cast service with this device
         Intent i = new Intent(this, CastService.class);
-        i.setAction(CastService.ACTION_DEVICE_SELECTED);
-        i.putExtra(CastService.EXTRA_PATH, mPath);
-        i.putExtra(CastService.EXTRA_DEVICE,
+        i.setAction(CastServiceConstants.ACTION_DEVICE_SELECTED);
+        i.putExtra(CastServiceConstants.EXTRA_PATH, mPath);
+        i.putExtra(CastServiceConstants.EXTRA_DEVICE,
                 device.getAddress() + ":" + device.getPort() + "/" + device.getName());
         startService(i);
     }
