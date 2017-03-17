@@ -103,6 +103,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     private HandlerThread mBackgroundHandlerThread;
     private ICastTaskManager mCastTaskManager;
     private boolean mInDozeMode = false;
+    private boolean mIsNewStart = false;
 
     private boolean mScanning;
     private boolean mHasNearDevices;
@@ -422,7 +423,6 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         Message.obtain(mBackgroundHandler, MESSAGE_SELECT_DEVICE, o).sendToTarget();
     }
 
-    @SuppressWarnings("deprecation")
     public boolean startServer(String deviceInfo) {
         Log.d(TAG, "Start server");
 
@@ -449,21 +449,6 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             // Create a new cast server
             startServer(device);
             Cast.setLastConnectedDevice(this, device);
-
-            if (AndroidHelper.isMarshmallowOrGreater() && !mCastTaskManager.canNetworkSchedule()) {
-                // Open the queue activity so we can held the screen off
-                Intent i = new Intent(this, CastPhotoQueueActivity.class);
-                i.putExtra(CastPhotoQueueActivity.EXTRA_SHOW_DOZE_WARNING,
-                        PreferencesProvider.Preferences.Cast.isShowDozeModeWarning(this));
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_SINGLE_TOP
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NO_HISTORY
-                        | (AndroidHelper.isLollipopOrGreater()
-                            ? Intent.FLAG_ACTIVITY_NEW_DOCUMENT
-                            : Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
-                startActivity(i);
-            }
             return true;
 
         } catch (IOException ex) {
@@ -497,6 +482,8 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
         Intent i = new Intent(ACTION_SERVER_EXITED);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+
+        mIsNewStart = false;
     }
 
     private void performCast(String path) {
@@ -507,7 +494,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
             // It's a folder? Then obtain all the pictures, send the first one and enqueue th
             // rest ones
-            if (f.exists() && f.isDirectory()) {
+            if (f.isDirectory()) {
                 List<File> pictures = mMediaDiscoverer.obtain(f);
                 if (pictures.isEmpty()) {
                     return;
@@ -517,6 +504,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
                 cancelSlideShowAlarm();
 
                 // Enqueue and cast this
+                boolean newQueue = mIsNewStart && mQueue.isEmpty();
                 mQueue.clear();
                 mShuffleQueue.clear();
                 for (File pic : pictures) {
@@ -529,12 +517,22 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
                 mCastStatusInfo.mCastMode = CAST_MODE_SLIDESHOW;
                 mServer.send(chooseNextPicture());
+                mIsNewStart = false;
                 sendLoadingStatus();
                 mQueuePointer = 0;
-            } else {
+
+                // If we can't use the GCM network (and we needed to bypass Doze) and
+                // its the first time
+                if (newQueue && AndroidHelper.isMarshmallowOrGreater()
+                        && !mCastTaskManager.canNetworkSchedule()) {
+                    // Open the queue activity so we can held the screen off
+                    startPhotoQueueActivity();
+                }
+            } else if (f.isFile()) {
                 cancelSlideShowAlarm();
                 mCastStatusInfo.mCastMode = CAST_MODE_SINGLE;
                 mServer.send(path);
+                mIsNewStart = false;
                 sendLoadingStatus();
             }
         } catch (Exception ex) {
@@ -546,10 +544,11 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         Log.d(TAG, "Enqueue " + path);
 
         File f = new File(path);
+        boolean newQueue = mIsNewStart && mQueue.isEmpty();
 
         // It's a folder? Then obtain all the pictures, send the first one and enqueue the
         // rest ones
-        if (f.exists() && f.isDirectory()) {
+        if (f.isDirectory()) {
             List<File> pictures = mMediaDiscoverer.obtain(f);
             if (pictures.isEmpty()) {
                 return;
@@ -562,7 +561,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
                     mShuffleQueue.add(p);
                 }
             }
-        } else {
+        } else if (f.isFile()) {
             String p = f.getAbsolutePath();
             if (!mQueue.contains(p)) {
                 mQueue.add(p);
@@ -570,6 +569,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             }
         }
 
+        mIsNewStart = false;
         if (mCastStatusInfo.mCastMode != CAST_MODE_SLIDESHOW) {
             final String p = chooseNextPicture();
             try {
@@ -579,6 +579,14 @@ public class CastService extends Service implements CastServer.CastServerEventLi
                 sendLoadingStatus();
             } catch (Exception ex) {
                 Log.e(TAG, "Cannot send picture to device: " + p, ex);
+            }
+
+            // If we can't use the GCM network (and we needed to bypass Doze) and
+            // its the first time
+            if (newQueue && AndroidHelper.isMarshmallowOrGreater()
+                    && !mCastTaskManager.canNetworkSchedule()) {
+                // Open the queue activity so we can held the screen off
+                startPhotoQueueActivity();
             }
         }
 
@@ -1042,6 +1050,8 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         CastServer castServer = new CastServer(this, device, this);
         castServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         mServer = castServer;
+
+        mIsNewStart = true;
     }
 
     private void checkAndRestoreServerStatusIfNeeded() {
@@ -1057,5 +1067,20 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     private void sendLoadingStatus() {
         Intent i = new Intent(ACTION_LOADING_MEDIA);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void startPhotoQueueActivity() {
+        Intent i = new Intent(this, CastPhotoQueueActivity.class);
+        i.putExtra(CastPhotoQueueActivity.EXTRA_SHOW_DOZE_WARNING,
+                PreferencesProvider.Preferences.Cast.isShowDozeModeWarning(this));
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_NO_HISTORY
+                | (AndroidHelper.isLollipopOrGreater()
+                    ? Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                    : Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
+        startActivity(i);
     }
 }
