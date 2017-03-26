@@ -17,20 +17,28 @@
 package com.ruesga.android.wallpapers.photophase.glesnative;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public final class GLESNative {
 
-    private static final boolean NATIVE_TEXTURE_BIND = true;
+    private static final String TAG = "GLESNative";
+
+    private static boolean NATIVE_TEXTURE_BIND = true;
 
     private static IntBuffer sNativeBuffer;
 
     static {
         if (NATIVE_TEXTURE_BIND) {
-            System.loadLibrary("photophase");
-            sNativeBuffer = null;
+            try {
+                System.loadLibrary("photophase");
+                sNativeBuffer = null;
+            } catch (UnsatisfiedLinkError ex) {
+                NATIVE_TEXTURE_BIND = false;
+                Log.w(TAG, "Can't load native library. Fallback to android texImage2D version", ex);
+            }
         }
     }
 
