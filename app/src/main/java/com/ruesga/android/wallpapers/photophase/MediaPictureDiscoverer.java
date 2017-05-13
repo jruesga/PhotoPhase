@@ -192,7 +192,8 @@ public class MediaPictureDiscoverer {
             long start = System.currentTimeMillis();
             List<File> paths = new ArrayList<>();
             List<File> partial = new ArrayList<>();
-            Cursor c = mFinalContentResolver.query(uri, projection, where, args, null);
+            String sort = projection[0] + " ASC";
+            Cursor c = mFinalContentResolver.query(uri, projection, where, args, sort);
             if (c != null) {
                 try {
                     int i = 0;
