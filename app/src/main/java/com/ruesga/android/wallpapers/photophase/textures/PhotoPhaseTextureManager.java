@@ -330,7 +330,11 @@ public class PhotoPhaseTextureManager extends TextureManager
         // No images but thread should start here to received partial data
         this.mStatus = 0; // Loading
         if (mBackgroundTask != null) {
-            mBackgroundTask.setAvailableImages(new File[]{});
+            // In order to continue with the last media shown, we need all the
+            // images to process them
+            if (!Preferences.Media.isRememberLastMediaShown(mContext) || mFirstLoad) {
+                mBackgroundTask.setAvailableImages(new File[]{});
+            }
             if (!mBackgroundTask.mRun) {
                 mBackgroundTask.start();
             } else {
@@ -586,6 +590,9 @@ public class PhotoPhaseTextureManager extends TextureManager
                 String lastMedia = Preferences.Media.getLastMediaShown(mContext);
                 if (!TextUtils.isEmpty(lastMedia)) {
                     File lastMediaFile = new File(lastMedia);
+                    mNewImages.addAll(mUsedImages);
+                    mUsedImages.clear();
+                    Collections.sort(mNewImages);
                     int pos = mNewImages.indexOf(lastMediaFile);
                     // Only if not exists or is not the next in the list
                     if (pos > 0) {
