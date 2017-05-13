@@ -55,6 +55,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.ruesga.android.wallpapers.photophase.cast.CastService;
 import com.ruesga.android.wallpapers.photophase.cast.CastServiceConstants;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
@@ -75,7 +77,6 @@ import java.util.Locale;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoViewerActivity extends AppCompatActivity {
     private static final String TAG = "PhotoViewerActivity";
@@ -84,8 +85,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
     private File mPhoto;
 
-    private PhotoViewAttacher mPhotoViewAttacher;
-    private ImageView mPhotoView;
+    private PhotoView mPhotoView;
     private View mDetails;
     private MenuItem mDetailsMenu;
     private MenuItem mShareMenu;
@@ -97,7 +97,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private boolean mHasTransition;
     private boolean mInDetails;
 
-    private final float[] mLocation = new float[2];
+    private double[] mLocation;
     boolean mHasLocation = false;
 
     // To avoid passing a bitmap in an extra
@@ -143,7 +143,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
     };
 
-    private final AsyncTask<Float, Void, Bitmap> mMapLoaderTask = new AsyncTask<Float, Void, Bitmap>() {
+    private final AsyncTask<Double, Void, Bitmap> mMapLoaderTask = new AsyncTask<Double, Void, Bitmap>() {
         private static final String OPEN_STREETMAP_URL =
                 "http://staticmap.openstreetmap.de/staticmap.php/";
         private static final String IMAGE_URL = OPEN_STREETMAP_URL +
@@ -156,7 +156,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Bitmap doInBackground(Float... params) {
+        protected Bitmap doInBackground(Double... params) {
             // Check if we have connectivity
             if (!AndroidHelper.isNetworkAvailable(PhotoViewerActivity.this)) {
                 Log.w(TAG, "No network available. Cannot download map");
@@ -237,17 +237,16 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
 
         mDetails = findViewById(R.id.photo_details);
-        mPhotoView = (ImageView) findViewById(R.id.photo);
+        mPhotoView = (PhotoView) findViewById(R.id.photo);
         if (mPhotoView != null) {
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             mThumbnail = BitmapUtils.createUnscaledBitmap(
                     mPhoto, metrics.widthPixels / 8, metrics.heightPixels / 8);
             mPhotoView.setImageBitmap(mThumbnail);
-            mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
-            mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+            mPhotoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
-                public void onViewTap(View view, float v, float v1) {
+                public void onPhotoTap(ImageView view, float x, float y) {
                     if (mToolbar != null) {
                         boolean hide = mToolbar.getAlpha() > 0.0f;
                         mToolbar.animate()
@@ -357,7 +356,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 @Override
                 public void onPictureLoaded(Object o, Drawable drawable) {
                     if (mPhotoView != null) {
-                        mPhotoViewAttacher.update();
+                        mPhotoView.setImageDrawable(drawable);
                     }
 
                     // Update the details information
@@ -456,9 +455,6 @@ public class PhotoViewerActivity extends AppCompatActivity {
     }
 
     private void finishActivity() {
-        if (mPhotoViewAttacher != null) {
-            mPhotoViewAttacher.cleanup();
-        }
         supportFinishAfterTransition();
     }
 
@@ -579,7 +575,8 @@ public class PhotoViewerActivity extends AppCompatActivity {
             }
 
             // Location
-            if (exif.getLatLong(mLocation)) {
+            mLocation = exif.getLatLong();
+            if (mLocation != null) {
                 mHasLocation = true;
                 if (Geocoder.isPresent()) {
                     Geocoder geocoder = new Geocoder(this, AndroidHelper.getLocale(getResources()));
@@ -745,14 +742,14 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
     }
 
-    private boolean hasExternalMapApp(float latitude, float longitude) {
+    private boolean hasExternalMapApp(double latitude, double longitude) {
         String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         PackageManager manager = getPackageManager();
         return manager.queryIntentActivities(intent, 0).size() > 0;
     }
 
-    private void openLocationInExternalApp(float latitude, float longitude) {
+    private void openLocationInExternalApp(double latitude, double longitude) {
         String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         startActivity(intent);
