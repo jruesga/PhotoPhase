@@ -46,6 +46,7 @@ import com.ruesga.android.wallpapers.photophase.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -538,7 +539,7 @@ public class PhotoPhaseTextureManager extends TextureManager
                 mNewImages.clear();
                 mNewImages.addAll(filtered);
 
-                if (mFirstLoad) {
+                if (!mFirstLoad) {
                     reuseLastShownMedia();
                 }
 
