@@ -49,7 +49,7 @@
   <string name="pref_general_summary">Ajustes generales, efectos y transiciones</string>
   <string name="pref_general_app_shortcut_title">Acceso directo</string>
   <string name="pref_general_app_shortcut_summary">Mostrar una acceso directo a PhotoPhase en menu de aplicaciones de tu launcher</string>
-  <string name="pref_general_set_wallpaper">Establer como fondo de escritorio</string>
+  <string name="pref_general_set_wallpaper">Establecer como fondo de escritorio</string>
   <string name="pref_general_settings">Ajustes</string>
   <string name="pref_general_settings_wallpaper_dim">Oscurecer fondo de pantalla</string>
   <string name="pref_general_settings_background_color">Color del fondo</string>
