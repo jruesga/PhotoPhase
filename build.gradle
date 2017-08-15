@@ -17,7 +17,7 @@
 ext {
     libraries = [
             support                     : '26.0.1',
-            gms                         : '11.0.4',
+            gms                         : '11.2.0',
             okhttp3                     : '3.8.1',
             okio                        : '1.13.0',
             colorpickerview             : '1.4.0',
@@ -37,7 +37,7 @@ ext {
             compileSdkVersion           : 26,
             buildToolsVersion           : '26.0.1',
             minSdkVersion               : 15,
-            targetSdkVersion            : 25
+            targetSdkVersion            : 26
     ]
 }
 
