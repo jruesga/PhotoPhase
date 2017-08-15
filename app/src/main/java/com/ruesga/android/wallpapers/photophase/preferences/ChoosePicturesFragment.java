@@ -40,6 +40,7 @@ import android.os.RemoteException;
 import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -213,7 +214,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
             if (mSelectAll) {
                 Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
                 intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
-                getActivity().sendBroadcast(intent);
+                if (getActivity() != null) {
+                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                }
                 mRecreateWorld = true;
             }
         }
@@ -413,7 +416,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
         if (mRecreateWorld) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
         }
-        getActivity().sendBroadcast(intent);
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        }
 
         super.onDestroy();
     }

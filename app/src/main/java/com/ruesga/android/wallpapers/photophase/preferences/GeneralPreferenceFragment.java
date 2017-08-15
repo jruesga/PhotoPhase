@@ -33,6 +33,7 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
@@ -145,7 +146,9 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         if (mRecreateWorld) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
         }
-        getActivity().sendBroadcast(intent);
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        }
     }
 
     @Override

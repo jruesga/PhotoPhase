@@ -368,10 +368,13 @@ public class CastService extends Service implements CastServer.CastServerEventLi
         mBackgroundHandler = new Handler(mBackgroundHandlerThread.getLooper(), mMessenger);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(mSettingsChanged, filter);
+
+        filter = new IntentFilter();
+        filter.addAction(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mSettingsChanged, filter);
 
         mMediaDiscoverer = new MediaPictureDiscoverer(this);
 
@@ -385,6 +388,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
         // Unregister receiver
         unregisterReceiver(mSettingsChanged);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mSettingsChanged);
 
         // Destroy the server
         cancelSlideShowAlarm();
@@ -737,11 +741,11 @@ public class CastService extends Service implements CastServer.CastServerEventLi
             return;
         }
 
-        if (!CastUtils.hasValidCastNetwork(this)) {
+        /*if (!CastUtils.hasValidCastNetwork(this)) {
             mHasNearDevices = false;
             stopSelfAndServer();
             return;
-        }
+        }*/
 
         // Check if at least one devices is listening
         mScanning = true;

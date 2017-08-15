@@ -25,6 +25,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -184,7 +185,9 @@ public class CastPreferenceFragment extends PreferenceFragment {
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         intent.putExtra(PreferencesProvider.EXTRA_FLAG_CAST_CONFIGURATION_CHANGE, Boolean.TRUE);
         intent.putExtra(PreferencesProvider.EXTRA_PREF_KEY, key);
-        getActivity().sendBroadcast(intent);
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        }
     }
 
     private void setEnabledDependencies(boolean state) {

@@ -26,6 +26,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.R;
@@ -81,7 +82,9 @@ public class LayoutPreferenceFragment extends PreferenceFragment {
             int interval = Preferences.Layout.getRandomDispositionsInterval(getActivity());
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_DISPOSITION_INTERVAL_CHANGED, interval);
         }
-        getActivity().sendBroadcast(intent);
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        }
     }
 
     /**

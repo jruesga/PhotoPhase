@@ -430,7 +430,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         intent.putExtra(PreferencesProvider.EXTRA_FLAG_CAST_CONFIGURATION_CHANGE, Boolean.TRUE);
         intent.putExtra(PreferencesProvider.EXTRA_PREF_KEY, key);
-        sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void updateCurrentPlaying(String media) {

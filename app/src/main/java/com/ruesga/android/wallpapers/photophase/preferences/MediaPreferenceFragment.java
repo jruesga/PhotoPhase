@@ -24,6 +24,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.R;
@@ -80,7 +81,9 @@ public class MediaPreferenceFragment extends PreferenceFragment {
         if (mEmptyTextureQueueFlag) {
             intent.putExtra(PreferencesProvider.EXTRA_FLAG_EMPTY_TEXTURE_QUEUE, Boolean.TRUE);
         }
-        getActivity().sendBroadcast(intent);
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        }
     }
 
     /**
@@ -109,7 +112,9 @@ public class MediaPreferenceFragment extends PreferenceFragment {
                 Intent intent = new Intent(PreferencesProvider.ACTION_SETTINGS_CHANGED);
                 intent.putExtra(PreferencesProvider.EXTRA_FLAG_MEDIA_RELOAD, Boolean.TRUE);
                 intent.putExtra(PreferencesProvider.EXTRA_ACTION_MEDIA_USER_RELOAD_REQUEST, Boolean.TRUE);
-                getActivity().sendBroadcast(intent);
+                if (getActivity() != null) {
+                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                }
                 return true;
             }
         });

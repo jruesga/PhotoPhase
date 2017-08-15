@@ -18,6 +18,7 @@ package com.ruesga.android.wallpapers.photophase.cast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
 
@@ -41,7 +42,7 @@ public class CastReceiver extends BroadcastReceiver {
 
                 // Notify anyone that connectivity changed
                 i = new Intent(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED);
-                context.sendBroadcast(i);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(i);
             }
         }
     }

@@ -38,6 +38,7 @@ import android.opengl.Matrix;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.cast.CastService;
@@ -309,9 +310,12 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         if (DEBUG) Log.d(TAG, "onCreate [" + mInstance + "]");
         // Register a receiver to listen for media reload request
         IntentFilter filter = new IntentFilter();
-        filter.addAction(PreferencesProvider.ACTION_SETTINGS_CHANGED);
         filter.addAction(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED);
         mContext.registerReceiver(mSettingsChangedReceiver, filter);
+
+        filter = new IntentFilter();
+        filter.addAction(PreferencesProvider.ACTION_SETTINGS_CHANGED);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mSettingsChangedReceiver, filter);
 
         // Check whether the media scan is active
         int interval = Preferences.Media.getRefreshFrequency(mContext);
@@ -338,6 +342,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         // Register a receiver to listen for media reload request
         unbindFromCastService();
         mContext.unregisterReceiver(mSettingsChangedReceiver);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mSettingsChangedReceiver);
         recycle();
         if (mEffectContext != null) {
             mEffectContext.release();

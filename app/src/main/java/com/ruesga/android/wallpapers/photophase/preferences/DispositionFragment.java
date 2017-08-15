@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
@@ -209,7 +210,9 @@ public abstract class DispositionFragment extends PreferenceFragment
                     intent.putExtra(PreferencesProvider.EXTRA_FLAG_REDRAW, Boolean.TRUE);
                     intent.putExtra(PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, Boolean.TRUE);
                 }
-                getActivity().sendBroadcast(intent);
+                if (getActivity() != null) {
+                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                }
             }
         }
 
