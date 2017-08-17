@@ -154,7 +154,7 @@ public class BitmapUtils {
         options.inJustDecodeBounds = false;
         options.inSampleSize = Math.max(Math.round(photoWidth / dstWidth),
                 Math.round(photoHeight / dstHeight));
-        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        return decodeExifBitmap(file, BitmapFactory.decodeFile(file.getAbsolutePath(), options));
     }
 
     /**
