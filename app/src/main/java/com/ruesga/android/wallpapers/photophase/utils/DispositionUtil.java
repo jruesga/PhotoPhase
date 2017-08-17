@@ -101,7 +101,9 @@ public final class DispositionUtil {
             for (int row = disposition.y; row < count; row++) {
                 int count2 = disposition.x + disposition.w;
                 for (int col = disposition.x; col < count2; col++) {
-                    matrix[row][col]  = 1;
+                    if (row < rows && col < cols) {
+                        matrix[row][col] = 1;
+                    }
                 }
             }
         }

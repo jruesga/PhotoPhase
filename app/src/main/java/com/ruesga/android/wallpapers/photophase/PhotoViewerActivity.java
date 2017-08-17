@@ -646,8 +646,10 @@ public class PhotoViewerActivity extends AppCompatActivity {
         // Ensure we can have information about the picture size
         if (w <= 0 || h <= 0) {
             Rect r = BitmapUtils.getBitmapDimensions(mPhoto);
-            w = r.width();
-            h = r.height();
+            if (r != null) {
+                w = r.width();
+                h = r.height();
+            }
         }
 
         TextView tv;
