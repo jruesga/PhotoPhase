@@ -63,6 +63,8 @@ public class CastGcmTaskService extends GcmTaskService {
         i.setPackage(getPackageName());
         i.setAction(CastServiceConstants.ACTION_MEDIA_COMMAND);
         i.putExtra(CastServiceConstants.EXTRA_COMMAND, CastServiceConstants.COMMAND_NEXT);
+        // This should work since GcmTaskService should be in foreground, and it service
+        // should be previously created
         startService(i);
 
         // Hold a bit the job, to ensure the picture was sent over the network
