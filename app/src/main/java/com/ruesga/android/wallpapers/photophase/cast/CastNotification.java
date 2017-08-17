@@ -26,9 +26,10 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
+import com.ruesga.android.wallpapers.photophase.PhotoPhaseApplication;
 import com.ruesga.android.wallpapers.photophase.PhotoViewerActivity;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.cast.CastService.CastStatusInfo;
@@ -91,7 +92,8 @@ public class CastNotification {
     private static void performShowNotification(Context ctx, CastStatusInfo statusInfo,
             NotificationCompat.Style style, PendingIntent contentIntent) {
         // Create the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                    ctx, PhotoPhaseApplication.CAST_NOTIFICATION_CHANNEL_ID);
         builder.setSmallIcon(R.drawable.ic_cast_notification)
                 .setContentTitle(ctx.getString(R.string.app_name))
                 .setContentText(ctx.getString(R.string.cast_app_description))

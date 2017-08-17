@@ -305,6 +305,7 @@
     <string name="saved_dispositions_delete_success">Successfully deleted</string>
 
     <!-- Cast -->
+    <string name="cast_notification_channel" translatable="false">PhotoPhase - Cast</string>
     <string name="cast_app_description">Cast your photos</string>
     <string name="cast_loading_msg">Loading</string>
     <string name="cast_dialog_title">Send to</string>
