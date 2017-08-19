@@ -77,6 +77,7 @@ import java.util.Locale;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class PhotoViewerActivity extends AppCompatActivity {
     private static final String TAG = "PhotoViewerActivity";
@@ -173,15 +174,20 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 Response response = okClient.newCall(request).execute();
 
                 // Extract the bitmap
-                InputStream is = response.body().byteStream();
-                try {
-                    return BitmapUtils.decodeBitmap(is);
-                } finally {
+                ResponseBody body = response.body();
+                if (body != null) {
+                    InputStream is = response.body().byteStream();
                     try {
-                        is.close();
-                    } catch (IOException ex) {
-                        // Ignore
+                        return BitmapUtils.decodeBitmap(is);
+                    } finally {
+                        try {
+                            is.close();
+                        } catch (IOException ex) {
+                            // Ignore
+                        }
                     }
+                } else {
+                    Log.w(TAG, "Failed to download map. No body");
                 }
 
             } catch (IOException ex) {
@@ -198,7 +204,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 findViewById(R.id.details_map_no_data).setVisibility(View.VISIBLE);
             } else {
                 findViewById(R.id.details_map_progress).setVisibility(View.GONE);
-                ImageView iv = (ImageView) findViewById(R.id.details_map);
+                ImageView iv = findViewById(R.id.details_map);
                 iv.setImageBitmap(bitmap);
             }
         }
@@ -237,7 +243,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
 
         mDetails = findViewById(R.id.photo_details);
-        mPhotoView = (PhotoView) findViewById(R.id.photo);
+        mPhotoView = findViewById(R.id.photo);
         if (mPhotoView != null) {
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -408,7 +414,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
     private void initToolbar() {
         // Add a toolbar
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(" ");
@@ -490,9 +496,10 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
         // Request the image of the map
         if (mHasLocation) {
-            ImageView iv = (ImageView) findViewById(R.id.details_map);
+            ImageView iv = findViewById(R.id.details_map);
             if (iv.getDrawable() == null && mMapLoaderTask.getStatus() != AsyncTask.Status.RUNNING) {
-                mMapLoaderTask.execute(mLocation[0], mLocation[1]);
+                mMapLoaderTask.executeOnExecutor(
+                        AsyncTask.THREAD_POOL_EXECUTOR, mLocation[0], mLocation[1]);
             }
         }
     }
@@ -655,7 +662,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         TextView tv;
 
         // Date
-        tv = (TextView) findViewById(R.id.details_datetime);
+        tv = findViewById(R.id.details_datetime);
         tv.setText(datetime == null
                 ? notAvailable
                 : getString(R.string.photoviewer_details_format,
@@ -665,16 +672,16 @@ public class PhotoViewerActivity extends AppCompatActivity {
         if (!mHasLocation) {
             findViewById(R.id.details_lat_lon).setVisibility(View.GONE);
             findViewById(R.id.details_map_block).setVisibility(View.GONE);
-            tv = (TextView) findViewById(R.id.details_location);
+            tv = findViewById(R.id.details_location);
             tv.setText(notAvailable);
         } else {
-            tv = (TextView) findViewById(R.id.details_location);
+            tv = findViewById(R.id.details_location);
             if (location == null) {
                 tv.setVisibility(View.GONE);
             } else {
                 tv.setText(location);
             }
-            tv = (TextView) findViewById(R.id.details_lat_lon);
+            tv = findViewById(R.id.details_lat_lon);
             tv.setText(getString(R.string.photoviewer_details_latitude_longitude,
                     mLocation[0], mLocation[1]));
 
@@ -694,27 +701,27 @@ public class PhotoViewerActivity extends AppCompatActivity {
         if (manufacturer == null && model == null ) {
             findViewById(R.id.details_camera).setVisibility(View.GONE);
         } else {
-            tv = (TextView) findViewById(R.id.details_manufacturer);
+            tv = findViewById(R.id.details_manufacturer);
             tv.setText(manufacturer == null
                     ? getString(R.string.photoviewer_details_manufacturer, notAvailable)
                     : getString(R.string.photoviewer_details_manufacturer, manufacturer));
-            tv = (TextView) findViewById(R.id.details_model);
+            tv = findViewById(R.id.details_model);
             tv.setText(model == null
                     ? getString(R.string.photoviewer_details_model, notAvailable)
                     : getString(R.string.photoviewer_details_model, model));
-            tv = (TextView) findViewById(R.id.details_exposure);
+            tv = findViewById(R.id.details_exposure);
             tv.setText(exposure == -1
                     ? getString(R.string.photoviewer_details_exposure, notAvailable)
                     : getString(R.string.photoviewer_details_exposure, nf1.format(exposure)));
-            tv = (TextView) findViewById(R.id.details_aperture);
+            tv = findViewById(R.id.details_aperture);
             tv.setText(aperture == -1
                     ? getString(R.string.photoviewer_details_aperture, notAvailable)
                     : getString(R.string.photoviewer_details_aperture, nf2.format(aperture)));
-            tv = (TextView) findViewById(R.id.details_iso);
+            tv = findViewById(R.id.details_iso);
             tv.setText(iso == null
                     ? getString(R.string.photoviewer_details_iso, notAvailable)
                     : getString(R.string.photoviewer_details_iso, iso));
-            tv = (TextView) findViewById(R.id.details_flash);
+            tv = findViewById(R.id.details_flash);
             tv.setText(flash == -1
                     ? getString(R.string.photoviewer_details_flash, notAvailable)
                     : getString(R.string.photoviewer_details_flash, ((flash & 0x01) == 0x1)
@@ -723,23 +730,23 @@ public class PhotoViewerActivity extends AppCompatActivity {
         }
 
         // Info
-        tv = (TextView) findViewById(R.id.details_name);
+        tv = findViewById(R.id.details_name);
         tv.setText(getString(R.string.photoviewer_details_name, title));
-        tv = (TextView) findViewById(R.id.details_size);
+        tv = findViewById(R.id.details_size);
         tv.setText(getString(R.string.photoviewer_details_size, mPhoto.length() / 1024));
-        tv = (TextView) findViewById(R.id.details_resolution);
+        tv = findViewById(R.id.details_resolution);
         if (w == -1 || h == -1) {
             tv.setVisibility(View.GONE);
         } else {
             tv.setText(getString(R.string.photoviewer_details_resolution, w, h));
         }
-        tv = (TextView) findViewById(R.id.details_orientation);
+        tv = findViewById(R.id.details_orientation);
         if (orientation == -1) {
             tv.setVisibility(View.GONE);
         } else {
             tv.setText(getString(R.string.photoviewer_details_orientation, orientation));
         }
-        tv = (TextView) findViewById(R.id.details_path);
+        tv = findViewById(R.id.details_path);
         tv.setText(getString(R.string.photoviewer_details_path, mPhoto.getParent()));
 
     }

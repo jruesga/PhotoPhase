@@ -895,10 +895,10 @@ public class DispositionView extends RelativeLayout
 
         View dialogView = LayoutInflater.from(
                 getContext()).inflate(R.layout.frame_settings, null, false);
-        final SwitchCompat background = (SwitchCompat) dialogView.findViewById(R.id.flag_background);
-        final SwitchCompat transition = (SwitchCompat) dialogView.findViewById(R.id.flag_transition);
-        final SwitchCompat effect = (SwitchCompat) dialogView.findViewById(R.id.flag_effect);
-        final SwitchCompat border = (SwitchCompat) dialogView.findViewById(R.id.flag_border);
+        final SwitchCompat background = dialogView.findViewById(R.id.flag_background);
+        final SwitchCompat transition = dialogView.findViewById(R.id.flag_transition);
+        final SwitchCompat effect = dialogView.findViewById(R.id.flag_effect);
+        final SwitchCompat border = dialogView.findViewById(R.id.flag_border);
         background.setChecked(disposition.hasFlag(Disposition.BACKGROUND_FLAG));
         transition.setChecked(disposition.hasFlag(Disposition.TRANSITION_FLAG));
         effect.setChecked(disposition.hasFlag(Disposition.EFFECT_FLAG));

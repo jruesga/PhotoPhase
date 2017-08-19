@@ -173,11 +173,11 @@ public abstract class DispositionFragment extends PreferenceFragment
         mCurrentPage = 0;
         mNumberOfTemplates = getDispositionsTemplates().length;
 
-        mAdvise = (TextView)v.findViewById(R.id.advise);
-        mResizeFrame = (ResizeFrame)v.findViewById(R.id.resize_frame);
+        mAdvise = v.findViewById(R.id.advise);
+        mResizeFrame = v.findViewById(R.id.resize_frame);
 
         mAdapter = new DispositionAdapter(getActivity(), getAllDispositions(), mResizeFrame, this);
-        mPager = (ViewPager) v.findViewById(R.id.dispositions_pager);
+        mPager = v.findViewById(R.id.dispositions_pager);
         mPager.setAdapter(mAdapter);
         mPager.addOnPageChangeListener(this);
         mPager.setCurrentItem(0);

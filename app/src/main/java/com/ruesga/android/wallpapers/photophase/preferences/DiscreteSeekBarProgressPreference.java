@@ -105,7 +105,7 @@ public class DiscreteSeekBarProgressPreference extends DiscreteSeekBarPreference
     @Override
     protected void onBindView(@NonNull View view) {
         super.onBindView(view);
-        mTextView = (TextView) view.findViewById(R.id.text);
+        mTextView = view.findViewById(R.id.text);
         setText(getProgress());
         mSeekBar.setIndicatorPopupEnabled(mShowPopUpIndicator);
     }

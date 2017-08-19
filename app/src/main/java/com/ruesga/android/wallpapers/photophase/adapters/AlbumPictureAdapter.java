@@ -107,7 +107,7 @@ public class AlbumPictureAdapter extends ArrayAdapter<Picture> {
 
             // Create the controller for the view
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.mPictureItemView = (PictureItemView) v.findViewById(R.id.picture);
+            viewHolder.mPictureItemView = v.findViewById(R.id.picture);
             viewHolder.mPictureItemView.setPicture(picture);
             viewHolder.mPictureItemView.addCallBackListener(mCallback);
             v.setTag(viewHolder);

@@ -77,7 +77,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
 
         public QueueViewHolder(View itemView) {
             super(itemView);
-            mPhoto = (ImageView) itemView.findViewById(R.id.queue_photo);
+            mPhoto = itemView.findViewById(R.id.queue_photo);
         }
     }
 
@@ -298,22 +298,22 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
         AndroidHelper.setupRecentBar(this);
 
         mQueueMediaPanel = findViewById(R.id.queue_media_panel);
-        mShuffle = (ImageView) findViewById(R.id.shuffle);
-        mRepeat = (ImageView) findViewById(R.id.repeat);
-        ImageView playPause = (ImageView) findViewById(R.id.play_pause);
+        mShuffle = findViewById(R.id.shuffle);
+        mRepeat = findViewById(R.id.repeat);
+        ImageView playPause = findViewById(R.id.play_pause);
         mPlayPauseDrawable = new PlayPauseDrawable();
         playPause.setImageDrawable(mPlayPauseDrawable);
-        ImageView previous = (ImageView) findViewById(R.id.previous);
-        ImageView next = (ImageView) findViewById(R.id.next);
+        ImageView previous = findViewById(R.id.previous);
+        ImageView next = findViewById(R.id.next);
 
         mLogo = findViewById(R.id.logo);
-        mPhoto = (ImageView) findViewById(R.id.photo);
-        mTitle = (TextView) findViewById(R.id.photo_title);
-        mAlbum = (TextView) findViewById(R.id.photo_album);
-        mLoading = (ProgressBar) findViewById(R.id.loading);
+        mPhoto = findViewById(R.id.photo);
+        mTitle = findViewById(R.id.photo_title);
+        mAlbum = findViewById(R.id.photo_album);
+        mLoading = findViewById(R.id.loading);
         mLoadingStatus = false;
 
-        mQueue = (RecyclerView) findViewById(R.id.queue);
+        mQueue = findViewById(R.id.queue);
         mQueue.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mQueueAdapter = new QueueAdapter(this, mQueueList, mOnItemClickListener);
         mQueue.setAdapter(mQueueAdapter);

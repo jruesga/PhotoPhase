@@ -177,7 +177,7 @@ public class PictureItemView extends FrameLayout {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!mInEditMode) {
-                    final int action = MotionEventCompat.getActionMasked(event);
+                    final int action = event.getAction();
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
                             mLongClickFired = false;
@@ -269,10 +269,10 @@ public class PictureItemView extends FrameLayout {
 
         // Retrieve the views references
         if (mIcon == null) {
-            mIcon = (ImageView) findViewById(R.id.photo);
+            mIcon = findViewById(R.id.photo);
         }
         if (mCheckbox == null) {
-            mCheckbox = (CheckBox) findViewById(R.id.picture_selector);
+            mCheckbox = findViewById(R.id.picture_selector);
         }
         if (mExpand == null) {
             mExpand = findViewById(R.id.picture_expand);

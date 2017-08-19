@@ -472,7 +472,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
             updateEmptyMsg(AndroidHelper.hasReadExternalStoragePermissionGranted(getActivity()));
         }
 
-        mAlbumsPanel = (ListView)root.findViewById(R.id.albums_panel);
+        mAlbumsPanel = root.findViewById(R.id.albums_panel);
         mAlbumsPanel.setSmoothScrollbarEnabled(true);
         mAlbumsPanel.setEmptyView(mEmpty);
         mAlbumAdapter = new AlbumCardUiAdapter(getActivity(), mAlbums, this, this);
@@ -640,8 +640,8 @@ public class ChoosePicturesFragment extends PreferenceFragment
 
     private void updateEmptyMsg(boolean hasStorageGrants) {
         if (mEmpty != null) {
-            TextView title = (TextView) mEmpty.findViewById(R.id.empty_title);
-            TextView msg = (TextView) mEmpty.findViewById(R.id.empty_msg);
+            TextView title = mEmpty.findViewById(R.id.empty_title);
+            TextView msg = mEmpty.findViewById(R.id.empty_msg);
             if (hasStorageGrants) {
                 title.setText(R.string.no_pictures_albums_found_msg);
                 msg.setText(R.string.no_pictures_albums_tap_to_refresh_msg);
@@ -997,13 +997,13 @@ public class ChoosePicturesFragment extends PreferenceFragment
     private void updateAlbumInfo(View v, Album album) {
         final Resources res = getResources();
 
-        AlbumInfoView info = (AlbumInfoView)v.findViewById(R.id.album_info);
+        AlbumInfoView info = v.findViewById(R.id.album_info);
         info.setAlbum(album);
 
-        ImageView icon = (ImageView)info.findViewById(R.id.album_thumbnail);
-        TextView name = (TextView)info.findViewById(R.id.album_name);
-        TextView items = (TextView)info.findViewById(R.id.album_items);
-        TextView selectedItems = (TextView)info.findViewById(R.id.album_selected_items);
+        ImageView icon = info.findViewById(R.id.album_thumbnail);
+        TextView name = info.findViewById(R.id.album_name);
+        TextView items = info.findViewById(R.id.album_items);
+        TextView selectedItems = info.findViewById(R.id.album_selected_items);
 
         icon.setImageDrawable(album.getIcon());
         name.setText(album.getName());
@@ -1078,7 +1078,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
         mContainer.addView(header);
 
         // Update and display the album pictures view
-        AlbumInfoView info = (AlbumInfoView)header.findViewById(R.id.album_info);
+        AlbumInfoView info = header.findViewById(R.id.album_info);
         info.addCallBackListener(ChoosePicturesFragment.this);
         info.setCastProxy(ChoosePicturesFragment.this);
         info.setAlbumMode(false);
@@ -1092,7 +1092,7 @@ public class ChoosePicturesFragment extends PreferenceFragment
      * @param view The picture view
      */
     private void onPicturePressed(View view) {
-        PictureItemView pictureView = (PictureItemView)view.findViewById(R.id.picture);
+        PictureItemView pictureView = view.findViewById(R.id.picture);
         if (pictureView != null) {
             Picture picture = pictureView.getPicture();
             onPictureChanged(picture);

@@ -70,7 +70,7 @@ public class SwitchPreference extends CheckBoxPreference {
     protected void onBindView(@NonNull View view) {
         super.onBindView(view);
 
-        SwitchCompat switchWidget = (SwitchCompat) view.findViewById(android.R.id.checkbox);
+        SwitchCompat switchWidget = view.findViewById(android.R.id.checkbox);
         switchWidget.setOnCheckedChangeListener(mListener);
     }
 }

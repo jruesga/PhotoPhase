@@ -92,7 +92,7 @@ public class AlbumCardUiAdapter extends ArrayAdapter<Album> {
 
             // Create the controller for the view
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.mAlbumInfoView = (AlbumInfoView)v.findViewById(R.id.album_info);
+            viewHolder.mAlbumInfoView = v.findViewById(R.id.album_info);
             viewHolder.mAlbumInfoView.setAlbum(album);
             viewHolder.mAlbumInfoView.addCallBackListener(mAlbumInfoCallback);
             viewHolder.mAlbumInfoView.setCastProxy(mCastProxy);

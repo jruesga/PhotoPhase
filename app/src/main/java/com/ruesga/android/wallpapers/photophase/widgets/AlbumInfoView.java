@@ -369,10 +369,10 @@ public class AlbumInfoView extends RelativeLayout
 
         // Retrieve the views references
         if (mIcon == null) {
-            mIcon = (ImageView)findViewById(R.id.album_thumbnail);
-            mSelectedItems = (TextView)findViewById(R.id.album_selected_items);
-            mName = (TextView)findViewById(R.id.album_name);
-            mItems = (TextView)findViewById(R.id.album_items);
+            mIcon = findViewById(R.id.album_thumbnail);
+            mSelectedItems = findViewById(R.id.album_selected_items);
+            mName = findViewById(R.id.album_name);
+            mItems = findViewById(R.id.album_items);
             mOverflowButton = findViewById(R.id.overflow_button);
             mOverflowButton.setOnClickListener(this);
         }

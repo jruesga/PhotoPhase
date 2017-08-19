@@ -130,7 +130,7 @@ public class LivePreviewAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         LayoutInflater li = LayoutInflater.from(mContext);
         final View view = li.inflate(R.layout.live_preview_view, container, false);
-        SwitchCompat check = (SwitchCompat) view.findViewById(R.id.check);
+        SwitchCompat check = view.findViewById(R.id.check);
         check.setChecked(mSelectedEntries.contains(mValues[position]));
         check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -145,9 +145,9 @@ public class LivePreviewAdapter extends PagerAdapter {
         });
 
         int id = Integer.valueOf(mValues[position]);
-        TextView label = (TextView) view.findViewById(R.id.label);
+        TextView label = view.findViewById(R.id.label);
         label.setText(mLabels[position]);
-        LivePreviewView preview = (LivePreviewView) view.findViewById(R.id.preview);
+        LivePreviewView preview = view.findViewById(R.id.preview);
         preview.setEffect(mCallback.getEffectForId(id));
         preview.setBorder(mCallback.getBorderForId(id));
         preview.setTransition(mCallback.getTransitionForId(id));
@@ -160,7 +160,7 @@ public class LivePreviewAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        LivePreviewView v = (LivePreviewView) ((View) object).findViewById(R.id.preview);
+        LivePreviewView v = ((View) object).findViewById(R.id.preview);
         v.recycle();
         container.removeView((View) object);
     }
@@ -182,7 +182,7 @@ public class LivePreviewAdapter extends PagerAdapter {
     }
 
     private void configureSettings(View view, final int id, final LivePreviewView preview) {
-        final ImageView settings = (ImageView) view.findViewById(R.id.settings);
+        final ImageView settings = view.findViewById(R.id.settings);
         final View settingsBlock = view.findViewById(R.id.settings_block);
         if (mCallback.hasSettings(id)) {
             settings.setColorFilter(ContextCompat.getColor(mContext, R.color.color_accent),
@@ -208,7 +208,7 @@ public class LivePreviewAdapter extends PagerAdapter {
                 }
             });
 
-            final DiscreteSeekBar seekBar = (DiscreteSeekBar) view.findViewById(R.id.strength);
+            final DiscreteSeekBar seekBar = view.findViewById(R.id.strength);
             mCallback.configureSettings(id, seekBar);
             seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
                 @Override

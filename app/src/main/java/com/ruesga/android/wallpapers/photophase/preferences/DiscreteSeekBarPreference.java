@@ -83,7 +83,7 @@ public class DiscreteSeekBarPreference extends Preference implements OnProgressC
     @Override
     protected void onBindView(@NonNull View view) {
         super.onBindView(view);
-        mSeekBar = (DiscreteSeekBar) view.findViewById(R.id.seekbar);
+        mSeekBar = view.findViewById(R.id.seekbar);
         mSeekBar.setOnProgressChangeListener(this);
         mSeekBar.setMin(mMin);
         mSeekBar.setMax(mMax);
