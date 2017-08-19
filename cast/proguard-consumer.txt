@@ -1,0 +1,4 @@
+# Don't warn OkHttp
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+-dontwarn okio.*
