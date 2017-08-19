@@ -27,7 +27,7 @@ import android.media.effect.EffectContext;
  */
 public class WarholEffect extends PhotoPhaseEffect {
 
-    private final String VERTEX_SHADER =
+    private static final String VERTEX_SHADER =
             "attribute vec4 a_position;\n" +
             "attribute vec2 a_texcoord;\n" +
             "varying vec2 v_position;\n" +

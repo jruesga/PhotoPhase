@@ -176,7 +176,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 // Extract the bitmap
                 ResponseBody body = response.body();
                 if (body != null) {
-                    InputStream is = response.body().byteStream();
+                    InputStream is = body.byteStream();
                     try {
                         return BitmapUtils.decodeBitmap(is);
                     } finally {
