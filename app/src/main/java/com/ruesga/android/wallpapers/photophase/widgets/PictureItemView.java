@@ -309,7 +309,7 @@ public class PictureItemView extends FrameLayout {
                 // Show as icon, the first picture
                 File f = new File(picture.getPath());
                 AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(getContext(), mIcon,
-                        mMetrics.widthPixels * 8, mMetrics.heightPixels * 8, new OnPictureLoaded() {
+                        mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded() {
                     @Override
                     public void onPictureLoaded(Object o, Drawable drawable) {
                         if (AndroidHelper.isHighEndDevice(getContext())) {
