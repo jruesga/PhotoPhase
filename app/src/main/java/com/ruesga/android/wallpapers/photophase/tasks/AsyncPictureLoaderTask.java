@@ -133,7 +133,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     @Override
     protected void onPostExecute(Drawable result) {
         mView.setImageDrawable(result);
-        if (mCallback != null) {
+        if (result != null && mCallback != null) {
             if (mCallback.mRefs != null && mCallback.mRefs.length > 0) {
                 for (Object o : mCallback.mRefs) {
                     if (!isCancelled()) {
