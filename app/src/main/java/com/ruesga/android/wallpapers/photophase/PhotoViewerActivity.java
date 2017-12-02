@@ -545,7 +545,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         String notAvailable = getString(R.string.photoviewer_details_not_available);
         String title = mPhoto.getName();
         Date datetime = null;
-        String location = null;
+        StringBuilder location = null;
         String manufacturer = null;
         String model = null;
         double exposure = -1d;
@@ -591,12 +591,12 @@ public class PhotoViewerActivity extends AppCompatActivity {
                     if (!addresses.isEmpty()) {
                         Address address = addresses.get(0);
                         int max = address.getMaxAddressLineIndex();
-                        location = "";
+                        location = new StringBuilder();
                         for (int i = 0; i <= max; i++) {
                             if (i > 0) {
-                                location += ", ";
+                                location.append(", ");
                             }
-                            location += address.getAddressLine(i);
+                            location.append(address.getAddressLine(i));
                         }
                     }
                 }
@@ -623,12 +623,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
             } catch (NullPointerException | NumberFormatException ex) {
                 // Ignore
             }
-            if (AndroidHelper.isNougatOrGreater()) {
-                iso = exif.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
-            } else {
-                //noinspection deprecation
-                iso = exif.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
-            }
+            iso = exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY);
             flash = exif.getAttributeInt(ExifInterface.TAG_FLASH, -1);
 
             // Resolution
@@ -679,7 +674,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
             if (location == null) {
                 tv.setVisibility(View.GONE);
             } else {
-                tv.setText(location);
+                tv.setText(location.toString());
             }
             tv = findViewById(R.id.details_lat_lon);
             tv.setText(getString(R.string.photoviewer_details_latitude_longitude,

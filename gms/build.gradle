@@ -19,14 +19,14 @@ apply plugin: 'com.android.library'
 def libraries = rootProject.ext.libraries;
 
 dependencies {
-    compile project(':cast')
-    compile "com.google.android.gms:play-services-gcm:${libraries.gms}"
+    api project(':cast')
+    implementation "com.google.android.gms:play-services-gcm:${libraries.gms}"
 }
 
 android {
     defaultConfig {
         consumerProguardFiles file('proguard-consumer.txt')
 
-        return void;
+        return void
     }
 }

@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.library'
+package com.ruesga.android.wallpapers.photophase.cast;
 
-dependencies {
-    api project(':cast')
-}
+import android.content.Context;
+import android.util.Log;
 
-android {
-    defaultConfig {
-        consumerProguardFiles file('proguard-consumer.txt')
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class FlossCastTaskManager implements ICastTaskManager {
+    private static final String TAG = "CastFlossTaskManager";
 
-        return void
+    public void instance(Context context) {
+        Log.i(TAG, "Using FLOSS cast task manager");
+    }
+
+    public boolean canNetworkSchedule() {
+        return false;
+    }
+
+    public void schedule(long time) {
+    }
+
+    @Override
+    public void cancelTasks() {
     }
 }

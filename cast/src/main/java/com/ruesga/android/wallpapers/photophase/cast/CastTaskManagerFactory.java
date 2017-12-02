@@ -17,24 +17,19 @@
 package com.ruesga.android.wallpapers.photophase.cast;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
-public class CastTaskManager implements ICastTaskManager {
-    private static final String TAG = "CastFlossTaskManager";
+public final class CastTaskManagerFactory {
+    private static final String TAG = "CastTaskManagerFactory";
 
-    public void instance(Context context) {
-        Log.i(TAG, "Using FLOSS cast task manager");
-    }
-
-    public boolean canNetworkSchedule() {
-        return false;
-    }
-
-    public void schedule(long time) {
-    }
-
-    @Override
-    public void cancelTasks() {
+    public static ICastTaskManager newCastTaskManager(String clazz) {
+        try {
+            Log.d(TAG, "Using CastTaskManager implementation: " + clazz);
+            return (ICastTaskManager) Class.forName(clazz).newInstance();
+        } catch (Exception ex) {
+            // Ignore
+        }
+        throw new IllegalAccessError("Failed to obtain CastTaskManager implementation: " + clazz);
     }
 }

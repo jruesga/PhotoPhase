@@ -24,7 +24,7 @@ import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.Task;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class CastTaskManager implements ICastTaskManager {
+public class GmsCastTaskManager implements ICastTaskManager {
     private static final String TAG = "CastGcmTaskManager";
 
     private static final String CAST_SERVICE_TAG = "photophase-cast-slideshow";

@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.model.library'
+apply plugin: 'com.android.library'
 
-model {
-    android {
-        compileSdkVersion rootProject.ext.sdkVersions.compileSdkVersion
-        buildToolsVersion rootProject.ext.sdkVersions.buildToolsVersion
+android {
+    defaultConfig {
+        consumerProguardFiles file('proguard-consumer.txt')
 
-        defaultConfig {
-            minSdkVersion.apiLevel rootProject.ext.sdkVersions.minSdkVersion
-            targetSdkVersion.apiLevel rootProject.ext.sdkVersions.targetSdkVersion
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_PLATFORM=android-15',
+                          '-DANDROID_TOOLCHAIN=clang'
+                cFlags '-Wall'
+            }
         }
 
         ndk {
-            moduleName = "photophase"
-            platformVersion =  15
-            toolchain = 'clang'
-            CFlags.addAll(['-Wall'])
-            ldLibs.addAll(['GLESv2'])
+            abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
         }
 
         compileOptions.with {
@@ -52,6 +50,14 @@ model {
                     debuggable false
                 }
             }
+        }
+
+        return void
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
         }
     }
 }

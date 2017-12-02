@@ -16,14 +16,15 @@
 
 ext {
     libraries = [
-            support                     : '26.0.1',
-            gms                         : '11.2.0',
-            okhttp3                     : '3.8.1',
+            // https://developer.android.com/topic/libraries/support-library/revisions.html
+            support                     : '27.0.2',
+            gms                         : '11.6.2',
+            okhttp3                     : '3.9.1',
             okio                        : '1.13.0',
             colorpickerview             : '1.4.0',
             discrete_seekbar            : '1.0.1',
             photoview                   : '2.0.0',
-            aboutlibraries              : '5.9.7',
+            aboutlibraries              : '6.0.0',
             chromecast                  : '2f777b443c',
             protobuf                    : '2.6.1',
             jackson                     : '1.9.13',
@@ -34,28 +35,29 @@ ext {
     ]
 
     sdkVersions = [
-            compileSdkVersion           : 26,
-            buildToolsVersion           : '26.0.1',
+            compileSdkVersion           : 27,
+            buildToolsVersion           : '27.0.1',
             minSdkVersion               : 15,
-            targetSdkVersion            : 26
+            targetSdkVersion            : 27
     ]
 }
 
 allprojects {
     buildscript {
         repositories {
+            google()
             jcenter()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:2.3.3'
-            classpath 'com.android.tools.build:gradle-experimental:0.9.3'
-            classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+            // https://developer.android.com/studio/releases/gradle-plugin.html#revisions
+            classpath 'com.android.tools.build:gradle:3.0.1'
+            classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
         }
     }
 
     repositories {
+        google()
         jcenter()
-        maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
     }
 

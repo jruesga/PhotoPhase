@@ -35,6 +35,7 @@ import android.support.v4.util.Pair;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
+import com.ruesga.android.wallpapers.photophase.BuildConfig;
 import com.ruesga.android.wallpapers.photophase.ICastService;
 import com.ruesga.android.wallpapers.photophase.MediaPictureDiscoverer;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
@@ -359,7 +360,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
     public void onCreate() {
         super.onCreate();
         mRandom = new Random();
-        mCastTaskManager = new CastTaskManager();
+        mCastTaskManager = CastTaskManagerFactory.newCastTaskManager(BuildConfig.CAST_IMPL);
         mCastTaskManager.instance(this);
 
         // Create a background messenger
