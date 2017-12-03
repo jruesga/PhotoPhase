@@ -22,8 +22,8 @@ android {
     flavorDimensions 'app'
 
     defaultConfig {
-        versionCode 1035
-        versionName "2.6.1"
+        versionCode 1036
+        versionName "2.7.0"
 
         applicationId 'com.ruesga.android.wallpapers.photophase'
 
