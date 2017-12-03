@@ -1,7 +1,7 @@
 PhotoPhase Live Wallpaper
 =========================
 
-### Description
+### Description [![Build Status](https://api.travis-ci.org/jruesga/PhotoPhase.svg?branch=master)](https://travis-ci.org/jruesga/PhotoPhase/branches) [![GitHub release](https://img.shields.io/github/release/jruesga/PhotoPhase.svg)](https://github.com/jruesga/PhotoPhase/releases/latest) [![Apache 2.0](https://img.shields.io/github/license/jruesga/PhotoPhase.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 A live wallpaper that displays a subset of your photos on your wallpaper.
 
