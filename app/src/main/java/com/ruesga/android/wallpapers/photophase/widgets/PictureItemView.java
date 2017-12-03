@@ -16,6 +16,7 @@
 
 package com.ruesga.android.wallpapers.photophase.widgets;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -174,6 +175,7 @@ public class PictureItemView extends FrameLayout {
 
         setOnTouchListener(new OnTouchListener() {
             @Override
+            @SuppressLint("ClickableViewAccessibility")
             public boolean onTouch(View v, MotionEvent event) {
                 if (!mInEditMode) {
                     final int action = event.getAction();

@@ -16,7 +16,7 @@
 
 apply plugin: 'com.android.library'
 
-def libraries = rootProject.ext.libraries;
+def libraries = rootProject.ext.libraries
 
 dependencies {
     api project(':cast')

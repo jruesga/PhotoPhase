@@ -22,8 +22,6 @@
     android:layout_marginTop="?attr/actionBarSize"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:focusableInTouchMode="true"
-    android:clickable="true"
     android:scrollbarThumbVertical="@drawable/photoviewer_scroll">
 
     <LinearLayout

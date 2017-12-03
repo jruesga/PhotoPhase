@@ -16,8 +16,6 @@
 
 package com.ruesga.android.wallpapers.photophase.cast;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 public final class CastTaskManagerFactory {

@@ -339,7 +339,7 @@ public class CastServer extends NanoHTTPD {
     @SuppressWarnings({"ConstantConditions"})
     public synchronized Response serve(IHTTPSession session) {
         // Acquire a wakelock while serving the file
-        mCpuWakeLock.acquire();
+        mCpuWakeLock.acquire(45000L);
 
         // We only allow request coming from the ChromeCast device we bound to
         if (!isAuthorized(session.getRemoteIpAddress())) {

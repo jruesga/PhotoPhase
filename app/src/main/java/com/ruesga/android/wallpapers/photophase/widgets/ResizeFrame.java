@@ -223,7 +223,7 @@ public class ResizeFrame extends FrameLayout {
      * {@inheritDoc}
      */
     @Override
-    @SuppressLint("RtlHardcoded")
+    @SuppressLint({"RtlHardcoded", "ClickableViewAccessibility"})
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
         final int action = ev.getAction();
         final float x = ev.getX();
