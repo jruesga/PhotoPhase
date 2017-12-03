@@ -42,6 +42,7 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
 
     private OnBackPressedListener mCallback;
     private Header mAboutHeader;
+    private int fragmentCount = 1;
 
     /**
      * {@inheritDoc}
@@ -119,15 +120,20 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       switch (item.getItemId()) {
-          case android.R.id.home:
-              if (mCallback == null || !mCallback.onBackPressed()) {
-                  finish();
-              }
-              return true;
-          default:
-             return super.onOptionsItemSelected(item);
-       }
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                fragmentCount--;
+                boolean isBackPressed = mCallback != null && mCallback.onBackPressed();
+                if ((fragmentCount == 0 || !isTaskRoot())
+                        && (mCallback == null || !isBackPressed)) {
+                    finish();
+                    return true;
+                }
+                if (isBackPressed) {
+                    return true;
+                }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -136,10 +142,16 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
     @Override
     public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mCallback == null || !mCallback.onBackPressed()) {
+            fragmentCount--;
+            boolean isBackPressed = mCallback != null && mCallback.onBackPressed();
+            if ((fragmentCount == 0 || !isTaskRoot())
+                    && (mCallback == null || !isBackPressed)) {
                 finish();
+                return true;
             }
-            return true;
+            if (isBackPressed) {
+                return true;
+            }
         }
         return super.onKeyUp(keyCode, event);
     }
@@ -150,6 +162,7 @@ public class PhotoPhasePreferences extends AppCompatPreferenceActivity {
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
+        fragmentCount++;
         if (fragment instanceof OnBackPressedListener) {
             mCallback = (OnBackPressedListener)fragment;
         } else {

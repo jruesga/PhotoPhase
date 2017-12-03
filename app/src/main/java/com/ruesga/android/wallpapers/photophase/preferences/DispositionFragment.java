@@ -239,8 +239,12 @@ public abstract class DispositionFragment extends PreferenceFragment
         switch (item.getItemId()) {
             case R.id.mnu_ok:
                 mOkPressed = true;
-                getActivity().finish();
-                return true;
+                if (getActivity() != null && !getActivity().isTaskRoot()) {
+                    getActivity().finish();
+                } else {
+                    getFragmentManager().popBackStack();
+                }
+                return super.onOptionsItemSelected(item);
             case R.id.mnu_restore:
                 restoreData();
                 return true;

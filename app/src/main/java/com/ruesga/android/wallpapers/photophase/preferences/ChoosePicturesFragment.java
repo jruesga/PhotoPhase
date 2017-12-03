@@ -582,8 +582,12 @@ public class ChoosePicturesFragment extends PreferenceFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mnu_ok:
-                getActivity().finish();
-                return true;
+                if (getActivity() != null && !getActivity().isTaskRoot()) {
+                    getActivity().finish();
+                } else {
+                    getFragmentManager().popBackStack();
+                }
+                return super.onOptionsItemSelected(item);
             case R.id.mnu_restore:
                 restoreData();
                 return true;
@@ -597,6 +601,19 @@ public class ChoosePicturesFragment extends PreferenceFragment
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onBackPressed() {
+        if (!mShowingAlbums) {
+            // Hide album pictures
+            hideAlbumPictures(mDstParent, mDstView, mSrcParent, mSrcView);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -768,19 +785,6 @@ public class ChoosePicturesFragment extends PreferenceFragment
     @Override
     public void onAllPicturesDeselected(Album album) {
         updateAllPicturesSelection(album, false);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onBackPressed() {
-        if (!mShowingAlbums) {
-            // Hide album pictures
-            hideAlbumPictures(mDstParent, mDstView, mSrcParent, mSrcView);
-            return true;
-        }
-        return false;
     }
 
     /**

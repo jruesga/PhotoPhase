@@ -65,8 +65,12 @@ public abstract class LivePreviewFragment extends PreferenceFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mnu_ok:
-                getActivity().finish();
-                return true;
+                if (getActivity() != null && !getActivity().isTaskRoot()) {
+                    getActivity().finish();
+                } else {
+                    getFragmentManager().popBackStack();
+                }
+                return super.onOptionsItemSelected(item);
             default:
                 return super.onOptionsItemSelected(item);
         }
