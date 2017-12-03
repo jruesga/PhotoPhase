@@ -379,7 +379,7 @@ public class CastServer extends NanoHTTPD {
                 long start = System.currentTimeMillis();
                 Rect r = BitmapUtils.getBitmapDimensions(f);
                 BitmapUtils.adjustRectToMinimumSize(r, BitmapUtils.calculateMaxAvailableSize(mContext));
-                Bitmap src = BitmapUtils.createUnscaledBitmap(f, r.width(), r.height());
+                Bitmap src = BitmapUtils.createUnscaledBitmap(f, r.width(), r.height(), 1);
                 try {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     src.compress(Bitmap.CompressFormat.WEBP, 60, out);

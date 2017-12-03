@@ -133,7 +133,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                     holder.itemView.setSelected(false);
                     File f = new File(item);
                     AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(mContext, holder.mPhoto,
-                            mPhotoSize, mPhotoSize, new AsyncPictureLoaderTask.OnPictureLoaded() {
+                            mPhotoSize, mPhotoSize, 2, new AsyncPictureLoaderTask.OnPictureLoaded() {
                         @Override
                         public void onPictureLoaded(Object o, Drawable drawable) {
                             holder.itemView.setSelected(selected);
@@ -468,7 +468,7 @@ public class CastPhotoQueueActivity extends AppCompatActivity implements OnClick
                 mPhoto.animate().alpha(1.0f).setDuration(450L).setListener(null).start();
                 mPhoto.setImageBitmap(
                         BitmapUtils.createUnscaledBitmap(
-                                f, mScreenDim.x, mScreenDim.y));
+                                f, mScreenDim.x, mScreenDim.y, 2));
 
                 mTitle.setText(CastUtils.getTrackName(f));
                 mAlbum.setText(CastUtils.getAlbumName(f));

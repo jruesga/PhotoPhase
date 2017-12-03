@@ -131,7 +131,7 @@ public class AlbumInfoView extends RelativeLayout
 
     private CastProxy mCastProxy;
 
-    private DisplayMetrics mMetrics;
+    private int mSize;
 
     /**
      * Constructor of <code>AlbumInfoView</code>.
@@ -176,10 +176,11 @@ public class AlbumInfoView extends RelativeLayout
         mCallbacks = new ArrayList<>();
         mAlbumMode = true;
 
-
-        mMetrics = new DisplayMetrics();
+        DisplayMetrics metrics = new DisplayMetrics();
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getMetrics(mMetrics);
+        wm.getDefaultDisplay().getMetrics(metrics);
+        mSize = metrics.widthPixels /
+                getResources().getInteger(R.integer.pictures_per_album);
     }
 
     /**
@@ -405,8 +406,8 @@ public class AlbumInfoView extends RelativeLayout
                 // Show as icon, the first picture
                 File f = new File(album.getItems().get(0).getPath());
                 AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(getContext(), mIcon,
-                        mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded(album));
-                task.mFactor = AndroidHelper.isHighEndDevice(getContext()) ? 2 : 4;
+                        mSize, mSize, 1, new OnPictureLoaded(album));
+                task.mFactor = 1;
                 mTask = new AsyncPictureLoaderRunnable(task, f);
                 ViewCompat.postOnAnimation(this, mTask);
             }

@@ -16,7 +16,7 @@
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="@dimen/queue_photo_size"
+    android:layout_width="@dimen/queue_photo_size"
     android:layout_height="@dimen/queue_photo_size"
     android:gravity="center"
     android:background="@drawable/card_selector">

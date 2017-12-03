@@ -247,8 +247,9 @@ public class PhotoViewerActivity extends AppCompatActivity {
         if (mPhotoView != null) {
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int factor = AndroidHelper.isHighEndDevice(this) ? 2 : 4;
             mThumbnail = BitmapUtils.createUnscaledBitmap(
-                    mPhoto, metrics.widthPixels / 8, metrics.heightPixels / 8);
+                    mPhoto, metrics.widthPixels / factor, metrics.heightPixels / factor, 1);
             mPhotoView.setImageBitmap(mThumbnail);
             mPhotoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
@@ -349,7 +350,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             mTask = new AsyncPictureLoaderTask(this, mPhotoView, metrics.widthPixels,
-                    metrics.heightPixels, new AsyncPictureLoaderTask.OnPictureLoaded() {
+                    metrics.heightPixels, 1, new AsyncPictureLoaderTask.OnPictureLoaded() {
                 @Override
                 public void onPreloadImage() {
                     try {

@@ -93,6 +93,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
     private final int mHeight;
 
     public int mFactor = 1;
+    private int mMinSampleSize;
 
     /**
      * Constructor of <code>AsyncPictureLoaderTask</code>
@@ -101,13 +102,15 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
      * @param v The associated view
      * @param callback A callback to notify when the picture was loaded
      */
-    public AsyncPictureLoaderTask(Context context, ImageView v, int w, int h, OnPictureLoaded callback) {
+    public AsyncPictureLoaderTask(Context context, ImageView v, int w, int h,
+            int minSampleSize, OnPictureLoaded callback) {
         super();
         mContext = context;
         mView = v;
         mCallback = callback;
         mWidth = w;
         mHeight = h;
+        mMinSampleSize = minSampleSize;
     }
 
     /**
@@ -120,7 +123,7 @@ public class AsyncPictureLoaderTask extends AsyncTask<File, Void, Drawable> {
         }
 
         Bitmap unscaledBitmap = BitmapUtils.createUnscaledBitmap(
-                params[0], mWidth / mFactor, mHeight / mFactor);
+                params[0], mWidth / mFactor, mHeight / mFactor, mMinSampleSize);
         if (unscaledBitmap != null) {
             return new BitmapDrawable(mContext.getResources(), unscaledBitmap);
         }

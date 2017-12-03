@@ -95,7 +95,7 @@ public class BitmapUtils {
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
         // Decode the bitmap with inSampleSize set
-        options.inSampleSize = calculateBitmapRatio(options, dstWidth, dstHeight);
+        options.inSampleSize = Math.min(1, calculateBitmapRatio(options, dstWidth, dstHeight));
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         if (bitmap == null) {
@@ -133,7 +133,8 @@ public class BitmapUtils {
      * @return Decoded bitmap
      */
     @SuppressWarnings("deprecation")
-    public static Bitmap createUnscaledBitmap(File file, int dstWidth, int dstHeight) {
+    public static Bitmap createUnscaledBitmap(File file, int dstWidth, int dstHeight,
+            int minSampleSize) {
         // Get the dimensions of the bitmap
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
@@ -152,8 +153,8 @@ public class BitmapUtils {
 
         // Decode the image file into a Bitmap sized to fill the view
         options.inJustDecodeBounds = false;
-        options.inSampleSize = Math.max(Math.round(photoWidth / dstWidth),
-                Math.round(photoHeight / dstHeight));
+        options.inSampleSize = Math.max(minSampleSize, Math.max(Math.round(photoWidth / dstWidth),
+                Math.round(photoHeight / dstHeight)));
         return decodeExifBitmap(file, BitmapFactory.decodeFile(file.getAbsolutePath(), options));
     }
 

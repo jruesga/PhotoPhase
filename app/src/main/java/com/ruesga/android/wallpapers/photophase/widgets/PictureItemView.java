@@ -96,7 +96,7 @@ public class PictureItemView extends FrameLayout {
     private boolean mInEditMode;
     private boolean mLongClickFired;
 
-    private DisplayMetrics mMetrics;
+    private int mSize;
 
     /**
      * Constructor of <code>PictureItemView</code>.
@@ -140,9 +140,11 @@ public class PictureItemView extends FrameLayout {
     private void init() {
         mCallbacks = new ArrayList<>();
 
-        mMetrics = new DisplayMetrics();
+        DisplayMetrics metrics = new DisplayMetrics();
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getMetrics(mMetrics);
+        wm.getDefaultDisplay().getMetrics(metrics);
+        mSize = metrics.widthPixels /
+                getResources().getInteger(R.integer.pictures_per_album);
 
         mScaleInAnimation = new ScaleAnimation(
                 1f, 0.98f, 1f, 0.98f,
@@ -311,7 +313,7 @@ public class PictureItemView extends FrameLayout {
                 // Show as icon, the first picture
                 File f = new File(picture.getPath());
                 AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(getContext(), mIcon,
-                        mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded() {
+                        mSize, mSize, 2, new OnPictureLoaded() {
                     @Override
                     public void onPictureLoaded(Object o, Drawable drawable) {
                         if (AndroidHelper.isHighEndDevice(getContext())) {
@@ -321,7 +323,7 @@ public class PictureItemView extends FrameLayout {
                         }
                     }
                 });
-                task.mFactor = AndroidHelper.isHighEndDevice(getContext()) ? 2 : 4;
+                task.mFactor = 1;
                 mTask = new AsyncPictureLoaderRunnable(task, f);
                 ViewCompat.postOnAnimation(this, mTask);
             }
