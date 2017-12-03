@@ -225,8 +225,12 @@ public final class PreferencesProvider {
                 public static final int DEFAULT_TRANSITION_INTERVAL_INDEX = 2;
 
                 public static Set<String> getSelectedTransitions(Context context) {
-                    Set<String> defaults = new HashSet<>();
-                    return getSharedPreferences(context).getStringSet("ui_transition_types", defaults);
+                    Set<String> set = getSharedPreferences(context).getStringSet(
+                            "ui_transition_types", null);
+                    if (set == null) {
+                        return new HashSet<>();
+                    }
+                    return new HashSet<>(set);
                 }
 
                 public static void setSelectedTransitions(Context context, Set<String> values) {
@@ -266,8 +270,12 @@ public final class PreferencesProvider {
              */
             public static class Effects {
                 public static Set<String> getSelectedEffects(Context context) {
-                    Set<String> defaults = new HashSet<>();
-                    return getSharedPreferences(context).getStringSet("ui_effect_types", defaults);
+                    Set<String> set = getSharedPreferences(context).getStringSet(
+                            "ui_effect_types", null);
+                    if (set == null) {
+                        return new HashSet<>();
+                    }
+                    return new HashSet<>(set);
                 }
 
                 public static void setSelectedEffects(Context context, Set<String> values) {
@@ -321,8 +329,12 @@ public final class PreferencesProvider {
                 }
 
                 public static Set<String> getSelectedBorders(Context context) {
-                    Set<String> defaults = new HashSet<>();
-                    return getSharedPreferences(context).getStringSet("ui_border_types", defaults);
+                    Set<String> set = getSharedPreferences(context).getStringSet(
+                            "ui_border_types", null);
+                    if (set == null) {
+                        return new HashSet<>();
+                    }
+                    return new HashSet<>(set);
                 }
 
                 public static void setSelectedBorders(Context context, Set<String> values) {
@@ -400,8 +412,12 @@ public final class PreferencesProvider {
              * @return Set<String> The list of albums and pictures to be displayed
              */
             public static Set<String> getSelectedMedia(Context context) {
-                Set<String> defaults = new HashSet<>();
-                return getSharedPreferences(context).getStringSet("media_selected_media", defaults);
+                Set<String> set = getSharedPreferences(context).getStringSet(
+                        "media_selected_media", null);
+                if (set == null) {
+                    return new HashSet<>();
+                }
+                return new HashSet<>(set);
             }
 
             /**
@@ -426,8 +442,12 @@ public final class PreferencesProvider {
             * @return Set<String> The list of albums and pictures to be displayed
             */
            public static Set<String> getLastDiscorevedAlbums(Context context) {
-               Set<String> defaults = new HashSet<>();
-               return getSharedPreferences(context).getStringSet("media_last_discovered_albums", defaults);
+               Set<String> set = getSharedPreferences(context).getStringSet(
+                       "media_last_discovered_albums", null);
+               if (set == null) {
+                   return new HashSet<>();
+               }
+               return new HashSet<>(set);
            }
 
            /**
