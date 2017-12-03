@@ -35,6 +35,7 @@ import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.R;
 import com.ruesga.android.wallpapers.photophase.model.Album;
 import com.ruesga.android.wallpapers.photophase.tasks.AsyncPictureLoaderTask;
@@ -405,7 +406,7 @@ public class AlbumInfoView extends RelativeLayout
                 File f = new File(album.getItems().get(0).getPath());
                 AsyncPictureLoaderTask task = new AsyncPictureLoaderTask(getContext(), mIcon,
                         mMetrics.widthPixels, mMetrics.heightPixels, new OnPictureLoaded(album));
-                task.mFactor = 8;
+                task.mFactor = AndroidHelper.isHighEndDevice(getContext()) ? 2 : 4;
                 mTask = new AsyncPictureLoaderRunnable(task, f);
                 ViewCompat.postOnAnimation(this, mTask);
             }

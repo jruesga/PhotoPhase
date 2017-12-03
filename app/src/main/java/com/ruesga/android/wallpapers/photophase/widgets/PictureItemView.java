@@ -321,7 +321,7 @@ public class PictureItemView extends FrameLayout {
                         }
                     }
                 });
-                task.mFactor = 8;
+                task.mFactor = AndroidHelper.isHighEndDevice(getContext()) ? 2 : 4;
                 mTask = new AsyncPictureLoaderRunnable(task, f);
                 ViewCompat.postOnAnimation(this, mTask);
             }
