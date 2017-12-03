@@ -15,6 +15,18 @@ android:
 jdk:
   - oraclejdk8
 
+before_script:
+  # Install NDK
+  - export NDK="android-ndk-r16"
+  - export TERM=dumb
+  - curl -L https://dl.google.com/android/repository/$NDK-linux-x86_64.zip -O
+  - unzip -qo $NDK-linux-x86_64.zip
+  - rm $NDK-linux-x86_64.zip
+  - export ANDROID_NDK_HOME=`pwd`/$NDK
+  - export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME"
+  - export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
+  - export PATH=$PATH:${ANDROID_NDK_HOME}
+
 script:
   - ./gradlew clean lintDebug testDebug assDebug
 
