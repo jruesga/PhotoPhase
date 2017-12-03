@@ -11,9 +11,13 @@ android:
      - platform-tools
      - extra-android-m2repository
      - extra-google-m2repository
+     - cmake
 
 jdk:
   - oraclejdk8
+
+before_install:
+  - echo "y" | sdkmanager "cmake;3.6.4111459"
 
 before_script:
   # Install NDK
