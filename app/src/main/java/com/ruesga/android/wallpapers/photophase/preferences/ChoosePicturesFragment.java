@@ -154,6 +154,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
                     Album album = null;
                     while (c.moveToNext()) {
                         album = processPath(all, pending, album, c.getString(0));
+                        if (album == null) {
+                            continue;
+                        }
                         count++;
                         if (count % PROGRESS_STEPS == 0) {
                             // Notify and clean
@@ -262,6 +265,9 @@ public class ChoosePicturesFragment extends PreferenceFragment
                         album.getSelectedItems().add(f.getAbsolutePath());
                     }
                 }
+            }
+            if (album == null) {
+                return null;
             }
             if (mSelectAll) {
                 album.setSelected(true);
