@@ -16,6 +16,7 @@
 package com.ruesga.android.wallpapers.photophase.cast;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
 import com.ruesga.android.wallpapers.photophase.cast.mdsn.DiscoverResolver;
@@ -27,7 +28,8 @@ import su.litvak.chromecast.api.v2.ChromeCast;
 
 public class CastDiscover {
 
-    public static final String SERVICE_TYPE = "_googlecast._tcp.";
+    private static final String SERVICE_TYPE = "_googlecast._tcp.";
+    private static final String DEFAULT_NAME = "unknown device";
 
     public interface DeviceResolverListener {
         void onDeviceDiscovered(ChromeCast device);
@@ -43,10 +45,18 @@ public class CastDiscover {
                     // this is a chromecast device
                     String ip = result.a.ipaddr;
                     int port = result.srv.port;
-                    String name = result.txt.dict.get("fn");
+                    String name = safeName(result);
                     mListener.onDeviceDiscovered(new ChromeCast(ip, port, name));
                 }
             }
+        }
+
+        private String safeName(MDNSDiscover.Result result) {
+            if (result.txt == null || result.txt.dict == null
+                    || TextUtils.isEmpty(result.txt.dict.get("fn"))) {
+                return DEFAULT_NAME;
+            }
+            return result.txt.dict.get("fn");
         }
     };
 
