@@ -163,11 +163,13 @@
   <string name="touch_actions_open">Abrir</string>
   <string name="touch_actions_share">Compartir</string>
   <string name="touch_actions_cast">Enviar</string>
+  <string name="touch_actions_show_details">Mostrar detalles</string>
   <string name="touch_actions_none_summary">No hacer nada</string>
   <string name="touch_actions_transition_summary">Efectuar la transición</string>
   <string name="touch_actions_open_summary">Abrir la imagen</string>
   <string name="touch_actions_share_summary">Compartir la imagen</string>
   <string name="touch_actions_cast_summary">Enviar la imagen</string>
+  <string name="touch_actions_show_details_summary">Mostrar detalles de la imagen</string>
   <string name="transitions_cube">Cubo</string>
   <string name="transitions_fade">Desvanecer</string>
   <string name="transitions_flip">Voltear</string>

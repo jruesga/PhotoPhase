@@ -39,7 +39,11 @@ public enum TouchAction {
     /**
      * Cast the picture to a remote chromacast device
      */
-    CAST(4);
+    CAST(4),
+    /**
+     * Show image details
+     */
+    SHOW_DETAILS(5);
 
     private final int mValue;
 
@@ -72,6 +76,7 @@ public enum TouchAction {
         if (value == OPEN.mValue) return OPEN;
         if (value == SHARE.mValue) return SHARE;
         if (value == CAST.mValue) return CAST;
+        if (value == SHOW_DETAILS.mValue) return SHOW_DETAILS;
         return NONE;
     }
 }

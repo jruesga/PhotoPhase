@@ -83,8 +83,10 @@ public class PhotoViewerActivity extends AppCompatActivity {
     private static final String TAG = "PhotoViewerActivity";
 
     public static final String EXTRA_PHOTO = "photo";
+    public static final String EXTRA_SHOW_DETAILS_ONLY = "show_details_only";
 
     private File mPhoto;
+    private boolean mShowDetailsOnly;
 
     private PhotoView mPhotoView;
     private View mDetails;
@@ -213,11 +215,6 @@ public class PhotoViewerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.photo_viewer);
-
-        if (savedInstanceState != null) {
-            mHasTransition = savedInstanceState.getBoolean("has_transition", true);
-        }
 
         if (getIntent() != null) {
             String photo = getIntent().getStringExtra(EXTRA_PHOTO);
@@ -231,16 +228,18 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 finishActivity();
                 return;
             }
+
+            mShowDetailsOnly = getIntent().getBooleanExtra(EXTRA_SHOW_DETAILS_ONLY, false);
+        }
+
+        setContentView(R.layout.photo_viewer);
+
+        if (savedInstanceState != null) {
+            mHasTransition = savedInstanceState.getBoolean("has_transition", true);
         }
 
         initToolbar();
         AndroidHelper.setupRecentBar(this);
-
-        // Initialize the nfc adapter if available
-        if (AndroidHelper.isJellyBeanMr1OrGreater()
-                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
-            mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        }
 
         mDetails = findViewById(R.id.photo_details);
         mPhotoView = findViewById(R.id.photo);
@@ -266,6 +265,21 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 }
             });
         }
+
+        if (mShowDetailsOnly) {
+            mDetails = findViewById(R.id.photo_details);
+            mPhotoView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            updateDetailsInformation();
+            displayDetails();
+            return;
+        }
+
+        // Initialize the nfc adapter if available
+        if (AndroidHelper.isJellyBeanMr1OrGreater()
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        }
+
         if (AndroidHelper.isLollipopOrGreater() && !mHasTransition) {
             addTransitionListener();
         }
@@ -287,34 +301,38 @@ public class PhotoViewerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mPictureLoaded) {
-            Drawable drawable = mPhotoView.getDrawable();
-            if (drawable instanceof BitmapDrawable) {
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-                Bitmap bitmap = bitmapDrawable.getBitmap();
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    bitmap.recycle();
+        if (!mShowDetailsOnly) {
+            if (mPictureLoaded) {
+                Drawable drawable = mPhotoView.getDrawable();
+                if (drawable instanceof BitmapDrawable) {
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+                    Bitmap bitmap = bitmapDrawable.getBitmap();
+                    if (bitmap != null && !bitmap.isRecycled()) {
+                        bitmap.recycle();
+                    }
                 }
             }
-        }
-        if (mThumbnail != null) {
-            mThumbnail.recycle();
-            mThumbnail = null;
-        }
+            if (mThumbnail != null) {
+                mThumbnail.recycle();
+                mThumbnail = null;
+            }
 
-        if (mCastService != null) {
-            unbindService(mCastConnection);
-        }
+            if (mCastService != null) {
+                unbindService(mCastConnection);
+            }
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCastReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mCastReceiver);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.photoviewer, menu);
-        mDetailsMenu = menu.findItem(R.id.mnu_details);
-        mShareMenu = menu.findItem(R.id.mnu_share);
-        mCastMenu = menu.findItem(R.id.mnu_cast);
+        if (!mShowDetailsOnly) {
+            getMenuInflater().inflate(R.menu.photoviewer, menu);
+            mDetailsMenu = menu.findItem(R.id.mnu_details);
+            mShareMenu = menu.findItem(R.id.mnu_share);
+            mCastMenu = menu.findItem(R.id.mnu_cast);
+        }
         return true;
     }
 
@@ -392,7 +410,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         super.onAttachedToWindow();
 
         // Transition is not supported
-        if (!AndroidHelper.isLollipopOrGreater() || !mHasTransition) {
+        if (!mShowDetailsOnly && (!AndroidHelper.isLollipopOrGreater() || !mHasTransition)) {
             performAsyncPhotoLoading();
         }
     }
@@ -401,8 +419,8 @@ public class PhotoViewerActivity extends AppCompatActivity {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        if (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
-                mTask.getStatus() == AsyncTask.Status.PENDING)) {
+        if (!mShowDetailsOnly && (mTask != null && (mTask.getStatus() == AsyncTask.Status.RUNNING ||
+                mTask.getStatus() == AsyncTask.Status.PENDING))) {
             mTask.cancel(true);
         }
     }
@@ -427,7 +445,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case android.R.id.home:
-                if (mInDetails) {
+                if (!mShowDetailsOnly && mInDetails) {
                     hideDetails();
                 } else {
                     finishActivity();
@@ -453,7 +471,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mInDetails) {
+        if (!mShowDetailsOnly && mInDetails) {
             hideDetails();
         } else {
             super.onBackPressed();
@@ -462,7 +480,11 @@ public class PhotoViewerActivity extends AppCompatActivity {
     }
 
     private void finishActivity() {
-        supportFinishAfterTransition();
+        if (mShowDetailsOnly) {
+            supportFinishAfterTransition();
+        } else {
+            finish();
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -472,9 +494,15 @@ public class PhotoViewerActivity extends AppCompatActivity {
             public void onAnimationStart(Animator animation) {
                 mDetails.setAlpha(0f);
                 mDetails.setVisibility(View.VISIBLE);
-                mDetailsMenu.setVisible(false);
-                mShareMenu.setVisible(false);
-                mCastMenu.setVisible(false);
+                if (mDetailsMenu != null) {
+                    mDetailsMenu.setVisible(false);
+                }
+                if (mShareMenu != null) {
+                    mShareMenu.setVisible(false);
+                }
+                if (mCastMenu != null) {
+                    mCastMenu.setVisible(false);
+                }
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(getString(R.string.mnu_details));
                 }
@@ -515,9 +543,15 @@ public class PhotoViewerActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animation) {
                 mDetails.setAlpha(0f);
                 mDetails.setVisibility(View.GONE);
-                mDetailsMenu.setVisible(true);
-                mShareMenu.setVisible(true);
-                mCastMenu.setVisible(hasNearDevices());
+                if (mDetailsMenu != null) {
+                    mDetailsMenu.setVisible(true);
+                }
+                if (mShareMenu != null) {
+                    mShareMenu.setVisible(true);
+                }
+                if (mCastMenu != null) {
+                    mCastMenu.setVisible(hasNearDevices());
+                }
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(" ");
                 }

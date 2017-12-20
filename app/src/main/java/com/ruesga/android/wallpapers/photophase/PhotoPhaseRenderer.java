@@ -125,7 +125,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(PreferencesProvider.ACTION_SETTINGS_CHANGED)) {
+            if (PreferencesProvider.ACTION_SETTINGS_CHANGED.equals(action)) {
                 // Check what flags are been requested
                 boolean recreateWorld = intent.getBooleanExtra(
                         PreferencesProvider.EXTRA_FLAG_RECREATE_WORLD, false);
@@ -184,7 +184,7 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
 
                 // Preference could be changed, should disconnect the cast service?
                 handleCastStatusChanged();
-            } else if (action.equals(CastServiceConstants.ACTION_CONNECTIVITY_CHANGED)) {
+            } else if (CastServiceConstants.ACTION_CONNECTIVITY_CHANGED.equals(action)) {
                 // Have a valid cast connectivity?
                 handleCastStatusChanged();
             }
@@ -503,6 +503,16 @@ public class PhotoPhaseRenderer implements GLSurfaceView.Renderer {
                         } catch (RemoteException e) {
                             Log.w(TAG, "Got a remote exception while casting " + file, e);
                         }
+                    }
+                } else if (touchAction.compareTo(TouchAction.SHOW_DETAILS) == 0) {
+                    File file = getFileFromFrame(frame);
+                    if (file != null) {
+                        Intent intent = new Intent(mContext, PhotoViewerActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra(PhotoViewerActivity.EXTRA_PHOTO, file.getAbsolutePath());
+                        intent.putExtra(PhotoViewerActivity.EXTRA_SHOW_DETAILS_ONLY, true);
+                        mContext.startActivity(intent);
                     }
                 }
             }

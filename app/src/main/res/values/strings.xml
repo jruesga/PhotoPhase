@@ -195,11 +195,13 @@
     <string name="touch_actions_open">Open</string>
     <string name="touch_actions_share">Share</string>
     <string name="touch_actions_cast">Cast</string>
+    <string name="touch_actions_show_details">Show details</string>
     <string name="touch_actions_none_summary">Do nothing</string>
     <string name="touch_actions_transition_summary">Perform image transition</string>
     <string name="touch_actions_open_summary">Open the image</string>
     <string name="touch_actions_share_summary">Share the image</string>
     <string name="touch_actions_cast_summary">Cast the image</string>
+    <string name="touch_actions_show_details_summary">Show image details</string>
 
     <!-- Transitions -->
     <string name="transitions_cube">Cube</string>

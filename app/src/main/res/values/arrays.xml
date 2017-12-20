@@ -41,6 +41,7 @@
         <item>@string/touch_actions_open</item>
         <item>@string/touch_actions_share</item>
         <item>@string/touch_actions_cast</item>
+        <item>@string/touch_actions_show_details</item>
     </string-array>
 
     <string-array name="touch_actions_summaries" translatable="false">
@@ -49,6 +50,7 @@
         <item>@string/touch_actions_open_summary</item>
         <item>@string/touch_actions_share_summary</item>
         <item>@string/touch_actions_cast_summary</item>
+        <item>@string/touch_actions_show_details_summary</item>
     </string-array>
 
     <string-array name="touch_actions_values" translatable="false">
@@ -57,6 +59,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string-array name="transitions_labels" translatable="false">
