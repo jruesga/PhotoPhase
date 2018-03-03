@@ -364,7 +364,7 @@ public final class GLESUtil {
      * @param dimensions The desired dimensions
      * @return GLESTextureInfo The texture info
      */
-    public static GLESTextureInfo loadFadeTexture(File file, Rect dimensions) {
+    public static GLESTextureInfo loadFakeTexture(File file, Rect dimensions) {
         Bitmap bitmap = null;
         try {
             // Decode and associate the bitmap (invert the desired dimensions)

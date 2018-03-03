@@ -98,7 +98,7 @@ public class PhotoPhaseTextureManager extends TextureManager
         public void run() {
             try {
                 // Load the bitmap and create a fake gles information
-                ti = GLESUtil.loadFadeTexture(mImage, mDimensions);
+                ti = GLESUtil.loadFakeTexture(mImage, mDimensions);
 
                 boolean enqueue;
                 synchronized (mSync) {
