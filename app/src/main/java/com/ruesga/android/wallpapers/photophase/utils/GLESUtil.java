@@ -25,10 +25,10 @@ import android.media.effect.Effect;
 import android.opengl.GLES20;
 import android.opengl.GLException;
 import android.opengl.GLUtils;
-import android.support.design.BuildConfig;
 import android.util.Log;
 
 import com.ruesga.android.wallpapers.photophase.AndroidHelper;
+import com.ruesga.android.wallpapers.photophase.BuildConfig;
 import com.ruesga.android.wallpapers.photophase.borders.Border;
 import com.ruesga.android.wallpapers.photophase.glesnative.GLESNative;
 import com.ruesga.android.wallpapers.photophase.preferences.PreferencesProvider;
