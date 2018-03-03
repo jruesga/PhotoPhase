@@ -473,7 +473,7 @@ public class CastService extends Service implements CastServer.CastServerEventLi
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        mServer.stop();
+                        mServer.stop(false);
                         mServer = null;
                         Log.i(TAG, "Cast server was stopped");
                     }
@@ -958,6 +958,14 @@ public class CastService extends Service implements CastServer.CastServerEventLi
 
     @Override
     public void onCastServerDisconnected() {
+        mCastStatusInfo.mCastMode = CAST_MODE_NONE;
+        cancelSlideShowAlarm();
+        Intent i = new Intent(ACTION_SERVER_EXITED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        mIsNewStart = false;
+
+        stopForeground(true);
+        stopSelf();
         mServer = null;
         Log.i(TAG, "Cast server was disconnected");
     }

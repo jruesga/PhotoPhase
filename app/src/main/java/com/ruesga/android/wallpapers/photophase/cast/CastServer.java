@@ -135,7 +135,7 @@ public class CastServer extends NanoHTTPD {
             } else if (data instanceof Close) {
                 Close ev = (Close) data;
                 if (!ev.requestedBySender) {
-                    stop();
+                    stop(true);
                     mCastServerEventListener.onCastServerDisconnected();
                 }
             }
@@ -229,7 +229,7 @@ public class CastServer extends NanoHTTPD {
             mDaemon = daemon;
             super.start(timeout, daemon);
         } catch (IOException ex) {
-            stop();
+            stop(false);
             throw ex;
         }
 
@@ -296,19 +296,20 @@ public class CastServer extends NanoHTTPD {
         setCurrentlyPlaying(null, false, null);
     }
 
-    @Override
-    public void stop() {
+    public void stop(boolean closed) {
         if (!mIsConnected) {
             return;
         }
 
         // Stop the chromecast
-        try {
-            if (mChromecast.isAppRunning(PHOTOPHASE_APP_ID)) {
-                mChromecast.stopApp();
+        if (!closed) {
+            try {
+                if (mChromecast.isAppRunning(PHOTOPHASE_APP_ID)) {
+                    mChromecast.stopApp();
+                }
+            } catch (Exception ex) {
+                // Ignore
             }
-        } catch (Exception ex) {
-            // Ignore
         }
         try {
             mChromecast.unregisterListener(mCastEventListener);
@@ -325,7 +326,7 @@ public class CastServer extends NanoHTTPD {
 
     private void reconnect() throws IOException {
         // Restart the server
-        stop();
+        stop(false);
         start(mTimeout, mDaemon);
     }
 
